@@ -128,3 +128,88 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# React Native
+.expo/
+.expo-shared/
+
+# Node modules
+node_modules/
+
+# Android
+*.apk
+*.ap_
+*.dex
+*.class
+*.so
+*.jar
+*.war
+*.ear
+
+/android/app/build/
+android/local.properties
+android/.idea/
+/android/app/.cxx/
+android/app/*.iml
+android/*.iml
+/android/captures/
+
+# macOS
+*.DS_Store
+
+# IDEs and editors
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# Gradle
+.gradle/
+build/
+**/build/
+
+# IntelliJ
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Keystore files (make sure to back up securely)
+*.jks
+*.keystore
+
+# Firebase
+google-services.json
+
+# Miscellaneous
+*.lock
+*.log
+*.tmp
+*.temp
+*.swp
+*.swo
+*~.nib
+*.out
+*.obj
+*.pyc
+*.pyo
+*.lib
+*.a
+*.la
+*.lo
+*.class
+*.jar
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
+# Bundler
+
