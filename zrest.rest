@@ -1,0 +1,7 @@
+curl -X POST http://localhost:3001/api/doctor/signin \                
+-H "Content-Type: application/json" \
+-d '{
+    "email_or_mobile": "johndoe@example.com",
+    "password": "1234"
+}'
+

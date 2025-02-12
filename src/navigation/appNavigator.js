@@ -2,20 +2,21 @@ import React from 'react';
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AuthNavigator from './authNavigator';
+import { isAuthenticatedAtom } from '../atoms/authAtoms/authAtom';
+import { useAtomValue } from 'jotai';
+import HomeNavigator from './homeNavigator';
 
 
 const Stack = createNativeStackNavigator();
 
-
-
 const AppNavigator = () => {
-   const isLoggedIn = false;
+    const isLoggedIn = useAtomValue(isAuthenticatedAtom);
 return (
         <Stack.Navigator>
             {isLoggedIn ? (
                 <Stack.Screen
-                    name="Home"
-                    component={()=>null}
+                    name="HomeNavigator"
+                    component={HomeNavigator}
                     options={{ headerShown: false }}
                 />
             ) : (
