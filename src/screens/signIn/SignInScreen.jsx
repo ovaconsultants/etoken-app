@@ -4,42 +4,25 @@ import {userTokenAtom} from '../../atoms/authAtoms/authAtom';
 import {useSetAtom} from 'jotai';
 import {doctorDetailsAtom} from '../../atoms/doctorAtoms/doctorAtom';
 import { styles } from './SignInScreen.styles';
+import { SignInRequest } from '../../services/authService';
 
 const SignInScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   // Jotai state management
-  const [setUserToken] = useSetAtom(userTokenAtom);
-  const [setDoctorDetails] = useSetAtom(doctorDetailsAtom);
+  const setUserToken = useSetAtom(userTokenAtom);
+  const setDoctorDetails = useSetAtom(doctorDetailsAtom);
   const handleSignIn = async () => {
     if (!email || !password) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
-
     try {
-      const apiBaseUrl = 'http://localhost:3001';
-      const  apiMethod = '/api/doctor/signin';
-      const  response = await fetch( apiBaseUrl + apiMethod, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email_or_mobile: email,
-          password: password,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
+      const  data  = await SignInRequest(email, password);
+      if (!data.success) {
         throw new Error(data.message || 'Sign-in failed');
       }
-
-      console.log('Sign-in successful:', data);
-
       setUserToken(data.token);
       setDoctorDetails(data.doctor);
     } catch (error) {

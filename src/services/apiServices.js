@@ -1,6 +1,4 @@
-// src/services/authService.js
-import httpClient from './httpClient';
-
+import httpClient from './apiProvider';
 /**
  * Logs an exception to the server
  * @param {string} description - Description of the exception
@@ -56,9 +54,13 @@ export const fetchData = async (endpoint, params = {}, headers = {}) => {
  */
 export const postData = async (endpoint, data = {}, headers = {}) => {
   try {
+    console.log('endpoint in postData ', endpoint);
+    console.log('data in postData', data);
+    console.log('headers in postData', headers);
     const response = await httpClient.post(endpoint, data, {
       headers,
     });
+    console.log('response', response);
     return response.data;
   } catch (error) {
     console.error('POST Request Failed:', {

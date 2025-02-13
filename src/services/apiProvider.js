@@ -1,32 +1,16 @@
 // src/services/api.js
 import axios from 'axios';
-import {  useAtom } from 'jotai';
-import { userTokenAtom } from '../atoms/authAtoms/authAtom';
-
-
-const API_BASE_URL = 'https://your-api-endpoint.com';
+import Config from 'react-native-config';
 
 const httpClient = axios.create({
-  baseURL: API_BASE_URL,
-  timeout: 10000, // 10 seconds
+  baseURL: Config.API_BASE_URL || 'http://localhost:3001/',
+  timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   },
 });
+console.log('Config.API_BASE_URL in api provider ', Config.API_BASE_URL);
 
-httpClient.interceptors.request.use(
-  (config) => {
-    const [token] = useAtom(userTokenAtom); // Get the token from Jotai
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    console.error('Request Interceptor Error:', error);
-    return Promise.reject(error);
-  }
-);
 
 httpClient.interceptors.response.use(
   (response) => response,

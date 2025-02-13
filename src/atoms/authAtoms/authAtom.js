@@ -1,5 +1,8 @@
+import { atomWithStorage} from 'jotai/utils';
 import { atom } from 'jotai';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const userTokenAtom = atom(null);
+// Create an atom with an initial value of null
+export const userTokenAtom = atomWithStorage('token', null, AsyncStorage);
 
-export const isAuthenticatedAtom = atom((get) => !!get(userTokenAtom));
+export const isAuthenticatedAtom = atom(get => !!get(userTokenAtom));
