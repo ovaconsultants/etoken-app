@@ -1,7 +1,8 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SignInScreen from '../screens/signIn/SignInScreen';
-// import SignUpScreen from '../screens/SignUpScreen';
+import SignUpScreen from '../screens/signUp/SignUpScreen';
+import ClinicScreen from '../screens/Clinic/ClinicScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -13,11 +14,16 @@ const AuthNavigator = () => {
         component={SignInScreen}
         options={{ headerShown: false }}
       />
-      {/* <Stack.Screen
+       <Stack.Screen
         name="SignUp"
         component={SignUpScreen}
         options={{ title: 'Sign Up' }}
-      /> */}
+      />
+      <Stack.Screen
+        name="Add Clinic"
+        component={ClinicScreen}
+        options={{ title: 'Add Clinic' }}
+      />  
     </Stack.Navigator>
   );
 };
