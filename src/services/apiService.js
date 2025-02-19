@@ -5,7 +5,11 @@ import httpClient from './apiProvider';
  * @param {string} platform - Platform where the error occurred (e.g., "Mobile-IOS/Android")
  * @param {string} createdBy - User or system that created the log
  */
-const logException = async (description, platform = 'Mobile-IOS/Android', createdBy = 'AdminUser') => {
+const logException = async (
+  description,
+  platform = 'Mobile-IOS/Android',
+  createdBy = 'AdminUser',
+) => {
   try {
     await httpClient.post('/api/exception/logException', {
       exception_description: description,
@@ -27,8 +31,8 @@ const logException = async (description, platform = 'Mobile-IOS/Android', create
 export const fetchData = async (endpoint, params = {}, headers = {}) => {
   try {
     const response = await httpClient.get(endpoint, {
-      params, // Query parameters
-      headers, // Custom headers
+      params,
+      headers,
     });
     return response.data;
   } catch (error) {

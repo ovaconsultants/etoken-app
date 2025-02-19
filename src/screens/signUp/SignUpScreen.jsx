@@ -1,9 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, ActivityIndicator, Alert, ScrollView } from 'react-native';
-import { Dropdown } from 'react-native-element-dropdown';
+import React, {useState, useEffect} from 'react';
+import {
+  Text,
+  TextInput,
+  Button,
+  ActivityIndicator,
+  Alert,
+  ScrollView,
+} from 'react-native';
+import {Dropdown} from 'react-native-element-dropdown';
+import {SignUpRequest} from '../../services/authService';
 import SignUpStyles from './SignUpStyles';
-
+import {AccountDetailsRequest} from '../../services/accountService';
+import {isAuthenticatedAtom} from '../../atoms/authAtoms/authAtom';
+import {useSetAtom} from 'jotai';
 const SignUpScreen = ({navigation}) => {
+  const setIsAuthenticatedAtom = useSetAtom(isAuthenticatedAtom);
   const [accounts, setAccounts] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [specializations, setSpecializations] = useState([]);
@@ -27,17 +38,20 @@ const SignUpScreen = ({navigation}) => {
   useEffect(() => {
     const fetchAccounts = async () => {
       try {
-        const response = await fetch('http://localhost:3001/registration/accounts');
-        const data = await response.json();
-        if (data.success) {
-          setAccounts(data.accounts.map(acc => ({ label: acc.account_name, value: acc.account_id })));
-        } else {
-          setError('Failed to load accounts');
+        const data = await AccountDetailsRequest();
+        if (!data.success) {
+          throw new Error(data.message || 'Failed to load accounts');
         }
+        setAccounts(
+          data.accounts.map(acc => ({
+            label: acc.account_name,
+            value: acc.account_id,
+          })),
+        );
       } catch (err) {
         setError(err.message);
       } finally {
-        setLoading(prev => ({ ...prev, accounts: false }));
+        setLoading(prev => ({...prev, accounts: false}));
       }
     };
     fetchAccounts();
@@ -45,16 +59,21 @@ const SignUpScreen = ({navigation}) => {
 
   useEffect(() => {
     const fetchSpecializations = async () => {
-      if (!selectedAccount) return;
-      setLoading(prev => ({ ...prev, specializations: true }));
+      if (!selectedAccount) {
+        return;
+      }
+      setLoading(prev => ({...prev, specializations: true}));
       try {
         const response = await fetch(
-          `http://localhost:3001/registration/specializations?account_id=${selectedAccount}`
+          `http://localhost:3001/registration/specializations?account_id=${selectedAccount}`,
         );
         const data = await response.json();
         if (data.success) {
           setSpecializations(
-            data.specializations.map(spec => ({ label: spec.specialization_name, value: spec.specialization_id }))
+            data.specializations.map(spec => ({
+              label: spec.specialization_name,
+              value: spec.specialization_id,
+            })),
           );
         } else {
           setError('Failed to load specializations');
@@ -62,12 +81,11 @@ const SignUpScreen = ({navigation}) => {
       } catch (err) {
         setError(err.message);
       } finally {
-        setLoading(prev => ({ ...prev, specializations: false }));
+        setLoading(prev => ({...prev, specializations: false}));
       }
     };
     fetchSpecializations();
   }, [selectedAccount]);
-
   const handleSubmit = async () => {
     const requiredFields = [
       formData.firstName,
@@ -83,35 +101,36 @@ const SignUpScreen = ({navigation}) => {
       return;
     }
 
-    setLoading(prev => ({ ...prev, submit: true }));
+    setLoading(prev => ({...prev, submit: true}));
     setError('');
 
     try {
-      const response = await fetch('http://localhost:3001/doctor/addDoctor', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          first_name: formData.firstName,
-          last_name: formData.lastName,
-          specialization_id: selectedSpecialization,
-          mobile_number: formData.mobileNumber,
-          phone_number: formData.phoneNumber,
-          email: formData.email,
-          // profile_picture_url: formData.profilePictureUrl,
-          created_by: formData.createdBy,
-        }),
-      });
+      const dataObject = {
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        specialization_id: selectedSpecialization,
+        mobile_number: formData.mobileNumber,
+        phone_number: formData.phoneNumber,
+        email: formData.email,
+        // profile_picture_url: formData.profilePictureUrl,
+        created_by: formData.createdBy,
+      };
 
-      const data = await response.json();
-      if (!response.ok || !data.success) {
+      const data = await SignUpRequest(dataObject);
+
+      if (!data.success) {
         throw new Error(data.message || 'Failed to submit form');
       }
 
-      Alert.alert('Success', 'Doctor registered successfully!'); [
-        { text: 'OK', onPress: () => navigation.navigate('Clinic') } 
-      ];
+      Alert.alert('Success', 'Doctor registered successfully!', [
+        {
+          text: 'OK',
+          onPress: () => {
+            navigation.navigate('AddProfilePicture');
+          },
+        },
+      ]);
+
       setSelectedAccount(null);
       setSelectedSpecialization(null);
       setFormData({
@@ -126,14 +145,13 @@ const SignUpScreen = ({navigation}) => {
     } catch (err) {
       setError(err.message);
     } finally {
-      setLoading(prev => ({ ...prev, submit: false }));
+      setLoading(prev => ({...prev, submit: false}));
     }
   };
-
   return (
     <ScrollView contentContainerStyle={SignUpStyles.container}>
-     {/* Account Dropdown */}
-     <Text style={SignUpStyles.label}>Account:</Text>
+      {/* Account Dropdown */}
+      <Text style={SignUpStyles.label}>Account:</Text>
       {loading.accounts ? (
         <ActivityIndicator />
       ) : (
@@ -166,7 +184,7 @@ const SignUpScreen = ({navigation}) => {
           disabled={!selectedAccount}
           style={[
             SignUpStyles.dropdown,
-            !selectedAccount && SignUpStyles.disabledDropdown
+            !selectedAccount && SignUpStyles.disabledDropdown,
           ]}
           placeholderStyle={SignUpStyles.placeholderText}
           selectedTextStyle={SignUpStyles.selectedText}
@@ -177,33 +195,37 @@ const SignUpScreen = ({navigation}) => {
       <TextInput
         placeholder="First Name *"
         value={formData.firstName}
-        onChangeText={text => setFormData(prev => ({ ...prev, firstName: text }))}
+        onChangeText={text => setFormData(prev => ({...prev, firstName: text}))}
         style={SignUpStyles.input}
       />
       <TextInput
         placeholder="Last Name *"
         value={formData.lastName}
-        onChangeText={text => setFormData(prev => ({ ...prev, lastName: text }))}
+        onChangeText={text => setFormData(prev => ({...prev, lastName: text}))}
         style={SignUpStyles.input}
       />
       <TextInput
         placeholder="Mobile Number *"
         value={formData.mobileNumber}
-        onChangeText={text => setFormData(prev => ({ ...prev, mobileNumber: text }))}
+        onChangeText={text =>
+          setFormData(prev => ({...prev, mobileNumber: text}))
+        }
         keyboardType="phone-pad"
         style={SignUpStyles.input}
       />
       <TextInput
         placeholder="Phone Number"
         value={formData.phoneNumber}
-        onChangeText={text => setFormData(prev => ({ ...prev, phoneNumber: text }))}
+        onChangeText={text =>
+          setFormData(prev => ({...prev, phoneNumber: text}))
+        }
         keyboardType="phone-pad"
         style={SignUpStyles.input}
       />
       <TextInput
         placeholder="Email *"
         value={formData.email}
-        onChangeText={text => setFormData(prev => ({ ...prev, email: text }))}
+        onChangeText={text => setFormData(prev => ({...prev, email: text}))}
         keyboardType="email-address"
         autoCapitalize="none"
         style={SignUpStyles.input}
@@ -217,13 +239,17 @@ const SignUpScreen = ({navigation}) => {
       <TextInput
         placeholder="Created By *"
         value={formData.createdBy}
-        onChangeText={text => setFormData(prev => ({ ...prev, createdBy: text }))}
+        onChangeText={text => setFormData(prev => ({...prev, createdBy: text}))}
         style={SignUpStyles.input}
       />
 
       {error ? <Text style={SignUpStyles.errorText}>{error}</Text> : null}
 
-      <Button title={loading.submit ? 'Submitting...' : 'Submit'} onPress={handleSubmit} disabled={loading.submit} />
+      <Button
+        title={loading.submit ? 'Submitting...' : 'Submit'}
+        onPress={handleSubmit}
+        disabled={loading.submit}
+      />
     </ScrollView>
   );
 };

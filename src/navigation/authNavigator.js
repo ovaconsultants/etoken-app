@@ -2,7 +2,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SignInScreen from '../screens/signIn/SignInScreen';
 import SignUpScreen from '../screens/signUp/SignUpScreen';
-import ClinicScreen from '../screens/Clinic/ClinicScreen';
+import CaptureProfilePhotoScreen from '../screens/profilePicture/CaptureProfilePhotoScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -20,10 +20,10 @@ const AuthNavigator = () => {
         options={{ title: 'Sign Up' }}
       />
       <Stack.Screen
-        name="Add Clinic"
-        component={ClinicScreen}
-        options={{ title: 'Add Clinic' }}
-      />  
+        name="AddProfilePicture"
+        component={CaptureProfilePhotoScreen}
+        options={{ title: 'Take a picture' }}
+      />
     </Stack.Navigator>
   );
 };

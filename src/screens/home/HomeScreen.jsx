@@ -1,15 +1,23 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet,Button} from 'react-native';
+import { isAuthenticatedAtom } from '../../atoms/authAtoms/authAtom';
+import { useSetAtom } from 'jotai';
 import  useDebugAtoms  from '../../hooks/useDebugAtoms';
-const HomeScreen = () => {
-      useDebugAtoms();
+
+const HomeScreen = ({navigation}) => {
+    useDebugAtoms();
+    const  setAuthentication  = useSetAtom(isAuthenticatedAtom);
+    const  handleSignOut = () => {
+        setAuthentication(false);
+        console.log('Going back to the Login Screen');
+    };
     return (
         <View style={styles.container}>
             <Text style={styles.text}>Welcome to the Home Screen!</Text>
+            <Button onPress={handleSignOut} title="Go Back to Sign In/Sign Up" />
         </View>
     );
 };
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,

@@ -5,22 +5,17 @@ export const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://your-api.c
 export const API_ENDPOINTS = {
   AUTH: {
     SIGN_IN: '/doctor/signin',
-    REGISTER: '/auth/register',
-    LOGOUT: '/auth/logout',
-    REFRESH_TOKEN: '/auth/refresh-token',
+    REGISTER: '',
+    LOGOUT: '',
+    REFRESH_TOKEN: '',
   },
   DOCTOR: {
-    GET_DOCTORS: '/doctors',
-    GET_DOCTOR: '/doctors/:id',
-    CREATE_DOCTOR: '/doctors',
-    UPDATE_DOCTOR: '/doctors/:id',
-    DELETE_DOCTOR: '/doctors/:id',
+    ADD_DOCTOR: '/doctor/addDoctor',
+  },
+  ACCOUNT: {
+    GET_REGISTER_ACCOUNTS: '/registration/accounts',
   },
   PATIENT: {
-    GET_PATIENTS: '/patients',
-    GET_PATIENT: '/patients/:id',
-    CREATE_PATIENT: '/patients',
-    UPDATE_PATIENT: '/patients/:id',
     DELETE_PATIENT: '/patients/:id',
   },
 };

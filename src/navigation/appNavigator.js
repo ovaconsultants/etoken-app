@@ -7,10 +7,11 @@ import { useAtomValue } from 'jotai';
 import HomeNavigator from './homeNavigator';
 
 
+
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
-    const isLoggedIn = useAtomValue(isAuthenticatedAtom);
+    const  isLoggedIn = useAtomValue(isAuthenticatedAtom);
 return (
         <Stack.Navigator>
             {isLoggedIn ? (
@@ -21,7 +22,7 @@ return (
                 />
             ) : (
                 <Stack.Screen
-                name="Auth"
+                name="AuthNavigator"
                 component={AuthNavigator}
                 options={{ headerShown: false }}
             />
