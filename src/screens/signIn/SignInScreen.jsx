@@ -24,6 +24,7 @@ const SignInScreen = ({navigation}) => {
         throw new Error(data.message || 'Sign-in failed');
       }
       setUserToken(data.token);
+      console.log('This is the token for signIn request',data.token);
       setDoctorDetails(data.doctor);
     } catch (error) {
       console.error('Error signing in:', error);

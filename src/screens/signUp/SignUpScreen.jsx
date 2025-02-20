@@ -10,7 +10,7 @@ import {
 import {Dropdown} from 'react-native-element-dropdown';
 import {SignUpRequest} from '../../services/authService';
 import SignUpStyles from './SignUpStyles';
-import {AccountDetailsRequest} from '../../services/accountService';
+import {FetchAccountRequest} from '../../services/accountService';
 import {FetchSpecializationsRequest} from '../../services/accountService';
 
 const SignUpScreen = ({navigation}) => {
@@ -37,7 +37,7 @@ const SignUpScreen = ({navigation}) => {
   useEffect(() => {
     const fetchAccounts = async () => {
       try {
-        const data = await AccountDetailsRequest();
+        const data = await FetchAccountRequest();
         if (!data.success) {
           throw new Error(data.message || 'Failed to load accounts');
         }
@@ -247,6 +247,7 @@ const SignUpScreen = ({navigation}) => {
         onPress={handleSubmit}
         disabled={loading.submit}
       />
+      <Button title=" Go to profile picture" onPress={() =>  navigation.navigate('AddProfilePicture')} />
     </ScrollView>
   );
 };

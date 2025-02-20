@@ -2,15 +2,14 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useSetAtom } from 'jotai';
-import { isAuthenticatedAtom } from '../../atoms/authAtoms/authAtom';
+
+
 
 const CaptureProfilePhotoScreen = () => {
   const navigation = useNavigation();
-  const setIsAuthenticated = useSetAtom(isAuthenticatedAtom);
+
 
   const navigateToClinicScreen = () => {
-    setIsAuthenticated(true);
     navigation.navigate('ClinicNavigator');
   };
 

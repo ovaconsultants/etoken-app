@@ -1,14 +1,14 @@
 import React from 'react';
 import { View, Text, StyleSheet,Button} from 'react-native';
-import { isAuthenticatedAtom } from '../../atoms/authAtoms/authAtom';
+import { userTokenAtom } from '../../atoms/authAtoms/authAtom';
 import { useSetAtom } from 'jotai';
 import  useDebugAtoms  from '../../hooks/useDebugAtoms';
 
 const HomeScreen = ({navigation}) => {
     useDebugAtoms();
-    const  setAuthentication  = useSetAtom(isAuthenticatedAtom);
+    const  setAuthentication  = useSetAtom(userTokenAtom);
     const  handleSignOut = () => {
-        setAuthentication(false);
+        setAuthentication(null);
         console.log('Going back to the Login Screen');
     };
     return (

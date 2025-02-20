@@ -1,7 +1,7 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AppNavigator from './appNavigator';
-import ClinicNavigator from './clinicNavigator';
+import DoctorClinicNavigator from './doctorClinicNavigator';
 
 
 const Stack = createNativeStackNavigator();
@@ -16,7 +16,7 @@ const RootNavigator = () => {
             />
             <Stack.Screen
                 name="ClinicNavigator"
-                component={ClinicNavigator}
+                component={DoctorClinicNavigator}
                 options={{ headerShown: false }}
             />
         </Stack.Navigator>

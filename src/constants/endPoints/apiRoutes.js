@@ -11,6 +11,7 @@ export const API_ENDPOINTS = {
   },
   DOCTOR: {
     ADD_DOCTOR: '/doctor/addDoctor',
+    ADD_CLINIC:'/doctor/addClinic',
   },
   ACCOUNT: {
     GET_REGISTER_ACCOUNTS: '/registration/accounts',

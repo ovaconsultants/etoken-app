@@ -1,10 +1,17 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet , Button} from 'react-native';
+import { userTokenAtom,isAuthenticatedAtom} from '../../atoms/authAtoms/authAtom';
+import { useSetAtom , useAtomValue} from 'jotai';
 
-const DoctorClinicScheduleScreen = () => {
+
+const DoctorClinicScheduleScreen = ({navigation}) => {
+    const setIsAuthenticated = useSetAtom(userTokenAtom);
+    console.log(navigation.getParent().getState());
+    console.log('this is value in DCSS' ,useAtomValue(isAuthenticatedAtom));
     return (
         <View style={styles.container}>
             <Text style={styles.text}>Doctor Clinic Schedule Screen</Text>
+            <Button title="Go to Sign in" onPress={() => {setIsAuthenticated(null); navigation.navigate('AppNavigator')}} />
         </View>
     );
 };

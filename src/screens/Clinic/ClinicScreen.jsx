@@ -6,10 +6,15 @@ import {
   ScrollView,
   Alert,
   ActivityIndicator,
+  Button,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import styles from './ClinicScreen.styles';
+import {SafeAreaInsetsContext} from 'react-native-safe-area-context';
+import {AddClinicRequest} from '../../services/clinicService';
 
-const ClinicScreen = () => {
+const ClinicScreen = ({navigation}) => {
   const [formData, setFormData] = useState({
     clinic_name: '',
     address: '',
@@ -21,6 +26,7 @@ const ClinicScreen = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [submitted, setSubmitted] = useState(false);
 
   const handleInputChange = (name, value) => {
     setFormData(prev => ({...prev, [name]: value}));
@@ -44,32 +50,11 @@ const ClinicScreen = () => {
     }
     setLoading(true);
     try {
-      const response = await fetch(
-        'https://etoken-api-dev.vercel.app/api/doctor/addClinic',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            ...formData,
-            doctor_id: Number(formData.doctor_id),
-          }),
-        },
-      );
-
-      const data = await response.json();
+      console.log('This is the form data', formData);
+      const data = await AddClinicRequest(formData);
       if (data.success) {
         Alert.alert('Success', data.message);
-        setFormData({
-          clinic_name: '',
-          address: '',
-          city: '',
-          state: '',
-          zip_code: '',
-          doctor_id: '',
-          created_by: '',
-        });
+        setSubmitted(true);
       } else {
         setError(data.error || 'Failed to create clinic');
       }
@@ -80,40 +65,90 @@ const ClinicScreen = () => {
     }
   };
 
+  const handleAddMore = () => {
+    setFormData({
+      clinic_name: '',
+      address: '',
+      city: '',
+      state: '',
+      zip_code: '',
+      doctor_id: '',
+      created_by: '',
+    });
+    setSubmitted(false);
+  };
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {/* <Text style={styles.title}>Add New Clinic</Text> */}
+    <SafeAreaInsetsContext.Provider>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardAvoidingView}>
+        <View style={styles.container}>
+          {/* Scrollable Content */}
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            bounces={false}>
+            {submitted ? (
+              <View style={styles.successContainer}>
+                <Text style={styles.successText}>
+                  Clinic added successfully!
+                </Text>
+                <Text style={styles.button} onPress={handleAddMore}>
+                  Add Another Clinic
+                </Text>
+              </View>
+            ) : (
+              <>
+                {Object.entries(formData).map(([key, value]) => (
+                  <View key={key} style={styles.inputContainer}>
+                    <Text style={styles.label}>
+                      {key.replace(/_/g, ' ').toUpperCase()}
+                    </Text>
+                    <TextInput
+                      style={styles.input}
+                      value={value}
+                      onChangeText={text => handleInputChange(key, text)}
+                      placeholder={`Enter ${key.replace(/_/g, ' ')}`}
+                      keyboardType={
+                        key === 'zip_code' || key === 'doctor_id'
+                          ? 'numeric'
+                          : 'default'
+                      }
+                      editable={!loading}
+                    />
+                  </View>
+                ))}
+                <View style={styles.footer}>
+                  <Button
+                    title="Go to Schedule"
+                    onPress={() => navigation.navigate('DoctorClinicSchedule')}
+                  />
+                </View>
+                {error ? <Text style={styles.error}>{error}</Text> : null}
 
-      {Object.entries(formData).map(([key, value]) => (
-        <View key={key} style={styles.inputContainer}>
-          <Text style={styles.label}>
-            {key.replace(/_/g, ' ').toUpperCase()}
-          </Text>
-          <TextInput
-            style={styles.input}
-            value={value}
-            onChangeText={text => handleInputChange(key, text)}
-            placeholder={`Enter ${key.replace(/_/g, ' ')}`}
-            keyboardType={
-              key === 'zip_code' || key === 'doctor_id' ? 'numeric' : 'default'
-            }
-            editable={!loading}
-          />
+                <View style={styles.buttonContainer}>
+                  {loading ? (
+                    <ActivityIndicator size="large" color="#007AFF" />
+                  ) : (
+                    <Text style={styles.button} onPress={handleSubmit}>
+                      Submit
+                    </Text>
+                  )}
+                </View>
+              </>
+            )}
+          </ScrollView>
+
+          {/* Footer */}
+          <View style={styles.footer}>
+            <Button
+              title="Go to Schedule"
+              onPress={() => navigation.navigate('DoctorClinicSchedule')}
+            />
+          </View>
         </View>
-      ))}
-
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-
-      <View style={styles.buttonContainer}>
-        {loading ? (
-          <ActivityIndicator size="large" color="#007AFF" />
-        ) : (
-          <Text style={styles.button} onPress={handleSubmit}>
-            Submit
-          </Text>
-        )}
-      </View>
-    </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaInsetsContext.Provider>
   );
 };
 

@@ -6,7 +6,7 @@ import DoctorClinicScheduleScreen from '../screens/schedule/DoctorClinicSchedule
 
 const Stack = createNativeStackNavigator();
 
-const ClinicNavigator = () => {
+const DoctorClinicNavigator = () => {
   return (
     <Stack.Navigator initialRouteName="Clinic">
       <Stack.Screen
@@ -15,7 +15,7 @@ const ClinicNavigator = () => {
         options={{ title: 'Clinic' }}
       />
       <Stack.Screen
-        name="DoctorClinicScheduleScreen"
+        name="DoctorClinicSchedule"
         component={DoctorClinicScheduleScreen}
         options={{ title: 'Doctor Clinic Schedule' }}
       />
@@ -23,4 +23,4 @@ const ClinicNavigator = () => {
   );
 };
 
-export default ClinicNavigator;
+export default DoctorClinicNavigator;
