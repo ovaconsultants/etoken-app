@@ -11,10 +11,9 @@ import {Dropdown} from 'react-native-element-dropdown';
 import {SignUpRequest} from '../../services/authService';
 import SignUpStyles from './SignUpStyles';
 import {AccountDetailsRequest} from '../../services/accountService';
-import {isAuthenticatedAtom} from '../../atoms/authAtoms/authAtom';
-import {useSetAtom} from 'jotai';
+import {FetchSpecializationsRequest} from '../../services/accountService';
+
 const SignUpScreen = ({navigation}) => {
-  const setIsAuthenticatedAtom = useSetAtom(isAuthenticatedAtom);
   const [accounts, setAccounts] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [specializations, setSpecializations] = useState([]);
@@ -64,13 +63,11 @@ const SignUpScreen = ({navigation}) => {
       }
       setLoading(prev => ({...prev, specializations: true}));
       try {
-        const response = await fetch(
-          `http://localhost:3001/registration/specializations?account_id=${selectedAccount}`,
-        );
-        const data = await response.json();
+        const data = await FetchSpecializationsRequest(selectedAccount);
+        const fetchedSpecializations = await data.specializations;
         if (data.success) {
           setSpecializations(
-            data.specializations.map(spec => ({
+            fetchedSpecializations.map(spec => ({
               label: spec.specialization_name,
               value: spec.specialization_id,
             })),

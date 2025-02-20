@@ -12,3 +12,15 @@ export const AccountDetailsRequest = async () => {
     throw error;
   }
 };
+
+// Fetching the specializations
+export const FetchSpecializationsRequest = async account_id => {
+  try {
+    const route = API_ENDPOINTS.ACCOUNT.GET_SPECIALIZATIONS;
+    const data = await fetchData(route, { account_id });
+    return data;
+  } catch (error) {
+    console.error('Failed to get specializations:', error);
+    throw error;
+  }
+};

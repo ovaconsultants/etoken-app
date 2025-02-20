@@ -14,6 +14,8 @@ export const API_ENDPOINTS = {
   },
   ACCOUNT: {
     GET_REGISTER_ACCOUNTS: '/registration/accounts',
+    GET_SPECIALIZATIONS: '/registration/specializations',
+
   },
   PATIENT: {
     DELETE_PATIENT: '/patients/:id',
