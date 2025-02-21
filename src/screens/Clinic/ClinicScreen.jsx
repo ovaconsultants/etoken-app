@@ -1,154 +1,102 @@
-import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  ScrollView,
-  Alert,
-  ActivityIndicator,
-  Button,
-  KeyboardAvoidingView,
-  Platform,
-} from 'react-native';
+// screens/ClinicScreen.js
+import React, { useState } from 'react';
+import { View, Text, TextInput, ScrollView, Alert, ActivityIndicator, Button } from 'react-native';
+import { Formik } from 'formik';
+import { ClinicValidationSchema } from '../../utils/formFields/validationSchemas/clinicSchemas';
+import ErrorMessage from '../../components/ErrorMessage';
+import { AddClinicRequest } from '../../services/clinicService';
 import styles from './ClinicScreen.styles';
-import {SafeAreaInsetsContext} from 'react-native-safe-area-context';
-import {AddClinicRequest} from '../../services/clinicService';
 
-const ClinicScreen = ({navigation}) => {
-  const [formData, setFormData] = useState({
-    clinic_name: '',
-    address: '',
-    city: '',
-    state: '',
-    zip_code: '',
-    doctor_id: '',
-    created_by: '',
-  });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+const ClinicScreen = ({ navigation }) => {
   const [submitted, setSubmitted] = useState(false);
-
-  const handleInputChange = (name, value) => {
-    setFormData(prev => ({...prev, [name]: value}));
-  };
-
-  const validateForm = () => {
-    if (!Object.values(formData).every(field => field.trim())) {
-      setError('All fields are required');
-      return false;
-    }
-    if (formData.zip_code.length !== 5) {
-      setError('Zip code must be 5 digits');
-      return false;
-    }
-    return true;
-  };
-
-  const handleSubmit = async () => {
-    if (!validateForm()) {
-      return;
-    }
-    setLoading(true);
+  const handleSubmit = async (values, { resetForm, setSubmitting, setErrors }) => {
     try {
-      console.log('This is the form data', formData);
-      const data = await AddClinicRequest(formData);
+      const data = await AddClinicRequest(values);
       if (data.success) {
         Alert.alert('Success', data.message);
+        resetForm();
         setSubmitted(true);
       } else {
-        setError(data.error || 'Failed to create clinic');
+        setErrors({ general: data.error || 'Failed to create clinic' });
       }
     } catch (err) {
-      setError('Network error. Please try again.');
+      setErrors({ general: 'Network error. Please try again.' });
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
-  };
-
-  const handleAddMore = () => {
-    setFormData({
-      clinic_name: '',
-      address: '',
-      city: '',
-      state: '',
-      zip_code: '',
-      doctor_id: '',
-      created_by: '',
-    });
-    setSubmitted(false);
   };
 
   return (
-    <SafeAreaInsetsContext.Provider>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardAvoidingView}>
-        <View style={styles.container}>
-          {/* Scrollable Content */}
-          <ScrollView
-            contentContainerStyle={styles.scrollContent}
-            bounces={false}>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Formik
+        initialValues={{
+          clinic_name: '',
+          address: '',
+          city: '',
+          state: '',
+          zip_code: '',
+          doctor_id: '',
+          created_by: '',
+        }}
+        validationSchema={ClinicValidationSchema}
+        onSubmit={handleSubmit}
+      >
+        {({ handleChange, handleBlur, handleSubmit: formikSubmit, values, errors, touched, isSubmitting }) => (
+          <>
             {submitted ? (
               <View style={styles.successContainer}>
-                <Text style={styles.successText}>
-                  Clinic added successfully!
-                </Text>
-                <Text style={styles.button} onPress={handleAddMore}>
-                  Add Another Clinic
-                </Text>
+                <Text style={styles.successText}>Clinic added successfully!</Text>
+                <Button
+                  title="Add Another Clinic"
+                  onPress={() => {
+                    setSubmitted(false); // Hide success message and show the form again
+                  }}
+                />
               </View>
             ) : (
               <>
-                {Object.entries(formData).map(([key, value]) => (
+                {Object.keys(values).map((key) => (
                   <View key={key} style={styles.inputContainer}>
                     <Text style={styles.label}>
                       {key.replace(/_/g, ' ').toUpperCase()}
                     </Text>
                     <TextInput
                       style={styles.input}
-                      value={value}
-                      onChangeText={text => handleInputChange(key, text)}
+                      value={values[key]}
+                      onChangeText={handleChange(key)}
+                      onBlur={handleBlur(key)}
                       placeholder={`Enter ${key.replace(/_/g, ' ')}`}
                       keyboardType={
-                        key === 'zip_code' || key === 'doctor_id'
-                          ? 'numeric'
-                          : 'default'
+                        key === 'zip_code' || key === 'doctor_id' ? 'numeric' : 'default'
                       }
-                      editable={!loading}
+                      editable={!isSubmitting}
                     />
+                    <ErrorMessage error={errors[key]} visible={touched[key]} />
                   </View>
                 ))}
-                <View style={styles.footer}>
-                  <Button
-                    title="Go to Schedule"
-                    onPress={() => navigation.navigate('DoctorClinicSchedule')}
-                  />
-                </View>
-                {error ? <Text style={styles.error}>{error}</Text> : null}
+
+                <ErrorMessage error={errors.general} visible={!!errors.general} />
 
                 <View style={styles.buttonContainer}>
-                  {loading ? (
+                  {isSubmitting ? (
                     <ActivityIndicator size="large" color="#007AFF" />
                   ) : (
-                    <Text style={styles.button} onPress={handleSubmit}>
-                      Submit
-                    </Text>
+                    <Button title="Submit" onPress={formikSubmit} />
                   )}
                 </View>
               </>
             )}
-          </ScrollView>
+          </>
+        )}
+      </Formik>
 
-          {/* Footer */}
-          <View style={styles.footer}>
-            <Button
-              title="Go to Schedule"
-              onPress={() => navigation.navigate('DoctorClinicSchedule')}
-            />
-          </View>
-        </View>
-      </KeyboardAvoidingView>
-    </SafeAreaInsetsContext.Provider>
+      <View style={styles.footer}>
+        <Button
+          title="Go to Schedule"
+          onPress={() => navigation.navigate('DoctorClinicSchedule')}
+        />
+      </View>
+    </ScrollView>
   );
 };
 

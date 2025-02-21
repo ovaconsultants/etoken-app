@@ -20,12 +20,14 @@ const SignInScreen = ({navigation}) => {
     }
     try {
       const  data  = await SignInRequest(email, password);
+      const doctorDetails = data.response;
+      console.log('This is the data for signIn request',data);
       if (!data.success) {
         throw new Error(data.message || 'Sign-in failed');
       }
       setUserToken(data.token);
       console.log('This is the token for signIn request',data.token);
-      setDoctorDetails(data.doctor);
+      setDoctorDetails(doctorDetails);
     } catch (error) {
       console.error('Error signing in:', error);
       Alert.alert('Login Failed', error.message);

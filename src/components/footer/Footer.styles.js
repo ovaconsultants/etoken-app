@@ -2,7 +2,8 @@ import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   footer: {
-    position: 'absolute',
+    position: 'relative',
+    marginTop:5,
     bottom: 0,
     width: '100%',
     height: 60,
