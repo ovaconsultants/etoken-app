@@ -3,7 +3,7 @@ import React, { useRef, useEffect } from 'react';
 import { Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
 import { useWindowDimensions } from 'react-native';
 
-const Card = ({ title, description, isSelected, onPress, cardWidth }) => {
+const Card = ({ title, description, isSelected, onPress,state, cardWidth }) => {
   const styles = useStyles();
   const scaleValue = useRef(new Animated.Value(1)).current;
 
@@ -20,12 +20,13 @@ const Card = ({ title, description, isSelected, onPress, cardWidth }) => {
       <Animated.View
         style={[
           styles.card,
-          { width: cardWidth, height: cardWidth, transform: [{ scale: scaleValue }] },
+          { width: cardWidth, height: cardWidth * 0.75, transform: [{ scale: scaleValue }] },
           isSelected && styles.selectedCard,
         ]}
       >
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.description}>{description}</Text>
+        <Text style={styles.title}>{state}</Text>
       </Animated.View>
     </TouchableOpacity>
   );
@@ -38,9 +39,9 @@ const useStyles = () => {
   return StyleSheet.create({
     card: {
       backgroundColor: '#fff',
-      borderRadius: isSmallDevice ? 4 : 8,
-      padding: isSmallDevice ? 8 : 16,
-      margin: isSmallDevice ? 4 : 7,
+      borderRadius: isSmallDevice ? 4 : 6,
+      padding: isSmallDevice ? 8 : 12,
+      margin: isSmallDevice ? 4 : 6,
       justifyContent: 'center',
       alignItems: 'center',
       shadowColor: '#000',
@@ -67,13 +68,7 @@ const useStyles = () => {
   });
 };
 
-const useCardWidth = () => {
-  const { width } = useWindowDimensions();
-  const isSmallDevice = width < 375;
-  const numColumns = isSmallDevice ? 2 : 3;
-  const cardWidth = (width - (numColumns + 1) * (isSmallDevice ? 4 : 7)) / numColumns;
-  return cardWidth;
-};
+
 
 export default Card;
 

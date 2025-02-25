@@ -14,10 +14,17 @@ export const ClinicValidationSchema = Yup.object().shape({
 });
 
 export const ScheduleValidationSchema = Yup.object().shape({
-    doctor_id: Yup.string().required('Doctor ID is required'),
-    clinic_id: Yup.string().required('Clinic ID is required'),
-    day_of_week: Yup.string().required('Day of week is required'),
-    start_time: Yup.string().required('Start time is required'),
-    end_time: Yup.string().required('End time is required'),
-    created_by: Yup.string().required('Created by is required'),
-    });
+  doctor_id: Yup.string().required('Doctor ID is required'),
+  clinic_id: Yup.string().required('Clinic ID is required'),
+  day_of_week: Yup.string().required('Day of week is required'),
+  start_time: Yup.string().required('Start time is required'),
+  end_time: Yup.string().required('End time is required'),
+  created_by: Yup.string().required('Created by is required'),
+});
+
+export const SignInValidationSchema = Yup.object().shape({
+  email: Yup.string().email('Invalid email').required('Email is required'),
+  password: Yup.string()
+    .min(4, 'Password must be at least 4 characters')
+    .required('Password is required'),
+});

@@ -22,4 +22,7 @@ export const API_ENDPOINTS = {
   PATIENT: {
     DELETE_PATIENT: '/patients/:id',
   },
+  TOKEN : {
+    FETCH_PT_TOKENS:'/token/fetchTokensForPatients',
+  },
 };

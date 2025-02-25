@@ -1,36 +1,47 @@
-import React, {useState} from 'react';
-import {View, Text, TextInput, Button, Alert} from 'react-native';
-import {userTokenAtom} from '../../atoms/authAtoms/authAtom';
-import {useSetAtom} from 'jotai';
-import {doctorDetailsAtom} from '../../atoms/doctorAtoms/doctorAtom';
+import React from 'react';
+import { View, Text, TextInput, Button, Alert } from 'react-native';
+import { Formik } from 'formik';
+import { useSetAtom } from 'jotai';
+import { userTokenAtom } from '../../atoms/authAtoms/authAtom';
+import { doctorDetailsAtom, doctorIdAtom } from '../../atoms/doctorAtoms/doctorAtom';
 import { styles } from './SignInScreen.styles';
 import { SignInRequest } from '../../services/authService';
+import { SignInValidationSchema } from '../../utils/formFields/validationSchemas/clinicSchemas';
+import { setAuthToken } from '../../utils/tokenManager';
 
-const SignInScreen = ({navigation}) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+// Validation Schema using Yup
 
+
+const SignInScreen = ({ navigation }) => {
   // Jotai state management
   const setUserToken = useSetAtom(userTokenAtom);
   const setDoctorDetails = useSetAtom(doctorDetailsAtom);
-  const handleSignIn = async () => {
-    if (!email || !password) {
-      Alert.alert('Error', 'Please fill in all fields');
-      return;
-    }
+  const  setDoctorIdAtom = useSetAtom(doctorIdAtom);
+
+  // Form submission handler
+  const handleSignIn = async (values, { setSubmitting }) => {
+    const { email, password } = values;
+
     try {
-      const  data  = await SignInRequest(email, password);
+      const data = await SignInRequest(email, password);
       const doctorDetails = data.response;
-      console.log('This is the data for signIn request',data);
+      console.log('Doctor Details:', doctorDetails);
+
       if (!data.success) {
         throw new Error(data.message || 'Sign-in failed');
       }
+
       setUserToken(data.token);
-      console.log('This is the token for signIn request',data.token);
+      setAuthToken(data.token);
+      const doctor_id = data.doctor_id ? data.doctor_id.toString() : '';
+      setDoctorIdAtom(doctor_id);
       setDoctorDetails(doctorDetails);
+      console.log('Sign-in successful. Token:', data.token);
     } catch (error) {
       console.error('Error signing in:', error);
       Alert.alert('Login Failed', error.message);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -38,25 +49,50 @@ const SignInScreen = ({navigation}) => {
     <View style={styles.container}>
       <Text style={styles.title}>Sign In</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
+      <Formik
+        initialValues={{ email: '', password: '' }}
+        validationSchema={SignInValidationSchema}
+        onSubmit={handleSignIn}
+      >
+        {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isSubmitting }) => (
+          <>
+            {/* Email Input */}
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              value={values.email}
+              onChangeText={handleChange('email')}
+              onBlur={handleBlur('email')}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+            {touched.email && errors.email && (
+              <Text style={styles.errorText}>{errors.email}</Text>
+            )}
 
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        autoCapitalize="none"
-      />
+            {/* Password Input */}
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              value={values.password}
+              onChangeText={handleChange('password')}
+              onBlur={handleBlur('password')}
+              secureTextEntry
+              autoCapitalize="none"
+            />
+            {touched.password && errors.password && (
+              <Text style={styles.errorText}>{errors.password}</Text>
+            )}
 
-      <Button title="Log In" onPress={handleSignIn} />
+            {/* Submit Button */}
+            <Button
+              title="Log In"
+              onPress={handleSubmit}
+              disabled={isSubmitting}
+            />
+          </>
+        )}
+      </Formik>
 
       <Text style={styles.footerText}>
         Don't have an account?{' '}
