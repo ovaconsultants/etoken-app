@@ -11,7 +11,7 @@ const CardGrid = ({ data , onPress,isSelectedCard}) => {
   return (
     <FlatList
       data={data}
-      numColumns={2} // Display 2 cards per row
+      numColumns={2}
       keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => (
         <Card

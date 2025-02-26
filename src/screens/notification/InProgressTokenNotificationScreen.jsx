@@ -3,7 +3,7 @@ import { Text, StyleSheet, TouchableOpacity, Dimensions, Animated } from 'react-
 import { Card, useTheme } from 'react-native-paper';
 import Tts from 'react-native-tts';
 
-const { width , height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 const InProgressTokenNotificationScreen = ({ inProgressPatient }) => {
   const theme = useTheme();
@@ -14,6 +14,9 @@ const InProgressTokenNotificationScreen = ({ inProgressPatient }) => {
     // Initialize TTS
     Tts.setDefaultLanguage('en-IN'); // Set default to Indian English
     Tts.setDefaultVoice('com.apple.ttsbundle.Lekha-compact'); // Indian Female English Voice
+    Tts.addEventListener('tts-progress', (event) => {
+      console.log('TTS Progress:', event); // Log TTS progress (optional)
+    });
 
     // Add event listener for TTS finish
     const ttsFinishListener = Tts.addEventListener('tts-finish', () => {
@@ -21,7 +24,7 @@ const InProgressTokenNotificationScreen = ({ inProgressPatient }) => {
       if (!isHindiSpoken.current) {
         // Speak in Hindi after English finishes with a 2-second delay
         setTimeout(() => {
-          const hindiMessage = `मरीज आईडी: ${inProgressPatient.token_id}, नाम: ${inProgressPatient.patient_name}, स्थिति: ${inProgressPatient.status}, फीस स्थिति: ${inProgressPatient.fee_status}`;
+          const hindiMessage = `मरीज आईडी: ${inProgressPatient.token_id}, नाम: ${inProgressPatient.patient_name}, डॉक्टर ने आपको बुलाया है, कृपया अपनी परामर्श के लिए आगे बढ़ें।`;
           Tts.speak(hindiMessage, {
             language: 'hi-IN', // Set language to Hindi
             voice: 'com.apple.ttsbundle.Lekha-compact', // Indian Female Hindi Voice
@@ -42,7 +45,7 @@ const InProgressTokenNotificationScreen = ({ inProgressPatient }) => {
     isHindiSpoken.current = false;
 
     // Speak in English first
-    const englishMessage = `Patient ID: ${inProgressPatient.token_id}, Name: ${inProgressPatient.patient_name}, Status: ${inProgressPatient.status}, Fee Status: ${inProgressPatient.fee_status}`;
+    const englishMessage = `Patient ID: ${inProgressPatient.token_id},Patient Name : ${inProgressPatient.patient_name}, The doctor has called you; please proceed for your consultation.`;
     Tts.speak(englishMessage, {
       language: 'en-IN', // Ensure English language
       voice: 'com.apple.ttsbundle.Lekha-compact', // Indian Female English Voice
@@ -84,6 +87,7 @@ const InProgressTokenNotificationScreen = ({ inProgressPatient }) => {
             </Text>
             <Text style={[styles.tableCell, { color: theme.colors.text }]}>
               👤 Name: {inProgressPatient.patient_name}
+              {/* ,{ "convert to hindi " : {inProgressPatient.patient_name}} */}
             </Text>
             <Text style={[styles.tableCell, { color: theme.colors.text }]}>
               📊 Status: {inProgressPatient.status}
@@ -100,9 +104,8 @@ const InProgressTokenNotificationScreen = ({ inProgressPatient }) => {
 
 const styles = StyleSheet.create({
     notificationBox: {
-      position: 'absolute',
-      width: width * 0.3, // 30% of screen width
-      height: height * 0.3, // 30% of screen height
+      position: 'relative',
+      width: width * 0.28 , // 30% of screen width
       backgroundColor: 'rgba(255, 255, 255, 0.9)', // Slight transparency
       borderRadius: 16, // Rounded edges
       elevation: 8, // Shadow for depth
@@ -110,13 +113,12 @@ const styles = StyleSheet.create({
       shadowOffset: { width: 4, height: 4 },
       shadowOpacity: 0.3,
       shadowRadius: 6,
-      padding: width * 0.02, // Responsive padding
+      padding: width * 0.002,
     },
     card: {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      padding: width * 0.02, // Consistent padding
       borderRadius: 16, // Rounded corners
     },
     tableCell: {
