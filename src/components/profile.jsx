@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text ,StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Text ,StyleSheet, Dimensions, TouchableOpacity , Button} from 'react-native';
+import { userTokenAtom } from '../atoms/authAtoms/authAtom';
+import { useSetAtom } from 'jotai';
 import FastImage from 'react-native-fast-image';
 
 
@@ -13,9 +15,14 @@ const ProfileCircle = ({ imageUrl }) => {
   const data = [
     { label: 'Profile', value: 'profile' },
     { label: 'Settings', value: 'settings' },
-    { label: 'Logout', value: 'logout' },
+    
   ];
+  const setUserTokenAtom = useSetAtom(userTokenAtom);
 
+  const handleSignOut = () => {
+    setUserTokenAtom(null);
+    console.log('Going back to the Login Screen');
+  };
   const handleSelect = (item) => {
     console.log(`✅ Selected: ${item.value}`);
     setDropdownVisible(false);
@@ -35,11 +42,12 @@ const ProfileCircle = ({ imageUrl }) => {
         <View style={styles.dropdown}>
           {data.map((item) => (
             <TouchableOpacity key={item.value} onPress={() => handleSelect(item)}>
-              <View style={{ padding: 10 }}>
+              <View style={styles.dropdownItem}>
                 <Text>{item.label}</Text>
               </View>
             </TouchableOpacity>
           ))}
+         <Button onPress={handleSignOut} title="Sign Out" color="#D32F2F" />
         </View>
       )}
     </View>
@@ -49,7 +57,7 @@ const ProfileCircle = ({ imageUrl }) => {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    marginTop: 20,
+    justifyContent: 'center',
   },
   gradientBorder: {
     width: width * 0.13,
@@ -84,6 +92,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+  },
+  dropdownItem: {
+    padding: 10,
   },
 });
 

@@ -1,74 +1,77 @@
-import React, { useEffect, useRef } from 'react';
-import { Text, StyleSheet, TouchableOpacity, Dimensions, Animated } from 'react-native';
+import React, { useEffect, useRef, useMemo, useCallback } from 'react';
+import { atom, useAtom } from 'jotai';
+import { Text,TouchableOpacity, Animated } from 'react-native';
+import { useTranslation } from '../../hooks/useLangTranslation';
+import { useTTS } from '../../hooks/useTTS';
 import { Card, useTheme } from 'react-native-paper';
 import Tts from 'react-native-tts';
+import { styles } from './InProgressTokenNotificationScreen.styles';
 
-const { width } = Dimensions.get('window');
+
+
+
+const regionalTranslatedTokenMessage = atom(null);
 
 const InProgressTokenNotificationScreen = ({ inProgressPatient }) => {
+  console.log('In Progress Patient: In InProgressTokenNotification', inProgressPatient);
+  const [messageInRegional , setMessageInRegional] = useAtom(regionalTranslatedTokenMessage);
   const theme = useTheme();
-  const scaleValue = new Animated.Value(1);
-  const isHindiSpoken = useRef(false); // Flag to track if Hindi speech has been triggered
+  const scaleValue = useRef(new Animated.Value(1)).current;
+  const isHindiSpoken = useRef(false);
+
+  // Memoized English message
+  const englishMessage = useMemo(
+    () =>
+      `Token Number: ${inProgressPatient.token_no}, Token Name: ${inProgressPatient.patient_name}. The doctor has called you; please proceed for your consultation.`,
+    [inProgressPatient]
+  );
+
+  // Translated token details
+  const translatedTokenId = useTranslation(`Token ID: ${inProgressPatient.token_id}`, 'English', 'Hindi');
+  const translatedName = useTranslation(`Token Name: ${inProgressPatient.patient_name}`, 'English', 'Hindi');
+  const translatedToken = useMemo(
+    () => (translatedTokenId && translatedName ? `${translatedTokenId}, ${translatedName}` : ''),
+    [translatedTokenId, translatedName]
+  );
+
+  setMessageInRegional(useTranslation(englishMessage, 'English', 'Hindi'));
+
+  console.log('Translated Token:', messageInRegional);
+  // TTS functionality
+  const { speak: speakEnglish } = useTTS(englishMessage, 'en-IN', 'com.apple.ttsbundle.Lekha-compact');
+  const { speak: speakHindi } = useTTS(messageInRegional, 'hi-IN', 'com.apple.ttsbundle.Lekha-compact');
 
   useEffect(() => {
-    // Initialize TTS
-    Tts.setDefaultLanguage('en-IN'); // Set default to Indian English
-    Tts.setDefaultVoice('com.apple.ttsbundle.Lekha-compact'); // Indian Female English Voice
     Tts.addEventListener('tts-progress', (event) => {
-      console.log('TTS Progress:', event); // Log TTS progress (optional)
+      console.log('TTS Progress:', event);
     });
-
-    // Add event listener for TTS finish
-    const ttsFinishListener = Tts.addEventListener('tts-finish', () => {
-      console.log('TTS finished speaking');
-      if (!isHindiSpoken.current) {
-        // Speak in Hindi after English finishes with a 2-second delay
-        setTimeout(() => {
-          const hindiMessage = `मरीज आईडी: ${inProgressPatient.token_id}, नाम: ${inProgressPatient.patient_name}, डॉक्टर ने आपको बुलाया है, कृपया अपनी परामर्श के लिए आगे बढ़ें।`;
-          Tts.speak(hindiMessage, {
-            language: 'hi-IN', // Set language to Hindi
-            voice: 'com.apple.ttsbundle.Lekha-compact', // Indian Female Hindi Voice
-          });
-          isHindiSpoken.current = true; // Set flag to true after Hindi speech
-        }, 2000);
+    const ttsFinishListener = Tts.addEventListener('tts-finish', async () => {
+      if (!isHindiSpoken.current && messageInRegional) {
+        speakHindi();
+        isHindiSpoken.current = true;
       }
     });
 
-    // Cleanup event listener on unmount
     return () => {
       ttsFinishListener.remove();
     };
-  }, [inProgressPatient]);
+  }, [messageInRegional, speakHindi]);
 
-  const speakNotification = () => {
-    // Reset the flag when the notification is pressed again
+  // Handle notification press
+  const handleNotificationPress = useCallback(() => {
     isHindiSpoken.current = false;
+    speakEnglish();
 
-    // Speak in English first
-    const englishMessage = `Patient ID: ${inProgressPatient.token_id},Patient Name : ${inProgressPatient.patient_name}, The doctor has called you; please proceed for your consultation.`;
-    Tts.speak(englishMessage, {
-      language: 'en-IN', // Ensure English language
-      voice: 'com.apple.ttsbundle.Lekha-compact', // Indian Female English Voice
-    });
-
-    // Add a subtle animation on press
+    // Button press animation
     Animated.sequence([
-      Animated.timing(scaleValue, {
-        toValue: 0.95,
-        duration: 100,
-        useNativeDriver: true,
-      }),
-      Animated.timing(scaleValue, {
-        toValue: 1,
-        duration: 100,
-        useNativeDriver: true,
-      }),
+      Animated.timing(scaleValue, { toValue: 0.95, duration: 100, useNativeDriver: true }),
+      Animated.timing(scaleValue, { toValue: 1, duration: 100, useNativeDriver: true }),
     ]).start();
-  };
+  }, [speakEnglish, scaleValue]);
 
   return (
     <TouchableOpacity
-      onPress={speakNotification}
+      onPress={handleNotificationPress}
       activeOpacity={0.8}
       accessible={true}
       accessibilityRole="button"
@@ -83,17 +86,13 @@ const InProgressTokenNotificationScreen = ({ inProgressPatient }) => {
         <Card style={styles.card}>
           <Card.Content>
             <Text style={[styles.tableCell, { color: theme.colors.text }]}>
-              🏥 ID: {inProgressPatient.token_id}
+              🏥 {`Token No: ${inProgressPatient.token_id}`}
             </Text>
             <Text style={[styles.tableCell, { color: theme.colors.text }]}>
-              👤 Name: {inProgressPatient.patient_name}
-              {/* ,{ "convert to hindi " : {inProgressPatient.patient_name}} */}
+              👤 {`Token Name: ${inProgressPatient.patient_name}`}
             </Text>
             <Text style={[styles.tableCell, { color: theme.colors.text }]}>
-              📊 Status: {inProgressPatient.status}
-            </Text>
-            <Text style={[styles.tableCell, { color: theme.colors.text }]}>
-              💰 Fee Status: {inProgressPatient.fee_status}
+              🏥 {translatedToken}
             </Text>
           </Card.Content>
         </Card>
@@ -102,34 +101,4 @@ const InProgressTokenNotificationScreen = ({ inProgressPatient }) => {
   );
 };
 
-const styles = StyleSheet.create({
-    notificationBox: {
-      position: 'relative',
-      width: width * 0.28 , // 30% of screen width
-      backgroundColor: 'rgba(255, 255, 255, 0.9)', // Slight transparency
-      borderRadius: 16, // Rounded edges
-      elevation: 8, // Shadow for depth
-      shadowColor: '#000',
-      shadowOffset: { width: 4, height: 4 },
-      shadowOpacity: 0.3,
-      shadowRadius: 6,
-      padding: width * 0.002,
-    },
-    card: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderRadius: 16, // Rounded corners
-    },
-    tableCell: {
-      fontSize: width * 0.018, // Dynamic font size
-      marginBottom: 6,
-      fontFamily: 'Roboto',
-      textAlign: 'center',
-      fontWeight: 'bold',
-      color: '#333', // Darker text for readability
-    },
-  });
-
-
-export default InProgressTokenNotificationScreen;
+export default React.memo(InProgressTokenNotificationScreen);

@@ -16,6 +16,7 @@ const logException = async (
       platform,
       created_by: createdBy,
     });
+    console.log('Exception logged successfully:', description);
   } catch (error) {
     console.error('Failed to log exception:', error);
   }
@@ -48,7 +49,7 @@ export const fetchData = async (endpoint, params = {}, headers = {}) => {
     });
 
     // Log the exception
-    await logException(`GET Request Failed: ${error.message}`);
+    await logException(`GET Request Failed: ${error.message} at this endpoint: ${endpoint}`);
     throw error;
   }
 };
@@ -79,7 +80,7 @@ export const postData = async (endpoint, data = {}, headers = {}) => {
     });
 
     // Log the exception
-    await logException(`POST Request Failed: ${error.message}`);
+    await logException(`POST Request Failed: ${error.message} at this endpoint: ${endpoint}`);
     throw error;
   }
 };
@@ -134,7 +135,7 @@ export const deleteData = async (endpoint, params = {}, headers = {}) => {
     });
 
     // Log the exception
-    await logException(`DELETE Request Failed: ${error.message}`);
+    await logException(`DELETE Request Failed: ${error.message} at this endpoint: ${endpoint}`);
     throw error;
   }
 };
@@ -162,7 +163,7 @@ export const patchData = async (endpoint, data = {}, headers = {}) => {
     });
 
     // Log the exception
-    await logException(`PATCH Request Failed: ${error.message}`);
+    await logException(`PATCH Request Failed: ${error.message} at this endpoint: ${endpoint}`);
     throw error;
   }
 };

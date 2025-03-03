@@ -1,20 +1,31 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
+
+const { width } = Dimensions.get('window');
 
 export const styles = StyleSheet.create({
   notificationBox: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 15,
-    margin: 10,
+    position: 'relative',
+    width: width * 0.28,
+    borderRadius: 16,
+    elevation: 8,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5, // For Android shadow
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    padding: width * 0.002,
+  },
+  card: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 16,
   },
   tableCell: {
-    fontSize: 16,
-    marginBottom: 5,
+    fontSize: width * 0.018,
+    marginBottom: 6,
+    fontFamily: 'Roboto',
+    textAlign: 'center',
+    fontWeight: 'bold',
     color: '#333',
   },
 });

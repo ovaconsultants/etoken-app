@@ -1,0 +1,10 @@
+[Category]_[Purpose]_[Description]_[Version].[Extension]
+
+ads_doctor_promo_special_offer_v1.jpg 
+
+ads: Indicates the category (advertisement).
+doctor: Specifies the target audience or context (e.g., doctor-related ads).
+promo: Describes the purpose of the file (e.g., promotion, announcement, etc.).
+special_offer: Provides a detailed description of the content.
+v1: Version number (useful for updates).
+.jpg: File extension.

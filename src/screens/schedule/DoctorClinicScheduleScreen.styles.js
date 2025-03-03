@@ -1,32 +1,62 @@
-// ClinicScreen.styles.js
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
   container: {
     flexGrow: 1,
-    padding: 16,
+    padding: 20,
+    backgroundColor: '#fff',
   },
   inputContainer: {
-    marginBottom: 16,
+    marginBottom: 20,
   },
   label: {
-    fontSize: 14,
-    fontWeight: 'bold',
+    fontSize: 16,
     marginBottom: 8,
+    color: '#333',
   },
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 4,
-    padding: 8,
+    borderRadius: 5,
+    padding: 10,
     fontSize: 16,
   },
+  dropdown: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
+  },
   buttonContainer: {
-    marginTop: 16,
+    marginTop: 20,
+  },
+  button: {
+    backgroundColor: '#007AFF',
+    padding: 15,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  successContainer: {
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  successText: {
+    fontSize: 18,
+    color: 'green',
+    marginBottom: 20,
+  },
+  errorContainer: {
+    marginTop: 10,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 14,
   },
   footer: {
-    padding: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#ccc',
+    marginTop: 20,
   },
 });

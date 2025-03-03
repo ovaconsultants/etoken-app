@@ -14,12 +14,12 @@ export const ClinicValidationSchema = Yup.object().shape({
 });
 
 export const ScheduleValidationSchema = Yup.object().shape({
-  doctor_id: Yup.string().required('Doctor ID is required'),
-  clinic_id: Yup.string().required('Clinic ID is required'),
-  day_of_week: Yup.string().required('Day of week is required'),
-  start_time: Yup.string().required('Start time is required'),
-  end_time: Yup.string().required('End time is required'),
-  created_by: Yup.string().required('Created by is required'),
+  clinicId: Yup.string().required('Please select a clinic'),
+  dayOfWeek: Yup.string().required('Please select a day'),
+  startTime: Yup.date().required('Start time is required'),
+  endTime: Yup.date()
+    .required('End time is required')
+    .min(Yup.ref('startTime'), 'End time must be after start time'),
 });
 
 export const SignInValidationSchema = Yup.object().shape({
