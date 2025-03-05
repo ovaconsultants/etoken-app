@@ -2,10 +2,8 @@ import { atomWithStorage, createJSONStorage } from 'jotai/utils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { atom } from 'jotai';
 
-const initialDoctorDetails = [
+const initialDoctorClinicDetails = [
   {
-    doctor_id: 0,
-    doctor_name: '',
     clinic_id: 0,
     clinic_name: '',
     clinic_address: '',
@@ -15,12 +13,18 @@ const initialDoctorDetails = [
   },
 ];
 
-export const doctorDetailsAtom = atomWithStorage(
+const initialDoctorInfo = {
+  doctor_id : '',
+  doctor_name : ''
+}
+
+export const doctorClinicDetailsAtom = atomWithStorage(
   'doctorDetails',
-  initialDoctorDetails,
+  initialDoctorClinicDetails,
   createJSONStorage(() => AsyncStorage)
 );
 
+export const doctorInfoAtom = atomWithStorage('doctorInfo',initialDoctorInfo , createJSONStorage(() => AsyncStorage));
 export const doctorIdAtom = atomWithStorage('doctorId', null, AsyncStorage);
 // Atom for storing errors related to doctor details
 export const doctorErrorAtom = atom(null);

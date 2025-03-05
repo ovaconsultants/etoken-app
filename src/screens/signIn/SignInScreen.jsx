@@ -1,31 +1,35 @@
 import React from 'react';
-import { View, Text, TextInput, Button, Alert } from 'react-native';
-import { Formik } from 'formik';
-import { useSetAtom } from 'jotai';
-import { userTokenAtom } from '../../atoms/authAtoms/authAtom';
-import { doctorDetailsAtom, doctorIdAtom } from '../../atoms/doctorAtoms/doctorAtom';
-import { styles } from './SignInScreen.styles';
-import { SignInRequest } from '../../services/authService';
-import { SignInValidationSchema } from '../../utils/formFields/validationSchemas/clinicSchemas';
-import { setAuthToken } from '../../utils/tokenManager';
+import {View, Text, TextInput, Button, Alert} from 'react-native';
+import {Formik} from 'formik';
+import {useSetAtom} from 'jotai';
+import {userTokenAtom} from '../../atoms/authAtoms/authAtom';
+import {
+  doctorClinicDetailsAtom,
+  doctorIdAtom,
+  doctorInfoAtom,
+} from '../../atoms/doctorAtoms/doctorAtom';
+import {styles} from './SignInScreen.styles';
+import {SignInRequest} from '../../services/authService';
+import {SignInValidationSchema} from '../../utils/formFields/validationSchemas/clinicSchemas';
+import {setAuthToken} from '../../utils/tokenManager';
 
 // Validation Schema using Yup
 
-
-const SignInScreen = ({ navigation }) => {
+const SignInScreen = ({navigation}) => {
   // Jotai state management
   const setUserToken = useSetAtom(userTokenAtom);
-  const setDoctorDetails = useSetAtom(doctorDetailsAtom);
-  const  setDoctorIdAtom = useSetAtom(doctorIdAtom);
+  const setDoctorClinicDetails = useSetAtom(doctorClinicDetailsAtom);
+  const setDoctorIdAtom = useSetAtom(doctorIdAtom);
+  const setDoctorInfoAtom = useSetAtom(doctorInfoAtom)
 
   // Form submission handler
-  const handleSignIn = async (values, { setSubmitting }) => {
-    const { email, password } = values;
+  const handleSignIn = async (values, {setSubmitting}) => {
+    const {email, password} = values;
 
     try {
       const data = await SignInRequest(email, password);
-      const doctorDetails = data.response;
-      console.log('Doctor Details:', doctorDetails);
+      const doctorClincDetails = data.response;
+      console.log('Doctor Details:', doctorClincDetails);
 
       if (!data.success) {
         throw new Error(data.message || 'Sign-in failed');
@@ -34,8 +38,14 @@ const SignInScreen = ({ navigation }) => {
       setUserToken(data.token);
       setAuthToken(data.token);
       const doctor_id = data.doctor_id ? data.doctor_id.toString() : '';
+      const doctorInfo = {
+        doctor_id: data.doctor_id,
+        doctor_name: data.doctor_name,
+      };
+
       setDoctorIdAtom(doctor_id);
-      setDoctorDetails(doctorDetails);
+      setDoctorInfoAtom(doctorInfo);
+      setDoctorClinicDetails(doctorClincDetails);
       console.log('Sign-in successful. Token:', data.token);
     } catch (error) {
       console.error('Error signing in:', error);
@@ -50,11 +60,18 @@ const SignInScreen = ({ navigation }) => {
       <Text style={styles.title}>Sign In</Text>
 
       <Formik
-        initialValues={{ email: '', password: '' }}
+        initialValues={{email: '', password: ''}}
         validationSchema={SignInValidationSchema}
-        onSubmit={handleSignIn}
-      >
-        {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isSubmitting }) => (
+        onSubmit={handleSignIn}>
+        {({
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          values,
+          errors,
+          touched,
+          isSubmitting,
+        }) => (
           <>
             {/* Email Input */}
             <TextInput

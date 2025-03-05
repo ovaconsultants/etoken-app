@@ -35,7 +35,7 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 3,
-    paddingHorizontal: landscapeWidth * 0.02, // Dynamic horizontal padding
+    // paddingHorizontal: landscapeWidth * 0.02, // Dynamic horizontal padding
   },
   tableHeader: {
     width: '100%',
@@ -58,8 +58,8 @@ export const styles = StyleSheet.create({
   },
   notificationInProgress: {
     position: 'absolute',
-    bottom : 0,
-    right: 0,
+    bottom : 0.01 * height,
+    right: 0.1 * height,
     margin: landscapeWidth * 0.02,
     zIndex: 100,
   },

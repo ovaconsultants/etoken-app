@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 import { useAtomValue } from 'jotai';
 import { userTokenAtom } from '../atoms/authAtoms/authAtom';
-import { doctorDetailsAtom } from '../atoms/doctorAtoms/doctorAtom';
+import { doctorClinicDetailsAtom } from '../atoms/doctorAtoms/doctorAtom';
 
 const useDebugAtoms = () => {
   const userToken = useAtomValue(userTokenAtom);
-  const doctorDetails = useAtomValue(doctorDetailsAtom);
+  const doctorDetails = useAtomValue(doctorClinicDetailsAtom);
 
   useEffect(() => {
     console.log('User Token:', userToken);

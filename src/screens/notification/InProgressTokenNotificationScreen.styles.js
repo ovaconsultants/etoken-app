@@ -5,7 +5,7 @@ const { width } = Dimensions.get('window');
 export const styles = StyleSheet.create({
   notificationBox: {
     position: 'relative',
-    width: width * 0.28,
+    width: width * 0.2,
     borderRadius: 16,
     elevation: 8,
     shadowColor: '#000',
@@ -21,7 +21,7 @@ export const styles = StyleSheet.create({
     borderRadius: 16,
   },
   tableCell: {
-    fontSize: width * 0.018,
+    fontSize: width * 0.012,
     marginBottom: 6,
     fontFamily: 'Roboto',
     textAlign: 'center',

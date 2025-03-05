@@ -15,7 +15,7 @@ import TimePicker from '../../components/TimePicker';
 import {Dropdown} from 'react-native-element-dropdown';
 import {userTokenAtom} from '../../atoms/authAtoms/authAtom';
 import {
-  doctorDetailsAtom,
+  doctorClinicDetailsAtom,
   doctorIdAtom,
 } from '../../atoms/doctorAtoms/doctorAtom';
 import {useAtomValue, useSetAtom} from 'jotai';
@@ -44,7 +44,7 @@ const getUniqueClinics = clinics => {
 
 const DoctorClinicScheduleScreen = ({navigation}) => {
   const setIsAuthenticated = useSetAtom(userTokenAtom);
-  const clinic_Data = useAtomValue(doctorDetailsAtom);
+  const clinic_Data = useAtomValue(doctorClinicDetailsAtom);
   const doctorId = useAtomValue(doctorIdAtom);
   const uniqueClinics = getUniqueClinics(clinic_Data || []);
 

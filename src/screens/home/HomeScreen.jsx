@@ -3,7 +3,7 @@ import { SafeAreaView, View, Button} from 'react-native';
 import { styles }  from './HomeScreen.styles';
 import CardGrid from '../../components/CardGrid';
 import { useAtomValue } from 'jotai';
-import { doctorDetailsAtom, doctorIdAtom } from '../../atoms/doctorAtoms/doctorAtom';
+import { doctorClinicDetailsAtom, doctorIdAtom } from '../../atoms/doctorAtoms/doctorAtom';
 import RadioGroupComponent from '../../components/RadioGroup';
 import { ScreenSelectionOptions } from '../../constants/formComponentsData/radioButtonsData';
 import ProfileCircle from '../../components/Profile';
@@ -14,7 +14,7 @@ import ProfileCircle from '../../components/Profile';
 const HomeScreen = ({ navigation }) => {
   const [selectedScreen, setSelectedScreen] = useState(null);
   const [isSelectedCard, setIsSelectedCard] = useState(null);
-  const clinicData = useAtomValue(doctorDetailsAtom);
+  const clinicData = useAtomValue(doctorClinicDetailsAtom);
   console.log('Clinic Data:', clinicData);
   const doctor_id = useAtomValue(doctorIdAtom);
 
