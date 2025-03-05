@@ -24,7 +24,6 @@ const SignUpScreen = ({navigation}) => {
     mobileNumber: '',
     phoneNumber: '',
     email: '',
-    // profilePictureUrl: '',
     createdBy: '',
   });
   const [loading, setLoading] = useState({
@@ -57,11 +56,15 @@ const SignUpScreen = ({navigation}) => {
   }, []);
 
   useEffect(() => {
-    const fetchSpecializations = async () => {
-      if (!selectedAccount) {
-        return;
-      }
-      setLoading(prev => ({...prev, specializations: true}));
+    const loadSpecializations = async () => {
+   
+      setSpecializations([]);
+      setSelectedSpecialization(null);
+  
+      if (!selectedAccount) return;
+  
+      setLoading(prev => ({ ...prev, specializations: true }));
+      
       try {
         const data = await FetchSpecializationsRequest(selectedAccount);
         const fetchedSpecializations = await data.specializations;
@@ -77,12 +80,15 @@ const SignUpScreen = ({navigation}) => {
         }
       } catch (err) {
         setError(err.message);
+        setSpecializations([]);
       } finally {
-        setLoading(prev => ({...prev, specializations: false}));
+        setLoading(prev => ({ ...prev, specializations: false }));
       }
     };
-    fetchSpecializations();
+  
+    loadSpecializations();
   }, [selectedAccount]);
+  
   const handleSubmit = async () => {
     const requiredFields = [
       formData.firstName,
@@ -123,7 +129,7 @@ const SignUpScreen = ({navigation}) => {
         {
           text: 'OK',
           onPress: () => {
-            navigation.navigate('AddProfilePicture');
+            navigation.navigate('Add Doctor Picture');
           },
         },
       ]);
@@ -136,7 +142,6 @@ const SignUpScreen = ({navigation}) => {
         mobileNumber: '',
         phoneNumber: '',
         email: '',
-        // profilePictureUrl: '',
         createdBy: '',
       });
     } catch (err) {
@@ -227,12 +232,7 @@ const SignUpScreen = ({navigation}) => {
         autoCapitalize="none"
         style={SignUpStyles.input}
       />
-      {/* <TextInput
-        placeholder="Profile Picture URL"
-        value={formData.profilePictureUrl}
-        onChangeText={text => setFormData(prev => ({ ...prev, profilePictureUrl: text }))}
-        style={SignUpStyles.input}
-      /> */}
+
       <TextInput
         placeholder="Created By *"
         value={formData.createdBy}
