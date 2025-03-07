@@ -6,29 +6,6 @@ export const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#ffffff',
   },
-  searchContainer: {
-    position: 'relative',
-    marginBottom: 16,
-    zIndex: 1,
-  },
-  searchBoxContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderColor: '#ddd',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    backgroundColor: '#f9f9f9',
-    height: 50,
-  },
-  searchIcon: {
-    marginRight: 10,
-  },
-  searchBox: {
-    flex: 1,
-    fontSize: 16,
-    color: '#333',
-  },
   input: {
     height: 50,
     borderColor: '#ccc',
@@ -39,6 +16,9 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 12,
     color: '#333',
+  },
+  searchBar : {
+      zIndex :2 ,
   },
   errorText: {
     color: 'red',
@@ -71,35 +51,8 @@ export const styles = StyleSheet.create({
   submitButton: {
     backgroundColor: '#007AFF',
   },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  dropdown: {
-    position: 'absolute',
-    top: 55,
-    left: 0,
-    right: 0,
-    backgroundColor: 'white',
-    maxHeight: 200,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 6,
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.2,
-  },
-  dropdownItem: {
-    padding: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-  dropdownItemText: {
-    fontSize: 16,
-    color: '#333',
-  },
+
+
   viewAllButtonContainer: {
     position: 'absolute',
     bottom: 20,

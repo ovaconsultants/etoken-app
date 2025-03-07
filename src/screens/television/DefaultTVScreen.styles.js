@@ -1,6 +1,8 @@
-import { StyleSheet, Dimensions } from 'react-native';
-
-const { width, height } = Dimensions.get('window');
+import { StyleSheet } from 'react-native';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
 
 export const styles = StyleSheet.create({
   gradientContainer: {
@@ -10,60 +12,59 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: height * 0.02,
-    paddingHorizontal: width * 0.05,
+    paddingVertical: hp('2%'), // 2% of screen height
+    paddingHorizontal: wp('5%'), // 5% of screen width
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    // backgroundColor: 'black',
   },
   headerText: {
-    fontSize: width * 0.01,
+    fontSize: wp('1%'), // 1% of screen width
     color: '#000',
     fontWeight: '500',
   },
   initialsCircle: {
-    width: width * 0.08,
-    height: width * 0.08,
-    borderRadius: width * 0.05,
+    width: wp('8%'), // 8% of screen width
+    height: wp('8%'), // 8% of screen width
+    borderRadius: wp('5%'), // 5% of screen width
     backgroundColor: '#FFE3E1',
     justifyContent: 'center',
     alignItems: 'center',
   },
   doctorInitials: {
-    fontSize: width * 0.02,
+    fontSize: wp('2%'), // 2% of screen width
     fontWeight: 'bold',
     color: '#333',
   },
   detailsContainer: {
     alignItems: 'center',
-    paddingVertical: height * 0.02,
+    paddingVertical: hp('2%'), // 2% of screen height
   },
   doctorName: {
-    fontSize: width * 0.03,
+    fontSize: wp('8%'), // 3% of screen width
     color: '#222',
     fontWeight: 'bold',
   },
   clinicName: {
-    fontSize: width * 0.03,
+    fontSize: wp('5%'), // 3% of screen width
     fontWeight: '600',
     color: '#444',
-    marginTop: height * 0.01,
+    marginTop: hp('1%'), // 1% of screen height
   },
   clinicInfo: {
-    flex : 1 ,
-    fontSize: width * 0.01,
+    flex: 1,
+    fontSize: wp('1%'), // 1% of screen width
     color: '#666',
-    marginTop: height * 0.01,
+    marginTop: hp('1%'), // 1% of screen height
   },
   doctorSection: {
-    flexDirection:'row',
-
+    flexDirection: 'row',
     flex: 1,
     justifyContent: 'space-around',
     alignItems: 'center',
   },
   doctorImage: {
-    width: width * 0.3,
-    height: height * 0.5,
+    margin: hp('1%'),
+    width: wp('40%'), // 30% of screen width
+    height: hp('28%'), // 50% of screen height
     borderRadius: 20,
     borderWidth: 5,
     borderColor: '#fff',
@@ -74,22 +75,21 @@ export const styles = StyleSheet.create({
     elevation: 10,
   },
   footer: {
-    margin:height * 0.02,
-    marginTop:height * 0.03,
-    position: 'relative',
-    bottom: height * 0.02,
-    alignItems: 'center',
+    margin: hp('2%'), 
+    position: 'absolute',
+    bottom: 0, 
+    alignItems: 'flex-start',
   },
   footerDetails: {
-    fontSize: width * 0.02,
+    fontSize: wp('3%'), 
     color: '#000',
-    textAlign: 'center',
+    textAlign: 'flex-start',
     fontWeight: '500',
   },
   footerNote: {
-    fontSize: width * 0.01,
+    fontSize: wp('1%'), // 1% of screen width
     color: '#888',
     textAlign: 'center',
-    marginTop: height * 0.01,
+    marginTop: hp('1%'), // 1% of screen height
   },
 });

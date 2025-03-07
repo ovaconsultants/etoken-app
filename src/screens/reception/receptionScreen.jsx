@@ -3,111 +3,106 @@ import {
   View,
   Text,
   TextInput,
-  Button,
   Alert,
   TouchableOpacity,
-  FlatList,
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
 import {Formik} from 'formik';
-import * as Yup from 'yup';
-import {styles} from './receptionScreen.styles';
-import {
-  insertPatient,
-  fetchPatients,
-  generateNewToken,
-} from '../../services/authService';
+import {styles} from './ReceptionScreen.styles';
 import {
   QueryClient,
   QueryClientProvider,
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
-import {useAtom} from 'jotai';
-import {searchTermAtom, patientsAtom} from '../../atoms/patientAtoms/atom';
-import GenerateTokenScreen from '../generateToken/GenerateTokenScreen';
 import {useNavigation} from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import SearchBar from '../../components/SearchBar';
+import {PatientSchema} from '../../utils/formFields/validationSchemas/clinicSchemas';
+import {
+  FetchPatientsRequest,
+  InsertPatientRequest,
+} from '../../services/patientService';
+import {GenerateTokenRequest} from '../../services/tokenService';
 
-const PatientSchema = Yup.object().shape({
-  patient_name: Yup.string().trim().required('Patient Name is required'),
-  mobile_number: Yup.string()
-    .trim()
-    .matches(/^[0-9]{10}$/, 'Invalid Mobile Number')
-    .required('Mobile Number is required'),
-  email: Yup.string()
-    .trim()
-    .lowercase()
-    .email('Invalid Email')
-    .required('Email is required'),
-});
-
-const ReceptionScreenComponent = ({ route }) => {
-  const { clinic_id } = route.params;
-  const [isModalVisible, setIsModalVisible] = useState(false);
+const ReceptionScreenComponent = ({route}) => {
+  const {doctor_id, clinic_id} = route.params;
   const navigation = useNavigation();
   const queryClient = useQueryClient();
-  const [generatedToken, setGeneratedToken] = useState(null);
-  const [searchTerm, setSearchTerm] = useAtom(searchTermAtom);
-  const [patients, setPatients] = useAtom(patientsAtom);
-  const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [patients, setPatients] = useState(null);
+  const [, setDropdownVisible] = useState(false);
   const formikRef = useRef();
 
   const {isLoading, isError, error} = useQuery({
-    queryKey: ['patients'],
+    queryKey: ['patientsForToken'],
     queryFn: async () => {
-      const patients = await fetchPatients();
-      setPatients(patients);
-      return patients;
+      const fetchedPatients = await FetchPatientsRequest();
+      setPatients(fetchedPatients);
+      return fetchedPatients;
     },
     refetchInterval: 10 * 1000,
     staleTime: 10 * 1000,
   });
 
-  const handleSubmit = async (values, { resetForm }) => {
+  const handleSubmit = async (values, {resetForm}) => {
+    console.log('Form Values:', values);
     try {
-      const patientData = {
-        patient_name: values.patient_name.trim(),
-        mobile_number: values.mobile_number.trim(),
-        email: values.email.trim().toLowerCase(),
-        clinic_id: clinic_id, // Include clinic_id from route params
-        created_by: 'receptionist', // Assuming this is static
-      };
-  
-      const response = await insertPatient(patientData);
-      if (response?.success) {
+      // Check if the patient already exists in the local `patients` array
+      const existingPatient = patients.find(
+        patient =>
+          patient.mobile_number === values.mobile_number.trim() ||
+          patient.email === values.email.trim().toLowerCase(),
+      );
+
+      let patientIdToUse;
+
+      if (existingPatient) {
+        // If patient exists, use their ID
+        patientIdToUse = existingPatient.patient_id;
+      } else {
+        // If patient does not exist, insert a new patient
+        const patientData = {
+          patient_name: values.patient_name.trim(),
+          mobile_number: values.mobile_number.trim(),
+          email: values.email.trim().toLowerCase(),
+          clinic_id: clinic_id,
+          created_by: 'receptionist',
+        };
+
+        const generatedPatientId = await InsertPatientRequest(patientData);
+        patientIdToUse = generatedPatientId;
+      }
+
+      // Generate token for the patient
+      if (patientIdToUse) {
         resetForm();
-        queryClient.invalidateQueries(['patients']); // Refresh patient list
-        handleGenerateToken({
-          ...values,
-          patient_id: response.patient_id,
+        queryClient.invalidateQueries(['patients']);
+
+        const patientTokenDataObj = {
+          patient_id: patientIdToUse,
+          doctor_id: doctor_id,
+          clinic_id: clinic_id,
+          created_by: 'receptionist',
+        };
+
+        const token_no = await GenerateTokenRequest(patientTokenDataObj);
+
+        // Navigate to the TokenSuccess screen
+        navigation.navigate('TokenSuccess', {
+          tokenNumber: token_no,
+          patientName: values.patient_name,
+          patientId: patientIdToUse,
         });
       } else {
-        Alert.alert('Error', response?.message ?? 'Failed to insert patient.');
+        Alert.alert('Error', 'Failed to insert patient or generate token.');
       }
-    } catch (error) {
-      Alert.alert(
-        'Error',
-        error.message ?? 'An error occurred while inserting the patient.',
-      );
+    } catch (err) {
+      console.error('Error:', err);
+      Alert.alert('Error', err.message ?? 'An error occurred.');
     }
   };
 
-  const filteredPatients = patients.filter(patient => {
-    const searchLower = searchTerm.toLowerCase();
-    return (
-      patient.patient_name?.toLowerCase().includes(searchLower) ||
-      patient.mobile_number?.includes(searchTerm) ||
-      patient.email?.toLowerCase().includes(searchLower)
-    );
-  });
-
   const handlePatientSelect = patient => {
-    console.log('selected Patient ', patient);
-    setSearchTerm(patient.patient_name);
-    setDropdownVisible(false);
-
     if (formikRef.current) {
       formikRef.current.setValues({
         patient_id: patient.patient_id,
@@ -115,82 +110,29 @@ const ReceptionScreenComponent = ({ route }) => {
         mobile_number: patient.mobile_number,
         email: patient.email,
       });
-
-      // Ensure the form updates correctly and clears errors if any
-      formikRef.current.validateForm();
     }
   };
 
-  const handleGenerateToken = async values => {
-    console.log('This is the patient id ', values.patient_id);
-    try {
-      const response = await generateNewToken(values.patient_id);
-      console.log('response for token generation', response);
-      if (response?.success) {
-        setGeneratedToken(response.token_no);
-        setIsModalVisible(true); // Ensure modal opens when token is generated
-      } else {
-        Alert.alert('Error', response?.message || 'Failed to generate token.');
-      }
-    } catch (error) {
-      Alert.alert('Error', 'An error occurred while generating the token.');
-    }
-  };
-
-  if (isLoading) return <Text>Loading patients...</Text>;
-  if (isError) return <Text>Error: {error.message}</Text>;
+  if (isLoading) {
+    return <Text>Loading patients...</Text>;
+  }
+  if (isError) {
+    return <Text>Error: {error.message}</Text>;
+  }
 
   return (
     <TouchableWithoutFeedback
       onPress={() => {
         setDropdownVisible(false);
-        setSearchTerm('');
         Keyboard.dismiss();
       }}
       accessible={false}>
       <View style={styles.container}>
-        <View style={styles.searchContainer}>
-          <View style={styles.searchBoxContainer}>
-            {/* <Icon
-              name="search"
-              size={24}
-              color="#007AFF"
-              style={styles.searchIcon}
-            /> */}
-            <TextInput
-              style={styles.searchBox}
-              placeholder="Search by Patient, Mobile, or Email"
-              placeholderTextColor="#888"
-              value={searchTerm}
-              onChangeText={text => {
-                setSearchTerm(text);
-                setDropdownVisible(!!text);
-              }}
-            />
-          </View>
-
-          {dropdownVisible && searchTerm.length > 0 && (
-            <FlatList
-              data={filteredPatients}
-              keyExtractor={item => item.patient_id.toString()}
-              style={styles.dropdown}
-              renderItem={({item}) => (
-                <TouchableOpacity
-                  style={styles.dropdownItem}
-                  onPress={() => handlePatientSelect(item)}>
-                  <Text style={styles.dropdownItemText}>
-                    {item.patient_name} - {item.mobile_number}
-                  </Text>
-                </TouchableOpacity>
-              )}
-              ListEmptyComponent={() => (
-                <View style={styles.dropdownItem}>
-                  <Text style={styles.dropdownItemText}>No patients found</Text>
-                </View>
-              )}
-            />
-          )}
-        </View>
+        <SearchBar
+          data={patients}
+          onSelectItem={handlePatientSelect}
+          placeholder="Search by Patient, Mobile, or Email"
+        />
 
         <Formik
           innerRef={formikRef}
@@ -205,7 +147,7 @@ const ReceptionScreenComponent = ({ route }) => {
           {({
             handleChange,
             handleBlur,
-            handleSubmit,
+            handleSubmit: formikHandleSubmit,
             values,
             errors,
             touched,
@@ -258,7 +200,7 @@ const ReceptionScreenComponent = ({ route }) => {
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.button, styles.submitButton]}
-                  onPress={handleSubmit}>
+                  onPress={formikHandleSubmit}>
                   <Text style={styles.buttonText}>GO</Text>
                 </TouchableOpacity>
               </View>
@@ -269,23 +211,22 @@ const ReceptionScreenComponent = ({ route }) => {
         <View style={styles.viewAllButtonContainer}>
           <TouchableOpacity
             style={styles.viewAllButton}
-            onPress={() => navigation.navigate('PatientScreen', {clinic_id : clinic_id})}>
+            onPress={() =>
+              navigation.navigate('TokenListing', {
+                clinic_id: clinic_id,
+                doctor_id: doctor_id,
+              })
+            }>
             <Text style={styles.viewAllButtonText}>View All Patients</Text>
           </TouchableOpacity>
         </View>
-
-        <GenerateTokenScreen
-          tokenNumber={generatedToken}
-          isModalVisible={isModalVisible}
-          setIsModalVisible={setIsModalVisible}
-        />
       </View>
     </TouchableWithoutFeedback>
   );
 };
 
 const queryClient = new QueryClient();
-const ReceptionScreen = ({ route }) => (
+const ReceptionScreen = ({route}) => (
   <QueryClientProvider client={queryClient}>
     <ReceptionScreenComponent route={route} />
   </QueryClientProvider>

@@ -15,8 +15,9 @@ const initialDoctorClinicDetails = [
 
 const initialDoctorInfo = {
   doctor_id : '',
-  doctor_name : ''
-}
+  doctor_name : '',
+  doctor_profile_pic_directory_api : '',
+};
 
 export const doctorClinicDetailsAtom = atomWithStorage(
   'doctorDetails',

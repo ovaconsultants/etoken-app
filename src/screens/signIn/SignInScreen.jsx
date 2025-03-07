@@ -41,6 +41,7 @@ const SignInScreen = ({navigation}) => {
       const doctorInfo = {
         doctor_id: data.doctor_id,
         doctor_name: data.doctor_name,
+        doctor_profile_pic_directory_api : data.profile_picture_url,
       };
 
       setDoctorIdAtom(doctor_id);

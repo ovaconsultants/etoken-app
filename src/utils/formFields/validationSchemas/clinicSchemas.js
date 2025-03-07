@@ -28,3 +28,16 @@ export const SignInValidationSchema = Yup.object().shape({
     .min(4, 'Password must be at least 4 characters')
     .required('Password is required'),
 });
+
+export const PatientSchema = Yup.object().shape({
+  patient_name: Yup.string().trim().required('Patient Name is required'),
+  mobile_number: Yup.string()
+    .trim()
+    .matches(/^[0-9]{10}$/, 'Invalid Mobile Number')
+    .required('Mobile Number is required'),
+  email: Yup.string()
+    .trim()
+    .lowercase()
+    .email('Invalid Email')
+    .required('Email is required'),
+});

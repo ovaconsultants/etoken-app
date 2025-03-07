@@ -22,7 +22,7 @@ const RadioGroupComponent = ({options, selectedId, onSelect}) => {
 };
 
 const styles = StyleSheet.create({
-    container: {marginVertical: 10},
+    container: {},
     text: {fontSize: 16, fontWeight: 'bold', textAlign: 'center', marginVertical: 20},
     radioGroupContainer: {flexDirection: 'row', alignItems: 'center', justifyContent: 'center'},
 });
