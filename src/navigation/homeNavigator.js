@@ -7,7 +7,7 @@ import TokenManagementScreen from '../screens/token/TokenManagementScreen';
 import DefaultTVScreen from '../screens/television/DefaultTVScreen';
 import ReceptionScreen from '../screens/reception/ReceptionScreen';
 import TokenSuccessScreen from '../screens/tokenDisplay/TokenSuccessScreen';
-import ReceptionAllPatientTokensScreen from '../screens/patient/ReceptionAllPatientTokensScreen';
+import PatientTokenQueueScreen from '../screens/patient/PatientTokenQueueScreen';
 import {IconButton} from 'react-native-paper';
 // Create stack navigator
 const Stack = createNativeStackNavigator();
@@ -52,8 +52,8 @@ const HomeNavigator = () => {
       />
       <Stack.Screen
         name="TokenListing"
-        component={ReceptionAllPatientTokensScreen}
-        options={{title: 'Tokens'}}
+        component={PatientTokenQueueScreen}
+        options={{title: 'Token List'}}
       />
       <Stack.Screen
         name="DefaultNoTokenTV"

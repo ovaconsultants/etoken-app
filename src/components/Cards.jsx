@@ -3,6 +3,7 @@ import React, { useRef, useEffect } from 'react';
 import { Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
 import { useWindowDimensions } from 'react-native';
 
+
 const Card = ({ title, description, isSelected, onPress,state, cardWidth }) => {
   const styles = useStyles();
   const scaleValue = useRef(new Animated.Value(1)).current;
@@ -20,7 +21,7 @@ const Card = ({ title, description, isSelected, onPress,state, cardWidth }) => {
       <Animated.View
         style={[
           styles.card,
-          { width: cardWidth, height: cardWidth * 0.75, transform: [{ scale: scaleValue }] },
+          { width: cardWidth, height: cardWidth, transform: [{ scale: scaleValue }] },
           isSelected && styles.selectedCard,
         ]}
       >
@@ -55,12 +56,12 @@ const useStyles = () => {
       borderWidth: isSmallDevice ? 1 : 2,
     },
     title: {
-      fontSize: isSmallDevice ? 14 : 18,
+      fontSize: isSmallDevice ? 18 : 26,
       fontWeight: 'bold',
       textAlign: 'center',
     },
     description: {
-      fontSize: isSmallDevice ? 12 : 14,
+      fontSize: isSmallDevice ? 16 : 20,
       color: '#666',
       marginTop: isSmallDevice ? 2 : 4,
       textAlign: 'center',

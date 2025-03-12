@@ -1,22 +1,23 @@
-import React, {useEffect, useState} from 'react';
-import {View, Text, ActivityIndicator, SafeAreaView} from 'react-native';
-import {styles} from './TokenManagementScreen.styles';
+// TokenManagement.js
+import React, { useEffect, useState } from 'react';
+import { View, Text, ActivityIndicator, SafeAreaView } from 'react-native';
+import { styles } from './TokenManagementScreen.styles';
 import Orientation from 'react-native-orientation-locker';
-import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
-import {usePatientTokens} from '../../hooks/usePatientTokens';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { usePatientTokens } from '../../hooks/usePatientTokens';
 import InProgressTokenNotificationScreen from '../notification/InProgressTokenNotificationScreen';
 import DefaultTVScreen from '../television/DefaultTVScreen';
-import {TokenTable} from './TokenTable';
+import { TokenTable } from './TokenTable';
 import { doctorClinicDetailsAtom } from '../../atoms/doctorAtoms/doctorAtom';
 import { useAtomValue } from 'jotai';
+
 // Query client for React Query
 const queryClient = new QueryClient();
 
-// Main TokenManagement component
-const TokenManagement = ({route}) => {
+const TokenManagement = ({ route }) => {
   const clinicData = useAtomValue(doctorClinicDetailsAtom);
   console.log('Clinic Data:', clinicData);
-  const {doctor_id, clinic_id} = route.params;
+  const { doctor_id, clinic_id } = route.params;
   const {
     data: tokens = [],
     isLoading,
@@ -27,14 +28,13 @@ const TokenManagement = ({route}) => {
 
   // Find the in-progress patient
   useEffect(() => {
-
     Orientation.lockToLandscape();
-    const inProgress = tokens.find(token => token.status === 'In Progress');
+    const inProgress = tokens.find(token => token.status === 'In Progress') || tokens.find(token => token.recall === true);
     setInProgressPatient(inProgress || null);
     return () => {
       Orientation.lockToPortrait();
     };
-  }, [clinicData, clinic_id, tokens]);
+  }, [tokens]);
 
   // Loading state
   if (isLoading) {
@@ -56,7 +56,7 @@ const TokenManagement = ({route}) => {
 
   // No tokens available - display ads/images/videos
   if (!tokens || tokens.length === 0) {
-    return <DefaultTVScreen  clinicInfo={currentClinicData}/>;
+    return <DefaultTVScreen clinicInfo={currentClinicData} />;
   }
 
   // Render token table and in-progress notification
@@ -67,6 +67,9 @@ const TokenManagement = ({route}) => {
         {inProgressPatient && (
           <InProgressTokenNotificationScreen
             inProgressPatient={inProgressPatient}
+            isLoading={isLoading}
+            isError={isError}
+            error={isError ? 'Error loading in-progress patient' : null}
           />
         )}
       </View>
@@ -75,7 +78,7 @@ const TokenManagement = ({route}) => {
 };
 
 // Main screen component with orientation handling
-const TokenManagementScreen = props => {
+const TokenManagementScreen = (props) => {
   return (
     <QueryClientProvider client={queryClient}>
       <SafeAreaView style={styles.fullScreenContainer}>

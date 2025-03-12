@@ -73,7 +73,7 @@ export default SearchBar;
 
 const styles = StyleSheet.create({
   searchContainer: {
-    width: wp('90%'), // 90% of screen width
+    width: wp('95%'), // 90% of screen width
     alignSelf: 'center', // Centers the search bar
     marginBottom: hp('2%'),
     position: 'relative',

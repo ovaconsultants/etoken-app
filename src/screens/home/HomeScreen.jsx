@@ -3,12 +3,14 @@ import { SafeAreaView, View } from 'react-native';
 import { useAtomValue } from 'jotai';
 import { styles } from './HomeScreen.styles';
 import CardGrid from '../../components/CardGrid';
+import useOrientationLocker from '../../hooks/useOrientationLocker';
 import RadioGroupComponent from '../../components/RadioGroup';
 import { doctorClinicDetailsAtom, doctorIdAtom } from '../../atoms/doctorAtoms/doctorAtom';
 import { ScreenSelectionOptions } from '../../constants/formComponentsData/radioButtonsData';
 import { Button } from 'react-native-paper';
 
 const HomeScreen = ({ navigation }) => {
+  useOrientationLocker('PORTRAIT');
   const [selectedScreen, setSelectedScreen] = useState(null);
   const [selectedClinicId, setSelectedClinicId] = useState(null);
 
@@ -28,7 +30,6 @@ const HomeScreen = ({ navigation }) => {
   }));
 
   const handleCardPress = useCallback((clinicId) => setSelectedClinicId(clinicId), []);
-  
   const isNextButtonDisabled = useMemo(() => !(selectedScreen && selectedClinicId), [selectedScreen, selectedClinicId]);
 
   const handleNextButtonPress = useCallback(() => {

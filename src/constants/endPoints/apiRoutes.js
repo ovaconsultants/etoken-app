@@ -27,5 +27,6 @@ export const API_ENDPOINTS = {
   TOKEN : {
     FETCH_PT_TOKENS:'/token/fetchTokensForPatients',
     INSERT_PT_TOKEN:'/token/insertToken',
+    UPDATE_PT_TOKEN: '/token/updateToken',
   },
 };

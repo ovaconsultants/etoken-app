@@ -1,13 +1,14 @@
 // components/CardGrid.js
 import React from 'react';
-import { FlatList, Dimensions, StyleSheet} from 'react-native';
+import { FlatList,StyleSheet} from 'react-native';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
 import Card from './Cards';
 
 const CardGrid = ({ data , onPress,isSelectedCard}) => {
-  // Calculate card width based on screen width (2 cards per row)
-  const screenWidth = Dimensions.get('window').width;
-  const cardWidth = (screenWidth - 50) / 2;
-
+  const cardWidth = (wp - 50);
   return (
     <FlatList
       data={data}

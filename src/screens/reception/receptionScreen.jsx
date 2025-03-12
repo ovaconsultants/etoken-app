@@ -18,6 +18,7 @@ import {
 } from '@tanstack/react-query';
 import {useNavigation} from '@react-navigation/native';
 import SearchBar from '../../components/SearchBar';
+import LoadingErrorHandler from '../../components/LoadingErrorHandler';
 import {PatientSchema} from '../../utils/formFields/validationSchemas/clinicSchemas';
 import {
   FetchPatientsRequest,
@@ -113,13 +114,6 @@ const ReceptionScreenComponent = ({route}) => {
     }
   };
 
-  if (isLoading) {
-    return <Text>Loading patients...</Text>;
-  }
-  if (isError) {
-    return <Text>Error: {error.message}</Text>;
-  }
-
   return (
     <TouchableWithoutFeedback
       onPress={() => {
@@ -128,6 +122,12 @@ const ReceptionScreenComponent = ({route}) => {
       }}
       accessible={false}>
       <View style={styles.container}>
+          {/* Use LoadingErrorHandler to handle loading and error states */}
+          <LoadingErrorHandler isLoading={isLoading} isError={isError} error={error} />
+
+{/* Render the rest of the UI only if not loading and no error */}
+{!isLoading && !isError && (
+        <>
         <SearchBar
           data={patients}
           onSelectItem={handlePatientSelect}
@@ -219,7 +219,9 @@ const ReceptionScreenComponent = ({route}) => {
             }>
             <Text style={styles.viewAllButtonText}>View All Patients</Text>
           </TouchableOpacity>
-        </View>
+          </View>
+          </>
+        )}
       </View>
     </TouchableWithoutFeedback>
   );
@@ -233,3 +235,73 @@ const ReceptionScreen = ({route}) => (
 );
 
 export default ReceptionScreen;
+// for refactoring the component 
+export const usePatientForm = ({ doctor_id, clinic_id, patients, navigation, queryClient }) => {
+  const [formValues, setFormValues] = useState({
+    patient_id: '',
+    patient_name: '',
+    mobile_number: '',
+    email: '',
+  });
+
+  const handleSubmit = async (values, { resetForm }) => {
+    console.log('Form Values:', values);
+    try {
+      // Check if the patient already exists
+      const existingPatient = patients.find(
+        (patient) =>
+          patient.mobile_number === values.mobile_number.trim() ||
+          patient.email === values.email.trim().toLowerCase(),
+      );
+
+      let patientIdToUse;
+
+      if (existingPatient) {
+        patientIdToUse = existingPatient.patient_id;
+      } else {
+        const patientData = {
+          patient_name: values.patient_name.trim(),
+          mobile_number: values.mobile_number.trim(),
+          email: values.email.trim().toLowerCase(),
+          clinic_id: clinic_id,
+          created_by: 'receptionist',
+        };
+
+        const generatedPatientId = await InsertPatientRequest(patientData);
+        patientIdToUse = generatedPatientId;
+      }
+
+      if (patientIdToUse) {
+        resetForm();
+        queryClient.invalidateQueries(['patients']);
+
+        const patientTokenDataObj = {
+          patient_id: patientIdToUse,
+          doctor_id: doctor_id,
+          clinic_id: clinic_id,
+          created_by: 'receptionist',
+        };
+
+        const token_no = await GenerateTokenRequest(patientTokenDataObj);
+
+        navigation.navigate('TokenSuccess', {
+          tokenNumber: token_no,
+          patientName: values.patient_name,
+          patientId: patientIdToUse,
+        });
+      } else {
+        Alert.alert('Error', 'Failed to insert patient or generate token.');
+      }
+    } catch (err) {
+      console.error('Error:', err);
+      Alert.alert('Error', err.message ?? 'An error occurred.');
+    }
+  };
+
+  return {
+    formValues,
+    setFormValues,
+    handleSubmit,
+    validationSchema: PatientSchema,
+  };
+};

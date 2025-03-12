@@ -7,7 +7,7 @@ import {
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8F9FA', //F8F9FA
+    backgroundColor: '#F8F9FA', 
   },
 
   cardContainer: {
@@ -15,21 +15,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     margin:wp('1%'),
-    padding: wp('5%'), // 5% of screen width// 12% of screen height
-  },
-  card: {
-    width: wp('90%'), // 90% of screen width
-    height: hp('60%'), // 60% of screen height
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: wp('1%'), // 5% of screen width
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.1,
-    shadowRadius: 20,
-    elevation: 10,
-    justifyContent: 'space-around',
-    alignItems: 'center',
+    padding: wp('5%'), // 5% of screen width
   },
   text: {
     fontSize: wp('5%'), // 5% of screen width
@@ -53,6 +39,5 @@ export const styles = StyleSheet.create({
     color: 'white',
     fontSize: wp('10%'),
     fontWeight: '600',
-  },
-  
+  }, 
 });

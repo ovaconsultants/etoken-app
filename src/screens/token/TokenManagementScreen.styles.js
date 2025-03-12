@@ -58,8 +58,8 @@ export const styles = StyleSheet.create({
   },
   notificationInProgress: {
     position: 'absolute',
-    bottom : 0.01 * height,
-    right: 0.1 * height,
+    bottom : 0.00 * height,
+    right: 0.05 * height,
     margin: landscapeWidth * 0.02,
     zIndex: 100,
   },
