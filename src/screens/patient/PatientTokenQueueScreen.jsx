@@ -1,6 +1,7 @@
 // PatientTokenQueueScreen.js
-import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Modal, StyleSheet } from 'react-native';
+import { AdminPanelSettingsIcon , RefreshIcon } from '../../components/icons/Icons';
 import withQueryClientProvider from '../../hooks/useQueryClientProvider';
 import { usePatientTokenManager } from '../../hooks/usePatientTokenManager';
 import { styles } from './PatientTokenQueueScreen.styles';
@@ -18,6 +19,8 @@ const PatientTokenQueueScreen = ({ route }) => {
     handleRecall,
     handleDone,
   } = usePatientTokenManager(clinic_id, doctor_id);
+
+  const [isSidePanelVisible, setSidePanelVisible] = useState(false);
 
   if (!patientTokens) {
     return (
@@ -38,7 +41,7 @@ const PatientTokenQueueScreen = ({ route }) => {
           <Text style={styles.buttonText}>Recall</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.nextButton}
+          style={[styles.nextButton]}
           onPress={isNextDone ? handleDone : handleNext}
         >
           <Text style={styles.buttonText}>{isNextDone ? 'Done' : 'Next'}</Text>
@@ -99,22 +102,74 @@ const PatientTokenQueueScreen = ({ route }) => {
         </View>
       </ScrollView>
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.footerButton}>
-          <Text style={styles.footerButtonText}>List Info</Text>
+        <TouchableOpacity style={styles.footerButton} onPress={() => setSidePanelVisible(true)}>
+         < AdminPanelSettingsIcon />
         </TouchableOpacity>
         <TouchableOpacity style={styles.footerButton}>
-          <Text style={styles.footerButtonText}>Turn On/Off Applicant</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.footerButton}>
-          <Text style={styles.footerButtonText}>Report</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.footerButton}>
-          <Text style={styles.footerButtonText}>LogOut</Text>
+        <RefreshIcon />
         </TouchableOpacity>
       </View>
+
+      <Modal
+        transparent={true}
+        visible={isSidePanelVisible}
+        onRequestClose={() => setSidePanelVisible(false)}
+      >
+        <View style={sidePanelStyles.overlay}>
+          <View style={sidePanelStyles.sidePanel}>
+            <TouchableOpacity style={sidePanelStyles.sidePanelButton}>
+              <Text style={sidePanelStyles.sidePanelButtonText}>List Info</Text>
+            </TouchableOpacity>
+            {/* <TouchableOpacity style={sidePanelStyles.sidePanelButton}>
+              <Text style={sidePanelStyles.sidePanelButtonText}>Turn On/Off Applicant</Text>
+            </TouchableOpacity> */}
+            <TouchableOpacity style={sidePanelStyles.sidePanelButton}>
+              <Text style={sidePanelStyles.sidePanelButtonText}>LogOut</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={sidePanelStyles.closeButton}
+              onPress={() => setSidePanelVisible(false)}
+            >
+              <Text style={sidePanelStyles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
+
+const sidePanelStyles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  sidePanel: {
+    width: '100%',
+    backgroundColor: '#fff',
+    padding: 20,
+  },
+  sidePanelButton: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  sidePanelButtonText: {
+    fontSize: 18,
+  },
+  closeButton: {
+    borderRadius : 20 ,
+    marginTop: 20,
+    padding: 15,
+    backgroundColor: '#f00',
+    alignItems: 'center',
+  },
+  closeButtonText: {
+    color: '#fff',
+    fontSize: 18,
+  },
+});
 
 // Wrap the component using the custom hook
 export default withQueryClientProvider(PatientTokenQueueScreen);

@@ -1,16 +1,23 @@
 // InProgressTokenNotificationScreen.js
-import React, { useEffect } from 'react';
-import { View, Text } from 'react-native';
-import { Card, useTheme } from 'react-native-paper';
-import { styles } from './InProgressTokenNotificationScreen.styles';
+import React, {useEffect} from 'react';
+import {View, Text} from 'react-native';
+import {Card, useTheme} from 'react-native-paper';
+import {styles} from './InProgressTokenNotificationScreen.styles';
 import LoadingErrorHandler from '../../components/LoadingErrorHandler';
 import useSpeechNotification from '../../hooks/useSpeechNotification';
 
-const InProgressTokenNotificationScreen = ({ inProgressPatient, isLoading, isError, error }) => {
+const InProgressTokenNotificationScreen = ({
+  inProgressPatient,
+  isLoading,
+  isError,
+  error,
+}) => {
+
   const theme = useTheme();
 
   // Use the custom hook for speech functionality
-  const { speakMessages, translatedData } = useSpeechNotification(inProgressPatient);
+  const {speakMessages, translatedData} =
+    useSpeechNotification(inProgressPatient);
 
   // Trigger speech when inProgressPatient changes
   useEffect(() => {
@@ -23,7 +30,7 @@ const InProgressTokenNotificationScreen = ({ inProgressPatient, isLoading, isErr
   if (!inProgressPatient) {
     return (
       <View style={styles.container}>
-        <Text style={[styles.noTokenText, { color: theme.colors.text }]}>
+        <Text style={[styles.noTokenText, {color: theme.colors.text}]}>
           No token available.
         </Text>
       </View>
@@ -32,22 +39,26 @@ const InProgressTokenNotificationScreen = ({ inProgressPatient, isLoading, isErr
 
   return (
     <View style={styles.container}>
-      {/* Loading and Error Handler */}
-      <LoadingErrorHandler isLoading={isLoading} isError={isError} error={error} />
+      {/* Loa"d"ing and Error Handler */}
+      <LoadingErrorHandler
+        isLoading={isLoading}
+        isError={isError}
+        error={error}
+      />
 
       {/* Notification Card */}
       <Card style={styles.card}>
         <Card.Content>
-          <Text style={[styles.tableCell, { color: theme.colors.text }]}>
+          <Text style={[styles.tableCell, {color: theme.colors.text}]}>
             🏥 Token No: {inProgressPatient.token_id}
           </Text>
-          <Text style={[styles.tableCell, { color: theme.colors.text }]}>
+          <Text style={[styles.tableCell, {color: theme.colors.text}]}>
             👤 Token Name: {inProgressPatient.patient_name}
           </Text>
-          <Text style={[styles.tableCell, { color: theme.colors.text }]}>
+          <Text style={[styles.tableCell, {color: theme.colors.text}]}>
             🏥 {translatedData.translatedTokenNo}
           </Text>
-          <Text style={[styles.tableCell, { color: theme.colors.text }]}>
+          <Text style={[styles.tableCell, {color: theme.colors.text}]}>
             👤 {translatedData.translatedPatientName}
           </Text>
         </Card.Content>

@@ -4,6 +4,20 @@ export const mediaTypes = {
   VIDEO: 'video',
 };
 
+export const transformApiResponse = (apiResponse) => {
+  return apiResponse.advertisements
+    .filter((ad) => ad.is_active) // Filter active ads
+    .map((ad) => {
+      return {
+        type: ad.content_type.toLowerCase() === 'video' ? mediaTypes.VIDEO : mediaTypes.IMAGE,
+        source: { uri: ad.content_url }, // Use URI for remote media
+        title: ad.company_name,
+        subtitle: `Display Duration: ${ad.display_duration} seconds`,
+      };
+    });
+};
+
+
 export const AddMedia = [
   {
     type: mediaTypes.IMAGE,

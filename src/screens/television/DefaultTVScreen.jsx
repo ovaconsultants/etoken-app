@@ -4,6 +4,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {styles} from './DefaultTVScreen.styles';
 import {doctorInfoAtom} from '../../atoms/doctorAtoms/doctorAtom';
 import {useAtomValue} from 'jotai';
+import AdWithRotation from '../../components/advertisement/AdRotation';
 
 const DefaultTVScreen = ({
   clinicInfo,
@@ -49,11 +50,7 @@ const DefaultTVScreen = ({
                 Dr {doctorInfo.doctor_name}
               </Text>
             </View>
-            <Image
-              source={require('../../../assets/ads/images/ads_doctor_cardio_john_doe_delhi_v1.jpg')}
-              style={styles.doctorImage}
-              resizeMode="cover"
-            />
+            <AdWithRotation /> 
           </View>
 
           {/* Footer Section */}

@@ -5,7 +5,6 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  Button,
   Modal,
   TouchableWithoutFeedback,
   Animated,
@@ -15,7 +14,7 @@ import { useSetAtom } from 'jotai';
 import { userTokenAtom } from '../atoms/authAtoms/authAtom';
 import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
-import Icon from 'react-native-vector-icons/MaterialIcons'; // For icons
+import { ProfileIcon,AddClinicIcon ,AddScheduleIcon , LogoutIcon ,UpdateProfileIcon } from './icons/Icons';
 
 const { width } = Dimensions.get('window');
 
@@ -24,10 +23,10 @@ const ProfileCircle = ({ imageUrl }) => {
   const fadeAnim = useState(new Animated.Value(0))[0]; // For fade animation
 
   const data = [
-    { label: 'Profile', value: 'profile', icon: 'person' },
-    { label: 'Add Clinic', value: 'Add Clinic', icon: 'add-business' },
-    { label: 'Add clinic schedule', value: 'Add clinic schedule', icon: 'schedule' },
-    { label: 'Update profile picture', value: 'profile pic', icon: 'camera-alt' },
+    { label: 'Profile', value: 'profile', icon: <ProfileIcon/>},
+    { label: 'Add Clinic', value: 'Add Clinic', icon: <AddClinicIcon/> },
+    { label: 'Add clinic schedule', value: 'Add clinic schedule', icon: <AddScheduleIcon/> },
+    { label: 'Update profile picture', value: 'profile pic', icon: <UpdateProfileIcon /> },
   ];
 
   const setUserTokenAtom = useSetAtom(userTokenAtom);
@@ -77,15 +76,15 @@ const ProfileCircle = ({ imageUrl }) => {
               {data.map((item) => (
                 <TouchableOpacity key={item.value} onPress={() => handleSelect(item)}>
                   <View style={styles.dropdownItem}>
-                    <Icon name={item.icon} size={20} color="#555" style={styles.icon} />
+                    {item.icon}
                     <Text style={styles.dropdownText}>{item.label}</Text>
                   </View>
                 </TouchableOpacity>
               ))}
               <View style={styles.separator} />
               <TouchableOpacity onPress={handleSignOut} style={styles.signOutButton}>
-                <Icon name="logout" size={20} color="#D32F2F" style={styles.icon} />
-                <Text style={[styles.dropdownText, { color: '#D32F2F' }]}>Sign Out</Text>
+              <LogoutIcon color="#D32F2F" />
+              <Text style={[styles.dropdownText, { color: '#D32F2F' }]}>Sign Out</Text>
               </TouchableOpacity>
             </View>
           </Animated.View>

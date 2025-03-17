@@ -8,17 +8,12 @@ import DefaultTVScreen from '../screens/television/DefaultTVScreen';
 import ReceptionScreen from '../screens/reception/ReceptionScreen';
 import TokenSuccessScreen from '../screens/tokenDisplay/TokenSuccessScreen';
 import PatientTokenQueueScreen from '../screens/patient/PatientTokenQueueScreen';
-import {IconButton} from 'react-native-paper';
+import HomeIcon from '../components/icons/HomeIcon';
 // Create stack navigator
 const Stack = createNativeStackNavigator();
 
 const HeaderHomeIcon = () => (
-  <IconButton
-    icon="home"
-    size={30}
-    color="black"
-    onPress={() => console.log('Home Pressed')}
-  />
+<HomeIcon width={32} height={32} color="#4A90E2" />
 );
 
 const HeaderRightProfile = React.memo(({imageUrl}) => (

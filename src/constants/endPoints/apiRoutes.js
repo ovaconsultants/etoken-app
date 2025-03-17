@@ -28,5 +28,9 @@ export const API_ENDPOINTS = {
     FETCH_PT_TOKENS:'/token/fetchTokensForPatients',
     INSERT_PT_TOKEN:'/token/insertToken',
     UPDATE_PT_TOKEN: '/token/updateToken',
+    RECALL_PT_TOKEN:'/token/toggleRecallStatus',
+  },
+  ADVERTISEMENT : {
+    FETCH_ACTIVE_ADVERTISEMENT : '/advertisement/fetchActiveAdvertisements',
   },
 };

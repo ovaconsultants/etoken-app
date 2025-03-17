@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { UpdateTokenRequest } from '../services/tokenService';
+import { UpdateTokenRequest,RecallTokenRequest} from '../services/tokenService';
 import { usePatientTokens } from './usePatientTokens';
 
 export const usePatientTokenManager = (clinic_id, doctor_id) => {
@@ -46,7 +46,9 @@ export const usePatientTokenManager = (clinic_id, doctor_id) => {
   };
 
   const handleRecall = () => {
- 
+         const  recallTokenDataObj = {token_id : selectedTokenId , modified_by : 'Receptionist'};
+         const data = RecallTokenRequest(recallTokenDataObj);
+         console.log('recall token is trigerred in this component of with the help of usePatientToken Manager',data);
   };
 
   const handleDone = () => {

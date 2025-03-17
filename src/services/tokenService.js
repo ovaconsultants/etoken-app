@@ -6,6 +6,7 @@ export const FetchTokensRequest = async (doctor_id, clinic_id) => {
   try {
     const route = API_ENDPOINTS.TOKEN.FETCH_PT_TOKENS;
     const data = await fetchData(route, { doctor_id, clinic_id });
+    console.log('token received in network api layer in tokenService.js',data);
     return data;
   } catch (error) {
     console.error('Failed to get tokens:', error);
@@ -26,16 +27,29 @@ export const GenerateTokenRequest = async (patientTokenDataObj) => {
 };
 
 // updating a token status also other data
-export const UpdateTokenRequest = async (UpdateTokenDataObj) => {
+export const UpdateTokenRequest = async (updateTokenDataObj) => {
   try {
     const route = API_ENDPOINTS.TOKEN.UPDATE_PT_TOKEN;
-    const data = await putData(route,UpdateTokenDataObj);
-    console.log('data in api layer for update token ', data );
+    const data = await putData(route,updateTokenDataObj);
     return data;
   } catch (error) {
     console.error('Failed to update token :', error);
     throw error;
   }
 };
+
+// recalling a patient token request ;
+export const RecallTokenRequest = async (recallTokenDataObj) => {
+  try {
+    const route = API_ENDPOINTS.TOKEN.RECALL_PT_TOKEN;
+    const data = await putData(route,recallTokenDataObj);
+    console.log('data in api layer for Recall  token ', data );
+    return data;
+  } catch (error) {
+    console.error('Failed to update token :', error);
+    throw error;
+  }
+};
+
 
 
