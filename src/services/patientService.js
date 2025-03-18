@@ -5,7 +5,6 @@ export const FetchPatientsRequest = async() => {
     try {
         const route = API_ENDPOINTS.PATIENT.FETCH_ALL_PATIENTS;
         const data = await fetchData(route);
-        console.log('data received in api layer' , data);
         return data.patients;
       } catch (error) {
         console.error('Failed to get tokens:', error);

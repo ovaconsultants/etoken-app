@@ -6,7 +6,6 @@ export const FetchTokensRequest = async (doctor_id, clinic_id) => {
   try {
     const route = API_ENDPOINTS.TOKEN.FETCH_PT_TOKENS;
     const data = await fetchData(route, { doctor_id, clinic_id });
-    console.log('token received in network api layer in tokenService.js',data);
     return data;
   } catch (error) {
     console.error('Failed to get tokens:', error);

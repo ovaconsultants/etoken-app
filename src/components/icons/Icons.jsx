@@ -213,3 +213,24 @@ export const UpdateProfileIcon = ({ width = 24, height = 24, color = '#000' }) =
       </Svg>
     );
   };
+
+  export const CheckCircleIcon = ({ size = 60, color = '#4CAF50' }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Circle cx="12" cy="12" r="10" stroke={color} strokeWidth="2" />
+      <Path d="M8 12l2.5 2.5L16 10" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+
+  export const PersonIcon = ({ size = 24, color = '#fff' }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Circle cx="12" cy="8" r="4" stroke={color} strokeWidth="2" />
+      <Path d="M4 20c0-4 4-7 8-7s8 3 8 7" stroke={color} strokeWidth="2" strokeLinecap="round" />
+    </Svg>
+  );
+
+  export const BadgeIcon = ({ size = 24, color = '#fff' }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M4 6h16v12H4z" stroke={color} strokeWidth="2" />
+      <Path d="M9 10h6M9 14h6" stroke={color} strokeWidth="2" strokeLinecap="round" />
+    </Svg>
+  );

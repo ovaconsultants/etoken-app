@@ -3,12 +3,12 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {useProfileURI} from '../hooks/useProfileURI';
 import ProfileCircle from '../components/ProfileImage';
 import HomeScreen from '../screens/home/HomeScreen';
-import TokenManagementScreen from '../screens/token/TokenManagementScreen';
+import TokenManagementScreen from '../screens/token/TokenManagementTVScreen';
 import DefaultTVScreen from '../screens/television/DefaultTVScreen';
 import ReceptionScreen from '../screens/reception/ReceptionScreen';
 import TokenSuccessScreen from '../screens/tokenDisplay/TokenSuccessScreen';
 import PatientTokenQueueScreen from '../screens/patient/PatientTokenQueueScreen';
-import HomeIcon from '../components/icons/HomeIcon';
+import HomeIcon from '../components/HomeIcon';
 // Create stack navigator
 const Stack = createNativeStackNavigator();
 

@@ -1,5 +1,5 @@
 // PatientTokenQueueScreen.js
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Modal, StyleSheet } from 'react-native';
 import { AdminPanelSettingsIcon , RefreshIcon } from '../../components/icons/Icons';
 import withQueryClientProvider from '../../hooks/useQueryClientProvider';
@@ -7,8 +7,10 @@ import { usePatientTokenManager } from '../../hooks/usePatientTokenManager';
 import { styles } from './PatientTokenQueueScreen.styles';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 
-const PatientTokenQueueScreen = ({ route }) => {
+const PatientTokenQueueScreen = ({navigation , route }) => {
   const { clinic_id, doctor_id } = route.params;
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSidePanelVisible, setSidePanelVisible] = useState(false);
   const {
     patientTokens,
     selectedTokenId,
@@ -19,17 +21,31 @@ const PatientTokenQueueScreen = ({ route }) => {
     handleRecall,
     handleDone,
   } = usePatientTokenManager(clinic_id, doctor_id);
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => <Text>Total Patients: {patientTokens.length}</Text>,
+    });
 
-  const [isSidePanelVisible, setSidePanelVisible] = useState(false);
+    if (patientTokens !== undefined) {
+      setIsLoading(false);
+    }
+  }, [navigation, patientTokens]);
 
-  if (!patientTokens) {
+  if (isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#0000ff" />
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#007BFF" />
       </View>
     );
   }
-
+  
+  if (patientTokens.length === 0) {
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyText}>No tokens are available</Text>
+      </View>
+    );
+  }
   return (
     <View style={styles.container}>
       <View style={styles.buttonContainer}>
@@ -50,7 +66,6 @@ const PatientTokenQueueScreen = ({ route }) => {
       <ScrollView horizontal contentContainerStyle={styles.scrollContent}>
         <View>
           <View style={styles.tableHeaderRow}>
-            <Text style={[styles.tableHeader, { width: wp('10%') }]}>S.No</Text>
             <Text style={[styles.tableHeader, { width: wp('15%') }]}>Select</Text>
             <Text style={[styles.tableHeader, { width: wp('20%') }]}>Token</Text>
             <Text style={[styles.tableHeader, { width: wp('30%') }]}>Pt-Name</Text>
@@ -58,7 +73,6 @@ const PatientTokenQueueScreen = ({ route }) => {
           </View>
           {(patientTokens ?? []).map((token, index) => (
             <View key={token.token_id} style={styles.tableRow}>
-              <Text style={[styles.tableCell, { width: wp('10%') }]}>{index + 1}</Text>
               <TouchableOpacity
                 style={[styles.tableCell, { width: wp('15%') }]}
                 onPress={() => handleSelectToken(token.token_id)}

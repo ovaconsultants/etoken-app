@@ -31,7 +31,7 @@ const AdWithRotation = ({route}) => {
     if (addMedia[currentAdIndex].type === 'image') {
       const interval = setInterval(() => {
         moveToNextAd();
-      }, 10000); // Rotate image ads every 10 seconds
+      }, 5000); // Rotate image ads every 10 seconds
 
       return () => clearInterval(interval);
     }

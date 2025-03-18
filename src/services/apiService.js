@@ -30,15 +30,11 @@ const logException = async (
  * @returns {Promise} - The response data
  */
 export const fetchData = async (endpoint, params = {}, headers = {}) => {
-  console.log('endpoint in fetchData ', endpoint);
-    console.log('data in fetchData', params);
-    console.log('headers in fetchData', headers);
   try {
     const response = await httpClient.get(endpoint, {
       params,
       headers,
     });
-    console.log('response', response);
     return response.data;
   } catch (error) {
     console.error('GET Request Failed:', {

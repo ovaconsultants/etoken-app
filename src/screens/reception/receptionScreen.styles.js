@@ -1,58 +1,71 @@
-import {StyleSheet} from 'react-native';
+import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#F5F5F5', // Light gray background
   },
   input: {
     height: 50,
-    borderColor: '#ccc',
+    borderColor: '#E0E0E0', // Light gray border
     borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    backgroundColor: '#fff',
+    borderRadius: 12, // Rounded corners
+    paddingHorizontal: 16,
+    backgroundColor: '#FFFFFF', // White background
     fontSize: 16,
-    marginBottom: 12,
+    marginBottom: 16,
     color: '#333',
+    shadowColor: '#000', // Shadow for depth
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3, // For Android
   },
-  searchBar : {
-      zIndex :2 ,
+  searchBar: {
+    zIndex: 2,
+    marginBottom: 16,
   },
   errorText: {
-    color: 'red',
-    fontSize: 13,
+    color: '#FF3B30', // iOS error red
+    fontSize: 14,
     marginBottom: 10,
+    marginLeft: 8,
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 20,
-    gap: 10,
+    gap: 12,
   },
   button: {
     flex: 1,
     height: 50,
-    borderRadius: 8,
+    borderRadius: 12, // Rounded corners
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: '#000', // Shadow for depth
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3, // For Android
   },
   clearButton: {
-    backgroundColor: '#808080', // A darker shade of grey
-    borderWidth: 1, // Optional: Add a border for better distinction
-    borderColor: '#666', // Border color to match the button's tone
+    backgroundColor: '#F5F5F5', // Light gray background
+    borderWidth: 1,
+    borderColor: '#E0E0E0', // Light gray border
   },
   buttonText: {
-    color: '#333', // Darker text color for better visibility
+    color: '#333', // Dark text
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '600', // Semi-bold
   },
   submitButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#007AFF', // iOS system blue
   },
-
-
+  submitButtonText: {
+    color: '#FFFFFF', // White text
+  },
   viewAllButtonContainer: {
     position: 'absolute',
     bottom: 20,
@@ -61,14 +74,19 @@ export const styles = StyleSheet.create({
   },
   viewAllButton: {
     height: 50,
-    borderRadius: 8,
-    backgroundColor: '#007AFF',
+    borderRadius: 12, // Rounded corners
+    backgroundColor: '#007AFF', // iOS system blue
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: '#000', // Shadow for depth
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3, // For Android
   },
   viewAllButtonText: {
-    color: '#fff',
+    color: '#FFFFFF', // White text
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '600', // Semi-bold
   },
 });
