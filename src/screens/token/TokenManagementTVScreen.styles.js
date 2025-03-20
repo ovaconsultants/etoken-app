@@ -3,7 +3,6 @@ import { StyleSheet, Dimensions } from 'react-native';
 // Dynamically get the width of the screen
 const { height } = Dimensions.get('screen');
 const landscapeWidth = 884;
-console.log('landscapeWidth', landscapeWidth);
 
 export const styles = StyleSheet.create({
   fullScreenContainer: {

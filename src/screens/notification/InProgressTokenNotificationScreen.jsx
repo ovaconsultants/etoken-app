@@ -6,6 +6,7 @@ import {styles} from './InProgressTokenNotificationScreen.styles';
 import LoadingErrorHandler from '../../components/LoadingErrorHandler';
 import useSpeechNotification from '../../hooks/useSpeechNotification';
 
+
 const InProgressTokenNotificationScreen = ({
   inProgressPatient,
   isLoading,
@@ -21,10 +22,12 @@ const InProgressTokenNotificationScreen = ({
 
   // Trigger speech when inProgressPatient changes
   useEffect(() => {
-    if (inProgressPatient) {
-      speakMessages(); // Trigger speech functionality
-    }
-  }, [inProgressPatient, speakMessages]);
+      console.log('Speak Message is called in useEffect in Progress Notification Screen');
+      speakMessages();
+      return () => {
+        console.log('Stopping TTS on unmount');
+      };
+  },[inProgressPatient, speakMessages]);
 
   // If no token is available, show a message
   if (!inProgressPatient) {
@@ -50,7 +53,7 @@ const InProgressTokenNotificationScreen = ({
       <Card style={styles.card}>
         <Card.Content>
           <Text style={[styles.tableCell, {color: theme.colors.text}]}>
-            🏥 Token No: {inProgressPatient.token_id}
+            🏥 Token No: {inProgressPatient.token_no}
           </Text>
           <Text style={[styles.tableCell, {color: theme.colors.text}]}>
             👤 Token Name: {inProgressPatient.patient_name}

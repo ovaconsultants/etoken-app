@@ -5,14 +5,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const httpClient = axios.create({
-  baseURL: Config.API_BASE_URL || 'http://localhost:3001/',
+  baseURL: Config.API_BASE_URL ,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   },
 });
-console.log('Config.API_BASE_URL in api provider ', Config.API_BASE_URL);
-
 
 httpClient.interceptors.request.use(
   async (config) => {

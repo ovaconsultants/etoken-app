@@ -16,7 +16,6 @@ const logException = async (
       platform,
       created_by: createdBy,
     });
-    console.log('Exception logged successfully:', description);
   } catch (error) {
     console.error('Failed to log exception:', error);
   }
@@ -59,13 +58,9 @@ export const fetchData = async (endpoint, params = {}, headers = {}) => {
  */
 export const postData = async (endpoint, data = {}, headers = {}) => {
   try {
-    console.log('endpoint in postData ', endpoint);
-    console.log('data in postData', data);
-    console.log('headers in postData', headers);
     const response = await httpClient.post(endpoint, data, {
       headers,
     });
-    console.log('response', response);
     return response.data;
   } catch (error) {
     console.error('POST Request Failed:', {

@@ -8,19 +8,18 @@ const VideoAd = ({ source, style, onEnd }) => {
   const [hasError, setHasError] = React.useState(false);
   console.log('AdMedia Source:', source);
   console.trace();
-
   return (
     <View style={[styles.container, style]}>
       <Video
-        source={source}
+        source={{ uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4'}} 
         style={styles.media}
         resizeMode="cover"
-        repeat={false} 
-        controls={false} 
+        repeat={false}
+        controls={false}
         paused={false}
         onLoad={() => setIsLoading(false)}
         onError={() => setHasError(true)}
-        onEnd={onEnd} 
+        onEnd={onEnd}
       />
       {isLoading && (
         <View style={styles.loadingOverlay}>

@@ -46,9 +46,7 @@ const ReceptionScreenComponent = ({route}) => {
   });
 
   const handleSubmit = async (values, {resetForm}) => {
-    console.log('Form Values:', values);
     try {
-      // Check if the patient already exists in the local `patients` array
       const existingPatient = patients.find(
         patient =>
           patient.mobile_number === values.mobile_number.trim() ||

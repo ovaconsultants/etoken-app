@@ -12,7 +12,6 @@ const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
     const  isLoggedIn = useAtomValue(isAuthenticatedAtom);
-    console.log('isLoggedIn', isLoggedIn);
 return (
         <Stack.Navigator>
             { isLoggedIn ? (

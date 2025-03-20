@@ -1,14 +1,10 @@
-// AdDisplay.js
 import React from 'react';
 import { View, Text } from 'react-native';
 import ImageAd from './adElements/ImageAd';
 import VideoAd from './adElements/ VideoAd';
-import { mediaTypes } from '../../constants/advertisementsInfo/adMediaConfig';
-
+import { mediaTypes } from '../../constants/advertisementConfigData/adMediaConfig';
 
 const AdRenderer = ({ media, onEnd }) => {
-  console.log('AdMedia: in media', media);
-  console.trace();
   return (
     <View style={styles.container}>
       <View style={styles.fixedFrame}>
@@ -27,22 +23,20 @@ const AdRenderer = ({ media, onEnd }) => {
 };
 
 export default AdRenderer;
-
-// styles.js
 import { StyleSheet } from 'react-native';
 
-export const styles = StyleSheet.create({
+const styles =  StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#000', // Background color for the frame
+    backgroundColor: '#000',
   },
   fixedFrame: {
-    width: '90%', // Adjust width as needed
-    aspectRatio: 16 / 9, // Fixed aspect ratio (16:9)
-    borderRadius: 10, // Rounded corners
-    overflow: 'hidden', // Ensure content stays within the frame
+    width: '90%',
+    aspectRatio: 16 / 9,
+    borderRadius: 10,
+    overflow: 'hidden',
   },
   media: {
     width: '100%',
@@ -53,7 +47,7 @@ export const styles = StyleSheet.create({
     bottom: 20,
     left: 20,
     right: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     padding: 10,
     borderRadius: 5,
   },
@@ -66,21 +60,5 @@ export const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 14,
     marginTop: 5,
-  },
-  loadingOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  errorOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 0, 0, 0.5)',
-  },
-  errorText: {
-    color: '#FFFFFF',
-    fontSize: 16,
   },
 });

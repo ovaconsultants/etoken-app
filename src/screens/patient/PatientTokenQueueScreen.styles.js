@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { blueGrey100, brown100, brown400, brown500 } from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -81,6 +82,7 @@ export const styles = StyleSheet.create({
   // ScrollView Content
   scrollContent: {
     paddingBottom: hp('2%'),
+    justifyContent : 'center',
   },
 
   // Table Header
@@ -170,10 +172,46 @@ export const styles = StyleSheet.create({
   disabledButton: {
     opacity: 0.5,
   },
+  selectedRow: {
+    opacity: 0.5,
+    backgroundColor: '#CFD8DC', // Hex code for blueGrey100
+  },
 
   // Strikethrough
   strikethrough: {
     textDecorationLine: 'line-through',
     textDecorationStyle: 'solid',
+  },
+});
+
+export const sidePanelStyles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  sidePanel: {
+    width: '100%',
+    backgroundColor: '#fff',
+    padding: 20,
+  },
+  sidePanelButton: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  sidePanelButtonText: {
+    fontSize: 18,
+  },
+  closeButton: {
+    borderRadius : 20 ,
+    marginTop: 20,
+    padding: 15,
+    backgroundColor: '#f00',
+    alignItems: 'center',
+  },
+  closeButtonText: {
+    color: '#fff',
+    fontSize: 18,
   },
 });

@@ -1,5 +1,5 @@
 // useSpeechNotification.js
-import { useEffect, useRef, useCallback } from 'react';
+import { useRef, useCallback } from 'react';
 import Tts from 'react-native-tts';
 import { useTranslation } from './useLangTranslation';
 
@@ -43,15 +43,14 @@ const useSpeechNotification = (inProgressPatient) => {
       }
     });
 
-    return () => finishListener.remove();
+    return () => {
+      console.log('Cleaning up speech on unmount...');
+      Tts.stop();
+      finishListener.remove();
+    };
   }, [englishMessage, translatedMessageInRegional]);
 
-  // Trigger speech when inProgressPatient changes
-  useEffect(() => {
-    if (inProgressPatient) {
-      speakMessages();
-    }
-  }, [inProgressPatient, speakMessages]);
+
 
   return { speakMessages, translatedData };
 };

@@ -7,6 +7,7 @@ import {
 export const styles = StyleSheet.create({
   gradientContainer: {
     flex: 1,
+    // zIndex: -1, // Remove this line
   },
   header: {
     flexDirection: 'row',

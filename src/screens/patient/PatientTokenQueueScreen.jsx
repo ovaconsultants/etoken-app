@@ -1,16 +1,29 @@
-// PatientTokenQueueScreen.js
-import React, { useState , useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Modal, StyleSheet } from 'react-native';
-import { AdminPanelSettingsIcon , RefreshIcon } from '../../components/icons/Icons';
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+  Modal,
+} from 'react-native';
+import {
+  AdminPanelSettingsIcon,
+  RefreshIcon,
+} from '../../components/icons/Icons';
 import withQueryClientProvider from '../../hooks/useQueryClientProvider';
 import { usePatientTokenManager } from '../../hooks/usePatientTokenManager';
-import { styles } from './PatientTokenQueueScreen.styles';
+import { styles, sidePanelStyles } from './PatientTokenQueueScreen.styles';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
+import  DefaultReceptionScreen  from '../noTokenReceptionState/DefaultReceptionScreen';
+import { BackIcon } from '../../components/icons/Icons';
 
-const PatientTokenQueueScreen = ({navigation , route }) => {
+const PatientTokenQueueScreen = ({ navigation, route }) => {
   const { clinic_id, doctor_id } = route.params;
   const [isLoading, setIsLoading] = useState(true);
   const [isSidePanelVisible, setSidePanelVisible] = useState(false);
+  const doubleTapTimeout = useRef(null);
+
   const {
     patientTokens,
     selectedTokenId,
@@ -21,9 +34,28 @@ const PatientTokenQueueScreen = ({navigation , route }) => {
     handleRecall,
     handleDone,
   } = usePatientTokenManager(clinic_id, doctor_id);
+
+  const handleRowPress = (tokenId) => {
+    if (doubleTapTimeout.current) {
+      clearTimeout(doubleTapTimeout.current);
+      doubleTapTimeout.current = null;
+      handleSelectToken(tokenId); // Select the token on double tap
+    } else {
+      // First tap, set a timeout for double tap detection
+      doubleTapTimeout.current = setTimeout(() => {
+        doubleTapTimeout.current = null;
+      }, 300); // 300ms delay to detect double tap
+    }
+  };
+
   useEffect(() => {
     navigation.setOptions({
-      headerRight: () => <Text>Total Patients: {patientTokens.length}</Text>,
+      headerRight: () => <Text>{patientTokens.length}</Text>,
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => navigation.goBack()}  style={{ paddingRight: 30}}>
+           <BackIcon size={28} color="black" />
+        </TouchableOpacity> 
+      )
     });
 
     if (patientTokens !== undefined) {
@@ -38,112 +70,109 @@ const PatientTokenQueueScreen = ({navigation , route }) => {
       </View>
     );
   }
-  
+
   if (patientTokens.length === 0) {
     return (
       <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>No tokens are available</Text>
+        <DefaultReceptionScreen /> 
       </View>
     );
   }
+
   return (
     <View style={styles.container}>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          style={[styles.recallButton, !isRecallEnabled && styles.disabledButton]}
+          style={[
+            styles.recallButton,
+            !isRecallEnabled && styles.disabledButton,
+          ]}
           onPress={handleRecall}
-          disabled={!isRecallEnabled}
-        >
+          disabled={!isRecallEnabled}>
           <Text style={styles.buttonText}>Recall</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.nextButton]}
-          onPress={isNextDone ? handleDone : handleNext}
-        >
+          onPress={isNextDone ? handleDone : handleNext}>
           <Text style={styles.buttonText}>{isNextDone ? 'Done' : 'Next'}</Text>
         </TouchableOpacity>
       </View>
       <ScrollView horizontal contentContainerStyle={styles.scrollContent}>
         <View>
           <View style={styles.tableHeaderRow}>
-            <Text style={[styles.tableHeader, { width: wp('15%') }]}>Select</Text>
             <Text style={[styles.tableHeader, { width: wp('20%') }]}>Token</Text>
             <Text style={[styles.tableHeader, { width: wp('30%') }]}>Pt-Name</Text>
             <Text style={[styles.tableHeader, { width: wp('25%') }]}>Status</Text>
           </View>
-          {(patientTokens ?? []).map((token, index) => (
-            <View key={token.token_id} style={styles.tableRow}>
-              <TouchableOpacity
-                style={[styles.tableCell, { width: wp('15%') }]}
-                onPress={() => handleSelectToken(token.token_id)}
-              >
-                <View
-                  style={[
-                    styles.radioCircle,
-                    selectedTokenId === token.token_id && styles.radioCircleSelected,
-                  ]}
-                />
-              </TouchableOpacity>
+          {(patientTokens ?? []).map((token) => (
+            <TouchableOpacity
+              key={token.token_id}
+              style={[
+                styles.tableRow,
+                selectedTokenId === token.token_id && styles.selectedRow, // Apply opacity style
+              ]}
+              onPress={() => handleRowPress(token.token_id)} // Handle row press
+            >
               <Text
                 style={[
                   styles.tableCell,
                   { width: wp('20%') },
-                  isNextDone && selectedTokenId === token.token_id && styles.strikethrough,
-                ]}
-              >
+                  isNextDone &&
+                    selectedTokenId === token.token_id &&
+                    styles.strikethrough,
+                ]}>
                 {token.token_no}
               </Text>
               <Text
                 style={[
                   styles.tableCell,
                   { width: wp('30%') },
-                  isNextDone && selectedTokenId === token.token_id && styles.strikethrough,
-                ]}
-              >
+                  isNextDone &&
+                    selectedTokenId === token.token_id &&
+                    styles.strikethrough,
+                ]}>
                 {token.patient_name}
               </Text>
               <Text
                 style={[
                   styles.tableCell,
                   { width: wp('25%') },
-                  isNextDone && selectedTokenId === token.token_id && styles.strikethrough,
-                ]}
-              >
+                  isNextDone &&
+                    selectedTokenId === token.token_id &&
+                    styles.strikethrough,
+                ]}>
                 {token.status}
               </Text>
-            </View>
+            </TouchableOpacity>
           ))}
         </View>
       </ScrollView>
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.footerButton} onPress={() => setSidePanelVisible(true)}>
-         < AdminPanelSettingsIcon />
+        <TouchableOpacity
+          style={styles.footerButton}
+          onPress={() => setSidePanelVisible(true)}>
+          <AdminPanelSettingsIcon />
         </TouchableOpacity>
         <TouchableOpacity style={styles.footerButton}>
-        <RefreshIcon />
+          <RefreshIcon />
         </TouchableOpacity>
       </View>
 
       <Modal
         transparent={true}
         visible={isSidePanelVisible}
-        onRequestClose={() => setSidePanelVisible(false)}
-      >
+        onRequestClose={() => setSidePanelVisible(false)}>
         <View style={sidePanelStyles.overlay}>
           <View style={sidePanelStyles.sidePanel}>
             <TouchableOpacity style={sidePanelStyles.sidePanelButton}>
               <Text style={sidePanelStyles.sidePanelButtonText}>List Info</Text>
             </TouchableOpacity>
-            {/* <TouchableOpacity style={sidePanelStyles.sidePanelButton}>
-              <Text style={sidePanelStyles.sidePanelButtonText}>Turn On/Off Applicant</Text>
-            </TouchableOpacity> */}
             <TouchableOpacity style={sidePanelStyles.sidePanelButton}>
               <Text style={sidePanelStyles.sidePanelButtonText}>LogOut</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={sidePanelStyles.closeButton}
-              onPress={() => setSidePanelVisible(false)}
-            >
+              onPress={() => setSidePanelVisible(false)}>
               <Text style={sidePanelStyles.closeButtonText}>Close</Text>
             </TouchableOpacity>
           </View>
@@ -153,37 +182,4 @@ const PatientTokenQueueScreen = ({navigation , route }) => {
   );
 };
 
-const sidePanelStyles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  sidePanel: {
-    width: '100%',
-    backgroundColor: '#fff',
-    padding: 20,
-  },
-  sidePanelButton: {
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
-  sidePanelButtonText: {
-    fontSize: 18,
-  },
-  closeButton: {
-    borderRadius : 20 ,
-    marginTop: 20,
-    padding: 15,
-    backgroundColor: '#f00',
-    alignItems: 'center',
-  },
-  closeButtonText: {
-    color: '#fff',
-    fontSize: 18,
-  },
-});
-
-// Wrap the component using the custom hook
 export default withQueryClientProvider(PatientTokenQueueScreen);

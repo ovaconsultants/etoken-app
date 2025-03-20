@@ -29,8 +29,6 @@ const SignInScreen = ({navigation}) => {
     try {
       const data = await SignInRequest(email, password);
       const doctorClincDetails = data.response;
-      console.log('Doctor Details:', doctorClincDetails);
-
       if (!data.success) {
         throw new Error(data.message || 'Sign-in failed');
       }
@@ -47,7 +45,6 @@ const SignInScreen = ({navigation}) => {
       setDoctorIdAtom(doctor_id);
       setDoctorInfoAtom(doctorInfo);
       setDoctorClinicDetails(doctorClincDetails);
-      console.log('Sign-in successful. Token:', data.token);
     } catch (error) {
       console.error('Error signing in:', error);
       Alert.alert('Login Failed', error.message);

@@ -10,10 +10,12 @@ export const usePatientTokenManager = (clinic_id, doctor_id) => {
   const [isNextDone, setIsNextDone] = useState(false);
   const [pauseQuery, setPauseQuery] = useState(false);
 
-  const {
-    data: tokens = [],
-    refetch: refetchTokens,
-  } = usePatientTokens(doctor_id, clinic_id, null, pauseQuery);
+  const { data: tokens = [], refetch: refetchTokens } = usePatientTokens(
+    doctor_id,
+    clinic_id,
+    null,
+    pauseQuery
+  );
 
   useEffect(() => {
     if (tokens.length > 0) {
@@ -30,7 +32,7 @@ export const usePatientTokenManager = (clinic_id, doctor_id) => {
     if (selectedTokenId) {
       setPauseQuery(true);
 
-      const updatedTokens = patientTokens.map(token =>
+      const updatedTokens = patientTokens.map((token) =>
         token.token_id === selectedTokenId ? { ...token, status: 'In Progress' } : token
       );
       setPatientTokens(updatedTokens);
@@ -74,7 +76,7 @@ export const usePatientTokenManager = (clinic_id, doctor_id) => {
     if (selectedTokenId) {
       setPauseQuery(true);
 
-      const updatedTokens = patientTokens.filter(token => token.token_id !== selectedTokenId);
+      const updatedTokens = patientTokens.filter((token) => token.token_id !== selectedTokenId);
       setPatientTokens(updatedTokens);
 
       try {

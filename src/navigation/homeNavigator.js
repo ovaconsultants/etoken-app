@@ -8,6 +8,7 @@ import DefaultTVScreen from '../screens/television/DefaultTVScreen';
 import ReceptionScreen from '../screens/reception/ReceptionScreen';
 import TokenSuccessScreen from '../screens/tokenDisplay/TokenSuccessScreen';
 import PatientTokenQueueScreen from '../screens/patient/PatientTokenQueueScreen';
+import DefaultReceptionScreen from '../screens/noTokenReceptionState/DefaultReceptionScreen';
 import HomeIcon from '../components/HomeIcon';
 // Create stack navigator
 const Stack = createNativeStackNavigator();
@@ -41,6 +42,11 @@ const HomeNavigator = () => {
         options={{title: 'Reception'}}
       />
       <Stack.Screen
+        name="DefaultNoTokenReception"
+        component={DefaultReceptionScreen}
+        options={{title: 'No Active Tokens'}}
+      />
+      <Stack.Screen
         name="TokenSuccess"
         component={TokenSuccessScreen}
         options={{title: 'Token Display'}}
@@ -48,7 +54,7 @@ const HomeNavigator = () => {
       <Stack.Screen
         name="TokenListing"
         component={PatientTokenQueueScreen}
-        options={{title: 'Token List'}}
+        options={{title: 'Token List', headerBackTitleVisible: false}}
       />
       <Stack.Screen
         name="DefaultNoTokenTV"

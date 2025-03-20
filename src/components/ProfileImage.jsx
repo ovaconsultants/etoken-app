@@ -34,11 +34,9 @@ const ProfileCircle = ({ imageUrl }) => {
   const handleSignOut = () => {
     setUserTokenAtom(null);
     AsyncStorage.removeItem('token');
-    console.log('Going back to the Login Screen');
   };
 
   const handleSelect = (item) => {
-    console.log(`✅ Selected: ${item.value}`);
     setDropdownVisible(false);
   };
 

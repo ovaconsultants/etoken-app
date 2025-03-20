@@ -8,14 +8,12 @@ const ImagePickerComponent = ({ initialImage, onImageSelected }) => {
   const [imageUri, setImageUri] = useState(initialImage);
 
   const openGallery = async () => {
-    console.log("Opening Gallery...");
     const options = { mediaType: "photo", quality: 0.8 };
     const response = await launchImageLibrary(options);
     handleImageResponse(response);
   };
 
   const openCamera = async () => {
-    console.log("Opening Camera...");
     const options = { mediaType: "photo", quality: 0.8, saveToPhotos: true };
     const response = await launchCamera(options);
     handleImageResponse(response);

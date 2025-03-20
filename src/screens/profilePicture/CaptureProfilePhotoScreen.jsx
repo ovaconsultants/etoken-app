@@ -8,14 +8,12 @@ import { useAtomValue } from 'jotai';
 
 const CaptureProfilePhotoScreen = ({navigation}) => {
   const doctorId = useAtomValue(doctorIdAtom);
-  console.log("Doctor id in Profile screen", doctorId);
   console.trace();
   const [profileImage, setProfileImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
  // Replace with dynamic ID
 
  const navigateToClinicScreen = () => {
-  console.log("This is called navigation for clinic screen .");
   navigation.navigate('ClinicNavigator');
 };
 

@@ -42,7 +42,6 @@ export const RecallTokenRequest = async (recallTokenDataObj) => {
   try {
     const route = API_ENDPOINTS.TOKEN.RECALL_PT_TOKEN;
     const data = await putData(route,recallTokenDataObj);
-    console.log('data in api layer for Recall  token ', data );
     return data;
   } catch (error) {
     console.error('Failed to update token :', error);

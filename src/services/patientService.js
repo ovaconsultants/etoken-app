@@ -17,7 +17,6 @@ export const InsertPatientRequest = async (patientDataObj) => {
   try {
     const route = API_ENDPOINTS.PATIENT.INSERT_PATIENT;
     const data = await postData(route,patientDataObj);
-    console.log('data after inserting the patient' , data);
     return data.patient_id;
   } catch (error) {
     console.error('Failed to get tokens:', error);

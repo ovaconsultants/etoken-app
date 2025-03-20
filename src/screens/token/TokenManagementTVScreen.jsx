@@ -16,7 +16,6 @@ const queryClient = new QueryClient();
 
 const TokenManagement = ({route}) => {
   const clinicData = useAtomValue(doctorClinicDetailsAtom);
-  console.log('Clinic Data:', clinicData);
   const {doctor_id, clinic_id} = route.params;
   const {
     data: tokens = [],

@@ -234,3 +234,13 @@ export const UpdateProfileIcon = ({ width = 24, height = 24, color = '#000' }) =
       <Path d="M9 10h6M9 14h6" stroke={color} strokeWidth="2" strokeLinecap="round" />
     </Svg>
   );
+
+  export const BackIcon = ({ size = 30, color = 'black' }) => {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <Path d="M19 12H5" />
+      <Path d="M12 19l-7-7 7-7" />
+    </Svg>
+    );
+  };
+  
