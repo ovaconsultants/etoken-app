@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
 import { styles } from './DefaultTVScreen.styles';
 import { doctorInfoAtom } from '../../atoms/doctorAtoms/doctorAtom';
 import { useAtomValue } from 'jotai';
 import { getInitials } from '../../utils/getInitials';
 import AdWithRotation from '../../components/advertisement/AdRotation';
+import FastImage  from 'react-native-fast-image';
+import { useProfileURI } from '../../hooks/useProfileURI';
 
 const DefaultTVScreen = ({ clinicInfo, footerDetails = '' }) => {
   const [isAdShowing, setIsAdShowing] = useState(false);
@@ -60,35 +61,73 @@ const DefaultTVScreen = ({ clinicInfo, footerDetails = '' }) => {
   );
 };
 
+
 const DefaultScreenContent = ({ clinicInfo, doctorInfo, doctorInitials }) => {
+  const profileUri = useProfileURI();
+  console.log('Profile URI', profileUri);
   console.log('Rendering Default Screen Content');
+
   return (
-    <>
+    <View style={styles.container}>
+      {/* Header Section */}
       <View style={styles.header}>
         <View style={styles.clinicInfo}>
           <Text style={styles.clinicName}>{clinicInfo.clinic_name}</Text>
-          <Text>
+          <Text style={styles.clinicAddress}>
             {clinicInfo.clinic_address}, {clinicInfo.clinic_city}, {clinicInfo.clinic_state} - {clinicInfo.clinic_zipcode}
           </Text>
         </View>
         <View style={styles.initialsCircle}>
-          <Text style={styles.doctorInitials}>{doctorInitials}</Text>
+          <Text style={styles.doctorInitials}>{'JD'}</Text>
         </View>
       </View>
 
-      <View style={styles.doctorSection}>
-        <View style={styles.detailsContainer}>
-          <Text style={styles.doctorName}>Dr {doctorInfo.doctor_name}</Text>
+      {/* Doctor Profile Section */}
+      <View style={styles.profileSection}>
+        <FastImage
+          source={{ uri: profileUri }}
+          style={styles.doctorImage}
+          resizeMode="cover"
+        />
+        <Text style={styles.doctorName}>Dr. John Doe</Text>
+        <Text style={styles.doctorTitle}>{doctorInfo?.specialty}</Text>
+      </View>
+
+      {/* Doctor Details Section */}
+      <View style={styles.detailsSection}>
+        <View style={styles.detailRow}>
+          <Text style={styles.detailLabel}>Experience</Text>
+          <Text style={styles.detailValue}>{doctorInfo?.experience} Years+</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Text style={styles.detailLabel}>Languages</Text>
+          <Text style={styles.detailValue}>{doctorInfo?.languages.join(', ')}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Text style={styles.detailLabel}>Specialties</Text>
+          <Text style={styles.detailValue}>{doctorInfo?.specialties.join(', ')}</Text>
         </View>
       </View>
 
+      {/* Contact Section */}
+      <View style={styles.contactSection}>
+        <Text style={styles.contactLabel}>Contact Information</Text>
+        <Text style={styles.contactValue}>{doctorInfo?.phone}</Text>
+        <Text style={styles.contactValue}>{doctorInfo?.email}</Text>
+        <Text style={styles.contactValue}>{doctorInfo?.website}</Text>
+      </View>
+
+      {/* Footer Section */}
       <View style={styles.footer}>
         <Text style={styles.footerDetails}>
-          This is our clinic {clinicInfo.clinic_name}. We hope you get well soon!
+          This is our clinic {clinicInfo?.clinic_name}. We hope you get well soon!
+        </Text>
+        <Text style={styles.footerNote}>
+          © 2025 Designed & Developed by OVA2 Consultants Pvt. Ltd
         </Text>
       </View>
-    </>
+    </View>
   );
 };
 
-export default DefaultTVScreen;
+export default DefaultScreenContent;
