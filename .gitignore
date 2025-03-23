@@ -76,3 +76,4 @@ yarn-error.log
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+android/.kotlin/sessions/kotlin-compiler-15880683517479267389.salive
