@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   View,
   Text,
@@ -12,15 +12,15 @@ import {
   RefreshIcon,
 } from '../../components/icons/Icons';
 import withQueryClientProvider from '../../hooks/useQueryClientProvider';
-import { usePatientTokenManager } from '../../hooks/usePatientTokenManager';
-import { styles, sidePanelStyles } from './PatientTokenQueueScreen.styles';
-import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
+import {usePatientTokenManager} from '../../hooks/usePatientTokenManager';
+import {styles, sidePanelStyles} from './PatientTokenQueueScreen.styles';
+import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import DefaultReceptionScreen from '../noTokenReceptionState/DefaultReceptionScreen';
-import { BackIcon } from '../../components/icons/Icons';
+import {BackIcon} from '../../components/icons/Icons';
 import InfoSymbol from '../../components/InfoSymbol';
 
-const PatientTokenQueueScreen = ({ navigation, route }) => {
-  const { clinic_id, doctor_id } = route.params;
+const PatientTokenQueueScreen = ({navigation, route}) => {
+  const {clinic_id, doctor_id} = route.params;
   const [isLoading, setIsLoading] = useState(true);
   const [isSidePanelVisible, setSidePanelVisible] = useState(false);
   const doubleTapTimeout = useRef(null);
@@ -36,7 +36,7 @@ const PatientTokenQueueScreen = ({ navigation, route }) => {
     handleDone,
   } = usePatientTokenManager(clinic_id, doctor_id);
 
-  const handleRowPress = (tokenId) => {
+  const handleRowPress = tokenId => {
     if (doubleTapTimeout.current) {
       clearTimeout(doubleTapTimeout.current);
       doubleTapTimeout.current = null;
@@ -49,17 +49,22 @@ const PatientTokenQueueScreen = ({ navigation, route }) => {
     }
   };
 
-  const handleInfoSymbolPress = (token) => {
+  const handleInfoSymbolPress = token => {
     console.log('Patient Info Editor ', token);
-    navigation.navigate('PatientInfoEditor', { patientInfo: token 
-    });
+    navigation.navigate('PatientInfoEditor', {patientInfo: token});
   };
 
   useEffect(() => {
     navigation.setOptions({
-      headerRight: () => <Text>{patientTokens.length}</Text>,
+      headerRight: () => (
+        <View style={{paddingRight: 15}}>
+          <Text>{patientTokens?.length || 0}</Text>
+        </View>
+      ),
       headerLeft: () => (
-        <TouchableOpacity onPress={() => navigation.goBack()} style={{ paddingRight: 30 }}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={{paddingRight: 30}}>
           <BackIcon size={28} color="black" />
         </TouchableOpacity>
       ),
@@ -90,7 +95,10 @@ const PatientTokenQueueScreen = ({ navigation, route }) => {
     <View style={styles.container}>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          style={[styles.recallButton, !isRecallEnabled && styles.disabledButton]}
+          style={[
+            styles.recallButton,
+            !isRecallEnabled && styles.disabledButton,
+          ]}
           onPress={handleRecall}
           disabled={!isRecallEnabled}>
           <Text style={styles.buttonText}>Recall</Text>
@@ -104,12 +112,17 @@ const PatientTokenQueueScreen = ({ navigation, route }) => {
       <ScrollView horizontal contentContainerStyle={styles.scrollContent}>
         <View>
           <View style={styles.tableHeaderRow}>
-            <Text style={[styles.tableHeader, { width: wp('20%') }]}>Token</Text>
-            <Text style={[styles.tableHeader, { width: wp('30%') }]}>Pt-Name</Text>
-            <Text style={[styles.tableHeader, { width: wp('25%') }]}>Status</Text>
-            <Text style={[styles.tableHeader, { width: wp('10%') }]}>Info</Text> {/* Added Info column */}
+            <Text style={[styles.tableHeader, {width: wp('20%')}]}>Token</Text>
+            <Text style={[styles.tableHeader, {width: wp('30%')}]}>
+              Pt-Name
+            </Text>
+            <Text style={[styles.tableHeader, {width: wp('25%')}]}>Status</Text>
+            <Text style={[styles.tableHeader, {width: wp('10%')}]}>
+              Info
+            </Text>{' '}
+            {/* Added Info column */}
           </View>
-          {(patientTokens ?? []).map((token) => (
+          {(patientTokens ?? []).map(token => (
             <View key={token.token_id}>
               <TouchableOpacity
                 style={[
@@ -120,7 +133,7 @@ const PatientTokenQueueScreen = ({ navigation, route }) => {
                 <Text
                   style={[
                     styles.tableCell,
-                    { width: wp('20%') },
+                    {width: wp('20%')},
                     isNextDone &&
                       selectedTokenId === token.token_id &&
                       styles.strikethrough,
@@ -130,7 +143,7 @@ const PatientTokenQueueScreen = ({ navigation, route }) => {
                 <Text
                   style={[
                     styles.tableCell,
-                    { width: wp('30%') },
+                    {width: wp('30%')},
                     isNextDone &&
                       selectedTokenId === token.token_id &&
                       styles.strikethrough,
@@ -140,15 +153,17 @@ const PatientTokenQueueScreen = ({ navigation, route }) => {
                 <Text
                   style={[
                     styles.tableCell,
-                    { width: wp('25%') },
+                    {width: wp('25%')},
                     isNextDone &&
                       selectedTokenId === token.token_id &&
                       styles.strikethrough,
                   ]}>
                   {token.status}
                 </Text>
-                <View style={[styles.tableCell, { width: wp('10%') }]}>
-                  <InfoSymbol onPress={() => handleInfoSymbolPress(token)} />
+                <View style={[styles.tableCell, {width: wp('10%')}]}>
+                  <Text>
+                    <InfoSymbol onPress={() => handleInfoSymbolPress(token)} />
+                  </Text>
                 </View>
               </TouchableOpacity>
             </View>
