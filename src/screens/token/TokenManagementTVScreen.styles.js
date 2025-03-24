@@ -1,14 +1,13 @@
 import { StyleSheet, Dimensions } from 'react-native';
 
 // Dynamically get the width of the screen
-const { height } = Dimensions.get('screen');
+const { height, width } = Dimensions.get('screen');
 const landscapeWidth = 884;
 
 export const styles = StyleSheet.create({
   fullScreenContainer: {
     flex: 1,
-    // backgroundColor: '#000000',
-    padding: landscapeWidth * 0.02, // Dynamic padding based on landscape width
+    padding: landscapeWidth * 0.02,
   },
   loaderContainer: {
     flex: 1,
@@ -16,13 +15,56 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#f0f0f0',
   },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: landscapeWidth * 0.02,
+    marginBottom: height * 0.02,
+  },
+  profileCircle: {
+    width: height * 0.08,
+    height: height * 0.08,
+    borderRadius: (height * 0.08) / 2,
+    backgroundColor: 'orange',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  profileInitials: {
+    fontSize: landscapeWidth * 0.03,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  doctorInfo: {
+    flex: 1,
+    marginLeft: landscapeWidth * 0.02,
+  },
+  doctorName: {
+    fontSize: landscapeWidth * 0.03,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  doctorQualification: {
+    fontSize: landscapeWidth * 0.02,
+    color: '#666',
+  },
+  reloadButton: {
+    backgroundColor: '#009BFF',
+    paddingVertical: height * 0.01,
+    paddingHorizontal: landscapeWidth * 0.02,
+    borderRadius: 8,
+  },
+  reloadButtonText: {
+    fontSize: landscapeWidth * 0.02,
+    color: '#fff',
+    fontWeight: 'bold',
+  },
   scrollContent: {
     flexGrow: 1,
-    // backgroundColor: 'green',
     paddingHorizontal: landscapeWidth * 0.02,
   },
   tableRow: {
-    width: landscapeWidth/1.3,
+    width: landscapeWidth / 1.3,
     flexDirection: 'row',
     alignItems: 'center',
     borderBottomWidth: 1,
@@ -34,7 +76,6 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 3,
-    // paddingHorizontal: landscapeWidth * 0.02, // Dynamic horizontal padding
   },
   tableHeader: {
     width: '100%',
@@ -44,7 +85,7 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#fff',
     flex: 1,
-    fontSize: landscapeWidth * 0.018, // Responsive font size
+    fontSize: landscapeWidth * 0.018,
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
   },
@@ -57,7 +98,7 @@ export const styles = StyleSheet.create({
   },
   notificationInProgress: {
     position: 'absolute',
-    bottom : 0.00 * height,
+    bottom: 0.0 * height,
     right: 0.05 * height,
     margin: landscapeWidth * 0.02,
     zIndex: 100,

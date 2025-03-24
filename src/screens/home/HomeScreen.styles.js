@@ -7,37 +7,41 @@ import {
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8F9FA', 
+    backgroundColor: '#F8F9FA',
   },
-
   cardContainer: {
     height: hp('60%'),
     justifyContent: 'center',
     alignItems: 'center',
-    margin:wp('1%'),
-    padding: wp('5%'), // 5% of screen width
+    margin: wp('1%'),
+    padding: wp('5%'),
   },
-  text: {
-    fontSize: wp('5%'), // 5% of screen width
-    color: '#333',
-    textAlign: 'center',
+  bottomContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: hp('2%'),
   },
   button: {
-    marginTop : hp('3%'),
-    alignSelf : 'center',
-    width : wp('70%'),
-    height : hp('5%'),
-    backgroundColor: '#007AFF', // 2% of screen height
+    marginTop: hp('3%'),
+    alignSelf: 'center',
+    width: wp('70%'),
+    height: hp('6%'),
+    backgroundColor: '#007AFF',
     borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
     shadowColor: '#007AFF',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 5,
     elevation: 6,
   },
+  buttonDisabled: {
+    opacity: 0.7,
+  },
   buttonText: {
     color: 'white',
-    fontSize: wp('10%'),
+    fontSize: wp('4.5%'),
     fontWeight: '600',
-  }, 
+  },
 });

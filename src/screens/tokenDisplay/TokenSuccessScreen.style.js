@@ -1,83 +1,46 @@
 import { StyleSheet } from 'react-native';
-import { width, height } from './TokenSuccessScreen'; // Import screen dimensions
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    width: width, // Take full width
-    height: height, // Take full height
+    backgroundColor: 'rgb(93, 101, 208)',
   },
-  content: {
-    width: '90%',
-    padding: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', // Semi-transparent white background
-    borderRadius: 20,
+  contentWrapper: {
+    justifyContent: 'center',
     alignItems: 'center',
-    elevation: 10, // Shadow for Android
-    shadowColor: '#000', // Shadow for iOS
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-  },
-  headerContainer: {
-    alignItems: 'center',
-    marginBottom: 30,
-  },
-  header: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginTop: 10,
-    textAlign: 'center',
-  },
-  detailsContainer: {
     width: '100%',
-    marginBottom: 20,
   },
-  detailRow: {
-    flexDirection: 'row',
+  circleContainer: {
+    width: 220,
+    height: 220,
+    borderRadius: 110,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 15,
+    borderWidth: 2,
+    borderColor: '#FFF',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 12,
   },
-  detailLabel: {
-    fontSize: 18,
-    color: '#fff',
-    fontWeight: '600',
-    marginLeft: 10,
-    marginRight: 5,
-  },
-  detailValue: {
-    fontSize: 18,
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  tokenContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)', // Semi-transparent white background
-    padding: 20,
-    borderRadius: 15,
-    marginVertical: 20,
+  glow: {
+    position: 'absolute',
+    width: 250,
+    height: 250,
+    borderRadius: 125,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
   },
   tokenText: {
-    fontSize: 48,
+    fontSize: 72,
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#FFF',
     textAlign: 'center',
-  },
-  closeButton: {
-    backgroundColor: '#4CAF50', // Green button
-    paddingHorizontal: 30,
-    paddingVertical: 15,
-    borderRadius: 10,
-    marginTop: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  closeButtonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginLeft: 10,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 5,
   },
 });

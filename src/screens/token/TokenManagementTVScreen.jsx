@@ -1,6 +1,12 @@
-// TokenManagement.js
 import React, {useEffect, useState} from 'react';
-import {View, Text, ActivityIndicator, SafeAreaView} from 'react-native';
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  SafeAreaView,
+  TouchableOpacity,
+  Image,
+} from 'react-native';
 import {styles} from './TokenManagementTVScreen.styles';
 import Orientation from 'react-native-orientation-locker';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
@@ -8,14 +14,20 @@ import {usePatientTokens} from '../../hooks/usePatientTokens';
 import InProgressTokenNotificationScreen from '../notification/InProgressTokenNotificationScreen';
 import DefaultTVScreen from '../television/DefaultTVScreen';
 import {TokenTable} from './TokenTable';
-import {doctorClinicDetailsAtom} from '../../atoms/doctorAtoms/doctorAtom';
+import {
+  doctorClinicDetailsAtom,
+  doctorInfoAtom,
+} from '../../atoms/doctorAtoms/doctorAtom';
 import {useAtomValue} from 'jotai';
+import {getInitials} from '../../utils/getInitials';
 
 // Query client for React Query
 const queryClient = new QueryClient();
 
 const TokenManagement = ({route}) => {
   const clinicData = useAtomValue(doctorClinicDetailsAtom);
+  const doctorData = useAtomValue(doctorInfoAtom);
+  const doctorInitials = getInitials(doctorData.doctor_name);
   const {doctor_id, clinic_id} = route.params;
   const {
     data: tokens = [],
@@ -65,6 +77,23 @@ const TokenManagement = ({route}) => {
   // Render token table and in-progress notification
   return (
     <View style={styles.fullScreenContainer}>
+      <View style={styles.headerContainer}>
+        <View style={styles.profileCircle}>
+          <Text style={styles.profileInitials}>{doctorInitials}</Text>
+        </View>
+        <View style={styles.doctorInfo}>
+          <Text style={styles.doctorName}>Dr. {doctorData.doctor_name}</Text>
+          <Text style={styles.doctorQualification}>
+            {doctorData.qualification}
+          </Text>
+        </View>
+        <TouchableOpacity style={styles.reloadButton}>
+          <Image
+            source={require('../../../assets/ads/images/arrow.circlepath.png')}
+            accessibilityLabel="Reload button"
+          />
+        </TouchableOpacity>
+      </View>
       <TokenTable tokens={tokens} />
       <View style={styles.notificationInProgress}>
         {inProgressPatient && (

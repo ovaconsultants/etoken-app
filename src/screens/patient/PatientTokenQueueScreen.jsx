@@ -15,8 +15,9 @@ import withQueryClientProvider from '../../hooks/useQueryClientProvider';
 import { usePatientTokenManager } from '../../hooks/usePatientTokenManager';
 import { styles, sidePanelStyles } from './PatientTokenQueueScreen.styles';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
-import  DefaultReceptionScreen  from '../noTokenReceptionState/DefaultReceptionScreen';
+import DefaultReceptionScreen from '../noTokenReceptionState/DefaultReceptionScreen';
 import { BackIcon } from '../../components/icons/Icons';
+import InfoSymbol from '../../components/InfoSymbol';
 
 const PatientTokenQueueScreen = ({ navigation, route }) => {
   const { clinic_id, doctor_id } = route.params;
@@ -39,23 +40,29 @@ const PatientTokenQueueScreen = ({ navigation, route }) => {
     if (doubleTapTimeout.current) {
       clearTimeout(doubleTapTimeout.current);
       doubleTapTimeout.current = null;
-      handleSelectToken(tokenId); // Select the token on double tap
+      handleSelectToken(tokenId);
     } else {
       // First tap, set a timeout for double tap detection
       doubleTapTimeout.current = setTimeout(() => {
         doubleTapTimeout.current = null;
-      }, 300); // 300ms delay to detect double tap
+      }, 300);
     }
+  };
+
+  const handleInfoSymbolPress = (token) => {
+    console.log('Patient Info Editor ', token);
+    navigation.navigate('PatientInfoEditor', { patientInfo: token 
+    });
   };
 
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => <Text>{patientTokens.length}</Text>,
       headerLeft: () => (
-        <TouchableOpacity onPress={() => navigation.goBack()}  style={{ paddingRight: 30}}>
-           <BackIcon size={28} color="black" />
-        </TouchableOpacity> 
-      )
+        <TouchableOpacity onPress={() => navigation.goBack()} style={{ paddingRight: 30 }}>
+          <BackIcon size={28} color="black" />
+        </TouchableOpacity>
+      ),
     });
 
     if (patientTokens !== undefined) {
@@ -74,7 +81,7 @@ const PatientTokenQueueScreen = ({ navigation, route }) => {
   if (patientTokens.length === 0) {
     return (
       <View style={styles.emptyContainer}>
-        <DefaultReceptionScreen /> 
+        <DefaultReceptionScreen />
       </View>
     );
   }
@@ -83,10 +90,7 @@ const PatientTokenQueueScreen = ({ navigation, route }) => {
     <View style={styles.container}>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          style={[
-            styles.recallButton,
-            !isRecallEnabled && styles.disabledButton,
-          ]}
+          style={[styles.recallButton, !isRecallEnabled && styles.disabledButton]}
           onPress={handleRecall}
           disabled={!isRecallEnabled}>
           <Text style={styles.buttonText}>Recall</Text>
@@ -103,47 +107,51 @@ const PatientTokenQueueScreen = ({ navigation, route }) => {
             <Text style={[styles.tableHeader, { width: wp('20%') }]}>Token</Text>
             <Text style={[styles.tableHeader, { width: wp('30%') }]}>Pt-Name</Text>
             <Text style={[styles.tableHeader, { width: wp('25%') }]}>Status</Text>
+            <Text style={[styles.tableHeader, { width: wp('10%') }]}>Info</Text> {/* Added Info column */}
           </View>
           {(patientTokens ?? []).map((token) => (
-            <TouchableOpacity
-              key={token.token_id}
-              style={[
-                styles.tableRow,
-                selectedTokenId === token.token_id && styles.selectedRow, // Apply opacity style
-              ]}
-              onPress={() => handleRowPress(token.token_id)} // Handle row press
-            >
-              <Text
+            <View key={token.token_id}>
+              <TouchableOpacity
                 style={[
-                  styles.tableCell,
-                  { width: wp('20%') },
-                  isNextDone &&
-                    selectedTokenId === token.token_id &&
-                    styles.strikethrough,
-                ]}>
-                {token.token_no}
-              </Text>
-              <Text
-                style={[
-                  styles.tableCell,
-                  { width: wp('30%') },
-                  isNextDone &&
-                    selectedTokenId === token.token_id &&
-                    styles.strikethrough,
-                ]}>
-                {token.patient_name}
-              </Text>
-              <Text
-                style={[
-                  styles.tableCell,
-                  { width: wp('25%') },
-                  isNextDone &&
-                    selectedTokenId === token.token_id &&
-                    styles.strikethrough,
-                ]}>
-                {token.status}
-              </Text>
-            </TouchableOpacity>
+                  styles.tableRow,
+                  selectedTokenId === token.token_id && styles.selectedRow,
+                ]}
+                onPress={() => handleRowPress(token.token_id)}>
+                <Text
+                  style={[
+                    styles.tableCell,
+                    { width: wp('20%') },
+                    isNextDone &&
+                      selectedTokenId === token.token_id &&
+                      styles.strikethrough,
+                  ]}>
+                  {token.token_no}
+                </Text>
+                <Text
+                  style={[
+                    styles.tableCell,
+                    { width: wp('30%') },
+                    isNextDone &&
+                      selectedTokenId === token.token_id &&
+                      styles.strikethrough,
+                  ]}>
+                  {token.patient_name}
+                </Text>
+                <Text
+                  style={[
+                    styles.tableCell,
+                    { width: wp('25%') },
+                    isNextDone &&
+                      selectedTokenId === token.token_id &&
+                      styles.strikethrough,
+                  ]}>
+                  {token.status}
+                </Text>
+                <View style={[styles.tableCell, { width: wp('10%') }]}>
+                  <InfoSymbol onPress={() => handleInfoSymbolPress(token)} />
+                </View>
+              </TouchableOpacity>
+            </View>
           ))}
         </View>
       </ScrollView>

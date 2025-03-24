@@ -20,6 +20,7 @@ export const usePatientTokenManager = (clinic_id, doctor_id) => {
   useEffect(() => {
     if (tokens.length > 0) {
       setPatientTokens(tokens);
+      console.log('patient tokens' , tokens);
       setSelectedTokenId(tokens[0].token_id);
     }
   }, [tokens]);

@@ -1,74 +1,110 @@
-import React, {useEffect} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Dimensions,
-  StatusBar,
-} from 'react-native';
-import LinearGradient from 'react-native-linear-gradient'; // For gradient background
-import {
-  CheckCircleIcon,
-  PersonIcon,
-  BadgeIcon,
-} from '../../components/icons/Icons';
-import {styles} from './TokenSuccessScreen.style';
-import {useNavigation} from '@react-navigation/native';
+import React, { useEffect, useRef } from 'react';
+import { StatusBar, Animated, Easing, Text, View } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import { styles } from './TokenSuccessScreen.style';
 
-const {width, height} = Dimensions.get('window'); // Get screen dimensions
+const TokenSuccessScreen = ({ route, navigation }) => {
+  const { tokenNumber } = route.params;
 
-const TokenSuccessScreen = ({route}) => {
-  const {tokenNumber, patientName, patientId} = route.params; // Destructure route params
-  const navigation = useNavigation();
+  // Animation values
+  const scaleValue = useRef(new Animated.Value(0.8)).current;
+  const opacityValue = useRef(new Animated.Value(0)).current;
+  const glowValue = useRef(new Animated.Value(0)).current;
+  const pulseValue = useRef(new Animated.Value(1)).current;
 
-  // Automatically navigate back after 20 seconds
   useEffect(() => {
+    // Start animations
+    Animated.parallel([
+      Animated.timing(opacityValue, {
+        toValue: 1,
+        duration: 1200,
+        easing: Easing.out(Easing.quad),
+        useNativeDriver: true,
+      }),
+      Animated.timing(scaleValue, {
+        toValue: 1,
+        duration: 1000,
+        easing: Easing.out(Easing.elastic(1.1)),
+        useNativeDriver: true,
+      }),
+      // Glow effect
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(glowValue, {
+            toValue: 1,
+            duration: 800,
+            easing: Easing.ease,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glowValue, {
+            toValue: 0,
+            duration: 800,
+            easing: Easing.ease,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start(),
+      // Pulse effect
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(pulseValue, {
+            toValue: 1.1,
+            duration: 500,
+            easing: Easing.ease,
+            useNativeDriver: true,
+          }),
+          Animated.timing(pulseValue, {
+            toValue: 1,
+            duration: 500,
+            easing: Easing.ease,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start(),
+    ]).start();
+
+    // Auto navigate back after 10 seconds
     const timer = setTimeout(() => {
       navigation.goBack();
-    }, 20000);
+    }, 10000);
 
     return () => clearTimeout(timer);
-  }, [navigation]);
+  }, [glowValue, navigation, opacityValue, pulseValue, scaleValue]);
 
   return (
-    <LinearGradient
-      colors={['#4c669f', '#3b5998', '#192f6a']} // Gradient colors
-      style={styles.container}>
-      <StatusBar barStyle="light-content" /> {/* Light status bar text */}
-      <View style={styles.content}>
-        {/* Header with icon */}
-        <View style={styles.headerContainer}>
-          <CheckCircleIcon />
-          <Text style={styles.header}>Token Generated Successfully</Text>
-        </View>
-
-        {/* Patient Details */}
-        <View style={styles.detailsContainer}>
-          <View style={styles.detailRow}>
-            <PersonIcon />
-            <Text style={styles.detailLabel}>Patient ID:</Text>
-            <Text style={styles.detailValue}>{patientId}</Text>
-          </View>
-          <View style={styles.detailRow}>
-            <BadgeIcon />
-            <Text style={styles.detailLabel}>Patient Name:</Text>
-            <Text style={styles.detailValue}>{patientName}</Text>
-          </View>
-        </View>
-
-        {/* Token Number */}
-        <View style={styles.tokenContainer}>
-          <Text style={styles.tokenText}>Token No: {tokenNumber}</Text>
-        </View>
-
-        {/* Close Button */}
-        <TouchableOpacity
-          style={styles.closeButton}
-          onPress={() => navigation.goBack()}>
-          <Text style={styles.closeButtonText}>Close</Text>
-        </TouchableOpacity>
+    <View
+      style={styles.container}
+    >
+      <StatusBar barStyle="light-content" />
+      <View style={styles.contentWrapper}>
+        <Animated.View
+          style={[
+            styles.circleContainer,
+            { transform: [{ scale: scaleValue }] },
+          ]}
+        >
+          {/* Glow Effect */}
+          <Animated.View
+            style={[
+              styles.glow,
+              { opacity: glowValue },
+            ]}
+          />
+          {/* Token Number */}
+          <Animated.Text
+            style={[
+              styles.tokenText,
+              {
+                opacity: opacityValue,
+                transform: [{ scale: pulseValue }],
+              },
+            ]}
+          >
+            {tokenNumber}
+          </Animated.Text>
+        </Animated.View>
       </View>
-    </LinearGradient>
+    </View>
   );
 };
 

@@ -1,4 +1,4 @@
-import { fetchData  , postData} from './apiService';
+import { fetchData,postData,putData} from './apiService';
 import { API_ENDPOINTS } from '../constants/endPoints/apiRoutes';
 
 export const FetchPatientsRequest = async() => {
@@ -23,3 +23,15 @@ export const InsertPatientRequest = async (patientDataObj) => {
     throw error;
   }
 };
+
+export const UpdatePatientRequest = async (patientDataObj) => {
+  try {
+    const route = API_ENDPOINTS.PATIENT.UPDATE_PATIENT;
+    const data = await putData(route,patientDataObj);
+    return data;
+  } catch (error) {
+    console.error('Failed to get tokens:', error);
+    throw error;
+  }
+}
+

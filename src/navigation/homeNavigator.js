@@ -1,4 +1,5 @@
 import React from 'react';
+import { Image } from 'react-native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {useProfileURI} from '../hooks/useProfileURI';
 import ProfileCircle from '../components/ProfileImage';
@@ -8,14 +9,14 @@ import DefaultTVScreen from '../screens/television/DefaultTVScreen';
 import ReceptionScreen from '../screens/reception/ReceptionScreen';
 import TokenSuccessScreen from '../screens/tokenDisplay/TokenSuccessScreen';
 import PatientTokenQueueScreen from '../screens/patient/PatientTokenQueueScreen';
+import { PatientInfoEditorScreen } from '../screens/patientEditor/PatientInfoEditorReceptionScreen';
 import DefaultReceptionScreen from '../screens/noTokenReceptionState/DefaultReceptionScreen';
-import HomeIcon from '../components/HomeIcon';
+// import HomeIcon from '../components/HomeIcon';
 // Create stack navigator
 const Stack = createNativeStackNavigator();
 
 const HeaderHomeIcon = () => (
-<HomeIcon width={32} height={32} color="#4A90E2" />
-);
+  <Image source={require('../../assets/ads/images/home.png')}/>);
 
 const HeaderRightProfile = React.memo(({imageUrl}) => (
   <ProfileCircle imageUrl={imageUrl} />
@@ -64,7 +65,12 @@ const HomeNavigator = () => {
       <Stack.Screen
         name="TokenManagement"
         component={TokenManagementScreen}
-        options={{title: 'Token Management'}}
+        options={{title: 'Patients'}}
+      />
+      <Stack.Screen
+        name="PatientInfoEditor"
+        component={PatientInfoEditorScreen}
+        options={{title: 'Edit Patient Info'}}
       />
     </Stack.Navigator>
   );

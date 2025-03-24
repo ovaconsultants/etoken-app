@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
+  Image,
   StyleSheet,
   Dimensions,
   TouchableOpacity,
@@ -13,20 +14,26 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSetAtom } from 'jotai';
 import { userTokenAtom } from '../atoms/authAtoms/authAtom';
 import FastImage from 'react-native-fast-image';
-import LinearGradient from 'react-native-linear-gradient';
-import { ProfileIcon,AddClinicIcon ,AddScheduleIcon , LogoutIcon ,UpdateProfileIcon } from './icons/Icons';
+import { LogoutIcon } from './icons/Icons';
+// import { ProfileIcon, AddClinicIcon, AddScheduleIcon, LogoutIcon, UpdateProfileIcon } from './icons/Icons';
 
 const { width } = Dimensions.get('window');
 
 const ProfileCircle = ({ imageUrl }) => {
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const fadeAnim = useState(new Animated.Value(0))[0]; // For fade animation
+  const iconPaths = {
+    profile: require('../../assets/ads/images/profile.png'),
+    'Add Clinic': require('../../assets/ads/images/clinic.png'),
+    'Add clinic schedule': require('../../assets/ads/images/schedule.png'),
+    'profile pic': require('../../assets/ads/images/updateProfile.png'),
+  };
 
   const data = [
-    { label: 'Profile', value: 'profile', icon: <ProfileIcon/>},
-    { label: 'Add Clinic', value: 'Add Clinic', icon: <AddClinicIcon/> },
-    { label: 'Add clinic schedule', value: 'Add clinic schedule', icon: <AddScheduleIcon/> },
-    { label: 'Update profile picture', value: 'profile pic', icon: <UpdateProfileIcon /> },
+    { label: 'Profile', value: 'profile', icon: <Image source={iconPaths.profile} style={styles.icon} /> },
+    { label: 'Add Clinic', value: 'Add Clinic', icon: <Image source={iconPaths['Add Clinic']} style={styles.icon} /> },
+    { label: 'Add clinic schedule', value: 'Add clinic schedule', icon: <Image source={iconPaths['Add clinic schedule']} style={styles.icon} /> },
+    { label: 'Update profile picture', value: 'profile pic', icon: <Image source={iconPaths['profile pic']} style={styles.icon} /> },
   ];
 
   const setUserTokenAtom = useSetAtom(userTokenAtom);
@@ -60,10 +67,10 @@ const ProfileCircle = ({ imageUrl }) => {
   return (
     <View style={styles.container}>
       {/* Profile Button */}
-      <TouchableOpacity onPress={showDropdown}>
-        <LinearGradient colors={['#FFD700', '#FF8C00']} style={styles.gradientBorder}>
+      <TouchableOpacity onPress={showDropdown} style={styles.profileButton}>
+        <View style={styles.profileImageContainer}>
           <FastImage source={{ uri: imageUrl }} style={styles.profileImage} resizeMode="cover" />
-        </LinearGradient>
+        </View>
       </TouchableOpacity>
 
       {/* Dropdown Menu */}
@@ -81,8 +88,8 @@ const ProfileCircle = ({ imageUrl }) => {
               ))}
               <View style={styles.separator} />
               <TouchableOpacity onPress={handleSignOut} style={styles.signOutButton}>
-              <LogoutIcon color="#D32F2F" />
-              <Text style={[styles.dropdownText, { color: '#D32F2F' }]}>Sign Out</Text>
+                <LogoutIcon color="#D32F2F" />
+                <Text style={[styles.dropdownText, { color: '#D32F2F' }]}>Sign Out</Text>
               </TouchableOpacity>
             </View>
           </Animated.View>
@@ -97,14 +104,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  gradientBorder: {
-    width: width * 0.1,
-    height: width * 0.1,
-    borderRadius: (width * 0.2) / 2,
+  profileImageContainer: {
+    width: width * 0.10,
+    height: width * 0.10,
+    borderRadius: (width * 0.13) / 2,
+    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 3,
-    backgroundColor: '#ffffff',
     elevation: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -115,7 +121,6 @@ const styles = StyleSheet.create({
     width: '90%',
     height: '90%',
     borderRadius: 999,
-    backgroundColor: '#f0f0f0',
   },
   modalOverlay: {
     flex: 1,
@@ -141,16 +146,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 12,
-    paddingHorizontal: 16,
+    paddingHorizontal: 10,
   },
   dropdownText: {
     fontSize: 14,
     color: '#333',
-    marginLeft: 12,
-  },
-  icon: {
-    width: 20,
-    textAlign: 'center',
+    marginLeft: 10,
   },
   separator: {
     height: 1,
