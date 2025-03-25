@@ -6,7 +6,6 @@ import Video from 'react-native-video';
 const VideoAd = ({ source, style, onEnd }) => {
   const [isLoading, setIsLoading] = React.useState(true);
   const [hasError, setHasError] = React.useState(false);
-  console.log('AdMedia Source:', source);
   console.trace();
   return (
     <View style={[styles.container, style]}>

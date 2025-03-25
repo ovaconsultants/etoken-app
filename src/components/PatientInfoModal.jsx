@@ -11,9 +11,7 @@ export const PatientInfoScreen = ({ route, navigation }) => {
   // Handle save action
   const handleSave = () => {
     const updatedInfo = { ...patientInfo, isPaid };
-    // Call your API or update state here
-    console.log('Updated Patient Info:', updatedInfo);
-    navigation.goBack(); // Navigate back after saving
+    navigation.goBack();
   };
 
   return (

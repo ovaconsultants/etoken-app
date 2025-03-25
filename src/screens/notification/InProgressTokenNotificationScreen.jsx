@@ -22,10 +22,8 @@ const InProgressTokenNotificationScreen = ({
 
   // Trigger speech when inProgressPatient changes
   useEffect(() => {
-      console.log('Speak Message is called in useEffect in Progress Notification Screen');
       speakMessages();
       return () => {
-        console.log('Stopping TTS on unmount');
       };
   },[inProgressPatient, speakMessages]);
 

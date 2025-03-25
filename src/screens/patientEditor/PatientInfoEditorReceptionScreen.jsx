@@ -17,7 +17,6 @@ export const PatientInfoEditorScreen = ({ route, navigation }) => {
       fee_status: isPaid ? 'Paid' : 'Not Paid', // Update fee_status based on toggle
     };
     // Call your API or update state here
-    console.log('Updated Patient Info:', updatedInfo);
     await UpdatePatientRequest(updatedInfo);
     navigation.goBack(); // Navigate back after saving
   };

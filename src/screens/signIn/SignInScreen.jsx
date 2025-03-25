@@ -31,11 +31,9 @@ const SignInScreen = ({navigation}) => {
       if (!data.success) {
         throw new Error(data.message || 'Sign-in failed');
       }
-      console.log('Sign in response:', data);
       const doctorClinicDetails = data.doctors;
       const doctorFirstClinic = doctorClinicDetails[0];
       const doctor_id = doctorFirstClinic.doctor_id ? doctorFirstClinic.doctor_id.toString() : '';
-      console.log('doctor profile url ', doctorFirstClinic.profile_picture_url);
       const doctorInfo = {
         doctor_id: doctorFirstClinic.doctor_id,
         doctor_name: doctorFirstClinic.doctor_name,

@@ -28,8 +28,6 @@ import {GenerateTokenRequest} from '../../services/tokenService';
 
 const ReceptionScreenComponent = ({route}) => {
   const {doctor_id, clinic_id} = route.params;
-  console.log('doctor_id: in reception screen', doctor_id);
-  console.log('clinic_id: in reception screen', clinic_id);
   const navigation = useNavigation();
   const queryClient = useQueryClient();
   const [patients, setPatients] = useState(null);

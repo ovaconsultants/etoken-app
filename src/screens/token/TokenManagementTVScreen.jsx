@@ -28,17 +28,14 @@ const queryClient = new QueryClient();
 
 const TokenManagement = ({route}) => {
   const profileUri = useProfileURI();
-  console.log('profileUri: ', profileUri);
   const clinicData = useAtomValue(doctorClinicDetailsAtom);
   const doctorData = useAtomValue(doctorInfoAtom);
-  const doctorInitials = getInitials(doctorData.doctor_name);
   const {doctor_id, clinic_id} = route.params;
   const {
     data: tokens = [],
     isLoading,
     isError,
   } = usePatientTokens(doctor_id, clinic_id);
-  console.log('tokens: ', tokens);
   const currentClinicData = clinicData.find(
     clinic => clinic.clinic_id === clinic_id,
   );

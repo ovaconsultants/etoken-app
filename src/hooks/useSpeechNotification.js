@@ -44,7 +44,6 @@ const useSpeechNotification = (inProgressPatient) => {
     });
 
     return () => {
-      console.log('Cleaning up speech on unmount...');
       Tts.stop();
       finishListener.remove();
     };

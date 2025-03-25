@@ -4,7 +4,6 @@ import React from 'react';
 
 
 const DefaultReceptionScreen = ({ navigation }) => {
-    console.log('navigation: ', navigation);
     return (
         <View style={styles.container}>
             {/* Back Button */}
