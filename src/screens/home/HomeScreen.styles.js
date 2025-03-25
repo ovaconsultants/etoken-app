@@ -8,21 +8,61 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F8F9FA',
+    padding: wp('5%'),
+    margin : wp('5%')
   },
   cardContainer: {
-    height: hp('60%'),
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: wp('1%'),
-    padding: wp('5%'),
+    height: hp('45%'),
+    marginBottom: hp('3%'),
   },
-  bottomContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
+  selectionContainer: {
+    marginBottom: hp('5%'),
+  },
+  selectionTitle: {
+    fontSize: wp('4.5%'),
+    fontWeight: '600',
+    color: '#333',
     marginBottom: hp('2%'),
+    textAlign: 'center',
+  },
+  optionContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  optionButton: {
+    width: wp('40%'),
+    padding: wp('3%'),
+    borderRadius: 12,
+    backgroundColor: '#FFF',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+  },
+  selectedOption: {
+    borderColor: '#007AFF',
+    backgroundColor: '#F0F7FF',
+  },
+  optionContent: {
+    alignItems: 'center',
+  },
+  optionText: {
+    fontSize: wp('4%'),
+    fontWeight: '500',
+    color: '#333',
+    marginTop: hp('1%'),
+    marginBottom: hp('0.5%'),
+  },
+  selectedOptionText: {
+    color: '#007AFF',
+    fontWeight: '600',
+  },
+  optionDescription: {
+    fontSize: wp('3.2%'),
+    color: '#666',
+    textAlign: 'center',
   },
   button: {
-    marginTop: hp('3%'),
+    marginTop: hp('2%'),
     alignSelf: 'center',
     width: wp('70%'),
     height: hp('6%'),

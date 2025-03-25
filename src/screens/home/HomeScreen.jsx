@@ -16,6 +16,7 @@ import {
   doctorIdAtom,
 } from '../../atoms/doctorAtoms/doctorAtom';
 import {ScreenSelectionOptions} from '../../constants/formComponentsData/radioButtonsData';
+import {Tv, Users} from 'lucide-react-native';
 
 const HomeScreen = ({navigation}) => {
   useOrientationLocker('PORTRAIT');
@@ -28,7 +29,9 @@ const HomeScreen = ({navigation}) => {
     if (!Array.isArray(rawClinicData)) return [];
 
     const uniqueClinics = Array.from(
-      new Map(rawClinicData.map(c => [`${c.clinic_name}_${c.clinic_address}`, c])).values(),
+      new Map(
+        rawClinicData.map(c => [`${c.clinic_name}_${c.clinic_address}`, c]),
+      ).values(),
     );
 
     return uniqueClinics.map(clinic => ({
@@ -41,10 +44,11 @@ const HomeScreen = ({navigation}) => {
     }));
   }, [rawClinicData]);
 
-  const handleCardPress = useCallback(
-    clinicId => setSelectedClinicId(clinicId),
-    [],
-  );
+  const handleCardPress = useCallback(clinicId => {
+    setSelectedClinicId(prevClinicId =>
+      prevClinicId === clinicId ? null : clinicId,
+    );
+  }, []);
   const isNextButtonDisabled = useMemo(
     () => !(selectedScreen && selectedClinicId),
     [selectedScreen, selectedClinicId],
@@ -52,7 +56,6 @@ const HomeScreen = ({navigation}) => {
 
   const handleNextButtonPress = useCallback(() => {
     if (isNextButtonDisabled) {
-      // Optionally show a toast or alert here
       return;
     }
 
@@ -80,21 +83,66 @@ const HomeScreen = ({navigation}) => {
           isSelectedCard={selectedClinicId}
         />
       </View>
-      <View style={styles.bottomContainer}>
-        <RadioGroupComponent
-          options={ScreenSelectionOptions}
-          selectedId={selectedScreen}
-          onSelect={setSelectedScreen}
-        />
+
+      <View style={styles.selectionContainer}>
+        <Text style={styles.selectionTitle}>Select Display Mode:</Text>
+
+        <View style={styles.optionContainer}>
+          <TouchableOpacity
+            style={[
+              styles.optionButton,
+              selectedScreen === '1' && styles.selectedOption,
+            ]}
+            onPress={() => setSelectedScreen('1')}>
+            <View style={styles.optionContent}>
+              <Tv
+                size={32}
+                color={selectedScreen === '1' ? '#007AFF' : '#333'}
+              />
+              <Text
+                style={[
+                  styles.optionText,
+                  selectedScreen === '1' && styles.selectedOptionText,
+                ]}>
+                TV Display
+              </Text>
+              <Text style={styles.optionDescription}>
+                For waiting room screens
+              </Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.optionButton,
+              selectedScreen === '2' && styles.selectedOption,
+            ]}
+            onPress={() => setSelectedScreen('2')}>
+            <View style={styles.optionContent}>
+              <Users
+                size={32}
+                color={selectedScreen === '2' ? '#007AFF' : '#333'}
+              />
+              <Text
+                style={[
+                  styles.optionText,
+                  selectedScreen === '2' && styles.selectedOptionText,
+                ]}>
+                Reception
+              </Text>
+              <Text style={styles.optionDescription}>
+                For Patient Registration
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
       </View>
+
       <TouchableOpacity
         style={[styles.button, isNextButtonDisabled && styles.buttonDisabled]}
         onPress={handleNextButtonPress}
         disabled={isNextButtonDisabled}
-        activeOpacity={0.8}
-        accessibilityLabel="Next Button"
-        accessibilityRole="button"
-        accessibilityHint="Navigates to the next screen">
+        activeOpacity={0.8}>
         <Text style={styles.buttonText}>Next</Text>
       </TouchableOpacity>
     </SafeAreaView>

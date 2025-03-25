@@ -12,7 +12,7 @@ import { useAtomValue } from 'jotai';
 import withQueryClientProvider from '../../hooks/useQueryClientProvider';
 import {
   Phone, 
-  Pause, 
+  Nfc, 
   RefreshCw, 
   ArrowLeft, 
   UserCircle, 
@@ -30,19 +30,24 @@ import DefaultReceptionScreen from '../noTokenReceptionState/DefaultReceptionScr
 import { doctorInfoAtom } from '../../atoms/doctorAtoms/doctorAtom';
 import useOrientationLocker from '../../hooks/useOrientationLocker';
 import { getInitials } from '../../utils/getInitials';
+import { sidePanelStyles } from './PatientTokenQueueScreen.styles';
+import { HeaderRightProfile } from '../../navigation/homeNavigator';
+import ProfileCircle from '../../components/ProfileImage';
+import { useProfileURI } from '../../hooks/useProfileURI';
 
 
 const PatientTokenQueueScreen = ({navigation, route}) => {
-  useOrientationLocker('LANDSCAPE');
+ 
+  const imageUrl = useProfileURI();
   const {clinic_id, doctor_id} = route.params;
   const doctorData = useAtomValue(doctorInfoAtom);
   const doctorInitials = getInitials(doctorData.doctor_name);
-  
   const [showDoctorOptions, setShowDoctorOptions] = useState(false);
   const dropdownRef = useRef(null);
   const [isSidePanelVisible, setSidePanelVisible] = useState(false);
-  const doubleTapTimeout = useRef(null); // Add this line
-  const [isLoading, setIsLoading] = useState(true); // Add this line if missing
+  const doubleTapTimeout = useRef(null);
+  const [isLoading, setIsLoading] = useState(true); 
+  useOrientationLocker('LANDSCAPE');
   const {
     patientTokens,
     selectedTokenId,
@@ -60,19 +65,18 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
   const inQueue = patientTokens?.filter(t => t.status === 'Waiting').length || 0;
   const onHold = patientTokens?.filter(t => t.status === 'On Hold').length || 0;
 
-  const handleRowPress = tokenId => {
+  const handleRowPress = (tokenId) => {
     if (doubleTapTimeout.current) {
       clearTimeout(doubleTapTimeout.current);
       doubleTapTimeout.current = null;
-      handleSelectToken(tokenId);
+      handleSelectToken(tokenId); // Select the token on double tap
     } else {
       // First tap, set a timeout for double tap detection
       doubleTapTimeout.current = setTimeout(() => {
         doubleTapTimeout.current = null;
-      }, 300);
+      }, 300); // 300ms delay to detect double tap
     }
-  };
-
+  }
   const handleLongPress = (token) => {
     // Open patient info
     navigation.navigate('PatientInfoEditor', { patientInfo: token });
@@ -97,7 +101,7 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
   }
 
   if (patientTokens.length === 0) {
-    return <DefaultReceptionScreen />;
+    return <DefaultReceptionScreen  navigation={navigation}/>;
   }
 
   return (
@@ -122,7 +126,7 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
             <Text style={styles.badgeText}>On Hold: {onHold}</Text>
           </View>
           <TouchableOpacity onPress={() => setShowDoctorOptions(!showDoctorOptions)}>
-            <UserCircle size={24} color="#333" />
+          <ProfileCircle imageUrl={imageUrl} />
           </TouchableOpacity>
           {showDoctorOptions && (
             <View style={styles.dropdownMenu}>
@@ -159,7 +163,7 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
           style={styles.secondaryButton}
           onPress={handleRecall}
           disabled={!isRecallEnabled}>
-          <Pause size={16} color="#333" />
+           <Nfc />
           <Text style={styles.secondaryButtonText}>Recall</Text>
         </TouchableOpacity>
       </View>
@@ -229,7 +233,21 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
         transparent={true}
         visible={isSidePanelVisible}
         onRequestClose={() => setSidePanelVisible(false)}>
-        {/* Your existing side panel implementation */}
+              <View style={sidePanelStyles.overlay}>
+          <View style={sidePanelStyles.sidePanel}>
+            <TouchableOpacity style={sidePanelStyles.sidePanelButton}>
+              <Text style={sidePanelStyles.sidePanelButtonText}>List Info</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={sidePanelStyles.sidePanelButton}>
+              <Text style={sidePanelStyles.sidePanelButtonText}>LogOut</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={sidePanelStyles.closeButton}
+              onPress={() => setSidePanelVisible(false)}>
+              <Text style={sidePanelStyles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </Modal>
     </SafeAreaView>
   );

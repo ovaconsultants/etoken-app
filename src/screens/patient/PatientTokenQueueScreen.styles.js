@@ -11,7 +11,6 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  
   // Header Styles
   headerContainer: {
     flexDirection: 'row',
@@ -134,7 +133,8 @@ export const styles = StyleSheet.create({
     borderColor: '#d32f2f',
   },
   selectedCard: {
-    opacity: 0.7,
+    opacity: 0.9,
+    backgroundColor : '#f1f1f1',
   },
   tokenHeader: {
     flexDirection: 'row',
@@ -199,5 +199,37 @@ export const styles = StyleSheet.create({
   footerButtonText: {
     fontSize: wp('3%'),
     marginTop: hp('0.5%'),
+  },
+});
+
+export const sidePanelStyles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  sidePanel: {
+    width: '100%',
+    backgroundColor: '#fff',
+    padding: 20,
+  },
+  sidePanelButton: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  sidePanelButtonText: {
+    fontSize: 18,
+  },
+  closeButton: {
+    borderRadius : 20 ,
+    marginTop: 20,
+    padding: 15,
+    backgroundColor: '#f00',
+    alignItems: 'center',
+  },
+  closeButtonText: {
+    color: '#fff',
+    fontSize: 18,
   },
 });
