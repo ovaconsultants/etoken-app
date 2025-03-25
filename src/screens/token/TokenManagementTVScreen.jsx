@@ -5,7 +5,6 @@ import {
   ActivityIndicator,
   SafeAreaView,
   TouchableOpacity,
-  Image,
 } from 'react-native';
 import {styles} from './TokenManagementTVScreen.styles';
 import Orientation from 'react-native-orientation-locker';
@@ -18,13 +17,18 @@ import {
   doctorClinicDetailsAtom,
   doctorInfoAtom,
 } from '../../atoms/doctorAtoms/doctorAtom';
+import FastImage from 'react-native-fast-image';
 import {useAtomValue} from 'jotai';
 import {getInitials} from '../../utils/getInitials';
+import {useProfileURI} from '../../hooks/useProfileURI';
+import {RotateCcw} from 'lucide-react-native';
 
 // Query client for React Query
 const queryClient = new QueryClient();
 
 const TokenManagement = ({route}) => {
+  const profileUri = useProfileURI();
+  console.log('profileUri: ', profileUri);
   const clinicData = useAtomValue(doctorClinicDetailsAtom);
   const doctorData = useAtomValue(doctorInfoAtom);
   const doctorInitials = getInitials(doctorData.doctor_name);
@@ -34,6 +38,7 @@ const TokenManagement = ({route}) => {
     isLoading,
     isError,
   } = usePatientTokens(doctor_id, clinic_id);
+  console.log('tokens: ', tokens);
   const currentClinicData = clinicData.find(
     clinic => clinic.clinic_id === clinic_id,
   );
@@ -78,20 +83,24 @@ const TokenManagement = ({route}) => {
   return (
     <View style={styles.fullScreenContainer}>
       <View style={styles.headerContainer}>
+        <View style={styles.doctorSection}>
         <View style={styles.profileCircle}>
-          <Text style={styles.profileInitials}>{doctorInitials}</Text>
+          <FastImage
+            source={{uri: profileUri}}
+            style={styles.profileImage}
+            resizeMode="cover"
+            fallback={true} 
+          />
         </View>
         <View style={styles.doctorInfo}>
           <Text style={styles.doctorName}>Dr. {doctorData.doctor_name}</Text>
           <Text style={styles.doctorQualification}>
-            {doctorData.qualification}
+            {doctorData.specialization_name}
           </Text>
         </View>
+        </View>
         <TouchableOpacity style={styles.reloadButton}>
-          <Image
-            source={require('../../../assets/ads/images/arrow.circlepath.png')}
-            accessibilityLabel="Reload button"
-          />
+          <RotateCcw />
         </TouchableOpacity>
       </View>
       <TokenTable tokens={tokens} />

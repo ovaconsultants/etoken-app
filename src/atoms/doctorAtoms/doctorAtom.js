@@ -14,9 +14,11 @@ const initialDoctorClinicDetails = [
 ];
 
 const initialDoctorInfo = {
-  doctor_id : '',
-  doctor_name : '',
-  doctor_profile_pic_directory_api : '',
+  doctor_id: '',
+  doctor_name: '',
+  doctor_profile_pic_directory_api: '',
+  specialization_name: 'Oral Surgeon Dentist',
+  specialization_description: null,
 };
 
 export const doctorClinicDetailsAtom = atomWithStorage(

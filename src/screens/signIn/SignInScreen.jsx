@@ -20,7 +20,7 @@ const SignInScreen = ({navigation}) => {
   const setUserToken = useSetAtom(userTokenAtom);
   const setDoctorClinicDetails = useSetAtom(doctorClinicDetailsAtom);
   const setDoctorIdAtom = useSetAtom(doctorIdAtom);
-  const setDoctorInfoAtom = useSetAtom(doctorInfoAtom)
+  const setDoctorInfoAtom = useSetAtom(doctorInfoAtom);
 
   // Form submission handler
   const handleSignIn = async (values, {setSubmitting}) => {
@@ -28,23 +28,26 @@ const SignInScreen = ({navigation}) => {
 
     try {
       const data = await SignInRequest(email, password);
-      const doctorClincDetails = data.response;
       if (!data.success) {
         throw new Error(data.message || 'Sign-in failed');
       }
-
+      console.log('Sign in response:', data);
+      const doctorClinicDetails = data.doctors;
+      const doctorFirstClinic = doctorClinicDetails[0];
+      const doctor_id = doctorFirstClinic.doctor_id ? doctorFirstClinic.doctor_id.toString() : '';
+      console.log('doctor profile url ', doctorFirstClinic.profile_picture_url);
+      const doctorInfo = {
+        doctor_id: doctorFirstClinic.doctor_id,
+        doctor_name: doctorFirstClinic.doctor_name,
+        doctor_profile_pic_directory_api: doctorFirstClinic.profile_picture_url,
+        specialization_name: doctorFirstClinic.specialization_name,
+        specialization_description: doctorFirstClinic.specialization_description,
+      };
       setUserToken(data.token);
       setAuthToken(data.token);
-      const doctor_id = data.doctor_id ? data.doctor_id.toString() : '';
-      const doctorInfo = {
-        doctor_id: data.doctor_id,
-        doctor_name: data.doctor_name,
-        doctor_profile_pic_directory_api : data.profile_picture_url,
-      };
-
       setDoctorIdAtom(doctor_id);
       setDoctorInfoAtom(doctorInfo);
-      setDoctorClinicDetails(doctorClincDetails);
+      setDoctorClinicDetails(doctorClinicDetails);
     } catch (error) {
       console.error('Error signing in:', error);
       Alert.alert('Login Failed', error.message);

@@ -1,6 +1,5 @@
 // src/services/api.js
 import axios from 'axios';
-import Config from 'react-native-config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from '../config/apiUrl';
 
