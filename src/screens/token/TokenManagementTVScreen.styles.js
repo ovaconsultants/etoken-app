@@ -4,159 +4,149 @@ export const styles = StyleSheet.create({
   fullScreenContainer: {
     flex: 1,
     backgroundColor: '#fff',
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+
   },
-  loaderContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f0f0f0',
-  },
+
+  /** HEADER SECTION **/
   headerContainer: {
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-    marginBottom: 20,
+    marginBottom: 15,
+    paddingHorizontal: 10,
   },
+
+  /** DOCTOR PROFILE SECTION **/
   doctorSection: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-evenly',
+    alignItems: 'center',
   },
   profileCircle: {
-    height: 100,
-    width: 100,
-    borderRadius: 50,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     backgroundColor: '#ddd',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 20,
+    marginRight: 12,
   },
   profileImage: {
     width: '100%',
     height: '100%',
-    borderRadius: 50, 
+    borderRadius: 30,
   },
   doctorInfo: {
-    padding: 10,
-    borderRadius: 8,
+    justifyContent: 'center',
   },
   doctorName: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#000',
   },
   doctorQualification: {
-    fontSize: 16,
-    color: '#555',
-  },
-  reloadButton: {
-    backgroundColor: '#009BFF',
-    alignItems  : 'center',
-    padding: 10,
-    height : '50%',
-    borderRadius: '40%',
-    margin: '2%',
-  },
-  queueContainer: {
-    flex: 1,
-    padding: 20,
+    fontSize: 14,
+    color: '#444',
+    fontWeight: '600',
   },
 
-  inProgress: {
-    backgroundColor: '#f3faf5',
-    borderWidth: 1,
-    borderColor: '#2e7d32',
-  },
-  waiting: {
-    backgroundColor: '#fffbf2',
-  },
-  onHold: {
-    backgroundColor: '#fff5f5',
-  },
-  leftAlign: {
-    textAlign: 'left',
-  },
-  rightAlign: {
-    textAlign: 'right',
-  },
-  status: {
-    flexDirection: 'row',
+  /** RELOAD BUTTON **/
+  reloadButton: {
+    padding: 8,
+    borderRadius: 8,
+    backgroundColor: 'rgb(51, 141, 237)',
     alignItems: 'center',
-    justifyContent: 'flex-end',
-    gap: 6,
+    justifyContent: 'center',
   },
-  dot: {
-    height: 10,
-    width: 10,
-    borderRadius: 5,
-  },
-  green: { backgroundColor: 'green' },
-  orange: { backgroundColor: 'orange' },
-  red: { backgroundColor: 'red' },
-  patientName: {
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    width: 150,
-  },
-  hindi: {
-    fontSize: 13,
-    color: '#555',
-  },
-  notificationInProgress: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    zIndex: 100,
-  },
+
+  /** TOKEN TABLE **/
   tableContainer: {
-    flex: 1,
-    paddingHorizontal: 10,
+    marginTop: 10,
+    borderRadius: 8,
+    overflow: 'hidden',
   },
   tableHeader: {
     flexDirection: 'row',
-    backgroundColor: 'orange',
-    paddingVertical: 12,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    backgroundColor: '#f8f8f8',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
   },
   tableHeaderText: {
     flex: 1,
-    textAlign: 'center',
+    fontSize: 14,
     fontWeight: 'bold',
-    color: '#fff',
-    fontSize: 16,
+    color: '#333',
+    textAlign: 'flex-start',
   },
+  // patientCell: {
+  //   flex: 2,
+  //   textAlign: 'left',
+  // },
+
+  /** TOKEN ROWS **/
   tableRow: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 12,
+    paddingHorizontal: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
   },
   tableCell: {
     flex: 1,
-    textAlign: 'center',
     fontSize: 14,
     color: '#333',
-    paddingHorizontal: 4,
+    textAlign: 'flex-start',
   },
-  patientCell: {
-    flex: 1.5, // Wider column for patient names
-    textAlign: 'left',
-    paddingLeft: 10,
-  },
+
+  /** STATUS STYLES **/
   statusCell: {
     flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
-    gap: 6,
+    justifyContent: 'flex-start',
+  },
+  dot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: 'red',
+    marginRight: 6,
+    alignSelf: 'flex-start',
+  },
+  green: { backgroundColor: '#2e7d32' },
+  orange: { backgroundColor: '#f9a825' },
+  red: { backgroundColor: '#d32f2f' },
+
+  /** ROW COLORS BASED ON STATUS **/
+  inProgressRow: {
+    backgroundColor: '#f3faf5',
+    borderLeftWidth: 4,
+    borderLeftColor: '#2e7d32',
+  },
+  waitingRow: {
+    backgroundColor: '#fffbf2',
+    borderLeftWidth: 4,
+    borderLeftColor: '#f9a825',
+  },
+  onHoldRow: {
+    backgroundColor: '#fff5f5',
+    borderLeftWidth: 4,
+    borderLeftColor: '#d32f2f',
+  },
+  notificationInProgress : {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    backgroundColor: '#f3faf5',
+    margin: 10,
+  },
+  hindi: {
+    fontSize: 12,
+    color: '#666',
+    fontFamily: 'Your-Hindi-Font', // Add a Hindi font if needed
+    marginTop: 2,
   },
 });

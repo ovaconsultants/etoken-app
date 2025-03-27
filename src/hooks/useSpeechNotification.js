@@ -7,8 +7,8 @@ const useSpeechNotification = (inProgressPatient) => {
   const isHindiSpoken = useRef(false);
 
   // Translate token number and patient name
-  const translatedTokenNo = useTranslation(`Token Number: ${inProgressPatient.token_no}`, 'English', 'Hindi');
-  const translatedPatientName = useTranslation(`Token Name: ${inProgressPatient.patient_name}`, 'English', 'Hindi');
+  const translatedTokenNo = inProgressPatient.token_no;
+  const translatedPatientName = useTranslation(`${inProgressPatient.patient_name}`, 'English', 'Hindi');
 
   // Build English message
   const englishMessage = `Token Number: ${inProgressPatient.token_no}, Token Name: ${inProgressPatient.patient_name}. The doctor has called you; please proceed for your consultation.`;

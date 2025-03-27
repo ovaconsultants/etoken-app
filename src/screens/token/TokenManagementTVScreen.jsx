@@ -3,30 +3,26 @@ import {
   View,
   Text,
   ActivityIndicator,
-  SafeAreaView,
   TouchableOpacity,
 } from 'react-native';
 import {styles} from './TokenManagementTVScreen.styles';
 import Orientation from 'react-native-orientation-locker';
-import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {usePatientTokens} from '../../hooks/usePatientTokens';
 import InProgressTokenNotificationScreen from '../notification/InProgressTokenNotificationScreen';
 import DefaultTVScreen from '../television/DefaultTVScreen';
 import {TokenTable} from './TokenTable';
+import withQueryClientProvider from '../../hooks/useQueryClientProvider';
 import {
   doctorClinicDetailsAtom,
   doctorInfoAtom,
 } from '../../atoms/doctorAtoms/doctorAtom';
 import FastImage from 'react-native-fast-image';
 import {useAtomValue} from 'jotai';
-import {getInitials} from '../../utils/getInitials';
 import {useProfileURI} from '../../hooks/useProfileURI';
 import {RotateCcw} from 'lucide-react-native';
+import LoadingErrorHandler from '../../components/LoadingErrorHandler';
 
-// Query client for React Query
-const queryClient = new QueryClient();
-
-const TokenManagement = ({route}) => {
+const TokenManagementScreen = ({route}) => {
   const profileUri = useProfileURI();
   const clinicData = useAtomValue(doctorClinicDetailsAtom);
   const doctorData = useAtomValue(doctorInfoAtom);
@@ -53,30 +49,15 @@ const TokenManagement = ({route}) => {
     };
   }, [tokens]);
 
-  // Loading state
-  if (isLoading) {
-    return (
-      <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
 
-  // Error state
-  if (isError) {
-    return (
-      <View style={styles.loaderContainer}>
-        <Text>Error loading tokens.</Text>
-      </View>
-    );
-  }
 
-  // No tokens available - display ads/images/videos
+  // if isLoading and isError Handler 
+  if(isLoading ||  isError) {
+    LoadingErrorHandler(isLoading, isError, 'Error loading tokens.');
+  }
   if (!tokens || tokens.length === 0) {
     return <DefaultTVScreen clinicInfo={currentClinicData} />;
   }
-
-  // Render token table and in-progress notification
   return (
     <View style={styles.fullScreenContainer}>
       <View style={styles.headerContainer}>
@@ -115,15 +96,4 @@ const TokenManagement = ({route}) => {
   );
 };
 
-// Main screen component with orientation handling
-const TokenManagementScreen = props => {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <SafeAreaView style={styles.fullScreenContainer}>
-        <TokenManagement {...props} />
-      </SafeAreaView>
-    </QueryClientProvider>
-  );
-};
-
-export default TokenManagementScreen;
+export default withQueryClientProvider(TokenManagementScreen);

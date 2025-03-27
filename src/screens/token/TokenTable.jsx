@@ -1,8 +1,32 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
 import { styles } from './TokenManagementTVScreen.styles';
-
+import { TranslateNameToHindi } from '../../services/langTranslationService';
 export const TokenTable = ({ tokens }) => {
+  const [processedTokens, setProcessedTokens] = useState([]);
+
+  useEffect(() => {
+    const processTokens = async () => {
+      const updatedTokens = await Promise.all(
+        tokens.map(async (token) => {
+          // Only translate if hindi_name doesn't exist
+          if (!token.hindi_name && token.patient_name) {
+            try {
+              const hindiName = await TranslateNameToHindi(token.patient_name);
+              return { ...token, hindi_name: hindiName };
+            } catch (error) {
+              return token; // Return original if translation fails
+            }
+          }
+          return token;
+        })
+      );
+      setProcessedTokens(updatedTokens);
+    };
+
+    processTokens();
+  }, [tokens]);
+
   const getRowStyle = (status) => {
     switch (status?.toLowerCase()) {
       case 'in progress': return { backgroundColor: '#f3faf5', borderLeftWidth: 4, borderLeftColor: '#2e7d32' };
@@ -25,17 +49,19 @@ export const TokenTable = ({ tokens }) => {
     <View style={styles.tableContainer}>
       {/* Table Header */}
       <View style={styles.tableHeader}>
-        <Text style={[styles.tableHeaderText, styles.patientCell]}>Patient</Text>
+        <Text style={[styles.tableHeaderText]}>Patient</Text>
         <Text style={styles.tableHeaderText}>Phone</Text>
         <Text style={styles.tableHeaderText}>Payment</Text>
+        <Text style={styles.tableHeaderText}>Emergency</Text>
         <Text style={styles.tableHeaderText}>Status</Text>
         <Text style={styles.tableHeaderText}>Token</Text>
+
       </View>
 
       {/* Table Rows */}
-      {tokens.map((token) => (
+      {(processedTokens.length > 0 ? processedTokens : tokens).map((token) => (
         <View key={token.token_id} style={[styles.tableRow, getRowStyle(token.status)]}>
-          <View style={[styles.tableCell, styles.patientCell]}>
+          <View style={[styles.tableCell]}>
             <Text>{token.patient_name}</Text>
             {token.hindi_name && (
               <Text style={styles.hindi}>{token.hindi_name}</Text>
@@ -46,6 +72,9 @@ export const TokenTable = ({ tokens }) => {
           </Text>
           <Text style={styles.tableCell}>
             {token.fee_status || 'Not Paid'}
+          </Text>
+          <Text style={styles.tableCell}>
+            {token.emegency === 'Y' ? 'Yes' : 'No'}
           </Text>
           <View style={[styles.tableCell, styles.statusCell]}>
             {getStatusDot(token.status)}

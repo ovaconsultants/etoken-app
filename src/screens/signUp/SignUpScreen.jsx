@@ -129,7 +129,7 @@ const SignUpScreen = ({navigation}) => {
         {
           text: 'OK',
           onPress: () => {
-            navigation.navigate('Add Doctor Picture');
+            navigation.navigate('AddProfilePicture');
           },
         },
       ]);

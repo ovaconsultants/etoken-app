@@ -16,7 +16,7 @@ const initialDoctorClinicDetails = [
 const initialDoctorInfo = {
   doctor_id: '',
   doctor_name: '',
-  doctor_profile_pic_directory_api: '',
+  profile_picture_url: '',
   specialization_name: 'Oral Surgeon Dentist',
   specialization_description: null,
 };

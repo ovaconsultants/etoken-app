@@ -16,7 +16,8 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: wp('4%'),
+    paddingVertical: wp('3%'),
+    paddingHorizontal: wp('5%'),
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
   },
@@ -28,8 +29,9 @@ export const styles = StyleSheet.create({
   },
   headerBadges: {
     flexDirection: 'row',
+    justifyContent: 'space-evenly',
     alignItems: 'center',
-    gap: wp('1%'),
+    gap: wp('5%'),
   },
   badge: {
     backgroundColor: '#f1f1f1',
@@ -48,29 +50,6 @@ export const styles = StyleSheet.create({
   },
   badgeText: {
     fontSize: wp('3%'),
-  },
-  dropdownMenu: {
-    position: 'absolute',
-    top: hp('5%'),
-    right: 0,
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: wp('2%'),
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
-    zIndex: 100,
-  },
-  dropdownItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: wp('2%'),
-    padding: wp('2%'),
-  },
-  dropdownText: {
-    fontSize: wp('3.5%'),
   },
 
   // Action Buttons
@@ -180,7 +159,6 @@ export const styles = StyleSheet.create({
     fontSize: wp('3.5%'),
   },
   paymentStatus: {
-    marginTop: hp('1%'),
     fontSize: wp('3.5%'),
   },
 
@@ -199,6 +177,68 @@ export const styles = StyleSheet.create({
   footerButtonText: {
     fontSize: wp('3%'),
     marginTop: hp('0.5%'),
+  },
+  modalContainer: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+    alignSelf: 'center',
+    maxHeight: '70%',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  modalList: {
+    maxHeight: 300,
+  },
+  modalItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  modalText: {
+    fontSize: 16,
+  },
+  closeButton: {
+    marginTop: 10,
+    backgroundColor: '#007BFF',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  closeButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },  
+  dropdownContainer: {
+    position: 'relative',
+    zIndex: 1,
+  },
+  dropdownContent: {
+    position: 'absolute',
+    top: '100%',
+    left: 0,
+    right: 0,
+    backgroundColor: 'white',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    marginTop: 4,
+    maxHeight: 200,
+  },
+  dropdownScroll: {
+    maxHeight: 200,
+  },
+  dropdownItem: {
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f1f1f1',
+  },
+  dropdownItemText: {
+    fontSize: 14,
   },
 });
 

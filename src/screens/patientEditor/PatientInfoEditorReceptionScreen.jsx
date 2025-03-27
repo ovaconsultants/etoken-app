@@ -1,81 +1,274 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Switch, ScrollView, } from 'react-native';
+import React from 'react';
+import { View, Text, TouchableOpacity, Switch, ScrollView, TextInput, Alert } from 'react-native';
+import { Formik } from 'formik';
+import * as yup from 'yup';
 import { styles } from './PatientInfoEditorReceptionScreen.styles';
 import { UpdatePatientRequest } from '../../services/patientService';
+import { UpdateTokenRequest } from '../../services/tokenService';
+import { SaveAll, CircleX } from 'lucide-react-native';
+
+// Validation schema
+const validationSchema = yup.object().shape({
+  patient: yup.object().shape({
+    fname: yup.string().required('First name is required'),
+    lname: yup.string().required('Last name is required'),
+    mobile_number: yup.string()
+      .required('Mobile number is required')
+      .matches(/^[0-9]{10}$/, 'Must be a valid 10-digit phone number'),
+    email: yup.string().email('Invalid email format'),
+  }),
+  token: yup.object().shape({
+    status: yup.string().required('Status is required'),
+    fee_status: yup.string().required('Payment status is required'),
+    fee_amount: yup.number().typeError('Must be a number').min(0, 'Cannot be negative'),
+    emergency: yup.boolean(),
+  })
+});
 
 export const PatientInfoEditorScreen = ({ route, navigation }) => {
-  // Get patient information from the previous screen
   const { patientInfo } = route.params;
 
-  // State for the "Paid/Unpaid" toggle
-  const [isPaid, setIsPaid] = useState(patientInfo.fee_status === 'Paid');
+  // Initial form values
+  const initialValues = {
+    patient: {
+      patient_id: patientInfo.patient_id,
+      fname: patientInfo.patient_name.split(' ')[0] || '',
+      lname: patientInfo.patient_name.split(' ').slice(1).join(' ') || '',
+      mobile_number: patientInfo.mobile_number,
+      email: patientInfo.email || '',
+      modified_by: 'receptionist'
+    },
+    token: {
+      token_id: patientInfo.token_id,
+      status: patientInfo.status,
+      fee_status: patientInfo.fee_status,
+      emergency: patientInfo.emergency === 'Y',
+      fee_amount: patientInfo.fee_amount,
+      modified_by: 'receptionist'
+    }
+  };
 
-  // Handle save action
-  const handleSave = async () => {
-    const updatedInfo = {
-      ...patientInfo,
-      fee_status: isPaid ? 'Paid' : 'Not Paid', // Update fee_status based on toggle
-    };
-    // Call your API or update state here
-    await UpdatePatientRequest(updatedInfo);
-    navigation.goBack(); // Navigate back after saving
+  // Only submit if there are changes
+  const handleSubmit = async (values, { setSubmitting }) => {
+    try {
+      const patientChanged = Object.keys(values.patient).some(
+        key => initialValues.patient[key] !== values.patient[key]
+      );
+      
+      const tokenChanged = Object.keys(values.token).some(
+        key => initialValues.token[key] !== values.token[key]
+      );
+
+      if (!patientChanged && !tokenChanged) {
+        Alert.alert('Info', 'No changes detected');
+        navigation.goBack();
+        return;
+      }
+
+      const requests = [];
+      
+      if (patientChanged) {
+        const patientUpdate = {
+          ...values.patient,
+          patient_name: `${values.patient.fname} ${values.patient.lname}`.trim()
+        };
+        requests.push(UpdatePatientRequest(patientUpdate));
+      }
+
+      if (tokenChanged) {
+        const tokenUpdate = {
+          ...values.token,
+          emergency: values.token.emergency ? 'Y' : 'N'
+        };
+        requests.push(UpdateTokenRequest(tokenUpdate));
+      }
+
+      await Promise.all(requests);
+      Alert.alert('Success', 'Information updated successfully');
+      navigation.goBack();
+    } catch (error) {
+      console.error('Error updating:', error);
+      Alert.alert('Error', 'Failed to update information. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Patient Information</Text>
+    <Formik
+      initialValues={initialValues}
+      validationSchema={validationSchema}
+      onSubmit={handleSubmit}
+    >
+      {({ handleChange, handleBlur, handleSubmit, values, setFieldValue, errors, touched, isSubmitting }) => (
+        <ScrollView contentContainerStyle={styles.container}>
+          {/* Personal Information Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Personal Information</Text>
+            
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>First Name:</Text>
+              <TextInput
+                style={styles.input}
+                value={values.patient.fname}
+                onChangeText={handleChange('patient.fname')}
+                onBlur={handleBlur('patient.fname')}
+                placeholder="First Name"
+              />
+              {touched.patient?.fname && errors.patient?.fname && (
+                <Text style={styles.errorText}>{errors.patient.fname}</Text>
+              )}
+            </View>
 
-      {/* Display Patient Details */}
-      <View style={styles.infoContainer}>
-        <Text style={styles.label}>Name:</Text>
-        <Text style={styles.value}>{patientInfo.patient_name}</Text>
-      </View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Last Name:</Text>
+              <TextInput
+                style={styles.input}
+                value={values.patient.lname}
+                onChangeText={handleChange('patient.lname')}
+                onBlur={handleBlur('patient.lname')}
+                placeholder="Last Name"
+              />
+              {touched.patient?.lname && errors.patient?.lname && (
+                <Text style={styles.errorText}>{errors.patient.lname}</Text>
+              )}
+            </View>
 
-      <View style={styles.infoContainer}>
-        <Text style={styles.label}>Token No:</Text>
-        <Text style={styles.value}>{patientInfo.token_no}</Text>
-      </View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Mobile Number:</Text>
+              <TextInput
+                style={styles.input}
+                value={values.patient.mobile_number}
+                onChangeText={handleChange('patient.mobile_number')}
+                onBlur={handleBlur('patient.mobile_number')}
+                placeholder="Mobile Number"
+                keyboardType="phone-pad"
+              />
+              {touched.patient?.mobile_number && errors.patient?.mobile_number && (
+                <Text style={styles.errorText}>{errors.patient.mobile_number}</Text>
+              )}
+            </View>
 
-      <View style={styles.infoContainer}>
-        <Text style={styles.label}>Status:</Text>
-        <Text style={styles.value}>{patientInfo.status}</Text>
-      </View>
-      <View style={styles.infoContainer}>
-        <Text style={styles.label}>Emergency:</Text>
-        <Text style={styles.value}>{patientInfo.emergency === 'Y' ? 'Yes' : 'No'}</Text>
-      </View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Email:</Text>
+              <TextInput
+                style={styles.input}
+                value={values.patient.email}
+                onChangeText={handleChange('patient.email')}
+                onBlur={handleBlur('patient.email')}
+                placeholder="Email"
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+              {touched.patient?.email && errors.patient?.email && (
+                <Text style={styles.errorText}>{errors.patient.email}</Text>
+              )}
+            </View>
+          </View>
 
-      <View style={styles.infoContainer}>
-        <Text style={styles.label}>Fee Amount:</Text>
-        <Text style={styles.value}>{patientInfo.fee_amount}</Text>
-      </View>
+          {/* Medical Information Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Medical Information</Text>
+            
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Token No:</Text>
+              <Text style={styles.value}>{patientInfo.token_no}</Text>
+            </View>
 
-      <View style={styles.infoContainer}>
-        <Text style={styles.label}>Fee Status:</Text>
-        <Text style={styles.value}>{patientInfo.fee_status}</Text>
-      </View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Status:</Text>
+              <View style={styles.statusOptions}>
+                {['Waiting', 'In Progress', 'On Hold'].map(status => (
+                  <TouchableOpacity 
+                    key={status}
+                    style={[
+                      styles.statusButton, 
+                      values.token.status === status && styles.activeStatus
+                    ]}
+                    onPress={() => setFieldValue('token.status', status)}
+                  >
+                    <Text>{status}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              {touched.token?.status && errors.token?.status && (
+                <Text style={styles.errorText}>{errors.token.status}</Text>
+              )}
+            </View>
 
-      {/* Toggle for Paid/Unpaid */}
-      <View style={styles.toggleContainer}>
-        <Text style={styles.label}>Payment Status:</Text>
-        <Switch
-          value={isPaid}
-          onValueChange={(value) => setIsPaid(value)}
-          trackColor={{ false: '#767577', true: '#81b0ff' }}
-          thumbColor={isPaid ? '#007BFF' : '#f4f3f4'}
-        />
-        <Text style={styles.toggleText}>{isPaid ? 'Paid' : 'Not Paid'}</Text>
-      </View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Emergency:</Text>
+              <Switch
+                value={values.token.emergency}
+                onValueChange={(value) => setFieldValue('token.emergency', value)}
+                trackColor={{ false: '#767577', true: '#81b0ff' }}
+                thumbColor={values.token.emergency ? '#007BFF' : '#f4f3f4'}
+              />
+            </View>
+          </View>
 
-      {/* Save and Close Buttons */}
-      <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
-        <Text style={styles.saveButtonText}>Save Changes</Text>
-      </TouchableOpacity>
+          {/* Payment Information Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Payment Information</Text>
+            
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Fee Amount:</Text>
+              <TextInput
+                style={styles.input}
+                value={values.token.fee_amount}
+                onChangeText={handleChange('token.fee_amount')}
+                onBlur={handleBlur('token.fee_amount')}
+                placeholder="Fee Amount"
+                keyboardType="decimal-pad"
+              />
+              {touched.token?.fee_amount && errors.token?.fee_amount && (
+                <Text style={styles.errorText}>{errors.token.fee_amount}</Text>
+              )}
+            </View>
 
-      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.closeButton}>
-        <Text style={styles.closeButtonText}>Close</Text>
-      </TouchableOpacity>
-    </ScrollView>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Payment Status:</Text>
+              <Switch
+                value={values.token.fee_status === 'Paid'}
+                onValueChange={(value) => 
+                  setFieldValue('token.fee_status', value ? 'Paid' : 'Not Paid')
+                }
+                trackColor={{ false: '#767577', true: '#81b0ff' }}
+                thumbColor={values.token.fee_status === 'Paid' ? '#007BFF' : '#f4f3f4'}
+              />
+              <Text style={styles.toggleText}>
+                {values.token.fee_status === 'Paid' ? 'Paid' : 'Not Paid'}
+              </Text>
+              {touched.token?.fee_status && errors.token?.fee_status && (
+                <Text style={styles.errorText}>{errors.token.fee_status}</Text>
+              )}
+            </View>
+          </View>
+
+          {/* Action Buttons */}
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity 
+              onPress={handleSubmit} 
+              style={styles.saveButton}
+              disabled={isSubmitting}
+            >
+              <SaveAll size={20} color="#fff" />
+              <Text style={styles.buttonText}>
+                {isSubmitting ? 'Saving...' : 'Save All'}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              onPress={() => navigation.goBack()} 
+              style={styles.closeButton}
+              disabled={isSubmitting}
+            >
+              <CircleX size={20} color="#fff" />
+              <Text style={styles.buttonText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      )}
+    </Formik>
   );
 };
-

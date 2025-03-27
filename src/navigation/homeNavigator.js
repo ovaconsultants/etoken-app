@@ -1,5 +1,4 @@
 import React from 'react';
-import { Image } from 'react-native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {useProfileURI} from '../hooks/useProfileURI';
 import ProfileCircle from '../components/ProfileImage';
@@ -34,13 +33,13 @@ const HomeNavigator = () => {
         options={{
           headerTitle: HeaderHomeIcon,
           headerRight: () => <HeaderRightProfile imageUrl={profileUri} />,
-          headerTitleAlign: 'center', // Center the header title
+          headerTitleAlign: 'center',
         }}
       />
       <Stack.Screen
         name="Reception"
         component={ReceptionScreen}
-        options={{title: 'Reception'}}
+        options={{title: 'Registration'}}
       />
       <Stack.Screen
         name="DefaultNoTokenReception"
@@ -55,7 +54,11 @@ const HomeNavigator = () => {
       <Stack.Screen
         name="TokenListing"
         component={PatientTokenQueueScreen}
-        options={{title: 'Token List', headerBackTitleVisible: false}}
+        options={{
+          headerTitle: '',
+          headerRight: () => <HeaderRightProfile imageUrl={profileUri} />,
+          headerTitleAlign: 'center',
+        }}
       />
       <Stack.Screen
         name="DefaultNoTokenTV"

@@ -27,3 +27,15 @@ export const InterLanguageTranslationRequest = async (text, from, to) => {
     return error;
   }
 };
+
+
+// Add this function to your translation service file
+export const TranslateNameToHindi = async (englishName) => {
+  try {
+    const translation = await InterLanguageTranslationRequest(englishName, 'English', 'Hindi');
+    return translation?.trans || englishName;
+  } catch (error) {
+    console.error('Translation error:', error);
+    return englishName;
+  }
+};

@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  Image,
   StyleSheet,
-  Dimensions,
   TouchableOpacity,
   Modal,
   TouchableWithoutFeedback,
@@ -14,82 +12,78 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSetAtom } from 'jotai';
 import { userTokenAtom } from '../atoms/authAtoms/authAtom';
 import FastImage from 'react-native-fast-image';
-import { LogoutIcon } from './icons/Icons';
-// import { ProfileIcon, AddClinicIcon, AddScheduleIcon, LogoutIcon, UpdateProfileIcon } from './icons/Icons';
-
-const { width } = Dimensions.get('window');
+import { User, Calendar, PlusCircle, LogOut } from 'lucide-react-native';
 
 const ProfileCircle = ({ imageUrl }) => {
   const [isDropdownVisible, setDropdownVisible] = useState(false);
-  const fadeAnim = useState(new Animated.Value(0))[0]; // For fade animation
-  const iconPaths = {
-    profile: require('../../assets/ads/images/profile.png'),
-    'Add Clinic': require('../../assets/ads/images/clinic.png'),
-    'Add clinic schedule': require('../../assets/ads/images/schedule.png'),
-    'profile pic': require('../../assets/ads/images/updateProfile.png'),
-  };
-
-  const data = [
-    { label: 'Profile', value: 'profile', icon: <Image source={iconPaths.profile} style={styles.icon} /> },
-    { label: 'Add Clinic', value: 'Add Clinic', icon: <Image source={iconPaths['Add Clinic']} style={styles.icon} /> },
-    { label: 'Add clinic schedule', value: 'Add clinic schedule', icon: <Image source={iconPaths['Add clinic schedule']} style={styles.icon} /> },
-    { label: 'Update profile picture', value: 'profile pic', icon: <Image source={iconPaths['profile pic']} style={styles.icon} /> },
-  ];
-
+  const fadeAnim = useState(new Animated.Value(0))[0];
   const setUserTokenAtom = useSetAtom(userTokenAtom);
 
-  const handleSignOut = () => {
-    setUserTokenAtom(null);
-    AsyncStorage.removeItem('token');
-  };
+  const options = [
+    { label: 'Profile', icon: <User size={18} color="#333" /> },
+    { label: 'Clinic', icon: <PlusCircle size={18} color="#333" /> },
+    { label: 'Schedule', icon: <Calendar size={18} color="#333" /> },
+  ];
 
-  const handleSelect = (item) => {
+  const handleSignOut = async () => {
+    setUserTokenAtom(null);
+    await AsyncStorage.removeItem('token');
+    await AsyncStorage.removeItem('doctor_id');
+    await AsyncStorage.removeItem('doctor_info');
+    await AsyncStorage.removeItem('clinic_details');
     setDropdownVisible(false);
   };
 
-  const showDropdown = () => {
-    setDropdownVisible(true);
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 200,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const hideDropdown = () => {
-    Animated.timing(fadeAnim, {
-      toValue: 0,
-      duration: 200,
-      useNativeDriver: true,
-    }).start(() => setDropdownVisible(false));
+  const toggleDropdown = () => {
+    if (isDropdownVisible) {
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }).start(() => setDropdownVisible(false));
+    } else {
+      setDropdownVisible(true);
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    }
   };
 
   return (
     <View style={styles.container}>
-      {/* Profile Button */}
-      <TouchableOpacity onPress={showDropdown} style={styles.profileButton}>
+      <TouchableOpacity onPress={toggleDropdown}>
         <View style={styles.profileImageContainer}>
-          <FastImage source={{ uri: imageUrl }} style={styles.profileImage} resizeMode="cover" />
+          <FastImage 
+            source={{ uri: imageUrl }} 
+            style={styles.profileImage} 
+            resizeMode="cover" 
+          />
         </View>
       </TouchableOpacity>
 
-      {/* Dropdown Menu */}
-      <Modal transparent={true} visible={isDropdownVisible} onRequestClose={hideDropdown}>
-        <TouchableWithoutFeedback onPress={hideDropdown}>
+      <Modal transparent visible={isDropdownVisible} onRequestClose={toggleDropdown}>
+        <TouchableWithoutFeedback onPress={toggleDropdown}>
           <Animated.View style={[styles.modalOverlay, { opacity: fadeAnim }]}>
             <View style={styles.dropdown}>
-              {data.map((item) => (
-                <TouchableOpacity key={item.value} onPress={() => handleSelect(item)}>
-                  <View style={styles.dropdownItem}>
-                    {item.icon}
-                    <Text style={styles.dropdownText}>{item.label}</Text>
-                  </View>
+              {options.map((option) => (
+                <TouchableOpacity 
+                  key={option.label} 
+                  style={styles.option}
+                  onPress={toggleDropdown}
+                >
+                  {option.icon}
+                  <Text style={styles.optionText}>{option.label}</Text>
                 </TouchableOpacity>
               ))}
-              <View style={styles.separator} />
-              <TouchableOpacity onPress={handleSignOut} style={styles.signOutButton}>
-                <LogoutIcon color="#D32F2F" />
-                <Text style={[styles.dropdownText, { color: '#D32F2F' }]}>Sign Out</Text>
+              <View style={styles.divider} />
+              <TouchableOpacity 
+                style={styles.option}
+                onPress={handleSignOut}
+              >
+                <LogOut size={18} color="#D32F2F" />
+                <Text style={[styles.optionText, styles.signOutText]}>Sign Out</Text>
               </TouchableOpacity>
             </View>
           </Animated.View>
@@ -101,68 +95,57 @@ const ProfileCircle = ({ imageUrl }) => {
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    position: 'relative',
   },
   profileImageContainer: {
-    width: width * 0.10,
-    height: width * 0.10,
-    borderRadius: (width * 0.13) / 2,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 5,
+    overflow: 'hidden',
+    elevation: 2,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,
-    shadowRadius: 3,
+    shadowRadius: 2,
   },
   profileImage: {
-    width: '90%',
-    height: '90%',
-    borderRadius: 999,
+    width: '100%',
+    height: '100%',
   },
   modalOverlay: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-end',
+    paddingTop: 60,
+    paddingRight: 20,
   },
   dropdown: {
-    width: 200,
+    width: 160,
     backgroundColor: '#FFF',
-    borderRadius: 12,
+    borderRadius: 8,
     paddingVertical: 8,
-    position: 'absolute',
-    top: 100,
-    right: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
     elevation: 5,
   },
-  dropdownItem: {
+  option: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
   },
-  dropdownText: {
+  optionText: {
     fontSize: 14,
     color: '#333',
-    marginLeft: 10,
+    marginLeft: 12,
   },
-  separator: {
+  signOutText: {
+    color: '#D32F2F',
+  },
+  divider: {
     height: 1,
     backgroundColor: '#EEE',
-    marginVertical: 8,
-  },
-  signOutButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    marginVertical: 4,
   },
 });
 

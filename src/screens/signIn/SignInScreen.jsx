@@ -31,21 +31,17 @@ const SignInScreen = ({navigation}) => {
       if (!data.success) {
         throw new Error(data.message || 'Sign-in failed');
       }
-      const doctorClinicDetails = data.doctors;
-      const doctorFirstClinic = doctorClinicDetails[0];
-      const doctor_id = doctorFirstClinic.doctor_id ? doctorFirstClinic.doctor_id.toString() : '';
-      const doctorInfo = {
-        doctor_id: doctorFirstClinic.doctor_id,
-        doctor_name: doctorFirstClinic.doctor_name,
-        doctor_profile_pic_directory_api: doctorFirstClinic.profile_picture_url,
-        specialization_name: doctorFirstClinic.specialization_name,
-        specialization_description: doctorFirstClinic.specialization_description,
-      };
+
+      console.log('Sign in response:', data);
+      const doctorDetails = data.doctor;
+      const doctor_id = doctorDetails.doctor_id?.toString() || '';
+
       setUserToken(data.token);
       setAuthToken(data.token);
       setDoctorIdAtom(doctor_id);
-      setDoctorInfoAtom(doctorInfo);
-      setDoctorClinicDetails(doctorClinicDetails);
+      setDoctorInfoAtom(doctorDetails);
+      setDoctorClinicDetails(data.clinics);
+
     } catch (error) {
       console.error('Error signing in:', error);
       Alert.alert('Login Failed', error.message);

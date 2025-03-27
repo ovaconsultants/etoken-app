@@ -8,7 +8,6 @@ import { useAtomValue } from 'jotai';
 
 const CaptureProfilePhotoScreen = ({navigation}) => {
   const doctorId = useAtomValue(doctorIdAtom);
-  console.trace();
   const [profileImage, setProfileImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
  // Replace with dynamic ID

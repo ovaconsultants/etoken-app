@@ -51,16 +51,13 @@ const InProgressTokenNotificationScreen = ({
       <Card style={styles.card}>
         <Card.Content>
           <Text style={[styles.tableCell, {color: theme.colors.text}]}>
-            🏥 Token No: {inProgressPatient.token_no}
+           {inProgressPatient.token_no}
           </Text>
           <Text style={[styles.tableCell, {color: theme.colors.text}]}>
-            👤 Token Name: {inProgressPatient.patient_name}
+            {inProgressPatient.patient_name}
           </Text>
           <Text style={[styles.tableCell, {color: theme.colors.text}]}>
-            🏥 {translatedData.translatedTokenNo}
-          </Text>
-          <Text style={[styles.tableCell, {color: theme.colors.text}]}>
-            👤 {translatedData.translatedPatientName}
+             {translatedData.translatedPatientName}
           </Text>
         </Card.Content>
       </Card>

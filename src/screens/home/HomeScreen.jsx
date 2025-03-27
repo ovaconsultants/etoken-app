@@ -4,18 +4,15 @@ import {
   View,
   Text,
   TouchableOpacity,
-  StyleSheet,
 } from 'react-native';
 import {useAtomValue} from 'jotai';
 import {styles} from './HomeScreen.styles';
 import CardGrid from '../../components/CardGrid';
 import useOrientationLocker from '../../hooks/useOrientationLocker';
-import RadioGroupComponent from '../../components/RadioGroup';
 import {
   doctorClinicDetailsAtom,
   doctorIdAtom,
 } from '../../atoms/doctorAtoms/doctorAtom';
-import {ScreenSelectionOptions} from '../../constants/formComponentsData/radioButtonsData';
 import {Tv, Users} from 'lucide-react-native';
 
 const HomeScreen = ({navigation}) => {

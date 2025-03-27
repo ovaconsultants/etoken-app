@@ -1,20 +1,11 @@
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
-import { ArrowLeft, Tv, Users } from 'lucide-react-native';
+import { StyleSheet, View, Text, } from 'react-native';
+import { Tv, Users } from 'lucide-react-native';
 import React from 'react';
 
 
 const DefaultReceptionScreen = ({ navigation }) => {
     return (
         <View style={styles.container}>
-            {/* Back Button */}
-            <TouchableOpacity 
-                style={styles.backButton}
-                onPress={() => navigation.goBack()}
-                activeOpacity={0.7}
-            >
-                <ArrowLeft size={24} color="#007AFF" />
-                <Text style={styles.backButtonText}></Text>
-            </TouchableOpacity>
 
             {/* Main Content */}
             <View style={styles.content}>

@@ -12,18 +12,19 @@ export const styles = StyleSheet.create({
     alignItems: 'space-evenly',
   },
   card: {
-    width: wp('60%'), // Responsive width (70% of screen width)
+    width: wp('40%'),
     borderRadius: wp('3%'), // Responsive border radius
     elevation: 4,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4, // Responsive padding
-    marginBottom: hp('2%'), // Responsive margin bottom
+    marginBottom: hp('2%'),
+    backgroundColor : 'rgb(154, 125, 247)' // Responsive margin bottom
   },
   tableCell: {
-    fontSize: wp('3.2%'), // Responsive font size
-    marginBottom: hp('0.5%'), // Responsive margin bottom
+    fontSize: wp('5%'),
+    marginBottom: hp('0.5%'),
     fontFamily: 'Roboto',
     textAlign: 'center',
     fontWeight: 'bold',
