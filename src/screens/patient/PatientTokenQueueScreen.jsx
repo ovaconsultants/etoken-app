@@ -251,7 +251,7 @@ const TokenCard = React.memo(({token, isSelected, onPress, onLongPress}) => {
   );
 });
 
-export const FooterNavigation = React.memo(
+ const FooterNavigation = React.memo(
   ({navigation, doctor_id, clinic_id, handleRefresh}) => {
     const handleFooterPress = screenName => {
       switch (screenName) {
