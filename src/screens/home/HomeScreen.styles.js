@@ -7,24 +7,19 @@ import {
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8F9FA',
+    backgroundColor : 'rgb(240, 240, 246)',
     padding: wp('5%'),
-    margin : wp('5%')
+    margin : wp('5%'),
   },
   cardContainer: {
     height: hp('45%'),
     marginBottom: hp('3%'),
+    marginLeft : hp('2%'),
   },
   selectionContainer: {
     marginBottom: hp('5%'),
   },
-  selectionTitle: {
-    fontSize: wp('4.5%'),
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: hp('2%'),
-    textAlign: 'center',
-  },
+
   optionContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -62,9 +57,7 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
   },
   button: {
-    marginTop: hp('2%'),
-    alignSelf: 'center',
-    width: wp('70%'),
+    margin: hp('1.9%'),
     height: hp('6%'),
     backgroundColor: '#007AFF',
     borderRadius: 10,

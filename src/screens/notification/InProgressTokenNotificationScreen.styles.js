@@ -20,11 +20,10 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4, // Responsive padding
     marginBottom: hp('2%'),
-    backgroundColor : 'rgb(154, 125, 247)' // Responsive margin bottom
+    backgroundColor : 'rgba(217, 223, 249, 0.9)'
   },
   tableCell: {
     fontSize: wp('5%'),
-    marginBottom: hp('0.5%'),
     fontFamily: 'Roboto',
     textAlign: 'center',
     fontWeight: 'bold',

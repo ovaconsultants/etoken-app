@@ -1,4 +1,6 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
+
+const { height , width} = Dimensions.get('window');
 
 export const styles = StyleSheet.create({
   container: {
@@ -66,27 +68,78 @@ export const styles = StyleSheet.create({
   submitButtonText: {
     color: '#FFFFFF', // White text
   },
-  viewAllButtonContainer: {
+  bottomButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'space-evenly',
     position: 'absolute',
-    bottom: 20,
-    left: 20,
-    right: 20,
+    bottom: height * 0.03,
+    left: width * 0.05,
+    right: width * 0.05,
+    paddingHorizontal: width * 0.05,
+    paddingVertical: height * 0.02,
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+    zIndex: 1,  
   },
-  viewAllButton: {
+  homeButton: {
+    width: 50,
     height: 50,
-    borderRadius: 12, // Rounded corners
-    backgroundColor: '#007AFF', // iOS system blue
+    borderRadius: 25,
+    backgroundColor: '#4CAF50', // Green color for home
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000', // Shadow for depth
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.2,
     shadowRadius: 4,
-    elevation: 3, // For Android
+    elevation: 3,
   },
-  viewAllButtonText: {
-    color: '#FFFFFF', // White text
-    fontSize: 16,
-    fontWeight: '600', // Semi-bold
+  viewAllButton: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#007AFF', // Blue color for view all
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
+  viewAllButtonContainer: {
+    position: 'absolute',
+    bottom: height * 0.03,
+    right: width * 0.05,
+    width: width * 0.14,
+    height: width * 0.14,
+    borderRadius: width * 0.07,
+    backgroundColor: '#3b82f6',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  floatingButtonIcon: {
+    color: '#ffffff',
+  },
+  formContainer: {
+    marginBottom: height * 0.1, // Space for floating button
+  },
+  label: {
+    fontSize: width * 0.04,
+    color: '#4b5563',
+    marginBottom: height * 0.01,
+    fontWeight: '500',
+  },
+
 });

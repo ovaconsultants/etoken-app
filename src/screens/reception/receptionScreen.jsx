@@ -21,6 +21,7 @@ import {
 } from '../../services/patientService';
 import {GenerateTokenRequest} from '../../services/tokenService';
 import withQueryClientProvider from '../../hooks/useQueryClientProvider';
+import { Users ,Home } from 'lucide-react-native';
 
 const ReceptionScreen = ({route}) => {
   const {doctor_id, clinic_id} = route.params;
@@ -205,7 +206,13 @@ const ReceptionScreen = ({route}) => {
               )}
             </Formik>
 
-            <View style={styles.viewAllButtonContainer}>
+            <View style={styles.bottomButtonsContainer}>
+              <TouchableOpacity
+                style={styles.homeButton}
+                onPress={() => navigation.navigate('Home')}>
+                <Home size={24} color="#fff" />
+              </TouchableOpacity>
+
               <TouchableOpacity
                 style={styles.viewAllButton}
                 onPress={() =>
@@ -214,7 +221,7 @@ const ReceptionScreen = ({route}) => {
                     doctor_id: doctor_id,
                   })
                 }>
-                <Text style={styles.viewAllButtonText}>View All Patients</Text>
+                <Users size={24} color="#fff" />
               </TouchableOpacity>
             </View>
           </>

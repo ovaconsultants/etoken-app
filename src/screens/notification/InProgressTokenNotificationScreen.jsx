@@ -6,26 +6,28 @@ import {styles} from './InProgressTokenNotificationScreen.styles';
 import LoadingErrorHandler from '../../components/LoadingErrorHandler';
 import useSpeechNotification from '../../hooks/useSpeechNotification';
 
-
 const InProgressTokenNotificationScreen = ({
   inProgressPatient,
   isLoading,
   isError,
   error,
 }) => {
-
   const theme = useTheme();
 
   // Use the custom hook for speech functionality
-  const {speakMessages, translatedData} =
+  const {speakMessages, translatedData, stopSpeaking} =
     useSpeechNotification(inProgressPatient);
 
   // Trigger speech when inProgressPatient changes
   useEffect(() => {
+    if (inProgressPatient) {
       speakMessages();
-      return () => {
-      };
-  },[inProgressPatient, speakMessages]);
+    }
+
+    return () => {
+      // stopSpeaking(); // Clean up any ongoing speech when component unmounts or patient changes
+    };
+  }, [inProgressPatient, speakMessages, stopSpeaking]); // Only re-run when inProgressPatient changes
 
   // If no token is available, show a message
   if (!inProgressPatient) {
@@ -40,7 +42,7 @@ const InProgressTokenNotificationScreen = ({
 
   return (
     <View style={styles.container}>
-      {/* Loa"d"ing and Error Handler */}
+      {/* Loading and Error Handler */}
       <LoadingErrorHandler
         isLoading={isLoading}
         isError={isError}
@@ -51,18 +53,20 @@ const InProgressTokenNotificationScreen = ({
       <Card style={styles.card}>
         <Card.Content>
           <Text style={[styles.tableCell, {color: theme.colors.text}]}>
-           {inProgressPatient.token_no}
+            {inProgressPatient.token_no}
           </Text>
           <Text style={[styles.tableCell, {color: theme.colors.text}]}>
             {inProgressPatient.patient_name}
           </Text>
-          <Text style={[styles.tableCell, {color: theme.colors.text}]}>
-             {translatedData.translatedPatientName}
-          </Text>
+          {translatedData?.translatedPatientName && (
+            <Text style={[styles.tableCell, {color: theme.colors.text}]}>
+              {translatedData.translatedPatientName}
+            </Text>
+          )}
         </Card.Content>
       </Card>
     </View>
   );
 };
 
-export default React.memo(InProgressTokenNotificationScreen);
+export default InProgressTokenNotificationScreen;

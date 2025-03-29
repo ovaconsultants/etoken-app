@@ -1,63 +1,55 @@
-import React, { useState } from 'react';
-import { View, Button, Alert, ActivityIndicator } from 'react-native';
+import React, {useState} from 'react';
+import {View, Button, Alert, ActivityIndicator} from 'react-native';
 import ImagePickerComponent from '../../imagePickerComponent/ImagePickerComponent';
 import styles from './CaptureProfilePhotoScreen.styles';
-import { uploadDoctorProfilePicture } from '../../services/authService';
-import { doctorIdAtom } from '../../atoms/doctorAtoms/doctorAtom';
-import { useAtomValue } from 'jotai';
+import {UploadDoctorProfileImageRequest} from '../../services/profileImageService';
+import {doctorIdAtom} from '../../atoms/doctorAtoms/doctorAtom';
+import {useAtomValue} from 'jotai';
 
 const CaptureProfilePhotoScreen = ({navigation}) => {
-  const doctorId = useAtomValue(doctorIdAtom);
-  const [profileImage, setProfileImage] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
- // Replace with dynamic ID
-
- const navigateToClinicScreen = () => {
-  navigation.navigate('ClinicNavigator');
-};
-
-  const handleUpload = async () => {
-    if (!profileImage) {
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const doctorId = 2;
+  const handleImageUpload = async () => {
+    if (!selectedImage) {
       Alert.alert('Error', 'Please select an image first');
       return;
     }
 
-    setIsLoading(true);
+    setIsUploading(true);
+
     try {
-      const response = await uploadDoctorProfilePicture(profileImage, doctorId);
-      
-      if (response.success) {
-        Alert.alert('Success', 'Profile picture updated successfully');
-        navigateToClinicScreen();
-        
-      } else {
-        Alert.alert('Error', response.message || 'Update failed');
-      }
+      const result = await UploadDoctorProfileImageRequest(
+        selectedImage,
+        doctorId,
+      );
+
+      Alert.alert('Success', 'Profile image updated successfully');
+      console.log('Image URL:', result.imageUrl);
     } catch (error) {
-      Alert.alert('Error', error.message || 'Something went wrong');
+      Alert.alert('Upload Error', error.message);
     } finally {
-      setIsLoading(false);
+      setIsUploading(false);
     }
   };
 
   return (
     <View style={styles.container}>
       <ImagePickerComponent
-        initialImage={profileImage}
-        onImageSelected={setProfileImage}
+        onImageSelected={setSelectedImage}
+        initialImage={selectedImage?.uri}
       />
 
-      {isLoading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
+      {isUploading ? (
+        <ActivityIndicator size="large" />
       ) : (
         <Button
-          title="Update Profile Picture"
-          onPress={handleUpload}
-          disabled={!profileImage || isLoading}
+          title="Update Profile Image"
+          onPress={handleImageUpload}
+          disabled={!selectedImage}
         />
       )}
     </View>
   );
 };
-
 export default CaptureProfilePhotoScreen;

@@ -8,7 +8,7 @@ import {
 import Card from './Cards';
 
 const CardGrid = ({ data , onPress,isSelectedCard}) => {
-  const cardWidth = (wp - 50);
+  const cardWidth = (wp);
   return (
     <FlatList
       data={data}

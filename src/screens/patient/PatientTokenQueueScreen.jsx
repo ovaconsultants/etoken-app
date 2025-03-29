@@ -1,24 +1,28 @@
-import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import React, {useState, useEffect, useRef, useMemo, useCallback} from 'react';
 import {
   View,
   Text,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
-  Modal,
   SafeAreaView,
 } from 'react-native';
 import withQueryClientProvider from '../../hooks/useQueryClientProvider';
-import { Phone, Nfc, RefreshCw, Home, FileText, UserPlus } from 'lucide-react-native';
-import { styles } from './PatientTokenQueueScreen.styles';
-import { usePatientTokenManager } from '../../hooks/usePatientTokenManager';
+import LoadingErrorHandler from '../../components/LoadingErrorHandler';
+import {
+  Phone,
+  Nfc,
+  RefreshCw,
+  Home,
+  FileText,
+  UserPlus,
+} from 'lucide-react-native';
+import {styles} from './PatientTokenQueueScreen.styles';
+import {usePatientTokenManager} from '../../hooks/usePatientTokenManager';
 import DefaultReceptionScreen from '../noTokenReceptionState/DefaultReceptionScreen';
-import { sidePanelStyles } from './PatientTokenQueueScreen.styles';
 
-const PatientTokenQueueScreen = ({ navigation, route }) => {
+const PatientTokenQueueScreen = ({navigation, route}) => {
   // State initialization
-  const { clinic_id, doctor_id } = route.params;
-  const [isSidePanelVisible, setSidePanelVisible] = useState(false);
+  const {clinic_id, doctor_id} = route.params;
   const [isLoading, setIsLoading] = useState(true);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const doubleTapTimeout = useRef(null);
@@ -32,45 +36,70 @@ const PatientTokenQueueScreen = ({ navigation, route }) => {
     handleNext,
     handleRecall,
     handleDone,
+    refetchTokens,
+    isFetching,
+    isError,
+    error,
   } = usePatientTokenManager(clinic_id, doctor_id);
 
   // Memoized derived values
-  const onHoldOptions = useMemo(() => (
-    patientTokens
-      .filter(t => t.status === 'On Hold')
-      .map(patient => ({
-        label: `${patient.patient_name} (${patient.token_no})`,
-        value: patient.token_id,
-      }))
-  ), [patientTokens]);
+  const onHoldOptions = useMemo(
+    () =>
+      patientTokens
+        .filter(t => t.status === 'On Hold')
+        .map(patient => ({
+          label: `${patient.patient_name} (${patient.token_no})`,
+          value: patient.token_id,
+        })),
+    [patientTokens],
+  );
 
-  const { totalPatients, attendedPatients, inQueue, onHold, hasTokenInProgress } = useMemo(() => {
-    const inProgressTokens = patientTokens.filter(t => t.status === 'In Progress');
-    return {
-      totalPatients: patientTokens.length,
-      attendedPatients: inProgressTokens.length,
-      inQueue: patientTokens.filter(t => t.status === 'Waiting').length,
-      onHold: patientTokens.filter(t => t.status === 'On Hold').length,
-      hasTokenInProgress: inProgressTokens.length > 0,
-    };
-  }, [patientTokens]);
+  const {totalPatients, attendedPatients, inQueue, onHold, hasTokenInProgress} =
+    useMemo(() => {
+      const inProgressTokens = patientTokens.filter(
+        t => t.status === 'In Progress',
+      );
+      return {
+        totalPatients: patientTokens.length,
+        attendedPatients: inProgressTokens.length,
+        inQueue: patientTokens.filter(t => t.status === 'Waiting').length,
+        onHold: patientTokens.filter(t => t.status === 'On Hold').length,
+        hasTokenInProgress: inProgressTokens.length > 0,
+      };
+    }, [patientTokens]);
 
   // Event handlers
-  const handleRowPress = useCallback((tokenId) => {
-    if (doubleTapTimeout.current) {
-      clearTimeout(doubleTapTimeout.current);
-      doubleTapTimeout.current = null;
-      handleSelectToken(tokenId);
-    } else {
-      doubleTapTimeout.current = setTimeout(() => {
+  const handleRowPress = useCallback(
+    tokenId => {
+      if (doubleTapTimeout.current) {
+        clearTimeout(doubleTapTimeout.current);
         doubleTapTimeout.current = null;
-      }, 300);
-    }
-  }, [handleSelectToken]);
+        handleSelectToken(tokenId);
+      } else {
+        doubleTapTimeout.current = setTimeout(() => {
+          doubleTapTimeout.current = null;
+        }, 300);
+      }
+    },
+    [handleSelectToken],
+  );
 
-  const handleLongPress = useCallback((token) => {
-    navigation.navigate('PatientInfoEditor', { patientInfo: token });
-  }, [navigation]);
+  const handleLongPress = useCallback(
+    token => {
+      navigation.navigate('PatientInfoEditor', {patientInfo: token});
+    },
+    [navigation],
+  );
+
+  const handleRefresh = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      await refetchTokens();
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Error refreshing tokens:', error);
+    }
+  }, [refetchTokens]);
 
   const toggleDropdown = useCallback(() => {
     setIsDropdownVisible(prev => !prev);
@@ -83,12 +112,8 @@ const PatientTokenQueueScreen = ({ navigation, route }) => {
     }
   }, [patientTokens]);
 
-  if (isLoading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#007BFF" />
-      </View>
-    );
+  if (isError) {
+    return <LoadingErrorHandler isError={true} error={error} />;
   }
 
   if (patientTokens.length === 0) {
@@ -97,6 +122,10 @@ const PatientTokenQueueScreen = ({ navigation, route }) => {
 
   return (
     <SafeAreaView style={styles.fullScreenContainer}>
+      <LoadingErrorHandler
+        isLoading={isLoading && isFetching && patientTokens.length > 0}
+        isInline={true}
+      />
       {/* Header */}
       <View style={styles.headerContainer}>
         <View style={styles.headerBadges}>
@@ -110,11 +139,10 @@ const PatientTokenQueueScreen = ({ navigation, route }) => {
             <Text style={styles.badgeText}>In Queue: {inQueue}</Text>
           </View>
           <View style={styles.dropdownContainer}>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[styles.badge, styles.redBadge]}
               onPress={toggleDropdown}
-              disabled={onHoldOptions.length === 0}
-            >
+              disabled={onHoldOptions.length === 0}>
               <Text style={styles.badgeText}>On Hold: {onHold}</Text>
             </TouchableOpacity>
             {isDropdownVisible && (
@@ -127,9 +155,10 @@ const PatientTokenQueueScreen = ({ navigation, route }) => {
                       onPress={() => {
                         handleSelectToken(option.value);
                         setIsDropdownVisible(false);
-                      }}
-                    >
-                      <Text style={styles.dropdownItemText}>{option.label}</Text>
+                      }}>
+                      <Text style={styles.dropdownItemText}>
+                        {option.label}
+                      </Text>
                     </TouchableOpacity>
                   ))}
                 </ScrollView>
@@ -143,8 +172,7 @@ const PatientTokenQueueScreen = ({ navigation, route }) => {
       <View style={styles.actionButtonsContainer}>
         <TouchableOpacity
           style={styles.primaryButton}
-          onPress={hasTokenInProgress ? handleDone : handleNext}
-        >
+          onPress={hasTokenInProgress ? handleDone : handleNext}>
           <Phone size={16} color="white" />
           <Text style={styles.buttonText}>
             {hasTokenInProgress ? 'Done' : 'Call Next'}
@@ -153,8 +181,7 @@ const PatientTokenQueueScreen = ({ navigation, route }) => {
         <TouchableOpacity
           style={styles.secondaryButton}
           onPress={handleRecall}
-          disabled={!isRecallEnabled}
-        >
+          disabled={!isRecallEnabled}>
           <Nfc size={16} color="#333" />
           <Text style={styles.secondaryButtonText}>Recall</Text>
         </TouchableOpacity>
@@ -172,17 +199,18 @@ const PatientTokenQueueScreen = ({ navigation, route }) => {
           />
         ))}
       </ScrollView>
-      <FooterNavigation />
-      <SidePanel 
-        visible={isSidePanelVisible} 
-        onClose={() => setSidePanelVisible(false)} 
+
+      <FooterNavigation
+        navigation={navigation}
+        doctor_id={doctor_id}
+        clinic_id={clinic_id}
+        handleRefresh={handleRefresh}
       />
     </SafeAreaView>
   );
 };
-
 // Memoized Components for better performance
-const TokenCard = React.memo(({ token, isSelected, onPress, onLongPress }) => {
+const TokenCard = React.memo(({token, isSelected, onPress, onLongPress}) => {
   return (
     <TouchableOpacity
       style={[
@@ -193,8 +221,7 @@ const TokenCard = React.memo(({ token, isSelected, onPress, onLongPress }) => {
       ]}
       onPress={onPress}
       onLongPress={onLongPress}
-      delayLongPress={500}
-    >
+      delayLongPress={500}>
       <View style={styles.tokenHeader}>
         <Text style={styles.patientName}>{token.patient_name}</Text>
         <Text style={styles.tokenNumber}>{token.token_no}</Text>
@@ -209,12 +236,14 @@ const TokenCard = React.memo(({ token, isSelected, onPress, onLongPress }) => {
           </Text>
         )}
         <View style={styles.statusContainer}>
-          <View style={[
-            styles.statusDot,
-            token.status === 'In Progress' && styles.greenDot,
-            token.status === 'On Hold' && styles.redDot,
-            token.status === 'Waiting' && styles.yellowDot,
-          ]} />
+          <View
+            style={[
+              styles.statusDot,
+              token.status === 'In Progress' && styles.greenDot,
+              token.status === 'On Hold' && styles.redDot,
+              token.status === 'Waiting' && styles.yellowDot,
+            ]}
+          />
           <Text style={styles.statusText}>{token.status}</Text>
         </View>
       </View>
@@ -222,50 +251,63 @@ const TokenCard = React.memo(({ token, isSelected, onPress, onLongPress }) => {
   );
 });
 
-const FooterNavigation = React.memo(() => {
-  return (
-    <View style={styles.footerNavigation}>
-      <FooterButton icon={UserPlus} label="New" />
-      <FooterButton icon={Home} label="Home" />
-      <FooterButton icon={FileText} label="Report" />
-      <FooterButton icon={RefreshCw} label="Refresh" />
-    </View>
-  );
-});
+export const FooterNavigation = React.memo(
+  ({navigation, doctor_id, clinic_id, handleRefresh}) => {
+    const handleFooterPress = screenName => {
+      switch (screenName) {
+        case 'New':
+          navigation.navigate('Reception', {
+            doctor_id: doctor_id,
+            clinic_id: clinic_id,
+          });
+          break;
+        case 'Home':
+          navigation.navigate('Home');
+          break;
+        case 'Report':
+          navigation.navigate('ReportsScreen');
+          break;
+        case 'Refresh':
+          handleRefresh();
+          break;
+        default:
+          console.warn(`No screen defined for ${screenName}`);
+      }
+    };
 
-const FooterButton = React.memo(({ icon: Icon, label }) => {
+    return (
+      <View style={styles.footerNavigation}>
+        <FooterButton
+          icon={UserPlus}
+          label="New"
+          onPress={() => handleFooterPress('New')}
+        />
+        <FooterButton
+          icon={Home}
+          label="Home"
+          onPress={() => handleFooterPress('Home')}
+        />
+        <FooterButton
+          icon={FileText}
+          label="Report"
+          onPress={() => handleFooterPress('Report')}
+        />
+        <FooterButton
+          icon={RefreshCw}
+          label="Refresh"
+          onPress={() => handleFooterPress('Refresh')}
+        />
+      </View>
+    );
+  },
+);
+
+const FooterButton = React.memo(({icon: Icon, label, onPress}) => {
   return (
-    <TouchableOpacity style={styles.footerButton}>
+    <TouchableOpacity style={styles.footerButton} onPress={onPress}>
       <Icon size={20} color="#333" />
       <Text style={styles.footerButtonText}>{label}</Text>
     </TouchableOpacity>
-  );
-});
-
-const SidePanel = React.memo(({ visible, onClose }) => {
-  return (
-    <Modal
-      transparent={true}
-      visible={visible}
-      onRequestClose={onClose}
-    >
-      <View style={sidePanelStyles.overlay}>
-        <View style={sidePanelStyles.sidePanel}>
-          <TouchableOpacity style={sidePanelStyles.sidePanelButton}>
-            <Text style={sidePanelStyles.sidePanelButtonText}>List Info</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={sidePanelStyles.sidePanelButton}>
-            <Text style={sidePanelStyles.sidePanelButtonText}>LogOut</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={sidePanelStyles.closeButton}
-            onPress={onClose}
-          >
-            <Text style={sidePanelStyles.closeButtonText}>Close</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </Modal>
   );
 });
 

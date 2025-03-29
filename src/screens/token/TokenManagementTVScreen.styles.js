@@ -55,7 +55,6 @@ export const styles = StyleSheet.create({
   reloadButton: {
     padding: 8,
     borderRadius: 8,
-    backgroundColor: 'rgb(51, 141, 237)',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -114,7 +113,6 @@ export const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: 'red',
     marginRight: 6,
-    alignSelf: 'flex-start',
   },
   green: { backgroundColor: '#2e7d32' },
   orange: { backgroundColor: '#f9a825' },
@@ -142,6 +140,7 @@ export const styles = StyleSheet.create({
     right: 0,
     backgroundColor: '#f3faf5',
     margin: 10,
+    marginRight: 20,
   },
   hindi: {
     fontSize: 12,

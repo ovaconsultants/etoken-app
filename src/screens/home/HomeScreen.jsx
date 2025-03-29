@@ -23,7 +23,7 @@ const HomeScreen = ({navigation}) => {
   const rawClinicData = useAtomValue(doctorClinicDetailsAtom);
 
   const cards = useMemo(() => {
-    if (!Array.isArray(rawClinicData)) return [];
+    if (!Array.isArray(rawClinicData)) {return [];}
 
     const uniqueClinics = Array.from(
       new Map(
@@ -82,8 +82,6 @@ const HomeScreen = ({navigation}) => {
       </View>
 
       <View style={styles.selectionContainer}>
-        <Text style={styles.selectionTitle}>Select Display Mode:</Text>
-
         <View style={styles.optionContainer}>
           <TouchableOpacity
             style={[

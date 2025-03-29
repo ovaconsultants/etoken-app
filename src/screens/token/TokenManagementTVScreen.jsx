@@ -16,21 +16,24 @@ import {
   doctorClinicDetailsAtom,
   doctorInfoAtom,
 } from '../../atoms/doctorAtoms/doctorAtom';
-import FastImage from 'react-native-fast-image';
 import {useAtomValue} from 'jotai';
 import {useProfileURI} from '../../hooks/useProfileURI';
 import {RotateCcw} from 'lucide-react-native';
 import LoadingErrorHandler from '../../components/LoadingErrorHandler';
+import ProfileCircle from '../../components/ProfileImage';
 
 const TokenManagementScreen = ({route}) => {
   const profileUri = useProfileURI();
   const clinicData = useAtomValue(doctorClinicDetailsAtom);
   const doctorData = useAtomValue(doctorInfoAtom);
+  const [isRefreshReloading, setIsRefreshReloading] = useState(false);
   const {doctor_id, clinic_id} = route.params;
   const {
     data: tokens = [],
     isLoading,
     isError,
+    error,
+    refetch,
   } = usePatientTokens(doctor_id, clinic_id);
   const currentClinicData = clinicData.find(
     clinic => clinic.clinic_id === clinic_id,
@@ -49,36 +52,55 @@ const TokenManagementScreen = ({route}) => {
     };
   }, [tokens]);
 
+  // Reload button handler
+  const handleReloadPress = async () => {
+    try {
+      setIsRefreshReloading(true);
+      await refetch();
+    } catch (err) {
+      console.error('Refresh error:', err);
+    } finally {
+      setIsRefreshReloading(false);
+    }
+  };
 
-
-  // if isLoading and isError Handler 
-  if(isLoading ||  isError) {
-    LoadingErrorHandler(isLoading, isError, 'Error loading tokens.');
+  // Show loading state during initial load or refresh
+  if (isLoading || isRefreshReloading) {
+    return <LoadingErrorHandler isLoading={true} />;
   }
+
+  if (isError) {
+    return <LoadingErrorHandler isError={true} error={error} />;
+  }
+
   if (!tokens || tokens.length === 0) {
     return <DefaultTVScreen clinicInfo={currentClinicData} />;
   }
+
   return (
     <View style={styles.fullScreenContainer}>
       <View style={styles.headerContainer}>
         <View style={styles.doctorSection}>
-        <View style={styles.profileCircle}>
-          <FastImage
-            source={{uri: profileUri}}
-            style={styles.profileImage}
-            resizeMode="cover"
-            fallback={true} 
-          />
+          <View style={styles.profileCircle}>
+          <ProfileCircle profileUri={profileUri} />
+          </View>
+          <View style={styles.doctorInfo}>
+            <Text style={styles.doctorName}>Dr. {doctorData.doctor_name}</Text>
+            <Text style={styles.doctorQualification}>
+              {doctorData.specialization_name}
+            </Text>
+          </View>
         </View>
-        <View style={styles.doctorInfo}>
-          <Text style={styles.doctorName}>Dr. {doctorData.doctor_name}</Text>
-          <Text style={styles.doctorQualification}>
-            {doctorData.specialization_name}
-          </Text>
-        </View>
-        </View>
-        <TouchableOpacity style={styles.reloadButton}>
-          <RotateCcw />
+        <TouchableOpacity 
+          style={styles.reloadButton} 
+          onPress={handleReloadPress}
+          disabled={isRefreshReloading}
+        >
+          {isRefreshReloading ? (
+            <ActivityIndicator size="small" color="#007BFF" />
+          ) : (
+            <RotateCcw />
+          )}
         </TouchableOpacity>
       </View>
       <TokenTable tokens={tokens} />
@@ -88,7 +110,7 @@ const TokenManagementScreen = ({route}) => {
             inProgressPatient={inProgressPatient}
             isLoading={isLoading}
             isError={isError}
-            error={isError ? 'Error loading in-progress patient' : null}
+            error={error}
           />
         )}
       </View>

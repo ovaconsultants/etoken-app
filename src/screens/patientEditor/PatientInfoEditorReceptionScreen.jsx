@@ -1,18 +1,27 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, Switch, ScrollView, TextInput, Alert } from 'react-native';
-import { Formik } from 'formik';
+import React, { useEffect } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Switch,
+  ScrollView,
+  TextInput,
+  Alert,
+} from 'react-native';
+import {Formik} from 'formik';
 import * as yup from 'yup';
-import { styles } from './PatientInfoEditorReceptionScreen.styles';
-import { UpdatePatientRequest } from '../../services/patientService';
-import { UpdateTokenRequest } from '../../services/tokenService';
-import { SaveAll, CircleX } from 'lucide-react-native';
+import {styles} from './PatientInfoEditorReceptionScreen.styles';
+import {UpdatePatientRequest} from '../../services/patientService';
+import {UpdateTokenRequest} from '../../services/tokenService';
+import {SaveAll, CircleX} from 'lucide-react-native';
 
 // Validation schema
 const validationSchema = yup.object().shape({
   patient: yup.object().shape({
     fname: yup.string().required('First name is required'),
     lname: yup.string().required('Last name is required'),
-    mobile_number: yup.string()
+    mobile_number: yup
+      .string()
       .required('Mobile number is required')
       .matches(/^[0-9]{10}$/, 'Must be a valid 10-digit phone number'),
     email: yup.string().email('Invalid email format'),
@@ -20,14 +29,23 @@ const validationSchema = yup.object().shape({
   token: yup.object().shape({
     status: yup.string().required('Status is required'),
     fee_status: yup.string().required('Payment status is required'),
-    fee_amount: yup.number().typeError('Must be a number').min(0, 'Cannot be negative'),
+    fee_amount: yup
+      .number()
+      .typeError('Must be a number')
+      .min(0, 'Cannot be negative'),
     emergency: yup.boolean(),
-  })
+  }),
 });
 
-export const PatientInfoEditorScreen = ({ route, navigation }) => {
-  const { patientInfo } = route.params;
+export const PatientInfoEditorScreen = ({route, navigation}) => {
+  const {patientInfo} = route.params;
 
+  useEffect(() => {
+    navigation.setOptions({
+      title: `Edit Token No ${patientInfo.token_no} `,
+    });
+  }, [navigation, patientInfo.token_no]);
+  
   // Initial form values
   const initialValues = {
     patient: {
@@ -36,7 +54,7 @@ export const PatientInfoEditorScreen = ({ route, navigation }) => {
       lname: patientInfo.patient_name.split(' ').slice(1).join(' ') || '',
       mobile_number: patientInfo.mobile_number,
       email: patientInfo.email || '',
-      modified_by: 'receptionist'
+      modified_by: 'receptionist',
     },
     token: {
       token_id: patientInfo.token_id,
@@ -44,19 +62,19 @@ export const PatientInfoEditorScreen = ({ route, navigation }) => {
       fee_status: patientInfo.fee_status,
       emergency: patientInfo.emergency === 'Y',
       fee_amount: patientInfo.fee_amount,
-      modified_by: 'receptionist'
-    }
+      modified_by: 'receptionist',
+    },
   };
 
   // Only submit if there are changes
-  const handleSubmit = async (values, { setSubmitting }) => {
+  const handleSubmit = async (values, {setSubmitting}) => {
     try {
       const patientChanged = Object.keys(values.patient).some(
-        key => initialValues.patient[key] !== values.patient[key]
+        key => initialValues.patient[key] !== values.patient[key],
       );
-      
+
       const tokenChanged = Object.keys(values.token).some(
-        key => initialValues.token[key] !== values.token[key]
+        key => initialValues.token[key] !== values.token[key],
       );
 
       if (!patientChanged && !tokenChanged) {
@@ -66,11 +84,12 @@ export const PatientInfoEditorScreen = ({ route, navigation }) => {
       }
 
       const requests = [];
-      
+
       if (patientChanged) {
         const patientUpdate = {
           ...values.patient,
-          patient_name: `${values.patient.fname} ${values.patient.lname}`.trim()
+          patient_name:
+            `${values.patient.fname} ${values.patient.lname}`.trim(),
         };
         requests.push(UpdatePatientRequest(patientUpdate));
       }
@@ -78,7 +97,7 @@ export const PatientInfoEditorScreen = ({ route, navigation }) => {
       if (tokenChanged) {
         const tokenUpdate = {
           ...values.token,
-          emergency: values.token.emergency ? 'Y' : 'N'
+          emergency: values.token.emergency ? 'Y' : 'N',
         };
         requests.push(UpdateTokenRequest(tokenUpdate));
       }
@@ -98,14 +117,20 @@ export const PatientInfoEditorScreen = ({ route, navigation }) => {
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
-      onSubmit={handleSubmit}
-    >
-      {({ handleChange, handleBlur, handleSubmit, values, setFieldValue, errors, touched, isSubmitting }) => (
+      onSubmit={handleSubmit}>
+      {({
+        handleChange,
+        handleBlur,
+        handleSubmit: formikHandleSubmit,
+        values,
+        setFieldValue,
+        errors,
+        touched,
+        isSubmitting,
+      }) => (
         <ScrollView contentContainerStyle={styles.container}>
           {/* Personal Information Section */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Personal Information</Text>
-            
             <View style={styles.inputContainer}>
               <Text style={styles.label}>First Name:</Text>
               <TextInput
@@ -144,9 +169,12 @@ export const PatientInfoEditorScreen = ({ route, navigation }) => {
                 placeholder="Mobile Number"
                 keyboardType="phone-pad"
               />
-              {touched.patient?.mobile_number && errors.patient?.mobile_number && (
-                <Text style={styles.errorText}>{errors.patient.mobile_number}</Text>
-              )}
+              {touched.patient?.mobile_number &&
+                errors.patient?.mobile_number && (
+                  <Text style={styles.errorText}>
+                    {errors.patient.mobile_number}
+                  </Text>
+                )}
             </View>
 
             <View style={styles.inputContainer}>
@@ -168,74 +196,76 @@ export const PatientInfoEditorScreen = ({ route, navigation }) => {
 
           {/* Medical Information Section */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Medical Information</Text>
-            
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Token No:</Text>
-              <Text style={styles.value}>{patientInfo.token_no}</Text>
-            </View>
 
             <View style={styles.inputContainer}>
-              <Text style={styles.label}>Status:</Text>
-              <View style={styles.statusOptions}>
-                {['Waiting', 'In Progress', 'On Hold'].map(status => (
-                  <TouchableOpacity 
-                    key={status}
-                    style={[
-                      styles.statusButton, 
-                      values.token.status === status && styles.activeStatus
-                    ]}
-                    onPress={() => setFieldValue('token.status', status)}
-                  >
-                    <Text>{status}</Text>
-                  </TouchableOpacity>
-                ))}
+              <Text style={styles.label}>On Hold Status:</Text>
+              <View
+                style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
+                <Switch
+                  value={values.token.status === 'On Hold'}
+                  onValueChange={isOnHold => {
+                    setFieldValue(
+                      'token.status',
+                      isOnHold ? 'On Hold' : 'Waiting',
+                    );
+                  }}
+                  trackColor={{false: '#767577', true: '#81b0ff'}}
+                  thumbColor={
+                    values.token.status === 'On Hold' ? '#f5dd4b' : '#f4f3f4'
+                  }
+                />
+                <Text style={{fontWeight: 'bold'}}>
+                  {values.token.status === 'On Hold'
+                    ? 'ON HOLD'
+                    : 'ACTIVE (Waiting)'}
+                </Text>
               </View>
-              {touched.token?.status && errors.token?.status && (
-                <Text style={styles.errorText}>{errors.token.status}</Text>
-              )}
             </View>
 
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Emergency:</Text>
+
               <Switch
                 value={values.token.emergency}
-                onValueChange={(value) => setFieldValue('token.emergency', value)}
-                trackColor={{ false: '#767577', true: '#81b0ff' }}
+                onValueChange={value => setFieldValue('token.emergency', value)}
+                trackColor={{false: '#767577', true: '#81b0ff'}}
                 thumbColor={values.token.emergency ? '#007BFF' : '#f4f3f4'}
               />
+              <Text style={{}}>{values.token.emergency ? 'Yes' : 'No'}</Text>
             </View>
           </View>
 
           {/* Payment Information Section */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Payment Information</Text>
-            
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Fee Amount:</Text>
-              <TextInput
-                style={styles.input}
-                value={values.token.fee_amount}
-                onChangeText={handleChange('token.fee_amount')}
-                onBlur={handleBlur('token.fee_amount')}
-                placeholder="Fee Amount"
-                keyboardType="decimal-pad"
-              />
-              {touched.token?.fee_amount && errors.token?.fee_amount && (
-                <Text style={styles.errorText}>{errors.token.fee_amount}</Text>
-              )}
-            </View>
-
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Payment Status:</Text>
               <Switch
-                value={values.token.fee_status === 'Paid'}
-                onValueChange={(value) => 
-                  setFieldValue('token.fee_status', value ? 'Paid' : 'Not Paid')
-                }
-                trackColor={{ false: '#767577', true: '#81b0ff' }}
-                thumbColor={values.token.fee_status === 'Paid' ? '#007BFF' : '#f4f3f4'}
-              />
+      value={values.token.fee_status === 'Paid'}
+      onValueChange={(value) => {
+        Alert.alert(
+          'Change Payment Status',
+          `Are you sure you want to change payment status to ${value ? 'Paid' : 'Not Paid'}?`,
+          [
+            {
+              text: 'Cancel',
+              style: 'cancel',
+              onPress: () => {
+                // Revert the switch visually if cancelled
+                setFieldValue('token.fee_status', values.token.fee_status);
+              },
+            },
+            {
+              text: 'Confirm',
+              onPress: () => {
+                setFieldValue('token.fee_status', value ? 'Paid' : 'Not Paid');
+              },
+            },
+          ]
+        );
+      }}
+      trackColor={{false: '#767577', true: '#81b0ff'}}
+      thumbColor={values.token.fee_status === 'Paid' ? '#007BFF' : '#f4f3f4'}
+    />
               <Text style={styles.toggleText}>
                 {values.token.fee_status === 'Paid' ? 'Paid' : 'Not Paid'}
               </Text>
@@ -247,22 +277,20 @@ export const PatientInfoEditorScreen = ({ route, navigation }) => {
 
           {/* Action Buttons */}
           <View style={styles.buttonContainer}>
-            <TouchableOpacity 
-              onPress={handleSubmit} 
+            <TouchableOpacity
+              onPress={formikHandleSubmit}
               style={styles.saveButton}
-              disabled={isSubmitting}
-            >
+              disabled={isSubmitting}>
               <SaveAll size={20} color="#fff" />
               <Text style={styles.buttonText}>
                 {isSubmitting ? 'Saving...' : 'Save All'}
               </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity 
-              onPress={() => navigation.goBack()} 
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
               style={styles.closeButton}
-              disabled={isSubmitting}
-            >
+              disabled={isSubmitting}>
               <CircleX size={20} color="#fff" />
               <Text style={styles.buttonText}>Cancel</Text>
             </TouchableOpacity>

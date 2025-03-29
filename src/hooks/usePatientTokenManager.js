@@ -10,12 +10,13 @@ export const usePatientTokenManager = (clinic_id, doctor_id) => {
   const [pauseQuery, setPauseQuery] = useState(false);
 
   const selectedTokenRef = useRef(null);
-  const {data: tokens = [], refetch: refetchTokens} = usePatientTokens(
-    doctor_id,
-    clinic_id,
-    null,
-    pauseQuery,
-  );
+  const {
+    data: tokens = [],
+    refetch: refetchTokens,
+    isFetching,
+    error,
+    isError,
+  } = usePatientTokens(doctor_id, clinic_id, null, pauseQuery);
 
   useEffect(() => {
     if (tokens.length > 0) {
@@ -127,5 +128,9 @@ export const usePatientTokenManager = (clinic_id, doctor_id) => {
     handleNext,
     handleRecall,
     handleDone,
+    refetchTokens,
+    isFetching,
+    error,
+    isError
   };
 };

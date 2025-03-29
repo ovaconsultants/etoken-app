@@ -15,7 +15,7 @@ import { Home } from 'lucide-react-native';
 const Stack = createNativeStackNavigator();
 
 const HeaderHomeIcon = () => (
-  <Home size={30} color={'#000'} />
+  <Home size={30} color={'#000'} style={{ marginTop: 15 }}/>
   );
 
 export const HeaderRightProfile = React.memo(({imageUrl}) => (
@@ -33,13 +33,15 @@ const HomeNavigator = () => {
         options={{
           headerTitle: HeaderHomeIcon,
           headerRight: () => <HeaderRightProfile imageUrl={profileUri} />,
-          headerTitleAlign: 'center',
         }}
       />
       <Stack.Screen
         name="Reception"
         component={ReceptionScreen}
-        options={{title: 'Registration'}}
+        options={{title: 'Registration',
+          headerRight: () => <HeaderRightProfile imageUrl={profileUri} />
+
+        }}
       />
       <Stack.Screen
         name="DefaultNoTokenReception"

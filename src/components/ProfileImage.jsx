@@ -27,10 +27,7 @@ const ProfileCircle = ({ imageUrl }) => {
 
   const handleSignOut = async () => {
     setUserTokenAtom(null);
-    await AsyncStorage.removeItem('token');
-    await AsyncStorage.removeItem('doctor_id');
-    await AsyncStorage.removeItem('doctor_info');
-    await AsyncStorage.removeItem('clinic_details');
+    await AsyncStorage.clear();
     setDropdownVisible(false);
   };
 
