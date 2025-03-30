@@ -1,27 +1,20 @@
-import React, { useState } from 'react';
-import {
-  View,
-  TextInput,
-  FlatList,
-  TouchableOpacity,
-  Text,
-} from 'react-native';
+import React, {useState} from 'react';
+import {View, TextInput, FlatList, TouchableOpacity, Text} from 'react-native';
 import styles from './SearchBar.styles';
-import { calculateSearchRelevance } from '../utils/globalUtil';
+import {calculateSearchRelevance} from '../../utils/globalUtil';
 
-const SearchBar = ({ data, onSelectItem, placeholder }) => {
+const SearchBar = ({data, onSelectItem, placeholder}) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
-
   const filteredData = [...(data || [])]
-  .map(item => {
-    const searchWords = searchTerm.toLowerCase().trim().split(/\s+/);
-    const score = calculateSearchRelevance(item, searchWords);
-    return { ...item, matchScore: score };
-  })
-  .filter(item => item.matchScore > 0)
-  .sort((a, b) => b.matchScore - a.matchScore);
+    .map(item => {
+      const searchWords = searchTerm.toLowerCase().trim().split(/\s+/);
+      const score = calculateSearchRelevance(item, searchWords);
+      return {...item, matchScore: score};
+    })
+    .filter(item => item.matchScore > 0)
+    .sort((a, b) => b.matchScore - a.matchScore);
 
   return (
     <View style={styles.searchContainer}>
@@ -40,7 +33,7 @@ const SearchBar = ({ data, onSelectItem, placeholder }) => {
           data={filteredData}
           keyExtractor={item => item.patient_id.toString()}
           style={styles.dropdown}
-          renderItem={({ item }) => (
+          renderItem={({item}) => (
             <TouchableOpacity
               style={styles.dropdownItem}
               onPress={() => {

@@ -85,7 +85,7 @@ const SignUpScreen = ({navigation}) => {
         setLoading(prev => ({ ...prev, specializations: false }));
       }
     };
-  
+
     loadSpecializations();
   }, [selectedAccount]);
   

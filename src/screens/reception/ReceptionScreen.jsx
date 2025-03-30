@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, {useState, useRef} from 'react';
 import {
   View,
   Text,
@@ -8,29 +8,29 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
-import { Formik } from 'formik';
-import { styles } from './ReceptionScreen.styles';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useNavigation } from '@react-navigation/native';
-import SearchBar from '../../components/SearchBar';
+import {Formik} from 'formik';
+import {styles} from './ReceptionScreen.styles';
+import {useQuery, useQueryClient} from '@tanstack/react-query';
+import {useNavigation} from '@react-navigation/native';
+import SearchBar from '../../components/searchBar/SearchBar';
 import LoadingErrorHandler from '../../components/LoadingErrorHandler';
-import { PatientSchema } from '../../utils/formFields/validationSchemas/clinicSchemas';
+import {PatientSchema} from '../../utils/formFields/validationSchemas/clinicSchemas';
 import {
   FetchPatientsRequest,
   InsertPatientRequest,
 } from '../../services/patientService';
-import { GenerateTokenRequest } from '../../services/tokenService';
+import {GenerateTokenRequest} from '../../services/tokenService';
 import withQueryClientProvider from '../../hooks/useQueryClientProvider';
-import { Users, Home } from 'lucide-react-native';
+import {Users, Home} from 'lucide-react-native';
 
-const ReceptionScreen = ({ route }) => {
-  const { doctor_id, clinic_id } = route.params;
+const ReceptionScreen = ({route}) => {
+  const {doctor_id, clinic_id} = route.params;
   const navigation = useNavigation();
   const queryClient = useQueryClient();
   const [patients, setPatients] = useState(null);
   const formikRef = useRef();
 
-  const { isLoading, isError, error } = useQuery({
+  const {isLoading, isError, error} = useQuery({
     queryKey: ['patientsForToken'],
     queryFn: async () => {
       const fetchedPatients = await FetchPatientsRequest();
@@ -41,7 +41,7 @@ const ReceptionScreen = ({ route }) => {
     staleTime: 10 * 1000,
   });
 
-  const handleSubmit = async (values, { resetForm }) => {
+  const handleSubmit = async (values, {resetForm}) => {
     try {
       const existingPatient = patients.find(
         patient =>
@@ -96,7 +96,11 @@ const ReceptionScreen = ({ route }) => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={styles.container}>
-        <LoadingErrorHandler isLoading={isLoading} isError={isError} error={error} />
+        <LoadingErrorHandler
+          isLoading={isLoading}
+          isError={isError}
+          error={error}
+        />
 
         {!isLoading && !isError && (
           <>
@@ -174,10 +178,14 @@ const ReceptionScreen = ({ route }) => {
                   )}
 
                   <View style={styles.buttonContainer}>
-                    <TouchableOpacity style={styles.clearButton} onPress={resetForm}>
+                    <TouchableOpacity
+                      style={styles.clearButton}
+                      onPress={resetForm}>
                       <Text style={styles.buttonText}>Clear</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.submitButton} onPress={formikHandleSubmit}>
+                    <TouchableOpacity
+                      style={styles.submitButton}
+                      onPress={formikHandleSubmit}>
                       <Text style={styles.buttonText}>GO</Text>
                     </TouchableOpacity>
                   </View>
@@ -187,7 +195,11 @@ const ReceptionScreen = ({ route }) => {
           </>
         )}
 
-        <FooterNavigation navigation={navigation} doctor_id={doctor_id} clinic_id={clinic_id} />
+        <FooterNavigation
+          navigation={navigation}
+          doctor_id={doctor_id}
+          clinic_id={clinic_id}
+        />
       </View>
     </TouchableWithoutFeedback>
   );
@@ -195,19 +207,21 @@ const ReceptionScreen = ({ route }) => {
 
 export default withQueryClientProvider(ReceptionScreen);
 
-const FooterNavigation = ({ navigation, doctor_id, clinic_id }) => {
+const FooterNavigation = ({navigation, doctor_id, clinic_id}) => {
   return (
     <View style={styles.footerNavigation}>
       <FooterButton icon={Home} onPress={() => navigation.navigate('Home')} />
       <FooterButton
         icon={Users}
-        onPress={() => navigation.navigate('TokenListing', { doctor_id, clinic_id })}
+        onPress={() =>
+          navigation.navigate('TokenListing', {doctor_id, clinic_id})
+        }
       />
     </View>
   );
 };
 
-const FooterButton = ({ icon: Icon, onPress }) => {
+const FooterButton = ({icon: Icon, onPress}) => {
   return (
     <TouchableOpacity style={styles.footerButton} onPress={onPress}>
       <Icon size={24} color="#333" />
