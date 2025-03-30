@@ -34,7 +34,7 @@ const HomeScreen = ({navigation}) => {
     return uniqueClinics.map(clinic => ({
       id: clinic.clinic_id,
       title: clinic.clinic_name,
-      description: `Address: ${clinic.clinic_address || 'Not specified'}, ${
+      description: `${clinic.clinic_address || 'Not specified'}, ${
         clinic.clinic_city || ''
       }`,
       state: clinic.clinic_state,
@@ -101,9 +101,7 @@ const HomeScreen = ({navigation}) => {
                 ]}>
                 TV Display
               </Text>
-              <Text style={styles.optionDescription}>
-                For waiting room screens
-              </Text>
+              <Text style={styles.optionDescription}> </Text>
             </View>
           </TouchableOpacity>
 
@@ -125,9 +123,7 @@ const HomeScreen = ({navigation}) => {
                 ]}>
                 Reception
               </Text>
-              <Text style={styles.optionDescription}>
-                For Patient Registration
-              </Text>
+              <Text style={styles.optionDescription}> </Text>
             </View>
           </TouchableOpacity>
         </View>
