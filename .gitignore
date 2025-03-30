@@ -1,6 +1,8 @@
 # OSX
 #
 .DS_Store
+.env.development
+.env.*
 
 # Xcode
 #
@@ -74,3 +76,5 @@ yarn-error.log
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+android/.kotlin/sessions/kotlin-compiler-15880683517479267389.salive
+package-lock.json
