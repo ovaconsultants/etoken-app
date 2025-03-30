@@ -16,7 +16,7 @@ export const uploadProfileImage = async (
     formData.append('profile_picture', {
       uri: imageData.uri,
       type: imageData.type || 'image/jpeg',
-      name: `profile_${userType}_${userId}.jpg`,
+      name: `profile_doctor_${userId}.jpg`,
     });
 
     // Determine endpoint based on user type

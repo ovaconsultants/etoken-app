@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useMemo} from 'react';
+import React, {useState, useCallback, useMemo , useEffect} from 'react';
 import {
   SafeAreaView,
   View,
@@ -41,6 +41,12 @@ const HomeScreen = ({navigation}) => {
     }));
   }, [rawClinicData]);
 
+  useEffect(() => {
+    navigation.setOptions({
+      headerBackTitle: '',
+      headerLeft: () => null,
+    });
+  }, [navigation]);
   const handleCardPress = useCallback(clinicId => {
     setSelectedClinicId(prevClinicId =>
       prevClinicId === clinicId ? null : clinicId,

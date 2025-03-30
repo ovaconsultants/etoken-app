@@ -33,6 +33,8 @@ const HomeNavigator = () => {
         options={{
           headerTitle: HeaderHomeIcon,
           headerRight: () => <HeaderRightProfile imageUrl={profileUri} />,
+          headerBackVisible: false,
+          gestureEnabled: false,
         }}
       />
       <Stack.Screen
