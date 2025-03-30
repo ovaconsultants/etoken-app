@@ -7,7 +7,7 @@ import {
   Text,
 } from 'react-native';
 import styles from './SearchBar.styles';
-import { getMatchScore } from '../utils/globalUtil';
+import { calculateSearchRelevance } from '../utils/globalUtil';
 
 const SearchBar = ({ data, onSelectItem, placeholder }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -15,13 +15,13 @@ const SearchBar = ({ data, onSelectItem, placeholder }) => {
 
 
   const filteredData = [...(data || [])]
-    .map(item => {
-      const searchWords = searchTerm.toLowerCase().trim().split(/\s+/);
-      const score = getMatchScore(item, searchWords);
-      return { ...item, matchScore: score };
-    })
-    .filter(item => item.matchScore > 0)
-    .sort((a, b) => b.matchScore - a.matchScore); // Sort by best match
+  .map(item => {
+    const searchWords = searchTerm.toLowerCase().trim().split(/\s+/);
+    const score = calculateSearchRelevance(item, searchWords);
+    return { ...item, matchScore: score };
+  })
+  .filter(item => item.matchScore > 0)
+  .sort((a, b) => b.matchScore - a.matchScore);
 
   return (
     <View style={styles.searchContainer}>
