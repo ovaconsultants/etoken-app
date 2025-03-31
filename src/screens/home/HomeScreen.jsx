@@ -24,14 +24,7 @@ const HomeScreen = ({navigation}) => {
 
   const cards = useMemo(() => {
     if (!Array.isArray(rawClinicData)) {return [];}
-
-    const uniqueClinics = Array.from(
-      new Map(
-        rawClinicData.map(c => [`${c.clinic_name}_${c.clinic_address}`, c]),
-      ).values(),
-    );
-
-    return uniqueClinics.map(clinic => ({
+    return rawClinicData.map(clinic => ({
       id: clinic.clinic_id,
       title: clinic.clinic_name,
       description: `${clinic.clinic_address || 'Not specified'}, ${

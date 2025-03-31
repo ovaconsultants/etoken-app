@@ -35,9 +35,9 @@ export const PatientSchema = Yup.object().shape({
     .trim()
     .matches(/^[0-9]{10}$/, 'Invalid Mobile Number')
     .required('Mobile Number is required'),
+  area : Yup.string().trim().required('Patient Name is required'),
   email: Yup.string()
     .trim()
     .lowercase()
     .email('Invalid Email')
-    .required('Email is required'),
 });

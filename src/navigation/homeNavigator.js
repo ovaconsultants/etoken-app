@@ -15,7 +15,7 @@ import { Home } from 'lucide-react-native';
 const Stack = createNativeStackNavigator();
 
 const HeaderHomeIcon = () => (
-  <Home size={30} color={'#000'} style={{ marginTop: 15 }}/>
+  <Home size={30} color={'#000'} style={{ marginTop: 14 }}/>
   );
 
 export const HeaderRightProfile = React.memo(({imageUrl}) => (
