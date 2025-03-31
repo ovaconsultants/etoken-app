@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, ScrollView, Alert, ActivityIndicator, Button } from 'react-native';
 import { Formik } from 'formik';
 import { ClinicValidationSchema } from '../../utils/formFields/validationSchemas/clinicSchemas';
-import ErrorMessage from '../../components/ErrorMessage';
+import ErrorMessage from '../../components/errorMessage/ErrorMessage';
 import { AddClinicRequest } from '../../services/clinicService';
 import styles from './ClinicScreen.styles';
 

@@ -7,7 +7,7 @@ import {
   SafeAreaView,
 } from 'react-native';
 import withQueryClientProvider from '../../hooks/useQueryClientProvider';
-import LoadingErrorHandler from '../../components/LoadingErrorHandler';
+import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
 import {
   Phone,
   Nfc,
@@ -251,7 +251,7 @@ const TokenCard = React.memo(({token, isSelected, onPress, onLongPress}) => {
   );
 });
 
- const FooterNavigation = React.memo(
+const FooterNavigation = React.memo(
   ({navigation, doctor_id, clinic_id, handleRefresh}) => {
     const handleFooterPress = screenName => {
       switch (screenName) {

@@ -11,7 +11,7 @@ import {Formik} from 'formik';
 import * as Yup from 'yup';
 import {AddDoctorClinicScheduleRequest} from '../../services/doctorService';
 import styles from './DoctorClinicScheduleScreen.styles';
-import TimePicker from '../../components/TimePicker';
+import TimePicker from '../../components/timePicker/TimePicker';
 import {Dropdown} from 'react-native-element-dropdown';
 import {userTokenAtom} from '../../atoms/authAtoms/authAtom';
 import {

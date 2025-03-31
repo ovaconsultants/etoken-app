@@ -39,7 +39,7 @@ const SignInScreen = ({navigation}) => {
       setUserToken(data.token);
       setAuthToken(data.token);
       setDoctorIdAtom(doctor_id);
-      setDoctorInfoAtom(doctorDetails);
+      setDoctorInfoAtom(doctorDetails); 
       setDoctorClinicDetails(data.clinics);
 
     } catch (error) {

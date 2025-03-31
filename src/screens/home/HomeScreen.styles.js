@@ -14,7 +14,6 @@ export const styles = StyleSheet.create({
   cardContainer: {
     height: hp('45%'),
     marginBottom: hp('3%'),
-    marginLeft : hp('2%'),
   },
   selectionContainer: {
     marginBottom: hp('5%'),
@@ -22,11 +21,13 @@ export const styles = StyleSheet.create({
 
   optionContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
+  
   },
   optionButton: {
     width: wp('40%'),
     padding: wp('3%'),
+    justifyContent: 'space-between',
     borderRadius: 12,
     backgroundColor: '#FFF',
     alignItems: 'center',
@@ -57,7 +58,7 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
   },
   button: {
-    margin: hp('1.9%'),
+    marginVertical: hp('1.9%'),
     height: hp('6%'),
     backgroundColor: '#007AFF',
     borderRadius: 10,

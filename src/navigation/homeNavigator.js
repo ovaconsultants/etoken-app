@@ -1,22 +1,22 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {useProfileURI} from '../hooks/useProfileURI';
-import ProfileCircle from '../components/ProfileImage';
+import ProfileCircle from '../components/profileImage/ProfileImage';
 import HomeScreen from '../screens/home/HomeScreen';
 import TokenManagementScreen from '../screens/token/TokenManagementTVScreen';
 import DefaultTVScreen from '../screens/television/DefaultTVScreen';
 import ReceptionScreen from '../screens/reception/ReceptionScreen';
 import TokenSuccessScreen from '../screens/tokenDisplay/TokenSuccessScreen';
 import PatientTokenQueueScreen from '../screens/patient/PatientTokenQueueScreen';
-import { PatientInfoEditorScreen } from '../screens/patientEditor/PatientInfoEditorReceptionScreen';
+import {PatientInfoEditorScreen} from '../screens/patientEditor/PatientInfoEditorReceptionScreen';
 import DefaultReceptionScreen from '../screens/noTokenReceptionState/DefaultReceptionScreen';
-import { Home } from 'lucide-react-native';
+import {Home} from 'lucide-react-native';
 // Create stack navigator
 const Stack = createNativeStackNavigator();
 
 const HeaderHomeIcon = () => (
-  <Home size={30} color={'#000'} style={{ marginTop: 14 }}/>
-  );
+  <Home size={30} color={'#000'} style={{marginTop: 14}} />
+);
 
 export const HeaderRightProfile = React.memo(({imageUrl}) => (
   <ProfileCircle imageUrl={imageUrl} />
@@ -40,9 +40,9 @@ const HomeNavigator = () => {
       <Stack.Screen
         name="Reception"
         component={ReceptionScreen}
-        options={{title: 'Registration',
-          headerRight: () => <HeaderRightProfile imageUrl={profileUri} />
-
+        options={{
+          title: 'Registration',
+          headerRight: () => <HeaderRightProfile imageUrl={profileUri} />,
         }}
       />
       <Stack.Screen

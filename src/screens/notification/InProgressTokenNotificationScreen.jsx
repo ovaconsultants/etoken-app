@@ -3,7 +3,7 @@ import React, {useEffect} from 'react';
 import {View, Text} from 'react-native';
 import {Card, useTheme} from 'react-native-paper';
 import {styles} from './InProgressTokenNotificationScreen.styles';
-import LoadingErrorHandler from '../../components/LoadingErrorHandler';
+import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
 import useSpeechNotification from '../../hooks/useSpeechNotification';
 
 const InProgressTokenNotificationScreen = ({

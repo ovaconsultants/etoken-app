@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -9,20 +9,40 @@ import {
   Animated,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useSetAtom } from 'jotai';
-import { userTokenAtom } from '../atoms/authAtoms/authAtom';
+import {useSetAtom} from 'jotai';
+import {userTokenAtom} from '../../atoms/authAtoms/authAtom';
 import FastImage from 'react-native-fast-image';
-import { User, Calendar, PlusCircle, LogOut } from 'lucide-react-native';
+import {User, Calendar, PlusCircle, LogOut} from 'lucide-react-native';
+import {useNavigation} from '@react-navigation/native';
 
-const ProfileCircle = ({ imageUrl }) => {
+const ProfileCircle = ({imageUrl}) => {
+  const navigation = useNavigation();
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const fadeAnim = useState(new Animated.Value(0))[0];
   const setUserTokenAtom = useSetAtom(userTokenAtom);
 
   const options = [
-    { label: 'Profile', icon: <User size={18} color="#333" /> },
-    { label: 'Clinic', icon: <PlusCircle size={18} color="#333" /> },
-    { label: 'Schedule', icon: <Calendar size={18} color="#333" /> },
+    {
+      label: 'Profile',
+      icon: <User size={18} color="#333" />,
+      onPress: () =>
+        navigation.navigate('AppNavigator', {
+          screen: 'AuthNavigator',
+          params: {
+            screen: 'AddProfilePicture',
+          },
+        }),
+    },
+    {
+      label: 'Clinic',
+      icon: <PlusCircle size={18} color="#333" />,
+      onPress: () => navigation.navigate('DoctorClinicSchedule'),
+    },
+    {
+      label: 'Schedule',
+      icon: <Calendar size={18} color="#333" />,
+      onPress: () => navigation.navigate('DoctorClinicSchedule'),
+    },
   ];
 
   const handleSignOut = async () => {
@@ -52,35 +72,47 @@ const ProfileCircle = ({ imageUrl }) => {
     <View style={styles.container}>
       <TouchableOpacity onPress={toggleDropdown}>
         <View style={styles.profileImageContainer}>
-          <FastImage 
-            source={{ uri: imageUrl }} 
-            style={styles.profileImage} 
-            resizeMode="cover" 
+          <FastImage
+            source={{uri: imageUrl}}
+            style={styles.profileImage}
+            resizeMode="cover"
           />
         </View>
       </TouchableOpacity>
 
-      <Modal transparent visible={isDropdownVisible} onRequestClose={toggleDropdown}>
+      <Modal
+        transparent
+        visible={isDropdownVisible}
+        onRequestClose={toggleDropdown}>
         <TouchableWithoutFeedback onPress={toggleDropdown}>
-          <Animated.View style={[styles.modalOverlay, { opacity: fadeAnim }]}>
+          <Animated.View style={[styles.modalOverlay, {opacity: fadeAnim}]}>
             <View style={styles.dropdown}>
-              {options.map((option) => (
-                <TouchableOpacity 
-                  key={option.label} 
+              {options.map(option => (
+                <TouchableOpacity
+                  key={option.label}
                   style={styles.option}
-                  onPress={toggleDropdown}
-                >
+                  onPress={() => {
+                    console.log('called navigation');
+                    navigation.navigate('AppNavigator', {
+                      screen: 'AuthNavigator',
+                      params: {
+                        screen: 'AddProfilePicture',
+                        // You can add additional params if needed:
+                        params: {userId: '123'},
+                      },
+                    });
+                    toggleDropdown();
+                  }}>
                   {option.icon}
                   <Text style={styles.optionText}>{option.label}</Text>
                 </TouchableOpacity>
               ))}
               <View style={styles.divider} />
-              <TouchableOpacity 
-                style={styles.option}
-                onPress={handleSignOut}
-              >
+              <TouchableOpacity style={styles.option} onPress={handleSignOut}>
                 <LogOut size={18} color="#D32F2F" />
-                <Text style={[styles.optionText, styles.signOutText]}>Sign Out</Text>
+                <Text style={[styles.optionText, styles.signOutText]}>
+                  Sign Out
+                </Text>
               </TouchableOpacity>
             </View>
           </Animated.View>
@@ -99,10 +131,12 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     backgroundColor: '#fff',
+    borderColor: 'rgb(93, 101, 208)',
+    borderWidth: 1,
     overflow: 'hidden',
     elevation: 2,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
+    shadowOffset: {width: 0, height: 1},
     shadowOpacity: 0.2,
     shadowRadius: 2,
   },

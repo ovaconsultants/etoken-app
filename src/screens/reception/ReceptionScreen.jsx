@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useRef} from 'react';
 import {
   View,
   Text,
@@ -9,11 +9,12 @@ import {
   Keyboard,
 } from 'react-native';
 import {Formik} from 'formik';
-import {styles} from './ReceptionScreen.styles';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
 import {useNavigation} from '@react-navigation/native';
-import SearchBar from '../../components/searchBar/SearchBar';
-import LoadingErrorHandler from '../../components/LoadingErrorHandler';
+import {useAtom} from 'jotai';
+import {Users, Home} from 'lucide-react-native';
+import {patientsAtom} from '../../atoms/patientAtoms/patientAtom';
+import {styles} from './ReceptionScreen.styles';
 import {PatientSchema} from '../../utils/formFields/validationSchemas/clinicSchemas';
 import {
   FetchPatientsRequest,
@@ -21,21 +22,49 @@ import {
 } from '../../services/patientService';
 import {GenerateTokenRequest} from '../../services/tokenService';
 import withQueryClientProvider from '../../hooks/useQueryClientProvider';
-import {Users, Home} from 'lucide-react-native';
+import SearchBar from '../../components/searchBar/SearchBar';
+import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
 
-const ReceptionScreen = ({route}) => {
-  const {doctor_id, clinic_id} = route.params;
+const formFields = [
+  {
+    name: 'patient_name',
+    placeholder: 'Full Name (e.g., John Doe)',
+    keyboardType: 'default',
+    autoCapitalize: 'words',
+  },
+  {
+    name: 'mobile_number',
+    placeholder: 'Mobile Number (e.g., 9876543210)',
+    keyboardType: 'phone-pad',
+  },
+  {
+    name: 'area',
+    placeholder: 'Locality/Area (e.g., Downtown)',
+    keyboardType: 'default',
+  },
+  {
+    name: 'email',
+    placeholder: 'Email (e.g., john@example.com)',
+    keyboardType: 'email-address',
+  },
+];
+
+const ReceptionScreen = ({
+  route: {
+    params: {doctor_id, clinic_id},
+  },
+}) => {
   const navigation = useNavigation();
   const queryClient = useQueryClient();
-  const [patients, setPatients] = useState(null);
+  const [patients, setPatients] = useAtom(patientsAtom);
   const formikRef = useRef();
 
   const {isLoading, isError, error} = useQuery({
-    queryKey: ['patientsForToken'],
+    queryKey: ['fetchingPatients'],
     queryFn: async () => {
-      const fetchedPatients = await FetchPatientsRequest();
-      setPatients(fetchedPatients);
-      return fetchedPatients;
+      const data = await FetchPatientsRequest();
+      setPatients(data);
+      return data;
     },
     refetchInterval: 10 * 1000,
     staleTime: 10 * 1000,
@@ -44,51 +73,43 @@ const ReceptionScreen = ({route}) => {
   const handleSubmit = async (values, {resetForm}) => {
     try {
       const existingPatient = patients.find(
-        patient =>
-          patient.mobile_number === values.mobile_number.trim() ||
-          patient.email === values.email.trim().toLowerCase(),
+        p =>
+          p.mobile_number === values.mobile_number.trim() ||
+          p.email === values.email.trim().toLowerCase(),
       );
 
-      let patientIdToUse;
-
-      if (existingPatient) {
-        patientIdToUse = existingPatient.patient_id;
-      } else {
-        const patientData = {
-          patient_name: values.patient_name.trim(),
-          mobile_number: values.mobile_number.trim(),
-          email: values.email.trim().toLowerCase(),
-          clinic_id: clinic_id,
+      const patientIdToUse =
+        existingPatient?.patient_id ||
+        (await InsertPatientRequest({
+          ...Object.fromEntries(
+            Object.entries(values).map(([k, v]) => [
+              k,
+              typeof v === 'string' ? v.trim() : v,
+            ]),
+          ),
+          clinic_id,
+          doctor_id,
           created_by: 'receptionist',
-        };
+        }));
 
-        const generatedPatientId = await InsertPatientRequest(patientData);
-        patientIdToUse = generatedPatientId;
+      if (!patientIdToUse) {
+        throw new Error('Failed to insert patient or generate token');
       }
 
-      if (patientIdToUse) {
-        resetForm();
-        queryClient.invalidateQueries(['patients']);
-
-        const patientTokenDataObj = {
-          patient_id: patientIdToUse,
-          doctor_id: doctor_id,
-          clinic_id: clinic_id,
-          created_by: 'receptionist',
-        };
-
-        const token_no = await GenerateTokenRequest(patientTokenDataObj);
-
-        navigation.navigate('TokenSuccess', {
-          tokenNumber: token_no,
-          patientName: values.patient_name,
-          patientId: patientIdToUse,
-        });
-      } else {
-        Alert.alert('Error', 'Failed to insert patient or generate token.');
-      }
+      resetForm();
+      queryClient.invalidateQueries(['fetchingPatients']);
+      const token_no = await GenerateTokenRequest({
+        patient_id: patientIdToUse,
+        doctor_id,
+        clinic_id,
+        created_by: 'receptionist',
+      });
+      navigation.navigate('TokenSuccess', {
+        tokenNumber: token_no,
+        patientName: values.patient_name,
+        patientId: patientIdToUse,
+      });
     } catch (err) {
-      console.error('Error:', err);
       Alert.alert('Error', err.message ?? 'An error occurred.');
     }
   };
@@ -96,37 +117,30 @@ const ReceptionScreen = ({route}) => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={styles.container}>
-        <LoadingErrorHandler
-          isLoading={isLoading}
-          isError={isError}
-          error={error}
-        />
+        <LoadingErrorHandler {...{isLoading, isError, error}} />
 
         {!isLoading && !isError && (
           <>
             <SearchBar
               data={patients}
-              onSelectItem={patient => {
-                if (formikRef.current) {
-                  formikRef.current.setValues({
-                    patient_id: patient.patient_id,
-                    patient_name: patient.patient_name,
-                    mobile_number: patient.mobile_number,
-                    email: patient.email,
-                  });
-                }
-              }}
+              onSelectItem={patient =>
+                formikRef.current?.setValues({
+                  patient_id: patient.patient_id,
+                  ...Object.fromEntries(
+                    ['patient_name', 'mobile_number', 'area', 'email'].map(
+                      key => [key, patient[key]],
+                    ),
+                  ),
+                })
+              }
               placeholder="Search by Patient, Mobile, or Email"
             />
 
             <Formik
               innerRef={formikRef}
-              initialValues={{
-                patient_id: '',
-                patient_name: '',
-                mobile_number: '',
-                email: '',
-              }}
+              initialValues={Object.fromEntries(
+                formFields.map(f => [f.name, '']),
+              )}
               validationSchema={PatientSchema}
               onSubmit={handleSubmit}>
               {({
@@ -139,43 +153,25 @@ const ReceptionScreen = ({route}) => {
                 resetForm,
               }) => (
                 <View style={styles.formContainer}>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Patient Name"
-                    placeholderTextColor="#888"
-                    onChangeText={handleChange('patient_name')}
-                    onBlur={handleBlur('patient_name')}
-                    value={values.patient_name}
-                  />
-                  {touched.patient_name && errors.patient_name && (
-                    <Text style={styles.errorText}>{errors.patient_name}</Text>
-                  )}
-
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Mobile Number"
-                    placeholderTextColor="#888"
-                    onChangeText={handleChange('mobile_number')}
-                    onBlur={handleBlur('mobile_number')}
-                    value={values.mobile_number}
-                    keyboardType="phone-pad"
-                  />
-                  {touched.mobile_number && errors.mobile_number && (
-                    <Text style={styles.errorText}>{errors.mobile_number}</Text>
-                  )}
-
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Email"
-                    placeholderTextColor="#888"
-                    onChangeText={handleChange('email')}
-                    onBlur={handleBlur('email')}
-                    value={values.email}
-                    keyboardType="email-address"
-                  />
-                  {touched.email && errors.email && (
-                    <Text style={styles.errorText}>{errors.email}</Text>
-                  )}
+                  {formFields.map(field => (
+                    <React.Fragment key={field.name}>
+                      <TextInput
+                        style={styles.input}
+                        placeholder={field.placeholder}
+                        placeholderTextColor="#888"
+                        onChangeText={handleChange(field.name)}
+                        onBlur={handleBlur(field.name)}
+                        value={values[field.name]}
+                        keyboardType={field.keyboardType}
+                        autoCapitalize={field.autoCapitalize || 'none'}
+                      />
+                      {touched[field.name] && errors[field.name] && (
+                        <Text style={styles.errorText}>
+                          {errors[field.name]}
+                        </Text>
+                      )}
+                    </React.Fragment>
+                  ))}
 
                   <View style={styles.buttonContainer}>
                     <TouchableOpacity
@@ -195,36 +191,24 @@ const ReceptionScreen = ({route}) => {
           </>
         )}
 
-        <FooterNavigation
-          navigation={navigation}
-          doctor_id={doctor_id}
-          clinic_id={clinic_id}
-        />
+        <View style={styles.footerNavigation}>
+          {[
+            {icon: Home, screen: 'Home'},
+            {icon: Users, screen: 'TokenListing'},
+          ].map(({icon: Icon, screen}) => (
+            <TouchableOpacity
+              key={screen}
+              style={styles.footerButton}
+              onPress={() =>
+                navigation.navigate(screen, {doctor_id, clinic_id})
+              }>
+              <Icon size={24} color="#333" />
+            </TouchableOpacity>
+          ))}
+        </View>
       </View>
     </TouchableWithoutFeedback>
   );
 };
 
 export default withQueryClientProvider(ReceptionScreen);
-
-const FooterNavigation = ({navigation, doctor_id, clinic_id}) => {
-  return (
-    <View style={styles.footerNavigation}>
-      <FooterButton icon={Home} onPress={() => navigation.navigate('Home')} />
-      <FooterButton
-        icon={Users}
-        onPress={() =>
-          navigation.navigate('TokenListing', {doctor_id, clinic_id})
-        }
-      />
-    </View>
-  );
-};
-
-const FooterButton = ({icon: Icon, onPress}) => {
-  return (
-    <TouchableOpacity style={styles.footerButton} onPress={onPress}>
-      <Icon size={24} color="#333" />
-    </TouchableOpacity>
-  );
-};

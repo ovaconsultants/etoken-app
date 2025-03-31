@@ -1,10 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {
-  View,
-  Text,
-  ActivityIndicator,
-  TouchableOpacity,
-} from 'react-native';
+import {View, Text, ActivityIndicator, TouchableOpacity} from 'react-native';
 import {styles} from './TokenManagementTVScreen.styles';
 import Orientation from 'react-native-orientation-locker';
 import {usePatientTokens} from '../../hooks/usePatientTokens';
@@ -19,8 +14,8 @@ import {
 import {useAtomValue} from 'jotai';
 import {useProfileURI} from '../../hooks/useProfileURI';
 import {RotateCcw} from 'lucide-react-native';
-import LoadingErrorHandler from '../../components/LoadingErrorHandler';
-import ProfileCircle from '../../components/ProfileImage';
+import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
+import ProfileCircle from '../../components/profileImage/ProfileImage';
 
 const TokenManagementScreen = ({route}) => {
   const profileUri = useProfileURI();
@@ -82,7 +77,7 @@ const TokenManagementScreen = ({route}) => {
       <View style={styles.headerContainer}>
         <View style={styles.doctorSection}>
           <View style={styles.profileCircle}>
-          <ProfileCircle profileUri={profileUri} />
+            <ProfileCircle profileUri={profileUri} />
           </View>
           <View style={styles.doctorInfo}>
             <Text style={styles.doctorName}>Dr. {doctorData.doctor_name}</Text>
@@ -91,11 +86,10 @@ const TokenManagementScreen = ({route}) => {
             </Text>
           </View>
         </View>
-        <TouchableOpacity 
-          style={styles.reloadButton} 
+        <TouchableOpacity
+          style={styles.reloadButton}
           onPress={handleReloadPress}
-          disabled={isRefreshReloading}
-        >
+          disabled={isRefreshReloading}>
           {isRefreshReloading ? (
             <ActivityIndicator size="small" color="#007BFF" />
           ) : (

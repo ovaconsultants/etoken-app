@@ -1,0 +1,62 @@
+import { StyleSheet } from 'react-native';
+export const styles = (isSmallDevice) => StyleSheet.create({
+    card: {
+      backgroundColor: 'rgba(217, 223, 249, 0.9)',
+      borderRadius: 16,
+      padding: isSmallDevice ? 12 : 16,
+      justifyContent: 'center',
+      alignItems: 'center',
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.1,
+      shadowRadius: 6,
+      elevation: 5,
+      position: 'relative',
+      overflow: 'hidden',
+    },
+    borderHighlight: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      borderWidth: 2,
+      borderRadius: 16,
+    },
+    content: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: '100%',
+      padding: isSmallDevice ? 12 : 16,
+    },
+    title: {
+      fontSize: isSmallDevice ? 22 : 26, 
+      fontWeight: 'bold',
+      color: '#1E293B',
+      textAlign: 'left',
+      marginBottom: 8,
+      letterSpacing: 0.5,
+    },
+    description: {
+      fontSize: isSmallDevice ? 15 : 17,
+      color: '#4A5568',
+      textAlign: 'left',
+      lineHeight: isSmallDevice ? 22 : 24,
+      marginBottom: 12,
+      fontWeight: '500',
+      letterSpacing: 0.3,
+    },
+    stateBadge: {
+      paddingHorizontal: 14,
+      borderRadius: 12,
+      marginTop: 10,
+    },
+    stateText: {
+      fontSize: isSmallDevice ? 13 : 15,
+      fontWeight: '500',
+      color: '#718096',
+      textTransform: 'none',
+      letterSpacing: 0.3,
+    },
+  });
+

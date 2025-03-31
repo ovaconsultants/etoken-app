@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { StatusBar, Animated, Easing, Text, View } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
+import { StatusBar, Animated, Easing, View } from 'react-native';
 import { styles } from './TokenSuccessScreen.style';
 
 const TokenSuccessScreen = ({ route, navigation }) => {

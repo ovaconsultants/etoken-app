@@ -1,13 +1,8 @@
-import React, {useState, useCallback, useMemo , useEffect} from 'react';
-import {
-  SafeAreaView,
-  View,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
+import React, {useState, useCallback, useMemo, useEffect} from 'react';
+import {SafeAreaView, View, Text, TouchableOpacity} from 'react-native';
 import {useAtomValue} from 'jotai';
 import {styles} from './HomeScreen.styles';
-import CardGrid from '../../components/CardGrid';
+import CardGrid from '../../components/cardGrid/CardGrid';
 import useOrientationLocker from '../../hooks/useOrientationLocker';
 import {
   doctorClinicDetailsAtom,
@@ -23,7 +18,9 @@ const HomeScreen = ({navigation}) => {
   const rawClinicData = useAtomValue(doctorClinicDetailsAtom);
 
   const cards = useMemo(() => {
-    if (!Array.isArray(rawClinicData)) {return [];}
+    if (!Array.isArray(rawClinicData)) {
+      return [];
+    }
     return rawClinicData.map(clinic => ({
       id: clinic.clinic_id,
       title: clinic.clinic_name,

@@ -1,16 +1,16 @@
 // components/CardGrid.js
 import React from 'react';
-import { FlatList,StyleSheet} from 'react-native';
-import Card from './Cards';
+import {FlatList, StyleSheet} from 'react-native';
+import Card from '../card/Cards';
 
-const CardGrid = ({data,onPress,isSelectedCard}) => {
+const CardGrid = ({data, onPress, isSelectedCard}) => {
   const cardWidth = '100%';
   return (
     <FlatList
       data={data}
       numColumns={2}
-      keyExtractor={(item) => item.id.toString()}
-      renderItem={({ item }) => (
+      keyExtractor={item => item.id.toString()}
+      renderItem={({item}) => (
         <Card
           title={item.title}
           description={item.description}
@@ -27,8 +27,6 @@ const CardGrid = ({data,onPress,isSelectedCard}) => {
 
 const styles = StyleSheet.create({
   container: {
-    // padding: 10,
-    // backgroundColor : 
   },
 });
 
