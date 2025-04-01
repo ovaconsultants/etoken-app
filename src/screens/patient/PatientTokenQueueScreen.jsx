@@ -19,7 +19,7 @@ import {
 import {styles} from './PatientTokenQueueScreen.styles';
 import {usePatientTokenManager} from '../../hooks/usePatientTokenManager';
 import DefaultReceptionScreen from '../noTokenReceptionState/DefaultReceptionScreen';
-
+import {TranslateNameToHindi} from '../../services/langTranslationService';
 const PatientTokenQueueScreen = ({navigation, route}) => {
   // State initialization
   const {clinic_id, doctor_id} = route.params;
@@ -194,6 +194,7 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
             key={token.token_id}
             token={token}
             isSelected={selectedTokenId === token.token_id}
+            translateToHindi={TranslateNameToHindi}
             onPress={() => handleRowPress(token.token_id)}
             onLongPress={() => handleLongPress(token)}
           />
@@ -210,46 +211,73 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
   );
 };
 // Memoized Components for better performance
-const TokenCard = React.memo(({token, isSelected, onPress, onLongPress}) => {
-  return (
-    <TouchableOpacity
-      style={[
-        styles.tokenCard,
-        token.status === 'In Progress' && styles.inProgressCard,
-        token.status === 'On Hold' && styles.onHoldCard,
-        isSelected && styles.selectedCard,
-      ]}
-      onPress={onPress}
-      onLongPress={onLongPress}
-      delayLongPress={500}>
-      <View style={styles.tokenHeader}>
-        <Text style={styles.patientName}>{token.patient_name}</Text>
-        <Text style={styles.tokenNumber}>{token.token_no}</Text>
-      </View>
-      <View style={styles.tokenDetails}>
-        <Text style={styles.detailText}>
-          {token.mobile_number?.replace(/(\d{3})(\d{3})(\d{4})/, 'xxx-xxx-$3')}
-        </Text>
-        {token.fee_status && (
-          <Text style={styles.paymentStatus}>
-            {token.fee_status === 'Paid' ? 'Paid' : 'Not Paid'}
-          </Text>
-        )}
-        <View style={styles.statusContainer}>
-          <View
-            style={[
-              styles.statusDot,
-              token.status === 'In Progress' && styles.greenDot,
-              token.status === 'On Hold' && styles.redDot,
-              token.status === 'Waiting' && styles.yellowDot,
-            ]}
-          />
-          <Text style={styles.statusText}>{token.status}</Text>
+const TokenCard = React.memo(
+  ({token, isSelected, onPress, onLongPress, translateToHindi}) => {
+    const [hindiName, setHindiName] = useState('');
+    useEffect(() => {
+      // Only translate if name exists and hindiName isn't already set
+      if (token.patient_name && !hindiName) {
+        TranslateNameToHindi(token.patient_name)
+          .then(setHindiName)
+          .catch(() => setHindiName(''));
+      }
+    }, [hindiName, token.patient_name]);
+    return (
+      <TouchableOpacity
+        style={[
+          styles.tokenCard,
+          token.status === 'In Progress' && styles.inProgressCard,
+          token.status === 'On Hold' && styles.onHoldCard,
+          isSelected && styles.selectedCard,
+        ]}
+        onPress={onPress}
+        onLongPress={onLongPress}
+        delayLongPress={500}>
+        <View style={styles.tokenHeader}>
+          <View style={styles.patientName}>
+            <Text>{token.patient_name}</Text>
+            <Text>
+              ( { hindiName || ''} )
+            </Text>
+          </View>
+          <Text>
+  {new Date(token.created_date).toLocaleTimeString('en-US', {
+    hour12: true,  // Show AM/PM
+    hour: '2-digit', // e.g., "03" instead of "3"
+    minute: '2-digit', // e.g., "08" instead of "8"
+  })}
+</Text>
+
+          <Text style={styles.tokenNumber}>{token.token_no}</Text>
         </View>
-      </View>
-    </TouchableOpacity>
-  );
-});
+        <View style={styles.tokenDetails}>
+          <Text style={styles.detailText}>
+            {token.mobile_number?.replace(
+              /(\d{3})(\d{3})(\d{4})/,
+              'xxx-xxx-$3',
+            )}
+          </Text>
+          {token.fee_status && (
+            <Text style={styles.paymentStatus}>
+              {token.fee_status === 'Paid' ? 'Paid' : 'Not Paid'}
+            </Text>
+          )}
+          <View style={styles.statusContainer}>
+            <View
+              style={[
+                styles.statusDot,
+                token.status === 'In Progress' && styles.greenDot,
+                token.status === 'On Hold' && styles.redDot,
+                token.status === 'Waiting' && styles.yellowDot,
+              ]}
+            />
+            <Text style={styles.statusText}>{token.status}</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  },
+);
 
 const FooterNavigation = React.memo(
   ({navigation, doctor_id, clinic_id, handleRefresh}) => {

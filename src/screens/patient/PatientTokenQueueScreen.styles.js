@@ -118,9 +118,13 @@ export const styles = StyleSheet.create({
   tokenHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: hp('1%'),
   },
   patientName: {
+    flexDirection : 'row',
+    // justifyContent : 'space-between',
+    alignItems: 'center',
     fontSize: wp('4%'),
     fontWeight: 'bold',
   },
