@@ -21,12 +21,21 @@ export default StyleSheet.create({
     padding: 8,
     fontSize: 16,
   },
-  buttonContainer: {
-    marginTop: 16,
-  },
   footer: {
     padding: 16,
     borderTopWidth: 1,
     borderTopColor: '#ccc',
+  },
+  refreshButton: {
+    padding: 10,
+    borderRadius: 5,
+    backgroundColor: '#f0f0f0',
+    marginRight: 10,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
   },
 });

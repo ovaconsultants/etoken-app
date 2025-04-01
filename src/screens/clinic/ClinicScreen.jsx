@@ -1,17 +1,25 @@
-// screens/ClinicScreen.js
 import React, { useState } from 'react';
-import { View, Text, TextInput, ScrollView, Alert, ActivityIndicator, Button } from 'react-native';
+import { View, Text, TextInput, ScrollView, Alert, ActivityIndicator, Button, TouchableOpacity } from 'react-native';
 import { Formik } from 'formik';
+import { RefreshCw } from 'lucide-react-native';
 import { ClinicValidationSchema } from '../../utils/formFields/validationSchemas/clinicSchemas';
 import ErrorMessage from '../../components/errorMessage/ErrorMessage';
 import { AddClinicRequest } from '../../services/clinicService';
 import styles from './ClinicScreen.styles';
 
-const ClinicScreen = ({ navigation }) => {
+const ClinicScreen = ({ navigation, route }) => {
+  console.log('Route Params:', route.params);
+  const { doctor_id } = route?.params;
   const [submitted, setSubmitted] = useState(false);
+
   const handleSubmit = async (values, { resetForm, setSubmitting, setErrors }) => {
+    const appendedValues = {
+      ...values,
+      doctor_id: doctor_id,
+      created_by: 'admin',
+    };
     try {
-      const data = await AddClinicRequest(values);
+      const data = await AddClinicRequest(appendedValues);
       if (data.success) {
         Alert.alert('Success', data.message);
         resetForm();
@@ -28,6 +36,10 @@ const ClinicScreen = ({ navigation }) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.headerContainer}>
+        <Text style={styles.headerText}>Add New Clinic</Text>
+      </View>
+
       <Formik
         initialValues={{
           clinic_name: '',
@@ -35,13 +47,11 @@ const ClinicScreen = ({ navigation }) => {
           city: '',
           state: '',
           zip_code: '',
-          doctor_id: '',
-          created_by: '',
         }}
         validationSchema={ClinicValidationSchema}
         onSubmit={handleSubmit}
       >
-        {({ handleChange, handleBlur, handleSubmit: formikSubmit, values, errors, touched, isSubmitting }) => (
+        {({ handleChange, handleBlur, handleSubmit: formikSubmit, values, errors, touched, isSubmitting, resetForm }) => (
           <>
             {submitted ? (
               <View style={styles.successContainer}>
@@ -49,7 +59,8 @@ const ClinicScreen = ({ navigation }) => {
                 <Button
                   title="Add Another Clinic"
                   onPress={() => {
-                    setSubmitted(false); // Hide success message and show the form again
+                    resetForm();
+                    setSubmitted(false);
                   }}
                 />
               </View>
@@ -67,7 +78,7 @@ const ClinicScreen = ({ navigation }) => {
                       onBlur={handleBlur(key)}
                       placeholder={`Enter ${key.replace(/_/g, ' ')}`}
                       keyboardType={
-                        key === 'zip_code' || key === 'doctor_id' ? 'numeric' : 'default'
+                        key === 'zip_code' ? 'numeric' : 'default'
                       }
                       editable={!isSubmitting}
                     />
@@ -81,7 +92,23 @@ const ClinicScreen = ({ navigation }) => {
                   {isSubmitting ? (
                     <ActivityIndicator size="large" color="#007AFF" />
                   ) : (
-                    <Button title="Submit" onPress={formikSubmit} />
+                    <>
+                      <TouchableOpacity 
+                        onPress={() => {
+                          resetForm();
+                          setSubmitted(false);
+                        }}
+                        style={styles.refreshButton}
+                        disabled={isSubmitting}
+                      >
+                        <RefreshCw size={24} color={isSubmitting ? '#ccc' : '#007AFF'} />
+                      </TouchableOpacity>
+                      <Button 
+                        title="Submit" 
+                        onPress={formikSubmit} 
+                        disabled={isSubmitting}
+                      />
+                    </>
                   )}
                 </View>
               </>
@@ -92,8 +119,8 @@ const ClinicScreen = ({ navigation }) => {
 
       <View style={styles.footer}>
         <Button
-          title="Go to Schedule"
-          onPress={() => navigation.navigate('DoctorClinicSchedule')}
+          title="Skip"
+          onPress={() => navigation.navigate('AppNavigator', { screen: 'AuthNavigator', params: { screen: 'SignIn' } })}
         />
       </View>
     </ScrollView>

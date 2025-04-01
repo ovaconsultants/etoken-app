@@ -88,12 +88,24 @@ const CaptureProfilePhotoScreen = ({navigation,route}) => {
         <View style={styles.navigationButtonsContainer}>
           <TouchableOpacity
             style={[styles.navButton, styles.skipButton]}
-            onPress={() => navigation.navigate('ClinicNavigator')}>
+            onPress={() => navigation.navigate({
+              name: 'ClinicNavigator',
+              params: {
+                screen: 'Clinic',
+                params: { doctor_id: doctor_id }
+              }
+            })}>
             <Text style={[styles.navButtonText, styles.skipButtonText]}>Skip</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.navButton, styles.nextButton]}
-            onPress={() => navigation.navigate('ClinicNavigator')}>
+            onPress={() => navigation.navigate({
+              name: 'ClinicNavigator',
+              params: {
+                screen: 'Clinic',
+                params: { doctor_id: doctor_id }
+              }
+            })}>
             <Text style={[styles.navButtonText, styles.nextButtonText]}>Next</Text>
           </TouchableOpacity>
         </View>
