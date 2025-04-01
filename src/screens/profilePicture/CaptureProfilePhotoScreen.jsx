@@ -1,14 +1,15 @@
 import React, {useState} from 'react';
-import {View, Button, Alert, ActivityIndicator} from 'react-native';
+import {View, TouchableOpacity,Text , Alert, ActivityIndicator} from 'react-native';
 import ImagePickerComponent from '../../imagePickerComponent/ImagePickerComponent';
 import styles from './CaptureProfilePhotoScreen.styles';
 import {UploadDoctorProfileImageRequest} from '../../services/profileImageService';
 import RNFS from 'react-native-fs';
 
-const CaptureProfilePhotoScreen = ({navigation}) => {
+const CaptureProfilePhotoScreen = ({navigation,route}) => {
+  const { doctor_id } = route.params;
+  console.log('Doctor ID:',doctor_id );
   const [selectedImage, setSelectedImage] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
-  const doctorId = 2;
 
   const prepareImageForUpload = async (image) => {
     if (!image.uri) {
@@ -25,7 +26,7 @@ const CaptureProfilePhotoScreen = ({navigation}) => {
     return {
       uri: image.uri,
       type: image.type || 'image/jpeg',
-      name: `profile_doctor_${doctorId}_${Date.now()}.jpg`,
+      name: `profile_doctor_${doctor_id}_${Date.now()}.jpg`,
     };
   };
 
@@ -41,10 +42,8 @@ const CaptureProfilePhotoScreen = ({navigation}) => {
       const preparedImage = await prepareImageForUpload(selectedImage);
       console.log('Prepared image:', preparedImage);
 
-      const result = await UploadDoctorProfileImageRequest(preparedImage, doctorId);
-      
+      const result = await UploadDoctorProfileImageRequest(preparedImage, doctor_id);
       Alert.alert('Success', 'Profile image updated successfully');
-      console.log('Upload result:', result);
     } catch (error) {
       console.error('Upload error:', error);
       Alert.alert('Upload Error', error.message || 'Failed to upload image');
@@ -55,25 +54,50 @@ const CaptureProfilePhotoScreen = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <ImagePickerComponent
-        onImageSelected={(image) => {
-          setSelectedImage({
-            uri: image.uri,
-            type: image.type || 'image/jpeg',
-          });
-        }}
-        initialImage={selectedImage?.uri}
-      />
+      <View style={styles.contentContainer}>
+        <View style={styles.imagePickerContainer}>
+          <ImagePickerComponent
+            onImageSelected={(image) => {
+              setSelectedImage({
+                uri: image.uri,
+                type: image.type || 'image/jpeg',
+              });
+            }}
+            initialImage={selectedImage?.uri}
+          />
+        </View>
 
-      {isUploading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
-      ) : (
-        <Button
-          title="Update Profile Image"
-          onPress={handleImageUpload}
-          disabled={!selectedImage}
-        />
-      )}
+        {isUploading ? (
+          <ActivityIndicator 
+            size="large" 
+            color="#007AFF" 
+            style={styles.loadingIndicator} 
+          />
+        ) : (
+          <TouchableOpacity
+            style={[
+              styles.uploadButton,
+              !selectedImage && styles.buttonDisabled
+            ]}
+            onPress={handleImageUpload}
+            disabled={!selectedImage}>
+            <Text style={styles.uploadButtonText}>Update Profile Image</Text>
+          </TouchableOpacity>
+        )}
+
+        <View style={styles.navigationButtonsContainer}>
+          <TouchableOpacity
+            style={[styles.navButton, styles.skipButton]}
+            onPress={() => navigation.navigate('ClinicNavigator')}>
+            <Text style={[styles.navButtonText, styles.skipButtonText]}>Skip</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.navButton, styles.nextButton]}
+            onPress={() => navigation.navigate('ClinicNavigator')}>
+            <Text style={[styles.navButtonText, styles.nextButtonText]}>Next</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
   );
 };

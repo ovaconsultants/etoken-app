@@ -57,14 +57,10 @@ const SignUpScreen = ({navigation}) => {
 
   useEffect(() => {
     const loadSpecializations = async () => {
-   
       setSpecializations([]);
       setSelectedSpecialization(null);
-  
       if (!selectedAccount) return;
-  
       setLoading(prev => ({ ...prev, specializations: true }));
-      
       try {
         const data = await FetchSpecializationsRequest(selectedAccount);
         const fetchedSpecializations = await data.specializations;
@@ -88,7 +84,6 @@ const SignUpScreen = ({navigation}) => {
 
     loadSpecializations();
   }, [selectedAccount]);
-  
   const handleSubmit = async () => {
     const requiredFields = [
       formData.firstName,
@@ -120,19 +115,19 @@ const SignUpScreen = ({navigation}) => {
       };
 
       const data = await SignUpRequest(dataObject);
-
+      console.log('Sign up response:', data);
       if (!data.success) {
         throw new Error(data.message || 'Failed to submit form');
       }
 
-      Alert.alert('Success', 'Doctor registered successfully!', [
-        {
-          text: 'OK',
-          onPress: () => {
-            navigation.navigate('AddProfilePicture');
-          },
-        },
-      ]);
+     if (data.success) {
+      Alert.alert('Success', 'Doctor registered successfully!', [{
+        text: 'OK',
+        onPress: () => navigation.navigate('AddProfilePicture', { 
+          doctor_id: data.doctor_id , // Pass the doctor ID here
+        }),
+      }]);}
+
 
       setSelectedAccount(null);
       setSelectedSpecialization(null);
@@ -247,7 +242,6 @@ const SignUpScreen = ({navigation}) => {
         onPress={handleSubmit}
         disabled={loading.submit}
       />
-      <Button title=" Go to profile picture" onPress={() =>  navigation.navigate('AddProfilePicture')} />
     </ScrollView>
   );
 };
