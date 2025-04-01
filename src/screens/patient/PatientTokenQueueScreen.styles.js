@@ -182,4 +182,41 @@ export const styles = StyleSheet.create({
     fontSize: wp('3%'),
     marginTop: hp('0.5%'),
   },
+  statusButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+// Add these to your stylesheet
+dropdownMenu: {
+  position: 'absolute',
+  backgroundColor: 'white',
+  borderRadius: 8,
+  paddingVertical: 8,
+  paddingHorizontal: 12,
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.25,
+  shadowRadius: 4,
+  elevation: 5,
+  zIndex: 100,
+  minWidth: 120,
+},
+dropdownMenuItem: {
+  paddingVertical: 8,
+  paddingHorizontal: 12,
+  flexDirection: 'row',
+  alignItems: 'center',
+},
+dropdownMenuItemText: {
+  fontSize: 14,
+  color: '#333',
+},
+// statusContainer: {
+//   flexDirection: 'row',
+//   alignItems: 'center',
+//   position: 'relative', // Add this for positioning dropdown
+// },
+paymentStatusContainer: {
+  position: 'relative', // Add this for positioning dropdown
+},
 });

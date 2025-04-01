@@ -20,6 +20,7 @@ import {styles} from './PatientTokenQueueScreen.styles';
 import {usePatientTokenManager} from '../../hooks/usePatientTokenManager';
 import DefaultReceptionScreen from '../noTokenReceptionState/DefaultReceptionScreen';
 import {TranslateNameToHindi} from '../../services/langTranslationService';
+import FooterNavigation from '../../components/tabNavigationFooter/TabNavigationFooter';
 const PatientTokenQueueScreen = ({navigation, route}) => {
   // State initialization
   const {clinic_id, doctor_id} = route.params;
@@ -96,8 +97,8 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
     try {
       await refetchTokens();
       setIsLoading(false);
-    } catch (error) {
-      console.error('Error refreshing tokens:', error);
+    } catch (refreshError) {
+      console.error('Error refreshing tokens:', refreshError);
     }
   }, [refetchTokens]);
 
@@ -203,9 +204,35 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
 
       <FooterNavigation
         navigation={navigation}
-        doctor_id={doctor_id}
-        clinic_id={clinic_id}
+        currentRoute="PatientTokenQueue"
         handleRefresh={handleRefresh}
+        routes={[
+          {
+            id: 'new',
+            icon: UserPlus,
+            label: 'New',
+            screen: 'Reception',
+            params: {doctor_id, clinic_id},
+          },
+          {
+            id: 'home',
+            icon: Home,
+            label: 'Home',
+            screen: 'Home',
+          },
+          {
+            id: 'report',
+            icon: FileText,
+            label: 'Report',
+            screen: 'ReportsScreen',
+          },
+          {
+            id: 'refresh',
+            icon: RefreshCw,
+            label: 'Refresh',
+            action: 'refresh',
+          },
+        ]}
       />
     </SafeAreaView>
   );
@@ -214,6 +241,19 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
 const TokenCard = React.memo(
   ({token, isSelected, onPress, onLongPress, translateToHindi}) => {
     const [hindiName, setHindiName] = useState('');
+    const [showStatusDropdown, setShowStatusDropdown] = useState(false);
+    const [showFeeDropdown, setShowFeeDropdown] = useState(false);
+    const handleStatusChange = newStatus => {
+      // Call API to update status
+      console.log(`Updating status to ${newStatus}`);
+      setShowStatusDropdown(false);
+    };
+
+    const handleFeeStatusChange = newFeeStatus => {
+      // Call API to update fee status
+      console.log(`Updating fee status to ${newFeeStatus}`);
+      setShowFeeDropdown(false);
+    };
     useEffect(() => {
       // Only translate if name exists and hindiName isn't already set
       if (token.patient_name && !hindiName) {
@@ -236,17 +276,15 @@ const TokenCard = React.memo(
         <View style={styles.tokenHeader}>
           <View style={styles.patientName}>
             <Text>{token.patient_name}</Text>
-            <Text>
-              ( { hindiName || ''} )
-            </Text>
+            <Text>( {hindiName || ''} )</Text>
           </View>
           <Text>
-  {new Date(token.created_date).toLocaleTimeString('en-US', {
-    hour12: true,  // Show AM/PM
-    hour: '2-digit', // e.g., "03" instead of "3"
-    minute: '2-digit', // e.g., "08" instead of "8"
-  })}
-</Text>
+            {new Date(token.created_date).toLocaleTimeString('en-US', {
+              hour12: true, // Show AM/PM
+              hour: '2-digit', // e.g., "03" instead of "3"
+              minute: '2-digit', // e.g., "08" instead of "8"
+            })}
+          </Text>
 
           <Text style={styles.tokenNumber}>{token.token_no}</Text>
         </View>
@@ -257,86 +295,81 @@ const TokenCard = React.memo(
               'xxx-xxx-$3',
             )}
           </Text>
-          {token.fee_status && (
-            <Text style={styles.paymentStatus}>
+          <TouchableOpacity
+            onPress={() => {
+              setShowFeeDropdown(!showFeeDropdown);
+              setShowStatusDropdown(false); // Close other dropdown if open
+            }}
+            style={styles.paymentStatusContainer}>
+            <Text
+              style={[
+                styles.paymentStatus,
+                token.fee_status === 'Paid'
+                  ? styles.paidText
+                  : styles.notPaidText,
+              ]}>
               {token.fee_status === 'Paid' ? 'Paid' : 'Not Paid'}
             </Text>
-          )}
+
+            {showFeeDropdown && (
+              <View style={[styles.dropdownMenu, {top: 25, right: 0}]}>
+                <TouchableOpacity
+                  style={styles.dropdownMenuItem}
+                  onPress={() => handleFeeStatusChange('Paid')}>
+                  <Text style={styles.dropdownMenuItemText}>Mark as Paid</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.dropdownMenuItem}
+                  onPress={() => handleFeeStatusChange('Not Paid')}>
+                  <Text style={styles.dropdownMenuItemText}>
+                    Mark as Not Paid
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </TouchableOpacity>
           <View style={styles.statusContainer}>
-            <View
-              style={[
-                styles.statusDot,
-                token.status === 'In Progress' && styles.greenDot,
-                token.status === 'On Hold' && styles.redDot,
-                token.status === 'Waiting' && styles.yellowDot,
-              ]}
-            />
-            <Text style={styles.statusText}>{token.status}</Text>
+            <TouchableOpacity
+              style={{flexDirection: 'row', alignItems: 'center'}}
+              onPress={() => {
+                setShowStatusDropdown(!showStatusDropdown);
+                setShowFeeDropdown(false); // Close other dropdown if open
+              }}>
+              <View
+                style={[
+                  styles.statusDot,
+                  token.status === 'In Progress' && styles.greenDot,
+                  token.status === 'On Hold' && styles.redDot,
+                  token.status === 'Waiting' && styles.yellowDot,
+                ]}
+              />
+              <Text style={styles.statusText}>{token.status}</Text>
+            </TouchableOpacity>
+
+            {showStatusDropdown && (
+              <View style={[styles.dropdownMenu, {top: 25, left: 0}]}>
+                <TouchableOpacity
+                  style={styles.dropdownMenuItem}
+                  onPress={() => handleStatusChange('Waiting')}>
+                  <Text style={styles.dropdownMenuItemText}>Waiting</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.dropdownMenuItem}
+                  onPress={() => handleStatusChange('In Progress')}>
+                  <Text style={styles.dropdownMenuItemText}>In Progress</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.dropdownMenuItem}
+                  onPress={() => handleStatusChange('On Hold')}>
+                  <Text style={styles.dropdownMenuItemText}>On Hold</Text>
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
         </View>
       </TouchableOpacity>
     );
   },
 );
-
-const FooterNavigation = React.memo(
-  ({navigation, doctor_id, clinic_id, handleRefresh}) => {
-    const handleFooterPress = screenName => {
-      switch (screenName) {
-        case 'New':
-          navigation.navigate('Reception', {
-            doctor_id: doctor_id,
-            clinic_id: clinic_id,
-          });
-          break;
-        case 'Home':
-          navigation.navigate('Home');
-          break;
-        case 'Report':
-          navigation.navigate('ReportsScreen');
-          break;
-        case 'Refresh':
-          handleRefresh();
-          break;
-        default:
-          console.warn(`No screen defined for ${screenName}`);
-      }
-    };
-
-    return (
-      <View style={styles.footerNavigation}>
-        <FooterButton
-          icon={UserPlus}
-          label="New"
-          onPress={() => handleFooterPress('New')}
-        />
-        <FooterButton
-          icon={Home}
-          label="Home"
-          onPress={() => handleFooterPress('Home')}
-        />
-        <FooterButton
-          icon={FileText}
-          label="Report"
-          onPress={() => handleFooterPress('Report')}
-        />
-        <FooterButton
-          icon={RefreshCw}
-          label="Refresh"
-          onPress={() => handleFooterPress('Refresh')}
-        />
-      </View>
-    );
-  },
-);
-
-const FooterButton = React.memo(({icon: Icon, label, onPress}) => {
-  return (
-    <TouchableOpacity style={styles.footerButton} onPress={onPress}>
-      <Icon size={20} color="#333" />
-      <Text style={styles.footerButtonText}>{label}</Text>
-    </TouchableOpacity>
-  );
-});
 
 export default withQueryClientProvider(PatientTokenQueueScreen);

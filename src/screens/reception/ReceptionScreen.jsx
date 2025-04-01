@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
+  SafeAreaView,
 } from 'react-native';
 import {Formik} from 'formik';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
@@ -24,6 +25,7 @@ import {GenerateTokenRequest} from '../../services/tokenService';
 import withQueryClientProvider from '../../hooks/useQueryClientProvider';
 import SearchBar from '../../components/searchBar/SearchBar';
 import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
+import FooterNavigation from '../../components/tabNavigationFooter/TabNavigationFooter';
 
 const formFields = [
   {
@@ -115,6 +117,7 @@ const ReceptionScreen = ({
   };
 
   return (
+    <SafeAreaView style = {styles.fullScreenContainer}>
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={styles.container}>
         <LoadingErrorHandler {...{isLoading, isError, error}} />
@@ -192,22 +195,30 @@ const ReceptionScreen = ({
         )}
 
         <View style={styles.footerNavigation}>
-          {[
-            {icon: Home, screen: 'Home'},
-            {icon: Users, screen: 'TokenListing'},
-          ].map(({icon: Icon, screen}) => (
-            <TouchableOpacity
-              key={screen}
-              style={styles.footerButton}
-              onPress={() =>
-                navigation.navigate(screen, {doctor_id, clinic_id})
-              }>
-              <Icon size={24} color="#333" />
-            </TouchableOpacity>
-          ))}
+          <FooterNavigation
+            navigation={navigation}
+            currentRoute="Reception"
+            routes={[
+              {
+                id: 'home',
+                icon: Home,
+                screen: 'Home',
+                label : 'Home',
+              },
+              {
+                id: 'tokens',
+                icon: Users,
+                label : 'Tokens',
+                screen: 'TokenListing',
+                params: {doctor_id, clinic_id},
+              },
+            ]}
+            
+          />
         </View>
       </View>
     </TouchableWithoutFeedback>
+    </SafeAreaView>
   );
 };
 
