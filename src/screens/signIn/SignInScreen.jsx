@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TextInput, Button } from 'react-native';
 import { Formik } from 'formik';
+import * as Yup from 'yup';
 import { useSetAtom } from 'jotai';
 import { userTokenAtom } from '../../atoms/authAtoms/authAtom';
 import {
@@ -8,11 +9,21 @@ import {
   doctorIdAtom,
   doctorInfoAtom,
 } from '../../atoms/doctorAtoms/doctorAtom';
-import { styles } from './SignInScreen.styles';
 import { SignInRequest } from '../../services/authService';
-import { SignInValidationSchema } from '../../utils/formFields/validationSchemas/clinicSchemas';
 import { setAuthToken } from '../../utils/tokenManager';
 import { showToast } from '../../components/toastMessage/ToastMessage';
+import styles from './SignInScreen.styles';
+
+const SignInValidationSchema = Yup.object().shape({
+  email: Yup.string()
+    .email('Invalid email')
+    .required('Email is required')
+    .max(50, 'Email too long'),
+  password: Yup.string()
+    .min(4, 'Password must be at least 4 characters')
+    .max(15, 'Password cannot exceed 15 characters')
+    .required('Password is required'),
+});
 
 const SignInScreen = ({ navigation }) => {
   const setUserToken = useSetAtom(userTokenAtom);
@@ -39,9 +50,6 @@ const SignInScreen = ({ navigation }) => {
       setDoctorClinicDetails(data.clinics);
 
       showToast('Login successful!');
-
-    
-
     } catch (error) {
       console.error('Error signing in:', error);
       showToast(error.message || 'Login failed. Please try again.', 'error');
@@ -55,9 +63,11 @@ const SignInScreen = ({ navigation }) => {
       <Text style={styles.title}>Sign In</Text>
 
       <Formik
-        initialValues={{email: '', password: ''}}
+        initialValues={{ email: '', password: '' }}
         validationSchema={SignInValidationSchema}
-        onSubmit={handleSignIn}>
+        onSubmit={handleSignIn}
+        validateOnChange={true}
+      >
         {({
           handleChange,
           handleBlur,
@@ -66,39 +76,44 @@ const SignInScreen = ({ navigation }) => {
           errors,
           touched,
           isSubmitting,
+          isValid,
+          dirty,
         }) => (
           <>
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                (touched.email && errors.email) && styles.inputError
+              ]}
               placeholder="Email"
               value={values.email}
               onChangeText={handleChange('email')}
               onBlur={handleBlur('email')}
               keyboardType="email-address"
               autoCapitalize="none"
+              maxLength={50}
             />
-            {touched.email && errors.email && (
-              <Text style={styles.errorText}>{errors.email}</Text>
-            )}
 
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                (touched.password && errors.password) && styles.inputError
+              ]}
               placeholder="Password"
               value={values.password}
               onChangeText={handleChange('password')}
               onBlur={handleBlur('password')}
               secureTextEntry
               autoCapitalize="none"
+              maxLength={15}
             />
-            {touched.password && errors.password && (
-              <Text style={styles.errorText}>{errors.password}</Text>
-            )}
 
-            <Button
-              title="Log In"
-              onPress={handleSubmit}
-              disabled={isSubmitting}
-            />
+<Button
+  title="Log In"
+  onPress={handleSubmit}
+  disabled={!isValid || !dirty || isSubmitting}
+  color={(!isValid || !dirty || isSubmitting) ? '#add8e6' : undefined}
+/>
           </>
         )}
       </Formik>

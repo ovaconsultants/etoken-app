@@ -1,15 +1,21 @@
 import React from 'react';
-import {FlatList, StyleSheet, View, Text} from 'react-native';
+import {FlatList, StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import Card from '../card/Cards';
+import {Plus} from 'lucide-react-native';
 
-const CardGrid = ({data, onPress, isSelectedCard}) => {
+const CardGrid = ({data, onPress, isSelectedCard, onAddClinicPress}) => {
   const cardWidth = '100%';
 
   // Handle null/undefined data or empty array
   if (!data || data.length === 0) {
     return (
       <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>No clinics registered yet</Text>
+        <TouchableOpacity
+          style={styles.addClinicButton}
+          onPress={onAddClinicPress}>
+          <Plus size={24} color="#007AFF" />
+          <Text style={styles.addClinicText}>Add Clinic</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -21,7 +27,12 @@ const CardGrid = ({data, onPress, isSelectedCard}) => {
   if (validData.length === 0) {
     return (
       <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>No valid clinic data available</Text>
+        <TouchableOpacity
+          style={styles.addClinicButton}
+          onPress={onAddClinicPress}>
+          <Plus size={24} color="#007AFF" />
+          <Text style={styles.addClinicText}>Add Clinic</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -44,7 +55,12 @@ const CardGrid = ({data, onPress, isSelectedCard}) => {
       contentContainerStyle={styles.container}
       ListEmptyComponent={
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>No clinics to display</Text>
+          <TouchableOpacity
+            style={styles.addClinicButton}
+            onPress={onAddClinicPress}>
+            <Plus size={24} color="#007AFF" />
+            <Text style={styles.addClinicText}>Add Clinic</Text>
+          </TouchableOpacity>
         </View>
       }
     />
@@ -65,6 +81,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#888',
     textAlign: 'center',
+  },
+  addClinicButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#007AFF',
+    backgroundColor: 'white',
+  },
+  addClinicText: {
+    color: '#007AFF',
+    fontSize: 16,
+    marginLeft: 8,
   },
 });
 

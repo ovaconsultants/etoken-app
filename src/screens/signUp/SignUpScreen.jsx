@@ -170,14 +170,16 @@ const SignUpScreen = ({navigation}) => {
       });
       setErrors({});
       
-      navigation.navigate('AddProfilePicture');
+       navigation.navigate('AddProfilePicture', { 
+        doctor_id: data.doctor_id 
+      });
       
     } catch (err) {
       showToast('error', 'Error', err.message);
     } finally {
       setLoading(prev => ({...prev, submit: false}));
     }
-  };
+  };  
 
   return (
     <ScrollView contentContainerStyle={SignUpStyles.container}>

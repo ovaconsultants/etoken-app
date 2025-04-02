@@ -1,16 +1,39 @@
-// validation/schemas.js
 import * as Yup from 'yup';
 
 export const ClinicValidationSchema = Yup.object().shape({
-  clinic_name: Yup.string().required('Clinic name is required'),
-  address: Yup.string().required('Address is required'),
-  city: Yup.string().required('City is required'),
-  state: Yup.string().required('State is required'),
+  clinic_name: Yup.string()
+    .trim()
+    .required('Clinic name is required')
+    .min(3, 'Clinic name must be at least 3 characters')
+    .max(50, 'Clinic name cannot exceed 50 characters'),
+  address: Yup.string()
+    .trim()
+    .required('Address is required')
+    .min(5, 'Address must be at least 5 characters')
+    .max(100, 'Address cannot exceed 100 characters'),
+  city: Yup.string()
+    .trim()
+    .required('City is required')
+    .min(2, 'City name must be at least 2 characters')
+    .max(50, 'City name cannot exceed 50 characters')
+    .matches(/^[a-zA-Z ]+$/, 'City name can only contain letters and spaces'),
+  state: Yup.string()
+    .trim()
+    .required('State is required')
+    .min(2, 'State name must be at least 2 characters')
+    .max(50, 'State name cannot exceed 50 characters')
+    .matches(/^[a-zA-Z ]+$/, 'State name can only contain letters and spaces'),
   zip_code: Yup.string()
+    .trim()
     .required('Zip code is required')
-    .matches(/^\d{5}$/, 'Zip code must be 5 digits'),
-  doctor_id: Yup.string().required('Doctor ID is required'),
-  created_by: Yup.string().required('Created by is required'),
+    .matches(/^\d{5}$/, 'Zip code must be exactly 5 digits'),
+  doctor_id: Yup.string()
+    .trim()
+    .required('Doctor ID is required')
+    .matches(/^\d+$/, 'Doctor ID must be a number'),
+  created_by: Yup.string()
+    .trim()
+    .required('Created by is required'),
 });
 
 export const ScheduleValidationSchema = Yup.object().shape({

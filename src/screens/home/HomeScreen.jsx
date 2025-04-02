@@ -8,7 +8,7 @@ import {
   doctorClinicDetailsAtom,
   doctorIdAtom,
 } from '../../atoms/doctorAtoms/doctorAtom';
-import {Tv, Users} from 'lucide-react-native';
+import {Tv, Users, Plus} from 'lucide-react-native';
 
 const HomeScreen = ({navigation}) => {
   useOrientationLocker('PORTRAIT');
@@ -42,6 +42,13 @@ const HomeScreen = ({navigation}) => {
       prevClinicId === clinicId ? null : clinicId,
     );
   }, []);
+
+  const handleAddClinicPress = useCallback(() => {
+    navigation.navigate('Clinic', {
+      doctor_id: doctorId, 
+    });
+  }, [navigation, doctorId]); 
+
   const isNextButtonDisabled = useMemo(
     () => !(selectedScreen && selectedClinicId),
     [selectedScreen, selectedClinicId],
@@ -67,6 +74,22 @@ const HomeScreen = ({navigation}) => {
     isNextButtonDisabled,
   ]);
 
+  // Render add clinic button if no clinics available
+  if (!cards.length) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.emptyContainer}>
+          <TouchableOpacity
+            style={styles.addClinicButton}
+            onPress={handleAddClinicPress}>
+            <Plus size={24} color="#007AFF" />
+            <Text style={styles.addClinicText}>Add Clinic</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.cardContainer}>
@@ -74,6 +97,7 @@ const HomeScreen = ({navigation}) => {
           data={cards}
           onPress={handleCardPress}
           isSelectedCard={selectedClinicId}
+          onAddClinicPress={handleAddClinicPress}
         />
       </View>
 

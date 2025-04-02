@@ -4,37 +4,56 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5F5F5',
-    padding : 10 ,
+    padding: 16,
+  },
+  formContainer: {
+    marginBottom: 80,
+  },
+  inputContainer: {
+    marginBottom: 16,
   },
   input: {
     height: 50,
     borderColor: '#E0E0E0',
     borderWidth: 1,
-    borderRadius: 12,
+    borderRadius: 8,
     paddingHorizontal: 16,
     backgroundColor: '#FFFFFF',
     fontSize: 16,
-    marginBottom: 16,
     color: '#333',
+  },
+  inputError: {
+    borderColor: '#FF3B30',
+  },
+  errorText: {
+    color: '#FF3B30',
+    fontSize: 12,
+    marginBottom: 4,
+    marginLeft: 4,
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 20,
+    marginTop: 24,
   },
   clearButton: {
     flex: 1,
     backgroundColor: '#E0E0E0',
-    borderRadius: 12,
+    borderRadius: 8,
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 10,
   },
+  clearButtonText: {
+    color: '#333',
+    fontSize: 16,
+    fontWeight: '500',
+  },
   submitButton: {
     flex: 1,
     backgroundColor: '#007AFF',
-    borderRadius: 12,
+    borderRadius: 8,
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
@@ -42,6 +61,7 @@ export const styles = StyleSheet.create({
   buttonText: {
     color: '#FFF',
     fontSize: 16,
+    fontWeight: '500',
   },
   footerNavigation: {
     position : 'absolute' ,
@@ -49,24 +69,6 @@ export const styles = StyleSheet.create({
     left : 0 ,
     right : 0 ,
     width : '100%' ,
-    // flexDirection: 'row',
-    // justifyContent: 'space-around',
-    // alignItems: 'center',
-    // backgroundColor: '#F5F5F5',
-    // borderTopWidth: 1,
-    // borderTopColor: '#E0E0E0',
-    // paddingVertical: 15,
-    // paddingBottom: 20, 
-    // marginBottom : '2%',
-  },
-  footerButton: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  footerText: {
-    fontSize: 12,
-    color: '#333',
-    marginTop: 4, // Spacing between icon and text
   },
   fullScreenContainer: {
     flex: 1,

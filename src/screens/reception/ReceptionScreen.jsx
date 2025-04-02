@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, { useRef } from 'react';
 import {
   View,
   Text,
@@ -9,19 +9,19 @@ import {
   Keyboard,
   SafeAreaView,
 } from 'react-native';
-import {Formik} from 'formik';
-import {useQuery, useQueryClient} from '@tanstack/react-query';
-import {useNavigation} from '@react-navigation/native';
-import {useAtom} from 'jotai';
-import {Users, Home} from 'lucide-react-native';
-import {patientsAtom} from '../../atoms/patientAtoms/patientAtom';
-import {styles} from './ReceptionScreen.styles';
-import {PatientSchema} from '../../utils/formFields/validationSchemas/clinicSchemas';
+import { Formik } from 'formik';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useNavigation } from '@react-navigation/native';
+import { useAtom } from 'jotai';
+import { Users, Home } from 'lucide-react-native';
+import { patientsAtom } from '../../atoms/patientAtoms/patientAtom';
+import { styles } from './ReceptionScreen.styles';
+import { ReceptionFormValidationSchema } from '../../utils/ReceptionFormValidation';
 import {
   FetchPatientsRequest,
   InsertPatientRequest,
 } from '../../services/patientService';
-import {GenerateTokenRequest} from '../../services/tokenService';
+import { GenerateTokenRequest } from '../../services/tokenService';
 import withQueryClientProvider from '../../hooks/useQueryClientProvider';
 import SearchBar from '../../components/searchBar/SearchBar';
 import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
@@ -38,6 +38,7 @@ const formFields = [
     name: 'mobile_number',
     placeholder: 'Mobile Number (e.g., 9876543210)',
     keyboardType: 'phone-pad',
+    maxLength: 10,
   },
   {
     name: 'area',
@@ -53,7 +54,7 @@ const formFields = [
 
 const ReceptionScreen = ({
   route: {
-    params: {doctor_id, clinic_id},
+    params: { doctor_id, clinic_id },
   },
 }) => {
   const navigation = useNavigation();
@@ -61,7 +62,7 @@ const ReceptionScreen = ({
   const [patients, setPatients] = useAtom(patientsAtom);
   const formikRef = useRef();
 
-  const {isLoading, isError, error} = useQuery({
+  const { isLoading, isError, error } = useQuery({
     queryKey: ['fetchingPatients'],
     queryFn: async () => {
       const data = await FetchPatientsRequest();
@@ -72,7 +73,7 @@ const ReceptionScreen = ({
     staleTime: 10 * 1000,
   });
 
-  const handleSubmit = async (values, {resetForm}) => {
+  const handleSubmit = async (values, { resetForm }) => {
     try {
       const existingPatient = patients.find(
         p =>
@@ -117,107 +118,113 @@ const ReceptionScreen = ({
   };
 
   return (
-    <SafeAreaView style = {styles.fullScreenContainer}>
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={styles.container}>
-        <LoadingErrorHandler {...{isLoading, isError, error}} />
+    <SafeAreaView style={styles.fullScreenContainer}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <View style={styles.container}>
+          <LoadingErrorHandler {...{ isLoading, isError, error }} />
 
-        {!isLoading && !isError && (
-          <>
-            <SearchBar
-              data={patients}
-              onSelectItem={patient =>
-                formikRef.current?.setValues({
-                  patient_id: patient.patient_id,
-                  ...Object.fromEntries(
-                    ['patient_name', 'mobile_number', 'area', 'email'].map(
-                      key => [key, patient[key]],
+          {!isLoading && !isError && (
+            <>
+              <SearchBar
+                data={patients}
+                onSelectItem={patient =>
+                  formikRef.current?.setValues({
+                    patient_id: patient.patient_id,
+                    ...Object.fromEntries(
+                      ['patient_name', 'mobile_number', 'area', 'email'].map(
+                        key => [key, patient[key]],
+                      ),
                     ),
-                  ),
-                })
-              }
-              placeholder="Search by Patient, Mobile, or Email"
-            />
+                  })
+                }
+                placeholder="Search by Patient, Mobile, or Email"
+              />
 
-            <Formik
-              innerRef={formikRef}
-              initialValues={Object.fromEntries(
-                formFields.map(f => [f.name, '']),
-              )}
-              validationSchema={PatientSchema}
-              onSubmit={handleSubmit}>
-              {({
-                handleChange,
-                handleBlur,
-                handleSubmit: formikHandleSubmit,
-                values,
-                errors,
-                touched,
-                resetForm,
-              }) => (
-                <View style={styles.formContainer}>
-                  {formFields.map(field => (
-                    <React.Fragment key={field.name}>
-                      <TextInput
-                        style={styles.input}
-                        placeholder={field.placeholder}
-                        placeholderTextColor="#888"
-                        onChangeText={handleChange(field.name)}
-                        onBlur={handleBlur(field.name)}
-                        value={values[field.name]}
-                        keyboardType={field.keyboardType}
-                        autoCapitalize={field.autoCapitalize || 'none'}
-                      />
-                      {touched[field.name] && errors[field.name] && (
-                        <Text style={styles.errorText}>
-                          {errors[field.name]}
-                        </Text>
-                      )}
-                    </React.Fragment>
-                  ))}
+              <Formik
+                innerRef={formikRef}
+                initialValues={Object.fromEntries(
+                  formFields.map(f => [f.name, '']),
+                )}
+                validationSchema={ReceptionFormValidationSchema}
+                onSubmit={handleSubmit}
+              >
+                {({
+                  handleChange,
+                  handleBlur,
+                  handleSubmit: formikHandleSubmit,
+                  values,
+                  errors,
+                  touched,
+                  resetForm,
+                }) => (
+                  <View style={styles.formContainer}>
+                    {formFields.map(field => (
+                      <View key={field.name} style={styles.inputContainer}>
+                        {touched[field.name] && errors[field.name] && (
+                          <Text style={styles.errorText}>
+                            {errors[field.name]}
+                          </Text>
+                        )}
+                        <TextInput
+                          style={[
+                            styles.input,
+                            touched[field.name] && errors[field.name] && styles.inputError,
+                          ]}
+                          placeholder={field.placeholder}
+                          placeholderTextColor="#888"
+                          onChangeText={handleChange(field.name)}
+                          onBlur={handleBlur(field.name)}
+                          value={values[field.name]}
+                          keyboardType={field.keyboardType}
+                          autoCapitalize={field.autoCapitalize || 'none'}
+                          maxLength={field.maxLength}
+                        />
+                      </View>
+                    ))}
 
-                  <View style={styles.buttonContainer}>
-                    <TouchableOpacity
-                      style={styles.clearButton}
-                      onPress={resetForm}>
-                      <Text style={styles.buttonText}>Clear</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={styles.submitButton}
-                      onPress={formikHandleSubmit}>
-                      <Text style={styles.buttonText}>GO</Text>
-                    </TouchableOpacity>
+                    <View style={styles.buttonContainer}>
+                      <TouchableOpacity
+                        style={styles.clearButton}
+                        onPress={resetForm}
+                      >
+                        <Text style={styles.clearButtonText}>Clear</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.submitButton}
+                        onPress={formikHandleSubmit}
+                      >
+                        <Text style={styles.buttonText}>GO</Text>
+                      </TouchableOpacity>
+                    </View>
                   </View>
-                </View>
-              )}
-            </Formik>
-          </>
-        )}
+                )}
+              </Formik>
+            </>
+          )}
 
-        <View style={styles.footerNavigation}>
-          <FooterNavigation
-            navigation={navigation}
-            currentRoute="Reception"
-            routes={[
-              {
-                id: 'home',
-                icon: Home,
-                screen: 'Home',
-                label : 'Home',
-              },
-              {
-                id: 'tokens',
-                icon: Users,
-                label : 'Tokens',
-                screen: 'TokenListing',
-                params: {doctor_id, clinic_id},
-              },
-            ]}
-            
-          />
+          <View style={styles.footerNavigation}>
+            <FooterNavigation
+              navigation={navigation}
+              currentRoute="Reception"
+              routes={[
+                {
+                  id: 'home',
+                  icon: Home,
+                  screen: 'Home',
+                  label: 'Home',
+                },
+                {
+                  id: 'tokens',
+                  icon: Users,
+                  label: 'Tokens',
+                  screen: 'TokenListing',
+                  params: { doctor_id, clinic_id },
+                },
+              ]}
+            />
+          </View>
         </View>
-      </View>
-    </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 };

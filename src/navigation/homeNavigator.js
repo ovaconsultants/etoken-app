@@ -11,6 +11,7 @@ import PatientTokenQueueScreen from '../screens/patient/PatientTokenQueueScreen'
 import {PatientInfoEditorScreen} from '../screens/patientEditor/PatientInfoEditorReceptionScreen';
 import DefaultReceptionScreen from '../screens/noTokenReceptionState/DefaultReceptionScreen';
 import {Home} from 'lucide-react-native';
+import ClinicScreen from '../screens/clinic/ClinicScreen';
 // Create stack navigator
 const Stack = createNativeStackNavigator();
 
@@ -49,6 +50,11 @@ const HomeNavigator = () => {
         name="DefaultNoTokenReception"
         component={DefaultReceptionScreen}
         options={{title: 'No Active Tokens'}}
+      />
+       <Stack.Screen
+        name="Clinic"
+        component={ClinicScreen}
+        options={{ title: 'Clinic' }}
       />
       <Stack.Screen
         name="TokenSuccess"
