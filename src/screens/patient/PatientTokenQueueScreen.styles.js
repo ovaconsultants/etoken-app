@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
-export const styles = StyleSheet.create({
+export const styless = StyleSheet.create({
   fullScreenContainer: {
     flex: 1,
     backgroundColor: '#fff',
@@ -128,9 +128,19 @@ export const styles = StyleSheet.create({
     fontSize: wp('4%'),
     fontWeight: 'bold',
   },
+  menuContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   tokenNumber: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     fontSize: wp('5%'),
     fontWeight: 'bold',
+  },
+  tokenNumberText: {
+    marginLeft: '2%',
   },
   tokenDetails: {
     flexDirection: 'row',
@@ -187,36 +197,68 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
 // Add these to your stylesheet
-dropdownMenu: {
-  position: 'absolute',
-  backgroundColor: 'white',
-  borderRadius: 8,
-  paddingVertical: 8,
-  paddingHorizontal: 12,
-  shadowColor: '#000',
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.25,
-  shadowRadius: 4,
-  elevation: 5,
-  zIndex: 100,
-  minWidth: 120,
+controlsContainer: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginTop: 8,
 },
-dropdownMenuItem: {
-  paddingVertical: 8,
-  paddingHorizontal: 12,
+paymentToggle: {
   flexDirection: 'row',
   alignItems: 'center',
 },
-dropdownMenuItemText: {
+paymentLabel: {
+  marginRight: 5,
   fontSize: 14,
-  color: '#333',
 },
+paymentStatusText: {
+  marginLeft: 5,
+  fontSize: 14,
+  fontWeight: 'bold',
+},
+dropdown: {
+  width: 150,
+  height: 40,
+  borderColor: 'gray',
+  borderWidth: 0.5,
+  borderRadius: 8,
+  paddingHorizontal: 8,
+},
+dropdownItem: {
+  padding: 10,
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+},
+dropdownItemText: {
+  fontSize: 14,
+},
+// ..
 // statusContainer: {
 //   flexDirection: 'row',
 //   alignItems: 'center',
 //   position: 'relative', // Add this for positioning dropdown
 // },
+paymentSwitch : {
+  height: 20,
+  width: 40,
+},
 paymentStatusContainer: {
-  position: 'relative', // Add this for positioning dropdown
+  position: 'relative',
+  alignItems: 'center',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+},
+controlsRow: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginTop: 8,
+},
+paidText: {
+  color: 'green',
+},
+notPaidText: {
+  color: 'red',
 },
 });

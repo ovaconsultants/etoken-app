@@ -1,6 +1,5 @@
-import React, {useMemo} from 'react';
+import React from 'react';
 import {View, TouchableOpacity, Text} from 'react-native';
-import {Home, FileText, UserPlus, RefreshCw, Users} from 'lucide-react-native';
 import { styles } from './TabNavigationFooter.styles';
 
 const FooterButton = React.memo(({icon: Icon, label, onPress, active}) => {

@@ -16,11 +16,12 @@ import {
   FileText,
   UserPlus,
 } from 'lucide-react-native';
-import {styles} from './PatientTokenQueueScreen.styles';
+import {styless} from './PatientTokenQueueScreen.styles';
 import {usePatientTokenManager} from '../../hooks/usePatientTokenManager';
 import DefaultReceptionScreen from '../noTokenReceptionState/DefaultReceptionScreen';
 import {TranslateNameToHindi} from '../../services/langTranslationService';
 import FooterNavigation from '../../components/tabNavigationFooter/TabNavigationFooter';
+import {UpdateTokenRequest} from '../../services/tokenService';
 const PatientTokenQueueScreen = ({navigation, route}) => {
   // State initialization
   const {clinic_id, doctor_id} = route.params;
@@ -42,18 +43,6 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
     isError,
     error,
   } = usePatientTokenManager(clinic_id, doctor_id);
-
-  // Memoized derived values
-  const onHoldOptions = useMemo(
-    () =>
-      patientTokens
-        .filter(t => t.status === 'On Hold')
-        .map(patient => ({
-          label: `${patient.patient_name} (${patient.token_no})`,
-          value: patient.token_id,
-        })),
-    [patientTokens],
-  );
 
   const {totalPatients, attendedPatients, inQueue, onHold, hasTokenInProgress} =
     useMemo(() => {
@@ -102,10 +91,17 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
     }
   }, [refetchTokens]);
 
-  const toggleDropdown = useCallback(() => {
-    setIsDropdownVisible(prev => !prev);
-  }, []);
-
+  const handleTokenUpdate = useCallback(
+    async ( updatedTokenStatusDataObj) => {
+      try {
+        await UpdateTokenRequest(updatedTokenStatusDataObj);
+        await refetchTokens();
+      } catch (updateError) {
+        console.error('Error updating token status:', updateError);
+      }
+    },
+    [refetchTokens],
+  );
   // Side effects
   useEffect(() => {
     if (patientTokens !== undefined) {
@@ -140,31 +136,9 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
             <Text style={styles.badgeText}>In Queue: {inQueue}</Text>
           </View>
           <View style={styles.dropdownContainer}>
-            <TouchableOpacity
-              style={[styles.badge, styles.redBadge]}
-              onPress={toggleDropdown}
-              disabled={onHoldOptions.length === 0}>
+            <TouchableOpacity style={[styles.badge, styles.redBadge]}>
               <Text style={styles.badgeText}>On Hold: {onHold}</Text>
             </TouchableOpacity>
-            {isDropdownVisible && (
-              <View style={styles.dropdownContent}>
-                <ScrollView style={styles.dropdownScroll}>
-                  {onHoldOptions.map(option => (
-                    <TouchableOpacity
-                      key={option.value}
-                      style={styles.dropdownItem}
-                      onPress={() => {
-                        handleSelectToken(option.value);
-                        setIsDropdownVisible(false);
-                      }}>
-                      <Text style={styles.dropdownItemText}>
-                        {option.label}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </ScrollView>
-              </View>
-            )}
           </View>
         </View>
       </View>
@@ -198,6 +172,7 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
             translateToHindi={TranslateNameToHindi}
             onPress={() => handleRowPress(token.token_id)}
             onLongPress={() => handleLongPress(token)}
+            handleTokenUpdate={handleTokenUpdate}
           />
         ))}
       </ScrollView>
@@ -238,30 +213,80 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
   );
 };
 // Memoized Components for better performance
-const TokenCard = React.memo(
-  ({token, isSelected, onPress, onLongPress, translateToHindi}) => {
-    const [hindiName, setHindiName] = useState('');
-    const [showStatusDropdown, setShowStatusDropdown] = useState(false);
-    const [showFeeDropdown, setShowFeeDropdown] = useState(false);
-    const handleStatusChange = newStatus => {
-      // Call API to update status
-      console.log(`Updating status to ${newStatus}`);
-      setShowStatusDropdown(false);
-    };
+import {Switch, Alert} from 'react-native';
+import {Dropdown} from 'react-native-element-dropdown';
 
-    const handleFeeStatusChange = newFeeStatus => {
-      // Call API to update fee status
-      console.log(`Updating fee status to ${newFeeStatus}`);
-      setShowFeeDropdown(false);
-    };
+const statusOptions = [
+  {label: 'Waiting', value: 'Waiting'},
+  {label: 'In Progress', value: 'In Progress'},
+  {label: 'On Hold', value: 'On Hold'},
+];
+
+const TokenCard = React.memo(
+  ({token, isSelected, onPress, onLongPress, translateToHindi , handleTokenUpdate}) => {
+    const [hindiName, setHindiName] = useState('');
+    const [isPaid, setIsPaid] = useState(token.fee_status === 'Paid');
+
     useEffect(() => {
-      // Only translate if name exists and hindiName isn't already set
       if (token.patient_name && !hindiName) {
-        TranslateNameToHindi(token.patient_name)
+        translateToHindi(token.patient_name)
           .then(setHindiName)
           .catch(() => setHindiName(''));
       }
-    }, [hindiName, token.patient_name]);
+    }, [token.patient_name, hindiName, translateToHindi]);
+
+    const handleStatusChange = async  item => {
+      Alert.alert(
+        'Confirm Status Change',
+        `Are you sure you want to change status from ${token.status} to ${item.value}?`,
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'Confirm',
+            onPress: () => {
+              console.log(`Updating status to ${item.value}`);
+              // Add your API call here to update the status
+            },
+          },
+        ],
+      );
+      const updateTokenDataObj = {
+        ...token,
+        status: item.value,
+      };
+      await handleTokenUpdate(updateTokenDataObj);
+    };
+
+    const handlePaymentToggle = async value => {
+      const newStatus = value ? 'Paid' : 'Not Paid';
+      Alert.alert(
+        'Confirm Payment Change',
+        `Are you sure you want to change payment status from ${token.fee_status} to ${newStatus}?`,
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+            onPress: () => {}, // Keep current state
+          },
+          {
+            text: 'Confirm',
+            onPress: () => {
+              console.log(`Updating payment status to ${newStatus}`);
+              setIsPaid(value);
+              // Add your API call here to update payment status
+            },
+          },
+        ],
+      );
+      const updateTokenDataObj = {
+        ...token,
+        fee_status: newStatus,
+      };
+      await handleTokenUpdate(updateTokenDataObj);
+    };
     return (
       <TouchableOpacity
         style={[
@@ -278,16 +303,18 @@ const TokenCard = React.memo(
             <Text>{token.patient_name}</Text>
             <Text>( {hindiName || ''} )</Text>
           </View>
-          <Text>
-            {new Date(token.created_date).toLocaleTimeString('en-US', {
-              hour12: true, // Show AM/PM
-              hour: '2-digit', // e.g., "03" instead of "3"
-              minute: '2-digit', // e.g., "08" instead of "8"
-            })}
-          </Text>
-
-          <Text style={styles.tokenNumber}>{token.token_no}</Text>
+          <View style={styles.tokenNumber}>
+            <Text>
+              {new Date(token.created_date).toLocaleTimeString('en-US', {
+                hour12: true,
+                hour: '2-digit',
+                minute: '2-digit',
+              })}
+            </Text>
+            <Text style={styles.tokenNumberText}>{token.token_no}</Text>
+          </View>
         </View>
+
         <View style={styles.tokenDetails}>
           <Text style={styles.detailText}>
             {token.mobile_number?.replace(
@@ -295,81 +322,138 @@ const TokenCard = React.memo(
               'xxx-xxx-$3',
             )}
           </Text>
-          <TouchableOpacity
-            onPress={() => {
-              setShowFeeDropdown(!showFeeDropdown);
-              setShowStatusDropdown(false); // Close other dropdown if open
-            }}
-            style={styles.paymentStatusContainer}>
+
+          {/* Payment Switch - Small version */}
+          <View style={styles.paymentSwitchContainer}>
+            <Switch
+              value={isPaid}
+              onValueChange={handlePaymentToggle}
+              trackColor={{false: '#ff7675', true: '#55efc4'}}
+              thumbColor={isPaid ? '#00b894' : '#d63031'}
+              style={styles.smallSwitch}
+            />
             <Text
               style={[
                 styles.paymentStatus,
-                token.fee_status === 'Paid'
-                  ? styles.paidText
-                  : styles.notPaidText,
+                isPaid ? styles.paidText : styles.notPaidText,
               ]}>
-              {token.fee_status === 'Paid' ? 'Paid' : 'Not Paid'}
+              {isPaid ? 'Paid' : 'Not Paid'}
             </Text>
+          </View>
 
-            {showFeeDropdown && (
-              <View style={[styles.dropdownMenu, {top: 25, right: 0}]}>
-                <TouchableOpacity
-                  style={styles.dropdownMenuItem}
-                  onPress={() => handleFeeStatusChange('Paid')}>
-                  <Text style={styles.dropdownMenuItemText}>Mark as Paid</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.dropdownMenuItem}
-                  onPress={() => handleFeeStatusChange('Not Paid')}>
-                  <Text style={styles.dropdownMenuItemText}>
-                    Mark as Not Paid
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          </TouchableOpacity>
-          <View style={styles.statusContainer}>
-            <TouchableOpacity
-              style={{flexDirection: 'row', alignItems: 'center'}}
-              onPress={() => {
-                setShowStatusDropdown(!showStatusDropdown);
-                setShowFeeDropdown(false); // Close other dropdown if open
-              }}>
-              <View
-                style={[
-                  styles.statusDot,
-                  token.status === 'In Progress' && styles.greenDot,
-                  token.status === 'On Hold' && styles.redDot,
-                  token.status === 'Waiting' && styles.yellowDot,
-                ]}
-              />
-              <Text style={styles.statusText}>{token.status}</Text>
-            </TouchableOpacity>
-
-            {showStatusDropdown && (
-              <View style={[styles.dropdownMenu, {top: 25, left: 0}]}>
-                <TouchableOpacity
-                  style={styles.dropdownMenuItem}
-                  onPress={() => handleStatusChange('Waiting')}>
-                  <Text style={styles.dropdownMenuItemText}>Waiting</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.dropdownMenuItem}
-                  onPress={() => handleStatusChange('In Progress')}>
-                  <Text style={styles.dropdownMenuItemText}>In Progress</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.dropdownMenuItem}
-                  onPress={() => handleStatusChange('On Hold')}>
-                  <Text style={styles.dropdownMenuItemText}>On Hold</Text>
-                </TouchableOpacity>
-              </View>
-            )}
+          {/* Improved Status Dropdown */}
+          <View style={styles.statusDropdownContainer}>
+            <Dropdown
+              style={styles.statusDropdown}
+              placeholder=""
+              data={statusOptions}
+              labelField="label"
+              valueField="value"
+              value={token.status}
+              onChange={handleStatusChange}
+              renderItem={item => (
+                <View style={styles.dropdownItem}>
+                  <View
+                    style={[
+                      styles.smallStatusDot, // Changed to smallStatusDot
+                      item.value === 'In Progress' && styles.greenDot,
+                      item.value === 'On Hold' && styles.redDot,
+                      item.value === 'Waiting' && styles.yellowDot,
+                    ]}
+                  />
+                  <Text style={styles.smallDropdownItemText}>{item.label}</Text>
+                </View>
+              )}
+              renderSelectedItem={item => (
+                <View style={styles.selectedStatus}>
+                  <View
+                    style={[
+                      styles.smallStatusDot, // Changed to smallStatusDot
+                      item.value === 'In Progress' && styles.greenDot,
+                      item.value === 'On Hold' && styles.redDot,
+                      item.value === 'Waiting' && styles.yellowDot,
+                    ]}
+                  />
+                  <Text style={styles.smallStatusText}>{item.label}</Text>
+                </View>
+              )}
+              itemTextStyle={styles.smallDropdownItemText} // Added
+              selectedTextStyle={styles.smallStatusText} // Added
+            />
           </View>
         </View>
       </TouchableOpacity>
     );
   },
 );
+
+// Add these to your existing styles
+const additionalStyles = {
+  paymentSwitchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+  },
+  smallSwitch: {
+    transform: [{scaleX: 0.8}, {scaleY: 0.8}],
+  },
+  paymentStatus: {
+    fontSize: 14,
+  },
+  paidText: {
+    color: 'green',
+  },
+  notPaidText: {
+    color: 'red',
+  },
+
+  dropdownItemText: {
+    marginLeft: 8,
+    fontSize: 14,
+  },
+
+  // ... keep existing payment switch styles ...
+
+  // Status dropdown small styles
+  statusDropdownContainer: {
+    width: 110, // Reduced from 120
+  },
+  statusDropdown: {
+    backgroundColor: 'white',
+    borderRadius: 6, // Reduced from 8
+    padding: 6, // Reduced from 8
+    height: 30, // Added fixed height
+  },
+  smallStatusDot: {
+    width: 8, // Reduced from 10
+    height: 8, // Reduced from 10
+    borderRadius: 4, // Reduced from 5
+    marginRight: 4, // Reduced from 5
+  },
+  smallStatusText: {
+    fontSize: 12, // Reduced from 14
+    marginLeft: 4, // Reduced from 8
+  },
+  smallDropdownItemText: {
+    fontSize: 12, // Reduced from 14
+  },
+  dropdownItem: {
+    padding: 8, // Reduced from 10
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 30, // Added fixed height
+  },
+  selectedStatus: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 30, // Added fixed height
+  },
+};
+
+// Merge with existing styles
+const styles = {
+  ...styless, // Your existing styles
+  ...additionalStyles,
+};
 
 export default withQueryClientProvider(PatientTokenQueueScreen);
