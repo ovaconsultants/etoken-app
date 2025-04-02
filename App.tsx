@@ -8,6 +8,7 @@ import { ToastMessage } from './src/components/toastMessage/ToastMessage';
 
 const App = () => {
   return (
+    <>
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="rootNavigator" component={RootNavigator} options={{ headerShown: false }} />
@@ -15,6 +16,8 @@ const App = () => {
       <Footer />
       <ToastMessage />
     </NavigationContainer>
+     <ToastMessage />
+     </>
   );
 };
 
