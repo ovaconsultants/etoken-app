@@ -5,7 +5,6 @@ import {usePatientTokens} from './usePatientTokens';
 export const usePatientTokenManager = (clinic_id, doctor_id) => {
   const [patientTokens, setPatientTokens] = useState([]);
   const [selectedTokenId, setSelectedTokenId] = useState(null);
-  const [isRecallEnabled, setIsRecallEnabled] = useState(false);
   const [isNextDone, setIsNextDone] = useState(false);
   const [pauseQuery, setPauseQuery] = useState(false);
 
@@ -29,11 +28,9 @@ export const usePatientTokenManager = (clinic_id, doctor_id) => {
   }, [tokens]);
 
   const handleSelectToken = tokenId => {
-    console.log('handleSelectToken', tokenId);
     setSelectedTokenId(tokenId);
-    selectedTokenRef.current = tokenId; // Update the ref
+    selectedTokenRef.current = tokenId;
     const selectedToken = patientTokens.find(t => t.token_id === tokenId);
-    setIsRecallEnabled(selectedToken?.status === 'In Progress');
   };
 
   const handleNext = async () => {
@@ -54,10 +51,9 @@ export const usePatientTokenManager = (clinic_id, doctor_id) => {
           ),
         );
 
-        setIsRecallEnabled(true);
         setIsNextDone(true);
-      } catch (error) {
-        console.error('Error updating token status:', error);
+      } catch (updateError) {
+        console.error('Error updating token status:', updateError);
         setPatientTokens(tokens);
       } finally {
         setPauseQuery(false);
@@ -68,8 +64,6 @@ export const usePatientTokenManager = (clinic_id, doctor_id) => {
 
   const handleDone = async () => {
     const currentTokenId = selectedTokenRef.current; // Use ref value
-    console.log('handleDone', currentTokenId);
-
     if (currentTokenId) {
       setPauseQuery(true);
 
@@ -83,10 +77,9 @@ export const usePatientTokenManager = (clinic_id, doctor_id) => {
         // Reset selection
         setSelectedTokenId(null);
         selectedTokenRef.current = null;
-        setIsRecallEnabled(false);
         setIsNextDone(false);
-      } catch (error) {
-        console.error('Error completing token:', error);
+      } catch (completionError) {
+        console.error('Error completing token:', completionError);
         setPatientTokens(tokens);
       } finally {
         setPauseQuery(false);
@@ -110,8 +103,8 @@ export const usePatientTokenManager = (clinic_id, doctor_id) => {
           modified_by: 'Receptionist',
         };
         await RecallTokenRequest(recallTokenDataObj);
-      } catch (error) {
-        console.error('Error recalling token:', error);
+      } catch (recallError) {
+        console.error('Error recalling token:', recallError);
       } finally {
         setPauseQuery(false);
         await refetchTokens();
@@ -122,7 +115,6 @@ export const usePatientTokenManager = (clinic_id, doctor_id) => {
   return {
     patientTokens,
     selectedTokenId,
-    isRecallEnabled,
     isNextDone,
     handleSelectToken,
     handleNext,

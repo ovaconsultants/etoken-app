@@ -36,10 +36,6 @@ const ClinicScreen = ({ navigation, route }) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.headerText}>Add New Clinic</Text>
-      </View>
-
       <Formik
         initialValues={{
           clinic_name: '',

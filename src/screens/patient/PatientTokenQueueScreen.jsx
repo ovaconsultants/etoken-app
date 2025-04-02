@@ -26,14 +26,12 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
   // State initialization
   const {clinic_id, doctor_id} = route.params;
   const [isLoading, setIsLoading] = useState(true);
-  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const doubleTapTimeout = useRef(null);
 
   // Token management
   const {
     patientTokens = [],
     selectedTokenId,
-    isRecallEnabled,
     handleSelectToken,
     handleNext,
     handleRecall,
@@ -154,12 +152,12 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.secondaryButton}
-          onPress={handleRecall}
-          disabled={!isRecallEnabled}>
-          <Nfc size={16} color="#333" />
-          <Text style={styles.secondaryButtonText}>Recall</Text>
-        </TouchableOpacity>
+    style={styles.secondaryButton}
+    onPress={handleRecall}
+    disabled={!hasTokenInProgress}>
+    <Nfc size={16} color="#333" />
+    <Text style={styles.secondaryButtonText}>Recall</Text> 
+</TouchableOpacity>
       </View>
 
       {/* Token List */}
@@ -246,18 +244,17 @@ const TokenCard = React.memo(
           },
           {
             text: 'Confirm',
-            onPress: () => {
+            onPress: async () => {
               console.log(`Updating status to ${item.value}`);
-              // Add your API call here to update the status
+              const updateTokenDataObj = {
+                ...token,
+                status: item.value,
+              };
+              await handleTokenUpdate(updateTokenDataObj);
             },
           },
         ],
       );
-      const updateTokenDataObj = {
-        ...token,
-        status: item.value,
-      };
-      await handleTokenUpdate(updateTokenDataObj);
     };
 
     const handlePaymentToggle = async value => {
@@ -273,19 +270,18 @@ const TokenCard = React.memo(
           },
           {
             text: 'Confirm',
-            onPress: () => {
+            onPress: async() => {
               console.log(`Updating payment status to ${newStatus}`);
               setIsPaid(value);
-              // Add your API call here to update payment status
+              const updateTokenDataObj = {
+                ...token,
+                fee_status: newStatus,
+              };
+              await handleTokenUpdate(updateTokenDataObj);
             },
           },
         ],
       );
-      const updateTokenDataObj = {
-        ...token,
-        fee_status: newStatus,
-      };
-      await handleTokenUpdate(updateTokenDataObj);
     };
     return (
       <TouchableOpacity

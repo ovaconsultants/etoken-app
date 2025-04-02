@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Toast from 'react-native-toast-message';
 
@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
   toastContainer: {
     height: 60,
     width: '90%',
-    backgroundColor: 'white',
+    backgroundColor: '#9EC6F3',
     padding: 16,
     borderRadius: 8,
     flexDirection: 'row',
@@ -63,7 +63,7 @@ export const showToast = (message, type = 'success') => {
     position: 'top',
     visibilityTime: 4000,
     autoHide: true,
-    topOffset: 50,
+    topOffset: 100,
     bottomOffset: 40,
   });
 };

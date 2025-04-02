@@ -12,7 +12,7 @@ const DoctorClinicNavigator = () => {
       <Stack.Screen
         name="Clinic"
         component={ClinicScreen}
-        options={{ title: 'Clinic' }}
+        options={{ title: 'Add Clinic' }}
       />
       <Stack.Screen
         name="DoctorClinicSchedule"
