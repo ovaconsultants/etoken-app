@@ -46,11 +46,6 @@ const SearchBar = ({data, onSelectItem, placeholder}) => {
               </Text>
             </TouchableOpacity>
           )}
-          ListEmptyComponent={() => (
-            <View style={styles.dropdownItem}>
-              <Text style={styles.dropdownItemText}>No results found</Text>
-            </View>
-          )}
         />
       )}
     </View>

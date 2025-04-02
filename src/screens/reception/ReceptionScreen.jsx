@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, {useRef} from 'react';
 import {
   View,
   Text,
@@ -9,19 +9,19 @@ import {
   Keyboard,
   SafeAreaView,
 } from 'react-native';
-import { Formik } from 'formik';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useNavigation } from '@react-navigation/native';
-import { useAtom } from 'jotai';
-import { Users, Home } from 'lucide-react-native';
-import { patientsAtom } from '../../atoms/patientAtoms/patientAtom';
-import { styles } from './ReceptionScreen.styles';
-import { ReceptionFormValidationSchema } from '../../utils/ReceptionFormValidation';
+import {Formik} from 'formik';
+import {useQuery, useQueryClient} from '@tanstack/react-query';
+import {useNavigation} from '@react-navigation/native';
+import {useAtom} from 'jotai';
+import {Users, Home} from 'lucide-react-native';
+import {patientsAtom} from '../../atoms/patientAtoms/patientAtom';
+import {styles} from './ReceptionScreen.styles';
+import {ReceptionFormValidationSchema} from '../../utils/ReceptionFormValidation';
 import {
   FetchPatientsRequest,
   InsertPatientRequest,
 } from '../../services/patientService';
-import { GenerateTokenRequest } from '../../services/tokenService';
+import {GenerateTokenRequest} from '../../services/tokenService';
 import withQueryClientProvider from '../../hooks/useQueryClientProvider';
 import SearchBar from '../../components/searchBar/SearchBar';
 import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
@@ -30,31 +30,31 @@ import FooterNavigation from '../../components/tabNavigationFooter/TabNavigation
 const formFields = [
   {
     name: 'patient_name',
-    placeholder: 'Full Name (e.g., John Doe)',
+    placeholder: 'Full Name',
     keyboardType: 'default',
     autoCapitalize: 'words',
   },
   {
     name: 'mobile_number',
-    placeholder: 'Mobile Number (e.g., 9876543210)',
+    placeholder: 'Mobile Number',
     keyboardType: 'phone-pad',
     maxLength: 10,
   },
   {
     name: 'area',
-    placeholder: 'Locality/Area (e.g., Downtown)',
+    placeholder: 'Locality/Area',
     keyboardType: 'default',
   },
   {
     name: 'email',
-    placeholder: 'Email (e.g., john@example.com)',
+    placeholder: 'Email',
     keyboardType: 'email-address',
   },
 ];
 
 const ReceptionScreen = ({
   route: {
-    params: { doctor_id, clinic_id },
+    params: {doctor_id, clinic_id},
   },
 }) => {
   const navigation = useNavigation();
@@ -62,7 +62,7 @@ const ReceptionScreen = ({
   const [patients, setPatients] = useAtom(patientsAtom);
   const formikRef = useRef();
 
-  const { isLoading, isError, error } = useQuery({
+  const {isLoading, isError, error} = useQuery({
     queryKey: ['fetchingPatients'],
     queryFn: async () => {
       const data = await FetchPatientsRequest();
@@ -73,7 +73,7 @@ const ReceptionScreen = ({
     staleTime: 10 * 1000,
   });
 
-  const handleSubmit = async (values, { resetForm }) => {
+  const handleSubmit = async (values, {resetForm}) => {
     try {
       const existingPatient = patients.find(
         p =>
@@ -121,7 +121,7 @@ const ReceptionScreen = ({
     <SafeAreaView style={styles.fullScreenContainer}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={styles.container}>
-          <LoadingErrorHandler {...{ isLoading, isError, error }} />
+          <LoadingErrorHandler {...{isLoading, isError, error}} />
 
           {!isLoading && !isError && (
             <>
@@ -146,8 +146,7 @@ const ReceptionScreen = ({
                   formFields.map(f => [f.name, '']),
                 )}
                 validationSchema={ReceptionFormValidationSchema}
-                onSubmit={handleSubmit}
-              >
+                onSubmit={handleSubmit}>
                 {({
                   handleChange,
                   handleBlur,
@@ -160,15 +159,19 @@ const ReceptionScreen = ({
                   <View style={styles.formContainer}>
                     {formFields.map(field => (
                       <View key={field.name} style={styles.inputContainer}>
-                        {touched[field.name] && errors[field.name] && (
-                          <Text style={styles.errorText}>
-                            {errors[field.name]}
-                          </Text>
-                        )}
+                        <View style={{height: 16}}>
+                          {touched[field.name] && errors[field.name] ? (
+                            <Text style={styles.errorText}>
+                              {errors[field.name]}
+                            </Text>
+                          ) : null}
+                        </View>
                         <TextInput
                           style={[
                             styles.input,
-                            touched[field.name] && errors[field.name] && styles.inputError,
+                            touched[field.name] &&
+                              errors[field.name] &&
+                              styles.inputError,
                           ]}
                           placeholder={field.placeholder}
                           placeholderTextColor="#888"
@@ -185,14 +188,12 @@ const ReceptionScreen = ({
                     <View style={styles.buttonContainer}>
                       <TouchableOpacity
                         style={styles.clearButton}
-                        onPress={resetForm}
-                      >
+                        onPress={resetForm}>
                         <Text style={styles.clearButtonText}>Clear</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={styles.submitButton}
-                        onPress={formikHandleSubmit}
-                      >
+                        onPress={formikHandleSubmit}>
                         <Text style={styles.buttonText}>GO</Text>
                       </TouchableOpacity>
                     </View>
@@ -218,7 +219,7 @@ const ReceptionScreen = ({
                   icon: Users,
                   label: 'Tokens',
                   screen: 'TokenListing',
-                  params: { doctor_id, clinic_id },
+                  params: {doctor_id, clinic_id},
                 },
               ]}
             />
