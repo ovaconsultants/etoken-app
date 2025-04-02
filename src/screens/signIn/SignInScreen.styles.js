@@ -32,4 +32,9 @@ export const styles = StyleSheet.create({
       color: '#007bff',
       fontWeight: 'bold',
     },
-  });
+    errorText: {
+        color: 'red',
+        marginBottom: 5,
+        fontSize: 14,
+    },
+});

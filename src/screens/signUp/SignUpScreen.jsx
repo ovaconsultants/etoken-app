@@ -4,7 +4,6 @@ import {
   TextInput,
   Button,
   ActivityIndicator,
-  Alert,
   ScrollView,
 } from 'react-native';
 import {Dropdown} from 'react-native-element-dropdown';
@@ -12,6 +11,8 @@ import {SignUpRequest} from '../../services/authService';
 import SignUpStyles from './SignUpStyles';
 import {FetchAccountRequest} from '../../services/accountService';
 import {FetchSpecializationsRequest} from '../../services/accountService';
+import { showToast } from '../../components/toastMessage/ToastMessage';
+import { SignUpValidationSchema, validateForm, validateField } from '../../utils/signUpValidation';
 
 const SignUpScreen = ({navigation}) => {
   const [accounts, setAccounts] = useState([]);
@@ -24,14 +25,13 @@ const SignUpScreen = ({navigation}) => {
     mobileNumber: '',
     phoneNumber: '',
     email: '',
-    createdBy: '',
   });
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState({
     accounts: true,
     specializations: false,
     submit: false,
   });
-  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchAccounts = async () => {
@@ -47,7 +47,7 @@ const SignUpScreen = ({navigation}) => {
           })),
         );
       } catch (err) {
-        setError(err.message);
+        showToast('Network error!', 'error');
       } finally {
         setLoading(prev => ({...prev, accounts: false}));
       }
@@ -59,8 +59,11 @@ const SignUpScreen = ({navigation}) => {
     const loadSpecializations = async () => {
       setSpecializations([]);
       setSelectedSpecialization(null);
+  
       if (!selectedAccount) return;
+  
       setLoading(prev => ({ ...prev, specializations: true }));
+      
       try {
         const data = await FetchSpecializationsRequest(selectedAccount);
         const fetchedSpecializations = await data.specializations;
@@ -72,10 +75,10 @@ const SignUpScreen = ({navigation}) => {
             })),
           );
         } else {
-          setError('Failed to load specializations');
+          showToast('error', 'Error', 'Failed to load specializations');
         }
       } catch (err) {
-        setError(err.message);
+        showToast('error', 'Error', err.message);
         setSpecializations([]);
       } finally {
         setLoading(prev => ({ ...prev, specializations: false }));
@@ -84,6 +87,30 @@ const SignUpScreen = ({navigation}) => {
 
     loadSpecializations();
   }, [selectedAccount]);
+
+  const handleInputChange = async (fieldName, value) => {
+    const validation = await validateField(
+      SignUpValidationSchema,
+      fieldName,
+      value,
+      formData,
+      selectedAccount,
+      selectedSpecialization
+    );
+    
+    if (!validation.isValid) {
+      setErrors(prev => ({...prev, [fieldName]: validation.message}));
+    } else {
+      setErrors(prev => {
+        const newErrors = {...prev};
+        delete newErrors[fieldName];
+        return newErrors;
+      });
+    }
+    
+    setFormData(prev => ({...prev, [fieldName]: value}));
+  };
+  
   const handleSubmit = async () => {
     const requiredFields = [
       formData.firstName,
@@ -91,16 +118,27 @@ const SignUpScreen = ({navigation}) => {
       selectedSpecialization,
       formData.mobileNumber,
       formData.email,
-      formData.createdBy,
     ];
 
     if (requiredFields.some(field => !field)) {
-      setError('Please fill all required fields');
+      showToast('error', 'Validation Error', 'Please fill all required fields');
+      return;
+    }
+
+    const { isValid, errors: validationErrors } = await validateForm(
+      SignUpValidationSchema,
+      formData,
+      selectedAccount,
+      selectedSpecialization
+    );
+    
+    if (!isValid) {
+      setErrors(validationErrors);
+      showToast('error', 'Validation Error', 'Please fix the errors in the form');
       return;
     }
 
     setLoading(prev => ({...prev, submit: true}));
-    setError('');
 
     try {
       const dataObject = {
@@ -109,26 +147,18 @@ const SignUpScreen = ({navigation}) => {
         specialization_id: selectedSpecialization,
         mobile_number: formData.mobileNumber,
         phone_number: formData.phoneNumber,
-        email: formData.email,
-        // profile_picture_url: formData.profilePictureUrl,
-        created_by: formData.createdBy,
+        email: formData.email.toLowerCase().trim(),
+        created_by: 'Receptionist', 
       };
 
       const data = await SignUpRequest(dataObject);
-      console.log('Sign up response:', data);
+
       if (!data.success) {
         throw new Error(data.message || 'Failed to submit form');
       }
 
-     if (data.success) {
-      Alert.alert('Success', 'Doctor registered successfully!', [{
-        text: 'OK',
-        onPress: () => navigation.navigate('AddProfilePicture', { 
-          doctor_id: data.doctor_id , // Pass the doctor ID here
-        }),
-      }]);}
-
-
+      showToast('success', 'Success', 'Doctor registered successfully!');
+      
       setSelectedAccount(null);
       setSelectedSpecialization(null);
       setFormData({
@@ -137,110 +167,137 @@ const SignUpScreen = ({navigation}) => {
         mobileNumber: '',
         phoneNumber: '',
         email: '',
-        createdBy: '',
       });
+      setErrors({});
+      
+      navigation.navigate('AddProfilePicture');
+      
     } catch (err) {
-      setError(err.message);
+      showToast('error', 'Error', err.message);
     } finally {
       setLoading(prev => ({...prev, submit: false}));
     }
   };
+
   return (
     <ScrollView contentContainerStyle={SignUpStyles.container}>
-      {/* Account Dropdown */}
       <Text style={SignUpStyles.label}>Account:</Text>
       {loading.accounts ? (
         <ActivityIndicator />
       ) : (
-        <Dropdown
-          data={accounts}
-          labelField="label"
-          valueField="value"
-          placeholder="Select Account"
-          value={selectedAccount}
-          onChange={item => setSelectedAccount(item.value)}
-          style={SignUpStyles.dropdown}
-          placeholderStyle={SignUpStyles.placeholderText}
-          selectedTextStyle={SignUpStyles.selectedText}
-          inputSearchStyle={SignUpStyles.inputSearch}
-        />
+        <>
+          <Dropdown
+            data={accounts}
+            labelField="label"
+            valueField="value"
+            placeholder="Select Account"
+            value={selectedAccount}
+            onChange={item => setSelectedAccount(item.value)}
+            style={SignUpStyles.dropdown}
+            placeholderStyle={SignUpStyles.placeholderText}
+            selectedTextStyle={SignUpStyles.selectedText}
+            inputSearchStyle={SignUpStyles.inputSearch}
+          />
+          {errors.accountId && <Text style={SignUpStyles.errorText}>{errors.accountId}</Text>}
+        </>
       )}
 
-      {/* Specialization Dropdown */}
       <Text style={SignUpStyles.label}>Specialization:</Text>
       {loading.specializations ? (
         <ActivityIndicator />
       ) : (
-        <Dropdown
-          data={specializations}
-          labelField="label"
-          valueField="value"
-          placeholder="Select Specialization"
-          value={selectedSpecialization}
-          onChange={item => setSelectedSpecialization(item.value)}
-          disabled={!selectedAccount}
-          style={[
-            SignUpStyles.dropdown,
-            !selectedAccount && SignUpStyles.disabledDropdown,
-          ]}
-          placeholderStyle={SignUpStyles.placeholderText}
-          selectedTextStyle={SignUpStyles.selectedText}
-          inputSearchStyle={SignUpStyles.inputSearch}
-        />
+        <>
+          <Dropdown
+            data={specializations}
+            labelField="label"
+            valueField="value"
+            placeholder="Select Specialization"
+            value={selectedSpecialization}
+            onChange={item => setSelectedSpecialization(item.value)}
+            disabled={!selectedAccount}
+            style={[
+              SignUpStyles.dropdown,
+              !selectedAccount && SignUpStyles.disabledDropdown,
+            ]}
+            placeholderStyle={SignUpStyles.placeholderText}
+            selectedTextStyle={SignUpStyles.selectedText}
+            inputSearchStyle={SignUpStyles.inputSearch}
+          />
+          {errors.specializationId && <Text style={SignUpStyles.errorText}>{errors.specializationId}</Text>}
+        </>
       )}
 
       <TextInput
         placeholder="First Name *"
         value={formData.firstName}
-        onChangeText={text => setFormData(prev => ({...prev, firstName: text}))}
-        style={SignUpStyles.input}
+        onChangeText={text => handleInputChange('firstName', text)}
+        style={[
+          SignUpStyles.input,
+          errors.firstName && SignUpStyles.errorInput
+        ]}
+        maxLength={50}
       />
+      {errors.firstName && <Text style={SignUpStyles.errorText}>{errors.firstName}</Text>}
+
       <TextInput
         placeholder="Last Name *"
         value={formData.lastName}
-        onChangeText={text => setFormData(prev => ({...prev, lastName: text}))}
-        style={SignUpStyles.input}
+        onChangeText={text => handleInputChange('lastName', text)}
+        style={[
+          SignUpStyles.input,
+          errors.lastName && SignUpStyles.errorInput
+        ]}
+        maxLength={50}
       />
+      {errors.lastName && <Text style={SignUpStyles.errorText}>{errors.lastName}</Text>}
+
       <TextInput
         placeholder="Mobile Number *"
         value={formData.mobileNumber}
-        onChangeText={text =>
-          setFormData(prev => ({...prev, mobileNumber: text}))
-        }
+        onChangeText={text => handleInputChange('mobileNumber', text)}
         keyboardType="phone-pad"
-        style={SignUpStyles.input}
+        style={[
+          SignUpStyles.input,
+          errors.mobileNumber && SignUpStyles.errorInput
+        ]}
+        maxLength={10}
       />
+      {errors.mobileNumber && <Text style={SignUpStyles.errorText}>{errors.mobileNumber}</Text>}
+
       <TextInput
         placeholder="Phone Number"
         value={formData.phoneNumber}
-        onChangeText={text =>
-          setFormData(prev => ({...prev, phoneNumber: text}))
-        }
+        onChangeText={text => handleInputChange('phoneNumber', text)}
         keyboardType="phone-pad"
-        style={SignUpStyles.input}
+        style={[
+          SignUpStyles.input,
+          errors.phoneNumber && SignUpStyles.errorInput
+        ]}
+        maxLength={10}
       />
+      {errors.phoneNumber && <Text style={SignUpStyles.errorText}>{errors.phoneNumber}</Text>}
+
       <TextInput
         placeholder="Email *"
         value={formData.email}
-        onChangeText={text => setFormData(prev => ({...prev, email: text}))}
+        onChangeText={text => handleInputChange('email', text)}
         keyboardType="email-address"
         autoCapitalize="none"
-        style={SignUpStyles.input}
+        style={[
+          SignUpStyles.input,
+          errors.email && SignUpStyles.errorInput
+        ]}
       />
-
-      <TextInput
-        placeholder="Created By *"
-        value={formData.createdBy}
-        onChangeText={text => setFormData(prev => ({...prev, createdBy: text}))}
-        style={SignUpStyles.input}
-      />
-
-      {error ? <Text style={SignUpStyles.errorText}>{error}</Text> : null}
+      {errors.email && <Text style={SignUpStyles.errorText}>{errors.email}</Text>}
 
       <Button
         title={loading.submit ? 'Submitting...' : 'Submit'}
         onPress={handleSubmit}
         disabled={loading.submit}
+      />
+      <Button 
+        title="Go to profile picture" 
+        onPress={() => navigation.navigate('AddProfilePicture')} 
       />
     </ScrollView>
   );

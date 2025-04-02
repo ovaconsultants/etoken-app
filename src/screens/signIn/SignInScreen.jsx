@@ -1,30 +1,27 @@
 import React from 'react';
-import {View, Text, TextInput, Button, Alert} from 'react-native';
-import {Formik} from 'formik';
-import {useSetAtom} from 'jotai';
-import {userTokenAtom} from '../../atoms/authAtoms/authAtom';
+import { View, Text, TextInput, Button } from 'react-native';
+import { Formik } from 'formik';
+import { useSetAtom } from 'jotai';
+import { userTokenAtom } from '../../atoms/authAtoms/authAtom';
 import {
   doctorClinicDetailsAtom,
   doctorIdAtom,
   doctorInfoAtom,
 } from '../../atoms/doctorAtoms/doctorAtom';
-import {styles} from './SignInScreen.styles';
-import {SignInRequest} from '../../services/authService';
-import {SignInValidationSchema} from '../../utils/formFields/validationSchemas/clinicSchemas';
-import {setAuthToken} from '../../utils/tokenManager';
+import { styles } from './SignInScreen.styles';
+import { SignInRequest } from '../../services/authService';
+import { SignInValidationSchema } from '../../utils/formFields/validationSchemas/clinicSchemas';
+import { setAuthToken } from '../../utils/tokenManager';
+import { showToast } from '../../components/toastMessage/ToastMessage';
 
-// Validation Schema using Yup
-
-const SignInScreen = ({navigation}) => {
-  // Jotai state management
+const SignInScreen = ({ navigation }) => {
   const setUserToken = useSetAtom(userTokenAtom);
   const setDoctorClinicDetails = useSetAtom(doctorClinicDetailsAtom);
   const setDoctorIdAtom = useSetAtom(doctorIdAtom);
   const setDoctorInfoAtom = useSetAtom(doctorInfoAtom);
 
-  // Form submission handler
-  const handleSignIn = async (values, {setSubmitting}) => {
-    const {email, password} = values;
+  const handleSignIn = async (values, { setSubmitting }) => {
+    const { email, password } = values;
 
     try {
       const data = await SignInRequest(email, password);
@@ -32,19 +29,22 @@ const SignInScreen = ({navigation}) => {
         throw new Error(data.message || 'Sign-in failed');
       }
 
-      console.log('Sign in response:', data);
       const doctorDetails = data.doctor;
       const doctor_id = doctorDetails.doctor_id?.toString() || '';
 
       setUserToken(data.token);
       setAuthToken(data.token);
       setDoctorIdAtom(doctor_id);
-      setDoctorInfoAtom(doctorDetails); 
+      setDoctorInfoAtom(doctorDetails);
       setDoctorClinicDetails(data.clinics);
+
+      showToast('Login successful!');
+
+    
 
     } catch (error) {
       console.error('Error signing in:', error);
-      Alert.alert('Login Failed', error.message);
+      showToast(error.message || 'Login failed. Please try again.', 'error');
     } finally {
       setSubmitting(false);
     }
@@ -68,7 +68,6 @@ const SignInScreen = ({navigation}) => {
           isSubmitting,
         }) => (
           <>
-            {/* Email Input */}
             <TextInput
               style={styles.input}
               placeholder="Email"
@@ -82,7 +81,6 @@ const SignInScreen = ({navigation}) => {
               <Text style={styles.errorText}>{errors.email}</Text>
             )}
 
-            {/* Password Input */}
             <TextInput
               style={styles.input}
               placeholder="Password"
@@ -96,7 +94,6 @@ const SignInScreen = ({navigation}) => {
               <Text style={styles.errorText}>{errors.password}</Text>
             )}
 
-            {/* Submit Button */}
             <Button
               title="Log In"
               onPress={handleSubmit}
