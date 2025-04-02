@@ -12,7 +12,7 @@ import SignUpStyles from './SignUpStyles';
 import {FetchAccountRequest} from '../../services/accountService';
 import {FetchSpecializationsRequest} from '../../services/accountService';
 import { showToast } from '../../components/toastMessage/ToastMessage';
-import { SignUpValidationSchema, validateForm, validateField } from '../../utils/signUpValidation';
+import { SignUpValidationSchema , validateField , validateForm } from '../../utils/SignUpValidation';
 
 const SignUpScreen = ({navigation}) => {
   const [accounts, setAccounts] = useState([]);
@@ -157,7 +157,7 @@ const SignUpScreen = ({navigation}) => {
         throw new Error(data.message || 'Failed to submit form');
       }
 
-      showToast('success', 'Success', 'Doctor registered successfully!');
+      showToast('success', 'success', 'Doctor registered successfully!');
       
       setSelectedAccount(null);
       setSelectedSpecialization(null);
@@ -296,10 +296,6 @@ const SignUpScreen = ({navigation}) => {
         title={loading.submit ? 'Submitting...' : 'Submit'}
         onPress={handleSubmit}
         disabled={loading.submit}
-      />
-      <Button 
-        title="Go to profile picture" 
-        onPress={() => navigation.navigate('AddProfilePicture')} 
       />
     </ScrollView>
   );
