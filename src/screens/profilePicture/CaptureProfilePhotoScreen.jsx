@@ -1,17 +1,23 @@
 import React, {useState} from 'react';
-import {View, TouchableOpacity,Text , Alert, ActivityIndicator} from 'react-native';
+import {
+  View,
+  TouchableOpacity,
+  Text,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 import ImagePickerComponent from '../../imagePickerComponent/ImagePickerComponent';
 import styles from './CaptureProfilePhotoScreen.styles';
 import {UploadDoctorProfileImageRequest} from '../../services/profileImageService';
 import RNFS from 'react-native-fs';
 
-const CaptureProfilePhotoScreen = ({navigation,route}) => {
-  const { doctor_id } = route.params;
-  console.log('Doctor ID:',doctor_id );
+const CaptureProfilePhotoScreen = ({navigation, route}) => {
+  const {doctor_id} = route.params;
+  console.log('Doctor ID:', doctor_id);
   const [selectedImage, setSelectedImage] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
 
-  const prepareImageForUpload = async (image) => {
+  const prepareImageForUpload = async image => {
     if (!image.uri) {
       throw new Error('Invalid image URI');
     }
@@ -42,7 +48,10 @@ const CaptureProfilePhotoScreen = ({navigation,route}) => {
       const preparedImage = await prepareImageForUpload(selectedImage);
       console.log('Prepared image:', preparedImage);
 
-      const result = await UploadDoctorProfileImageRequest(preparedImage, doctor_id);
+      const result = await UploadDoctorProfileImageRequest(
+        preparedImage,
+        doctor_id,
+      );
       Alert.alert('Success', 'Profile image updated successfully');
     } catch (error) {
       console.error('Upload error:', error);
@@ -57,7 +66,7 @@ const CaptureProfilePhotoScreen = ({navigation,route}) => {
       <View style={styles.contentContainer}>
         <View style={styles.imagePickerContainer}>
           <ImagePickerComponent
-            onImageSelected={(image) => {
+            onImageSelected={image => {
               setSelectedImage({
                 uri: image.uri,
                 type: image.type || 'image/jpeg',
@@ -68,16 +77,16 @@ const CaptureProfilePhotoScreen = ({navigation,route}) => {
         </View>
 
         {isUploading ? (
-          <ActivityIndicator 
-            size="large" 
-            color="#007AFF" 
-            style={styles.loadingIndicator} 
+          <ActivityIndicator
+            size="large"
+            color="#007AFF"
+            style={styles.loadingIndicator}
           />
         ) : (
           <TouchableOpacity
             style={[
               styles.uploadButton,
-              !selectedImage && styles.buttonDisabled
+              !selectedImage && styles.buttonDisabled,
             ]}
             onPress={handleImageUpload}
             disabled={!selectedImage}>
@@ -88,25 +97,18 @@ const CaptureProfilePhotoScreen = ({navigation,route}) => {
         <View style={styles.navigationButtonsContainer}>
           <TouchableOpacity
             style={[styles.navButton, styles.skipButton]}
-            onPress={() => navigation.navigate({
-              name: 'ClinicNavigator',
-              params: {
-                screen: 'Clinic',
-                params: { doctor_id: doctor_id }
-              }
-            })}>
-            <Text style={[styles.navButtonText, styles.skipButtonText]}>Skip</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.navButton, styles.nextButton]}
-            onPress={() => navigation.navigate({
-              name: 'ClinicNavigator',
-              params: {
-                screen: 'Clinic',
-                params: { doctor_id: doctor_id }
-              }
-            })}>
-            <Text style={[styles.navButtonText, styles.nextButtonText]}>Next</Text>
+            onPress={() =>
+              navigation.navigate({
+                name: 'DoctorClinicNavigator',
+                params: {
+                  screen: 'Clinic',
+                  params: {doctor_id: doctor_id},
+                },
+              })
+            }>
+            <Text style={[styles.navButtonText, styles.skipButtonText]}>
+              Skip
+            </Text>
           </TouchableOpacity>
         </View>
       </View>

@@ -3,8 +3,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AuthNavigator from './authNavigator';
 import { isAuthenticatedAtom } from '../atoms/authAtoms/authAtom';
 import { useAtomValue } from 'jotai';
-import HomeNavigator from './homeNavigator';
 import { ActivityIndicator, View } from 'react-native';
+import DrawerNavigator from './drawerNavigator';
 
 const Stack = createNativeStackNavigator();
 
@@ -24,8 +24,8 @@ const AppNavigator = () => {
     <Stack.Navigator>
       {isLoggedIn ? (
         <Stack.Screen
-          name="HomeNavigator"
-          component={HomeNavigator}
+          name="DrawerNavigator"
+          component={DrawerNavigator}
           options={{ headerShown: false }}
         />
       ) : (

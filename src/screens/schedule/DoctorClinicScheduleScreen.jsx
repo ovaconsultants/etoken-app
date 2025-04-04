@@ -8,7 +8,6 @@ import {
   Alert,
 } from 'react-native';
 import {Formik} from 'formik';
-import * as Yup from 'yup';
 import {AddDoctorClinicScheduleRequest} from '../../services/doctorService';
 import styles from './DoctorClinicScheduleScreen.styles';
 import TimePicker from '../../components/timePicker/TimePicker';
@@ -16,14 +15,12 @@ import {Dropdown} from 'react-native-element-dropdown';
 import {userTokenAtom} from '../../atoms/authAtoms/authAtom';
 import {
   doctorClinicDetailsAtom,
-  doctorIdAtom,
 } from '../../atoms/doctorAtoms/doctorAtom';
 import {useAtomValue, useSetAtom} from 'jotai';
 import {WEEK_DAYS} from '../../constants/formComponentsData/weekDaysDropdownData';
 import {TransformTimeForPostgres} from '../../utils/formatTimeForPostgres';
 import {ScheduleValidationSchema} from '../../utils/formFields/validationSchemas/clinicSchemas';
 
-// ✅ Get unique clinics
 const getUniqueClinics = clinics => {
   const uniqueClinics = [];
   const seen = new Set();
@@ -38,14 +35,13 @@ const getUniqueClinics = clinics => {
       });
     }
   });
-
   return uniqueClinics;
 };
 
-const DoctorClinicScheduleScreen = ({navigation}) => {
+const DoctorClinicScheduleScreen = ({navigation , route}) => {
+  const {doctor_id }  = route?.params;
   const setIsAuthenticated = useSetAtom(userTokenAtom);
   const clinic_Data = useAtomValue(doctorClinicDetailsAtom);
-  const doctorId = useAtomValue(doctorIdAtom);
   const uniqueClinics = getUniqueClinics(clinic_Data || []);
 
   const [openPicker, setOpenPicker] = useState(null); // Track open picker
@@ -53,7 +49,7 @@ const DoctorClinicScheduleScreen = ({navigation}) => {
   const handleSubmit = async (values, {setSubmitting, resetForm}) => {
     try {
       const payload = {
-        doctor_id: doctorId,
+        doctor_id: doctor_id,
         clinic_id: values.clinicId,
         day_of_week: values.dayOfWeek,
         start_time: TransformTimeForPostgres(values.startTime),
@@ -92,7 +88,6 @@ const DoctorClinicScheduleScreen = ({navigation}) => {
   return (
     <Formik
       initialValues={{
-        clinicId: '',
         dayOfWeek: '',
         startTime: new Date(),
         endTime: new Date(),

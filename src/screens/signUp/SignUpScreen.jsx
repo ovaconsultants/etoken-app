@@ -169,11 +169,9 @@ const SignUpScreen = ({navigation}) => {
         email: '',
       });
       setErrors({});
-      
-       navigation.navigate('AddProfilePicture', { 
+       navigation.navigate('AddProfilePicture',{
         doctor_id: data.doctor_id 
       });
-      
     } catch (err) {
       showToast('error', 'Error', err.message);
     } finally {
