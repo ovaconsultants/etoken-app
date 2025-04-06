@@ -15,7 +15,7 @@ import {useAtomValue} from 'jotai';
 import {useProfileURI} from '../../hooks/useProfileURI';
 import {RotateCcw} from 'lucide-react-native';
 import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
-import ProfileCircle from '../../components/profileImage/ProfileImage';
+import DrawerLeftNavigationButton from '../../components/profileImage/ProfileImage';
 
 const TokenManagementScreen = ({route}) => {
   const profileUri = useProfileURI();
@@ -77,7 +77,7 @@ const TokenManagementScreen = ({route}) => {
       <View style={styles.headerContainer}>
         <View style={styles.doctorSection}>
           <View style={styles.profileCircle}>
-            <ProfileCircle profileUri={profileUri} />
+            <DrawerLeftNavigationButton profileUri={profileUri} />
           </View>
           <View style={styles.doctorInfo}>
             <Text style={styles.doctorName}>Dr. {doctorData.doctor_name}</Text>

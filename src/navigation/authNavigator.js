@@ -19,11 +19,6 @@ const AuthNavigator = () => {
         component={SignUpScreen}
         options={{ title: 'Sign Up' }}
       />
-      <Stack.Screen
-        name="AddProfilePicture"
-        component={CaptureProfilePhotoScreen}
-        options={{ title: 'Take a picture' }}
-      />
     </Stack.Navigator>
   );
 };

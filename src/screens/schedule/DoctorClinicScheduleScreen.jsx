@@ -14,7 +14,6 @@ import {Dropdown} from 'react-native-element-dropdown';
 import {userTokenAtom} from '../../atoms/authAtoms/authAtom';
 import {
   doctorClinicDetailsAtom,
-  doctorIdAtom,
 } from '../../atoms/doctorAtoms/doctorAtom';
 import {useAtomValue, useSetAtom} from 'jotai';
 import {WEEK_DAYS} from '../../constants/formComponentsData/weekDaysDropdownData';
@@ -36,14 +35,13 @@ const getUniqueClinics = clinics => {
       });
     }
   });
-
   return uniqueClinics;
 };
 
-const DoctorClinicScheduleScreen = ({navigation}) => {
+const DoctorClinicScheduleScreen = ({navigation , route}) => {
+  const {doctor_id }  = route?.params;
   const setIsAuthenticated = useSetAtom(userTokenAtom);
   const clinic_Data = useAtomValue(doctorClinicDetailsAtom);
-  const doctorId = useAtomValue(doctorIdAtom);
   const uniqueClinics = getUniqueClinics(clinic_Data || []);
   const [openPicker, setOpenPicker] = useState(null);
   const [fieldErrors, setFieldErrors] = useState({
@@ -72,7 +70,7 @@ const DoctorClinicScheduleScreen = ({navigation}) => {
   const handleSubmit = async (values, {setSubmitting, resetForm}) => {
     try {
       const payload = {
-        doctor_id: doctorId,
+        doctor_id: doctor_id,
         clinic_id: values.clinicId,
         day_of_week: values.dayOfWeek,
         start_time: TransformTimeForPostgres(values.startTime),

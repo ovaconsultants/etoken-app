@@ -1,183 +1,34 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   TouchableOpacity,
-  Modal,
-  TouchableWithoutFeedback,
-  Animated,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useSetAtom} from 'jotai';
-import {userTokenAtom} from '../../atoms/authAtoms/authAtom';
-import FastImage from 'react-native-fast-image';
-import {User, Calendar, PlusCircle, LogOut} from 'lucide-react-native';
+import { Menu } from 'lucide-react-native';
 import {useNavigation} from '@react-navigation/native';
 
-const ProfileCircle = ({imageUrl}) => {
-  const navigation = useNavigation();
-  const [isDropdownVisible, setDropdownVisible] = useState(false);
-  const fadeAnim = useState(new Animated.Value(0))[0];
-  const setUserTokenAtom = useSetAtom(userTokenAtom);
-
-  const options = [
-    {
-      label: 'Profile',
-      icon: <User size={18} color="#333" />,
-      onPress: () =>
-        navigation.navigate('AppNavigator', {
-          screen: 'AuthNavigator',
-          params: {
-            screen: 'AddProfilePicture',
-          },
-        }),
-    },
-    {
-      label: 'Clinic',
-      icon: <PlusCircle size={18} color="#333" />,
-      onPress: () => navigation.navigate('DoctorClinicSchedule'),
-    },
-    {
-      label: 'Schedule',
-      icon: <Calendar size={18} color="#333" />,
-      onPress: () => navigation.navigate('DoctorClinicSchedule'),
-    },
-  ];
-
-  const handleSignOut = async () => {
-    setUserTokenAtom(null);
-    await AsyncStorage.clear();
-    setDropdownVisible(false);
-  };
-
-  const toggleDropdown = () => {
-    if (isDropdownVisible) {
-      Animated.timing(fadeAnim, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
-      }).start(() => setDropdownVisible(false));
-    } else {
-      setDropdownVisible(true);
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 200,
-        useNativeDriver: true,
-      }).start();
-    }
-  };
-
+const DrawerLeftNavigationButton = () => {
+  const navigation = useNavigation(); 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={toggleDropdown}>
-        <View style={styles.profileImageContainer}>
-          <FastImage
-            source={{uri: imageUrl}}
-            style={styles.profileImage}
-            resizeMode="cover"
-          />
+      <TouchableOpacity
+        onPress={() => {
+          console.log('pressed');
+          navigation.toggleDrawer();
+        }}>
+        <View>
+        <Menu size={24} color="#333" />
         </View>
       </TouchableOpacity>
-
-      <Modal
-        transparent
-        visible={isDropdownVisible}
-        onRequestClose={toggleDropdown}>
-        <TouchableWithoutFeedback onPress={toggleDropdown}>
-          <Animated.View style={[styles.modalOverlay, {opacity: fadeAnim}]}>
-            <View style={styles.dropdown}>
-              {options.map(option => (
-                <TouchableOpacity
-                  key={option.label}
-                  style={styles.option}
-                  onPress={() => {
-                    console.log('called navigation');
-                    navigation.navigate('AppNavigator', {
-                      screen: 'AuthNavigator',
-                      params: {
-                        screen: 'AddProfilePicture',
-                        // You can add additional params if needed:
-                        params: {userId: '123'},
-                      },
-                    });
-                    toggleDropdown();
-                  }}>
-                  {option.icon}
-                  <Text style={styles.optionText}>{option.label}</Text>
-                </TouchableOpacity>
-              ))}
-              <View style={styles.divider} />
-              <TouchableOpacity style={styles.option} onPress={handleSignOut}>
-                <LogOut size={18} color="#D32F2F" />
-                <Text style={[styles.optionText, styles.signOutText]}>
-                  Sign Out
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </Animated.View>
-        </TouchableWithoutFeedback>
-      </Modal>
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
-    position: 'relative',
-  },
-  profileImageContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#fff',
-    borderColor: 'rgb(93, 101, 208)',
-    borderWidth: 1,
-    overflow: 'hidden',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-  },
-  profileImage: {
-    width: '100%',
-    height: '100%',
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.3)',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-end',
-    paddingTop: 60,
-    paddingRight: 20,
-  },
-  dropdown: {
-    width: 160,
-    backgroundColor: '#FFF',
-    borderRadius: 8,
-    paddingVertical: 8,
-    elevation: 5,
-  },
-  option: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-  },
-  optionText: {
-    fontSize: 14,
-    color: '#333',
-    marginLeft: 12,
-  },
-  signOutText: {
-    color: '#D32F2F',
-  },
-  divider: {
-    height: 1,
-    backgroundColor: '#EEE',
-    marginVertical: 4,
-  },
+    marginLeft: 15,  // Adjust as needed
+    marginTop: 14,
+  }
 });
 
-export default ProfileCircle;
+
+export default DrawerLeftNavigationButton;
