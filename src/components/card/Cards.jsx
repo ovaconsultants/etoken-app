@@ -35,7 +35,7 @@ const Card = ({ title, description, isSelected, onPress, state, cardWidth }) => 
           styles.card,
           { 
             width: cardWidth, 
-            height: cardWidth, 
+            height: cardWidth/3, 
             transform: [{ scale: scaleValue }] 
           },
         ]}
@@ -76,6 +76,7 @@ const useStyles = () => {
       elevation: 5,
       position: 'relative',
       overflow: 'hidden',
+      marginBottom: 16,
     },
     borderHighlight: {
       position: 'absolute',

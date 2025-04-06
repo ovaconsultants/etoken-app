@@ -40,7 +40,7 @@ const CardGrid = ({data, onPress, isSelectedCard, onAddClinicPress}) => {
   return (
     <FlatList
       data={validData}
-      numColumns={2}
+      numColumns={1}
       keyExtractor={item => item.id.toString()}
       renderItem={({item}) => (
         <Card

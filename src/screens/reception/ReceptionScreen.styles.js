@@ -27,9 +27,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     marginVertical: 1,
   },
-  inputError: {
-    borderColor: 'red',
-  },
+
   errorText: {
     color: 'red',
     fontSize: width * 0.03,
@@ -49,16 +47,13 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   submitButton: {
-    backgroundColor: '#2a92ce',
+    backgroundColor: '#007AFF',
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
     flex: 1,
   },
-  disabledButton: {
-    backgroundColor: '#38b6ff',
-    opacity: 0.7,
-  },
+
   inputError: {
     borderColor: 'red',
     borderWidth: 1,
@@ -67,11 +62,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'grey',
     opacity: 0.6,
   },
-  errorText: {
-    color: 'red',
-    fontSize: 12,
-    marginTop: 4,
-  },
+
   clearButtonText: {
     color: '#333',
     fontWeight: 'bold',

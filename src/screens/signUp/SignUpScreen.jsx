@@ -11,8 +11,12 @@ import {SignUpRequest} from '../../services/authService';
 import SignUpStyles from './SignUpStyles';
 import {FetchAccountRequest} from '../../services/accountService';
 import {FetchSpecializationsRequest} from '../../services/accountService';
-import { showToast } from '../../components/toastMessage/ToastMessage';
-import { SignUpValidationSchema , validateField , validateForm } from '../../utils/SignUpValidation';
+import {showToast} from '../../components/toastMessage/ToastMessage';
+import {
+  SignUpValidationSchema,
+  validateField,
+  validateForm,
+} from '../../utils/SignUpValidation';
 
 const SignUpScreen = ({navigation}) => {
   const [accounts, setAccounts] = useState([]);
@@ -33,7 +37,7 @@ const SignUpScreen = ({navigation}) => {
     mobileNumber: false,
     email: false,
     accountId: false,
-    specializationId: false
+    specializationId: false,
   });
   const [loading, setLoading] = useState({
     accounts: true,
@@ -67,11 +71,13 @@ const SignUpScreen = ({navigation}) => {
     const loadSpecializations = async () => {
       setSpecializations([]);
       setSelectedSpecialization(null);
-  
-      if (!selectedAccount) return;
-  
-      setLoading(prev => ({ ...prev, specializations: true }));
-      
+
+      if (!selectedAccount) {
+        return;
+      }
+
+      setLoading(prev => ({...prev, specializations: true}));
+
       try {
         const data = await FetchSpecializationsRequest(selectedAccount);
         const fetchedSpecializations = await data.specializations;
@@ -89,7 +95,7 @@ const SignUpScreen = ({navigation}) => {
         showToast('error', 'Error', err.message);
         setSpecializations([]);
       } finally {
-        setLoading(prev => ({ ...prev, specializations: false }));
+        setLoading(prev => ({...prev, specializations: false}));
       }
     };
 
@@ -100,16 +106,16 @@ const SignUpScreen = ({navigation}) => {
     if (!touched[fieldName]) {
       setTouched(prev => ({...prev, [fieldName]: true}));
     }
-    
+
     const validation = await validateField(
       SignUpValidationSchema,
       fieldName,
       value,
       formData,
       selectedAccount,
-      selectedSpecialization
+      selectedSpecialization,
     );
-    
+
     if (!validation.isValid) {
       setErrors(prev => ({...prev, [fieldName]: validation.message}));
     } else {
@@ -119,11 +125,11 @@ const SignUpScreen = ({navigation}) => {
         return newErrors;
       });
     }
-    
+
     setFormData(prev => ({...prev, [fieldName]: value}));
   };
 
-  const handleBlur = (fieldName) => {
+  const handleBlur = fieldName => {
     if (!touched[fieldName]) {
       setTouched(prev => ({...prev, [fieldName]: true}));
     }
@@ -143,16 +149,20 @@ const SignUpScreen = ({navigation}) => {
       return;
     }
 
-    const { isValid, errors: validationErrors } = await validateForm(
+    const {isValid, errors: validationErrors} = await validateForm(
       SignUpValidationSchema,
       formData,
       selectedAccount,
-      selectedSpecialization
+      selectedSpecialization,
     );
-    
+
     if (!isValid) {
       setErrors(validationErrors);
-      showToast('error', 'Validation Error', 'Please fix the errors in the form');
+      showToast(
+        'error',
+        'Validation Error',
+        'Please fix the errors in the form',
+      );
       return;
     }
 
@@ -166,7 +176,7 @@ const SignUpScreen = ({navigation}) => {
         mobile_number: formData.mobileNumber,
         phone_number: formData.phoneNumber,
         email: formData.email.toLowerCase().trim(),
-        created_by: 'Receptionist', 
+        created_by: 'Receptionist',
       };
 
       const data = await SignUpRequest(dataObject);
@@ -176,7 +186,7 @@ const SignUpScreen = ({navigation}) => {
       }
 
       showToast('success', 'success', 'Doctor registered successfully!');
-      
+
       setSelectedAccount(null);
       setSelectedSpecialization(null);
       setFormData({
@@ -193,18 +203,18 @@ const SignUpScreen = ({navigation}) => {
         mobileNumber: false,
         email: false,
         accountId: false,
-        specializationId: false
+        specializationId: false,
       });
-      
-      navigation.navigate('AddProfilePicture', { 
-        doctor_id: data.doctor_id 
+
+      navigation.navigate('AddProfilePicture', {
+        doctor_id: data.doctor_id,
       });
     } catch (err) {
       showToast('error', 'Error', err.message);
     } finally {
       setLoading(prev => ({...prev, submit: false}));
     }
-  };  
+  };
 
   return (
     <ScrollView contentContainerStyle={SignUpStyles.container}>
@@ -225,13 +235,15 @@ const SignUpScreen = ({navigation}) => {
             }}
             style={[
               SignUpStyles.dropdown,
-              touched.accountId && !selectedAccount && SignUpStyles.errorInput
+              touched.accountId && !selectedAccount && SignUpStyles.errorInput,
             ]}
             placeholderStyle={SignUpStyles.placeholderText}
             selectedTextStyle={SignUpStyles.selectedText}
             inputSearchStyle={SignUpStyles.inputSearch}
           />
-          {errors.accountId && <Text style={SignUpStyles.errorText}>{errors.accountId}</Text>}
+          {errors.accountId && (
+            <Text style={SignUpStyles.errorText}>{errors.accountId}</Text>
+          )}
         </>
       )}
 
@@ -254,13 +266,19 @@ const SignUpScreen = ({navigation}) => {
             style={[
               SignUpStyles.dropdown,
               !selectedAccount && SignUpStyles.disabledDropdown,
-              touched.specializationId && !selectedSpecialization && SignUpStyles.errorInput
+              touched.specializationId &&
+                !selectedSpecialization &&
+                SignUpStyles.errorInput,
             ]}
             placeholderStyle={SignUpStyles.placeholderText}
             selectedTextStyle={SignUpStyles.selectedText}
             inputSearchStyle={SignUpStyles.inputSearch}
           />
-          {errors.specializationId && <Text style={SignUpStyles.errorText}>{errors.specializationId}</Text>}
+          {errors.specializationId && (
+            <Text style={SignUpStyles.errorText}>
+              {errors.specializationId}
+            </Text>
+          )}
         </>
       )}
 
@@ -271,12 +289,14 @@ const SignUpScreen = ({navigation}) => {
         onBlur={() => handleBlur('firstName')}
         style={[
           SignUpStyles.input,
-          (touched.firstName && !formData.firstName) && SignUpStyles.errorInput,
-          errors.firstName && SignUpStyles.errorInput
+          touched.firstName && !formData.firstName && SignUpStyles.errorInput,
+          errors.firstName && SignUpStyles.errorInput,
         ]}
         maxLength={50}
       />
-      {errors.firstName && <Text style={SignUpStyles.errorText}>{errors.firstName}</Text>}
+      {errors.firstName && (
+        <Text style={SignUpStyles.errorText}>{errors.firstName}</Text>
+      )}
 
       <TextInput
         placeholder="Last Name *"
@@ -285,12 +305,14 @@ const SignUpScreen = ({navigation}) => {
         onBlur={() => handleBlur('lastName')}
         style={[
           SignUpStyles.input,
-          (touched.lastName && !formData.lastName) && SignUpStyles.errorInput,
-          errors.lastName && SignUpStyles.errorInput
+          touched.lastName && !formData.lastName && SignUpStyles.errorInput,
+          errors.lastName && SignUpStyles.errorInput,
         ]}
         maxLength={50}
       />
-      {errors.lastName && <Text style={SignUpStyles.errorText}>{errors.lastName}</Text>}
+      {errors.lastName && (
+        <Text style={SignUpStyles.errorText}>{errors.lastName}</Text>
+      )}
 
       <TextInput
         placeholder="Mobile Number *"
@@ -300,12 +322,16 @@ const SignUpScreen = ({navigation}) => {
         keyboardType="phone-pad"
         style={[
           SignUpStyles.input,
-          (touched.mobileNumber && !formData.mobileNumber) && SignUpStyles.errorInput,
-          errors.mobileNumber && SignUpStyles.errorInput
+          touched.mobileNumber &&
+            !formData.mobileNumber &&
+            SignUpStyles.errorInput,
+          errors.mobileNumber && SignUpStyles.errorInput,
         ]}
         maxLength={10}
       />
-      {errors.mobileNumber && <Text style={SignUpStyles.errorText}>{errors.mobileNumber}</Text>}
+      {errors.mobileNumber && (
+        <Text style={SignUpStyles.errorText}>{errors.mobileNumber}</Text>
+      )}
 
       <TextInput
         placeholder="Phone Number"
@@ -325,11 +351,13 @@ const SignUpScreen = ({navigation}) => {
         autoCapitalize="none"
         style={[
           SignUpStyles.input,
-          (touched.email && !formData.email) && SignUpStyles.errorInput,
-          errors.email && SignUpStyles.errorInput
+          touched.email && !formData.email && SignUpStyles.errorInput,
+          errors.email && SignUpStyles.errorInput,
         ]}
       />
-      {errors.email && <Text style={SignUpStyles.errorText}>{errors.email}</Text>}
+      {errors.email && (
+        <Text style={SignUpStyles.errorText}>{errors.email}</Text>
+      )}
 
       <Button
         title={loading.submit ? 'Submitting...' : 'Submit'}

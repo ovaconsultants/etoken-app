@@ -16,7 +16,7 @@ import {
   FileText,
   UserPlus,
 } from 'lucide-react-native';
-import {styless} from './PatientTokenQueueScreen.styles';
+import {styles} from './PatientTokenQueueScreen.styles';
 import {usePatientTokenManager} from '../../hooks/usePatientTokenManager';
 import DefaultReceptionScreen from '../noTokenReceptionState/DefaultReceptionScreen';
 import {TranslateNameToHindi} from '../../services/langTranslationService';
@@ -90,7 +90,7 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
   }, [refetchTokens]);
 
   const handleTokenUpdate = useCallback(
-    async ( updatedTokenStatusDataObj) => {
+    async updatedTokenStatusDataObj => {
       try {
         await UpdateTokenRequest(updatedTokenStatusDataObj);
         await refetchTokens();
@@ -98,14 +98,14 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
         console.error('Error updating token status:', updateError);
       }
     },
-    [refetchTokens],
+    [refetchTokens], // Make sure refetchTokens is stable
   );
   // Side effects
   useEffect(() => {
-    if (patientTokens !== undefined) {
+    if (patientTokens && patientTokens.length > 0) {
       setIsLoading(false);
     }
-  }, [patientTokens]);
+  }, [patientTokens, patientTokens.length]);
 
   if (isError) {
     return <LoadingErrorHandler isError={true} error={error} />;
@@ -152,12 +152,12 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-    style={styles.secondaryButton}
-    onPress={handleRecall}
-    disabled={!hasTokenInProgress}>
-    <Nfc size={16} color="#333" />
-    <Text style={styles.secondaryButtonText}>Recall</Text> 
-</TouchableOpacity>
+          style={styles.secondaryButton}
+          onPress={handleRecall}
+          disabled={!hasTokenInProgress}>
+          <Nfc size={16} color="#333" />
+          <Text style={styles.secondaryButtonText}>Recall</Text>
+        </TouchableOpacity>
       </View>
 
       {/* Token List */}
@@ -167,7 +167,7 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
             key={token.token_id}
             token={token}
             isSelected={selectedTokenId === token.token_id}
-            translateToHindi={TranslateNameToHindi}
+            translateNameToHindi={TranslateNameToHindi}
             onPress={() => handleRowPress(token.token_id)}
             onLongPress={() => handleLongPress(token)}
             handleTokenUpdate={handleTokenUpdate}
@@ -217,23 +217,42 @@ import {Dropdown} from 'react-native-element-dropdown';
 const statusOptions = [
   {label: 'Waiting', value: 'Waiting'},
   {label: 'In Progress', value: 'In Progress'},
+  {label: 'Completed', value: 'Completed'},
+  {label: 'Cancelled', value: 'Cancelled'},
   {label: 'On Hold', value: 'On Hold'},
 ];
 
 const TokenCard = React.memo(
-  ({token, isSelected, onPress, onLongPress, translateToHindi , handleTokenUpdate}) => {
+  ({
+    token,
+    isSelected,
+    onPress,
+    onLongPress,
+    translateNameToHindi,
+    handleTokenUpdate,
+  }) => {
+    const [pendingStatus, setPendingStatus] = useState(null);
+    const [pendingPayment, setPendingPayment] = useState(null);
     const [hindiName, setHindiName] = useState('');
     const [isPaid, setIsPaid] = useState(token.fee_status === 'Paid');
+    const memoizedTranslate = useCallback(
+      name => {
+        return translateNameToHindi(name) || null ;
+      },
+      [translateNameToHindi],
+    ); // Empty dependency array makes it stable
 
     useEffect(() => {
       if (token.patient_name && !hindiName) {
-        translateToHindi(token.patient_name)
+        memoizedTranslate(token.patient_name)
           .then(setHindiName)
           .catch(() => setHindiName(''));
       }
-    }, [token.patient_name, hindiName, translateToHindi]);
+    }, [token.patient_name, hindiName, memoizedTranslate]);
 
-    const handleStatusChange = async  item => {
+    const handleStatusChange = async item => {
+      setPendingStatus(item.value);
+
       Alert.alert(
         'Confirm Status Change',
         `Are you sure you want to change status from ${token.status} to ${item.value}?`,
@@ -241,6 +260,7 @@ const TokenCard = React.memo(
           {
             text: 'Cancel',
             style: 'cancel',
+            onPress: () => setPendingStatus(null),
           },
           {
             text: 'Confirm',
@@ -251,6 +271,7 @@ const TokenCard = React.memo(
                 status: item.value,
               };
               await handleTokenUpdate(updateTokenDataObj);
+              setPendingStatus(null);
             },
           },
         ],
@@ -258,6 +279,7 @@ const TokenCard = React.memo(
     };
 
     const handlePaymentToggle = async value => {
+      setPendingPayment(value);
       const newStatus = value ? 'Paid' : 'Not Paid';
       Alert.alert(
         'Confirm Payment Change',
@@ -266,11 +288,11 @@ const TokenCard = React.memo(
           {
             text: 'Cancel',
             style: 'cancel',
-            onPress: () => {}, // Keep current state
+            onPress: () => setPendingPayment(null), // Keep current state
           },
           {
             text: 'Confirm',
-            onPress: async() => {
+            onPress: async () => {
               console.log(`Updating payment status to ${newStatus}`);
               setIsPaid(value);
               const updateTokenDataObj = {
@@ -289,6 +311,9 @@ const TokenCard = React.memo(
           styles.tokenCard,
           token.status === 'In Progress' && styles.inProgressCard,
           token.status === 'On Hold' && styles.onHoldCard,
+          token.status === 'Waiting' && styles.waitingCard,
+          token.status === 'Completed' && styles.completedCard,
+          token.status === 'Cancelled' && styles.cancelledCard,
           isSelected && styles.selectedCard,
         ]}
         onPress={onPress}
@@ -297,7 +322,7 @@ const TokenCard = React.memo(
         <View style={styles.tokenHeader}>
           <View style={styles.patientName}>
             <Text>{token.patient_name}</Text>
-            <Text>( {hindiName || ''} )</Text>
+            <Text>{hindiName || ''}</Text>
           </View>
           <View style={styles.tokenNumber}>
             <Text>
@@ -322,17 +347,13 @@ const TokenCard = React.memo(
           {/* Payment Switch - Small version */}
           <View style={styles.paymentSwitchContainer}>
             <Switch
-              value={isPaid}
+              value={ pendingPayment || isPaid}
               onValueChange={handlePaymentToggle}
-              trackColor={{false: '#ff7675', true: '#55efc4'}}
-              thumbColor={isPaid ? '#00b894' : '#d63031'}
+              trackColor={{false: 'grey', true: 'grey'}}
+              thumbColor={isPaid ? '#27AE60' : '#d63031'}
               style={styles.smallSwitch}
             />
-            <Text
-              style={[
-                styles.paymentStatus,
-                isPaid ? styles.paidText : styles.notPaidText,
-              ]}>
+            <Text style={styles.paymentStatus}>
               {isPaid ? 'Paid' : 'Not Paid'}
             </Text>
           </View>
@@ -340,41 +361,30 @@ const TokenCard = React.memo(
           {/* Improved Status Dropdown */}
           <View style={styles.statusDropdownContainer}>
             <Dropdown
-              style={styles.statusDropdown}
-              placeholder=""
-              data={statusOptions}
+              style={styles.dropdown}
+              placeholder={token.status}
+              placeholderStyle={styles.placeholderText}
+              selectedTextStyle={styles.selectedStatusText}
+              data={statusOptions.filter(item => item.value !== token.status)}
               labelField="label"
               valueField="value"
-              value={token.status}
+              value={pendingStatus || token.status}
               onChange={handleStatusChange}
               renderItem={item => (
                 <View style={styles.dropdownItem}>
                   <View
                     style={[
-                      styles.smallStatusDot, // Changed to smallStatusDot
+                      styles.smallStatusDot,
                       item.value === 'In Progress' && styles.greenDot,
-                      item.value === 'On Hold' && styles.redDot,
+                      item.value === 'On Hold' && styles.orangeDot,
                       item.value === 'Waiting' && styles.yellowDot,
+                      item.value === 'Completed' && styles.blueDot,
+                      item.value === 'Cancelled' && styles.redDot,
                     ]}
                   />
                   <Text style={styles.smallDropdownItemText}>{item.label}</Text>
                 </View>
               )}
-              renderSelectedItem={item => (
-                <View style={styles.selectedStatus}>
-                  <View
-                    style={[
-                      styles.smallStatusDot, // Changed to smallStatusDot
-                      item.value === 'In Progress' && styles.greenDot,
-                      item.value === 'On Hold' && styles.redDot,
-                      item.value === 'Waiting' && styles.yellowDot,
-                    ]}
-                  />
-                  <Text style={styles.smallStatusText}>{item.label}</Text>
-                </View>
-              )}
-              itemTextStyle={styles.smallDropdownItemText} // Added
-              selectedTextStyle={styles.smallStatusText} // Added
             />
           </View>
         </View>
@@ -382,74 +392,5 @@ const TokenCard = React.memo(
     );
   },
 );
-
-// Add these to your existing styles
-const additionalStyles = {
-  paymentSwitchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-  },
-  smallSwitch: {
-    transform: [{scaleX: 0.8}, {scaleY: 0.8}],
-  },
-  paymentStatus: {
-    fontSize: 14,
-  },
-  paidText: {
-    color: 'green',
-  },
-  notPaidText: {
-    color: 'red',
-  },
-
-  dropdownItemText: {
-    marginLeft: 8,
-    fontSize: 14,
-  },
-
-  // ... keep existing payment switch styles ...
-
-  // Status dropdown small styles
-  statusDropdownContainer: {
-    width: 110, // Reduced from 120
-  },
-  statusDropdown: {
-    backgroundColor: 'white',
-    borderRadius: 6, // Reduced from 8
-    padding: 6, // Reduced from 8
-    height: 30, // Added fixed height
-  },
-  smallStatusDot: {
-    width: 8, // Reduced from 10
-    height: 8, // Reduced from 10
-    borderRadius: 4, // Reduced from 5
-    marginRight: 4, // Reduced from 5
-  },
-  smallStatusText: {
-    fontSize: 12, // Reduced from 14
-    marginLeft: 4, // Reduced from 8
-  },
-  smallDropdownItemText: {
-    fontSize: 12, // Reduced from 14
-  },
-  dropdownItem: {
-    padding: 8, // Reduced from 10
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: 30, // Added fixed height
-  },
-  selectedStatus: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: 30, // Added fixed height
-  },
-};
-
-// Merge with existing styles
-const styles = {
-  ...styless, // Your existing styles
-  ...additionalStyles,
-};
 
 export default withQueryClientProvider(PatientTokenQueueScreen);

@@ -1,7 +1,8 @@
 import { StyleSheet } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
-export const styless = StyleSheet.create({
+export const styles = StyleSheet.create({
+  // Main Containers
   fullScreenContainer: {
     flex: 1,
     backgroundColor: '#fff',
@@ -11,6 +12,11 @@ export const styless = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  tokenListContainer: {
+    flex: 1,
+    paddingHorizontal: wp('4%'),
+  },
+
   // Header Styles
   headerContainer: {
     flexDirection: 'row',
@@ -21,36 +27,30 @@ export const styless = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
   },
-  screenTitle: {
-    fontSize: wp('5%'),
-    fontWeight: 'bold',
-    flex: 1,
-    textAlign: 'center',
-  },
   headerBadges: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     alignItems: 'center',
     gap: wp('5%'),
   },
+  screenTitle: {
+    fontSize: wp('5%'),
+    fontWeight: 'bold',
+    flex: 1,
+    textAlign: 'center',
+  },
+
+  // Badge Styles
   badge: {
     backgroundColor: '#f1f1f1',
     paddingHorizontal: wp('2%'),
     paddingVertical: hp('0.5%'),
     borderRadius: 20,
   },
-  greenBadge: {
-    backgroundColor: '#e6f7e6',
-  },
-  yellowBadge: {
-    backgroundColor: '#fff8e6',
-  },
-  redBadge: {
-    backgroundColor: '#ffebee',
-  },
-  badgeText: {
-    fontSize: wp('3%'),
-  },
+  greenBadge: { backgroundColor: '#e6f7e6' },
+  yellowBadge: { backgroundColor: '#fff8e6' },
+  redBadge: { backgroundColor: '#ffebee' },
+  badgeText: { fontSize: wp('3%') },
 
   // Action Buttons
   actionButtonsContainer: {
@@ -81,20 +81,10 @@ export const styless = StyleSheet.create({
     padding: hp('2%'),
     borderRadius: 10,
   },
-  buttonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  secondaryButtonText: {
-    color: '#333',
-    fontWeight: 'bold',
-  },
+  buttonText: { color: 'white', fontWeight: 'bold' },
+  secondaryButtonText: { color: '#333', fontWeight: 'bold' },
 
-  // Token List
-  tokenListContainer: {
-    flex: 1,
-    paddingHorizontal: wp('4%'),
-  },
+  // Token Card Styles
   tokenCard: {
     backgroundColor: 'white',
     borderRadius: 10,
@@ -103,18 +93,14 @@ export const styless = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#eee',
   },
-  inProgressCard: {
-    backgroundColor: '#f3faf5',
-    borderColor: '#2e7d32',
-  },
-  onHoldCard: {
-    backgroundColor: '#fff5f5',
-    borderColor: '#d32f2f',
-  },
-  selectedCard: {
-    opacity: 0.9,
-    backgroundColor : '#f1f1f1',
-  },
+  inProgressCard: { backgroundColor: '#f3faf5', borderColor: '#2e7d32' },
+  onHoldCard: { backgroundColor: '#fff5f5', borderColor: '#d32f2f' },
+  completedCard: { backgroundColor: '#e8f5e9', borderColor: '#388e3c' },
+  cancelledCard: { backgroundColor: '#fce4ec', borderColor: '#d32f2f' },
+  waitingCard: { backgroundColor: '#e3f2fd', borderColor: '#1976d2' },
+  selectedCard: { opacity: 0.9, backgroundColor: '#f1f1f1' },
+
+  // Token Content
   tokenHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -122,15 +108,10 @@ export const styless = StyleSheet.create({
     marginBottom: hp('1%'),
   },
   patientName: {
-    flexDirection : 'row',
-    // justifyContent : 'space-between',
+    flexDirection: 'row',
     alignItems: 'center',
     fontSize: wp('4%'),
     fontWeight: 'bold',
-  },
-  menuContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
   },
   tokenNumber: {
     flexDirection: 'row',
@@ -139,17 +120,15 @@ export const styless = StyleSheet.create({
     fontSize: wp('5%'),
     fontWeight: 'bold',
   },
-  tokenNumberText: {
-    marginLeft: '2%',
-  },
+  tokenNumberText: { marginLeft: '5%'  , fontSize: wp('5%') , fontWeight: 'bold' },
   tokenDetails: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  detailText: {
-    color: '#666',
-  },
+  detailText: { color: '#666' },
+
+  // Status Indicators
   statusContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -160,21 +139,56 @@ export const styless = StyleSheet.create({
     height: wp('2%'),
     borderRadius: wp('1%'),
   },
-  greenDot: {
-    backgroundColor: '#4CAF50',
+  greenDot: { backgroundColor: '#4CAF50' },
+  redDot: { backgroundColor: '#F44336' },
+  yellowDot: { backgroundColor: '#FFC107' },
+  blueDot: { backgroundColor: '#2196F3' },
+  orangeDot: { backgroundColor: '#FF9800' },
+  statusText: { fontSize: wp('3.5%') },
+
+  // Dropdown Styles
+  statusDropdownContainer: { width: 110, alignItems: 'flex-start' },
+  dropdown: {
+    justifyContent: 'center',
+    alignItems: 'flex-start',
   },
-  redDot: {
-    backgroundColor: '#F44336',
-  },
-  yellowDot: {
-    backgroundColor: '#FFC107',
-  },
-  statusText: {
+  selectedStatusText: {
     fontSize: wp('3.5%'),
+    fontWeight: 'bold',
+    color: '#333',
   },
-  paymentStatus: {
-    fontSize: wp('3.5%'),
+  placeholderText: {
+    flex: 1,
+    textAlign : 'right',
   },
+  smallStatusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: 4,
+  },
+  smallStatusText: { fontSize: 12, marginLeft: 4 },
+  smallDropdownItemText: { fontSize: 12 },
+  dropdownItem: {
+    padding: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 30,
+  },
+  selectedStatus: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 30,
+  },
+
+  // Payment Controls
+  paymentSwitchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  smallSwitch: { transform: [{scaleX: 0.6}, {scaleY: 0.6}] },
+  paymentStatus: { fontSize: 14 , width : 60, alignItems: 'center' },
 
   // Footer Navigation
   footerNavigation: {
@@ -185,80 +199,6 @@ export const styless = StyleSheet.create({
     borderTopColor: '#eee',
     backgroundColor: 'white',
   },
-  footerButton: {
-    alignItems: 'center',
-  },
-  footerButtonText: {
-    fontSize: wp('3%'),
-    marginTop: hp('0.5%'),
-  },
-  statusButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-// Add these to your stylesheet
-controlsContainer: {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  marginTop: 8,
-},
-paymentToggle: {
-  flexDirection: 'row',
-  alignItems: 'center',
-},
-paymentLabel: {
-  marginRight: 5,
-  fontSize: 14,
-},
-paymentStatusText: {
-  marginLeft: 5,
-  fontSize: 14,
-  fontWeight: 'bold',
-},
-dropdown: {
-  width: 150,
-  height: 40,
-  borderColor: 'gray',
-  borderWidth: 0.5,
-  borderRadius: 8,
-  paddingHorizontal: 8,
-},
-dropdownItem: {
-  padding: 10,
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-},
-dropdownItemText: {
-  fontSize: 14,
-},
-// ..
-// statusContainer: {
-//   flexDirection: 'row',
-//   alignItems: 'center',
-//   position: 'relative', // Add this for positioning dropdown
-// },
-paymentSwitch : {
-  height: 20,
-  width: 40,
-},
-paymentStatusContainer: {
-  position: 'relative',
-  alignItems: 'center',
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-},
-controlsRow: {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  marginTop: 8,
-},
-paidText: {
-  color: 'green',
-},
-notPaidText: {
-  color: 'red',
-},
+  footerButton: { alignItems: 'center' },
+  footerButtonText: { fontSize: wp('3%'), marginTop: hp('0.5%') },
 });

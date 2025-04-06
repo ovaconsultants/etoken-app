@@ -18,7 +18,7 @@ export default function DrawerNavigator() {
         drawerStyle: { width: 250 },
       }}
     >
-      <Drawer.Screen name="HomeNavigator" component={HomeNavigator} />
+      <Drawer.Screen name="HomeNavigator" component={HomeNavigator}  screenOptions={{ headerBackTitle : 'Back', }}/>
     </Drawer.Navigator>
   );
 }
