@@ -1,9 +1,8 @@
-import React, {useRef} from 'react';
+import React, {useRef, useState} from 'react';
 import {
   View,
   Text,
   TextInput,
-  Alert,
   TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
@@ -15,7 +14,7 @@ import {useNavigation} from '@react-navigation/native';
 import {useAtom} from 'jotai';
 import {Users, Home} from 'lucide-react-native';
 import {patientsAtom} from '../../atoms/patientAtoms/patientAtom';
-import {styles} from './ReceptionScreen.styles';
+import styles from './ReceptionScreen.styles';
 import {ReceptionFormValidationSchema} from '../../utils/ReceptionFormValidation';
 import {
   FetchPatientsRequest,
@@ -26,6 +25,7 @@ import withQueryClientProvider from '../../hooks/useQueryClientProvider';
 import SearchBar from '../../components/searchBar/SearchBar';
 import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
 import FooterNavigation from '../../components/tabNavigationFooter/TabNavigationFooter';
+import { showToast, ToastMessage } from '../../components/toastMessage/ToastMessage';
 
 const formFields = [
   {
@@ -61,6 +61,7 @@ const ReceptionScreen = ({
   const queryClient = useQueryClient();
   const [patients, setPatients] = useAtom(patientsAtom);
   const formikRef = useRef();
+  const [submitAttempted, setSubmitAttempted] = useState(false);
 
   const {isLoading, isError, error} = useQuery({
     queryKey: ['fetchingPatients'],
@@ -75,6 +76,8 @@ const ReceptionScreen = ({
 
   const handleSubmit = async (values, {resetForm}) => {
     try {
+      setSubmitAttempted(true);
+      
       const existingPatient = patients.find(
         p =>
           p.mobile_number === values.mobile_number.trim() ||
@@ -100,28 +103,33 @@ const ReceptionScreen = ({
       }
 
       resetForm();
+      setSubmitAttempted(false);
       queryClient.invalidateQueries(['fetchingPatients']);
+
       const token_no = await GenerateTokenRequest({
         patient_id: patientIdToUse,
         doctor_id,
         clinic_id,
         created_by: 'receptionist',
       });
+
+      showToast('Token Generated successfully!');
       navigation.navigate('TokenSuccess', {
         tokenNumber: token_no,
         patientName: values.patient_name,
         patientId: patientIdToUse,
       });
     } catch (err) {
-      Alert.alert('Error', err.message ?? 'An error occurred.');
+      showToast(err.message ?? 'An error occurred.', 'error');
     }
   };
 
   return (
-    <SafeAreaView style={styles.fullScreenContainer}>
+    <SafeAreaView>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={styles.container}>
           <LoadingErrorHandler {...{isLoading, isError, error}} />
+          <ToastMessage />
 
           {!isLoading && !isError && (
             <>
@@ -142,11 +150,10 @@ const ReceptionScreen = ({
 
               <Formik
                 innerRef={formikRef}
-                initialValues={Object.fromEntries(
-                  formFields.map(f => [f.name, '']),
-                )}
+                initialValues={Object.fromEntries(formFields.map(f => [f.name, '']))}
                 validationSchema={ReceptionFormValidationSchema}
-                onSubmit={handleSubmit}>
+                onSubmit={handleSubmit}
+                enableReinitialize>
                 {({
                   handleChange,
                   handleBlur,
@@ -155,50 +162,76 @@ const ReceptionScreen = ({
                   errors,
                   touched,
                   resetForm,
-                }) => (
-                  <View style={styles.formContainer}>
-                    {formFields.map(field => (
-                      <View key={field.name} style={styles.inputContainer}>
-                        <View style={{height: 16}}>
-                          {touched[field.name] && errors[field.name] ? (
-                            <Text style={styles.errorText}>
-                              {errors[field.name]}
-                            </Text>
-                          ) : null}
-                        </View>
-                        <TextInput
-                          style={[
-                            styles.input,
-                            touched[field.name] &&
-                              errors[field.name] &&
-                              styles.inputError,
-                          ]}
-                          placeholder={field.placeholder}
-                          placeholderTextColor="#888"
-                          onChangeText={handleChange(field.name)}
-                          onBlur={handleBlur(field.name)}
-                          value={values[field.name]}
-                          keyboardType={field.keyboardType}
-                          autoCapitalize={field.autoCapitalize || 'none'}
-                          maxLength={field.maxLength}
-                        />
-                      </View>
-                    ))}
+                  isValid,
+                  setFieldTouched,
+                }) => {
+                  const isFormIncomplete = formFields.some(
+                    field => !values[field.name]?.trim() || errors[field.name]
+                  );
 
-                    <View style={styles.buttonContainer}>
-                      <TouchableOpacity
-                        style={styles.clearButton}
-                        onPress={resetForm}>
-                        <Text style={styles.clearButtonText}>Clear</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        style={styles.submitButton}
-                        onPress={formikHandleSubmit}>
-                        <Text style={styles.buttonText}>GO</Text>
-                      </TouchableOpacity>
+                  const shouldShowError = (fieldName) => {
+                   return (submitAttempted || touched[fieldName]) && errors[fieldName];
+                  };
+
+                  return (
+                    <View style={styles.formContainer}>
+                      {formFields.map(field => (
+                        <View key={field.name} style={styles.inputContainer}>
+                          <TextInput
+                            style={[
+                              styles.input,
+                              shouldShowError(field.name) && styles.inputError,
+                            ]}
+                            placeholder={field.placeholder}
+                            placeholderTextColor="#888"
+                            onChangeText={text => {
+                              handleChange(field.name)(text);
+                              setFieldTouched(field.name, true, false);
+                            }}
+                            onBlur={() => setFieldTouched(field.name, true, false)}
+                            value={values[field.name]}
+                            keyboardType={field.keyboardType}
+                            autoCapitalize={field.autoCapitalize || 'none'}
+                            maxLength={field.maxLength}
+                          />
+                        </View>
+                      ))}
+
+                      <View style={styles.buttonContainer}>
+                        <TouchableOpacity
+                          style={styles.clearButton}
+                          onPress={() => {
+                            resetForm();
+                            formFields.forEach(field => {
+                              setFieldTouched(field.name, false);
+                            });
+                            setSubmitAttempted(false);
+                          }}>
+                          <Text style={styles.clearButtonText}>Clear</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                          style={[
+                            styles.submitButton,
+                            isFormIncomplete && styles.disabledButton,
+                          ]}
+                          onPress={() => {
+                            if (!isFormIncomplete) {
+                              formikHandleSubmit();
+                            } else {
+                              // Mark all fields as touched when submit is attempted
+                              formFields.forEach(field => {
+                                setFieldTouched(field.name, true, false);
+                              });
+                            }
+                          }}
+                          disabled={isFormIncomplete}>
+                          <Text style={styles.buttonText}>GO</Text>
+                        </TouchableOpacity>
+                      </View>
                     </View>
-                  </View>
-                )}
+                  );
+                }}
               </Formik>
             </>
           )}

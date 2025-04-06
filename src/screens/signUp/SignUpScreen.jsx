@@ -27,6 +27,14 @@ const SignUpScreen = ({navigation}) => {
     email: '',
   });
   const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({
+    firstName: false,
+    lastName: false,
+    mobileNumber: false,
+    email: false,
+    accountId: false,
+    specializationId: false
+  });
   const [loading, setLoading] = useState({
     accounts: true,
     specializations: false,
@@ -89,6 +97,10 @@ const SignUpScreen = ({navigation}) => {
   }, [selectedAccount]);
 
   const handleInputChange = async (fieldName, value) => {
+    if (!touched[fieldName]) {
+      setTouched(prev => ({...prev, [fieldName]: true}));
+    }
+    
     const validation = await validateField(
       SignUpValidationSchema,
       fieldName,
@@ -110,7 +122,13 @@ const SignUpScreen = ({navigation}) => {
     
     setFormData(prev => ({...prev, [fieldName]: value}));
   };
-  
+
+  const handleBlur = (fieldName) => {
+    if (!touched[fieldName]) {
+      setTouched(prev => ({...prev, [fieldName]: true}));
+    }
+  };
+
   const handleSubmit = async () => {
     const requiredFields = [
       formData.firstName,
@@ -169,8 +187,16 @@ const SignUpScreen = ({navigation}) => {
         email: '',
       });
       setErrors({});
+      setTouched({
+        firstName: false,
+        lastName: false,
+        mobileNumber: false,
+        email: false,
+        accountId: false,
+        specializationId: false
+      });
       
-       navigation.navigate('AddProfilePicture', { 
+      navigation.navigate('AddProfilePicture', { 
         doctor_id: data.doctor_id 
       });
       
@@ -194,8 +220,14 @@ const SignUpScreen = ({navigation}) => {
             valueField="value"
             placeholder="Select Account"
             value={selectedAccount}
-            onChange={item => setSelectedAccount(item.value)}
-            style={SignUpStyles.dropdown}
+            onChange={item => {
+              setTouched(prev => ({...prev, accountId: true}));
+              setSelectedAccount(item.value);
+            }}
+            style={[
+              SignUpStyles.dropdown,
+              touched.accountId && !selectedAccount && SignUpStyles.errorInput
+            ]}
             placeholderStyle={SignUpStyles.placeholderText}
             selectedTextStyle={SignUpStyles.selectedText}
             inputSearchStyle={SignUpStyles.inputSearch}
@@ -215,11 +247,15 @@ const SignUpScreen = ({navigation}) => {
             valueField="value"
             placeholder="Select Specialization"
             value={selectedSpecialization}
-            onChange={item => setSelectedSpecialization(item.value)}
+            onChange={item => {
+              setTouched(prev => ({...prev, specializationId: true}));
+              setSelectedSpecialization(item.value);
+            }}
             disabled={!selectedAccount}
             style={[
               SignUpStyles.dropdown,
               !selectedAccount && SignUpStyles.disabledDropdown,
+              touched.specializationId && !selectedSpecialization && SignUpStyles.errorInput
             ]}
             placeholderStyle={SignUpStyles.placeholderText}
             selectedTextStyle={SignUpStyles.selectedText}
@@ -233,8 +269,10 @@ const SignUpScreen = ({navigation}) => {
         placeholder="First Name *"
         value={formData.firstName}
         onChangeText={text => handleInputChange('firstName', text)}
+        onBlur={() => handleBlur('firstName')}
         style={[
           SignUpStyles.input,
+          (touched.firstName && !formData.firstName) && SignUpStyles.errorInput,
           errors.firstName && SignUpStyles.errorInput
         ]}
         maxLength={50}
@@ -245,8 +283,10 @@ const SignUpScreen = ({navigation}) => {
         placeholder="Last Name *"
         value={formData.lastName}
         onChangeText={text => handleInputChange('lastName', text)}
+        onBlur={() => handleBlur('lastName')}
         style={[
           SignUpStyles.input,
+          (touched.lastName && !formData.lastName) && SignUpStyles.errorInput,
           errors.lastName && SignUpStyles.errorInput
         ]}
         maxLength={50}
@@ -257,9 +297,11 @@ const SignUpScreen = ({navigation}) => {
         placeholder="Mobile Number *"
         value={formData.mobileNumber}
         onChangeText={text => handleInputChange('mobileNumber', text)}
+        onBlur={() => handleBlur('mobileNumber')}
         keyboardType="phone-pad"
         style={[
           SignUpStyles.input,
+          (touched.mobileNumber && !formData.mobileNumber) && SignUpStyles.errorInput,
           errors.mobileNumber && SignUpStyles.errorInput
         ]}
         maxLength={10}
@@ -271,22 +313,20 @@ const SignUpScreen = ({navigation}) => {
         value={formData.phoneNumber}
         onChangeText={text => handleInputChange('phoneNumber', text)}
         keyboardType="phone-pad"
-        style={[
-          SignUpStyles.input,
-          errors.phoneNumber && SignUpStyles.errorInput
-        ]}
+        style={SignUpStyles.input}
         maxLength={10}
       />
-      {errors.phoneNumber && <Text style={SignUpStyles.errorText}>{errors.phoneNumber}</Text>}
 
       <TextInput
         placeholder="Email *"
         value={formData.email}
         onChangeText={text => handleInputChange('email', text)}
+        onBlur={() => handleBlur('email')}
         keyboardType="email-address"
         autoCapitalize="none"
         style={[
           SignUpStyles.input,
+          (touched.email && !formData.email) && SignUpStyles.errorInput,
           errors.email && SignUpStyles.errorInput
         ]}
       />

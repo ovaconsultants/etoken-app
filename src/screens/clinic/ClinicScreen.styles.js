@@ -1,5 +1,7 @@
 // ClinicScreen.styles.js
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
+
+const { width, height } = Dimensions.get('window');
 
 export default StyleSheet.create({
   container: {
@@ -13,13 +15,21 @@ export default StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
     marginBottom: 8,
+    marginLeft: -width * 0.020,
+    marginRight: -width * 0.40,
   },
   input: {
+    height: height * 0.06,
+    width: '105%',
+    marginLeft: -width * 0.025,
+    marginRight: -width * 0.025,
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 4,
-    padding: 8,
-    fontSize: 16,
+    borderRadius: width * 0.03,
+    paddingHorizontal: width * 0.03,
+    fontSize: width * 0.04,
+    backgroundColor: '#fff',
+    marginVertical: 1,
   },
   footer: {
     padding: 16,
