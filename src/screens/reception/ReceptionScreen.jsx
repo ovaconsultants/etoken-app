@@ -25,7 +25,10 @@ import withQueryClientProvider from '../../hooks/useQueryClientProvider';
 import SearchBar from '../../components/searchBar/SearchBar';
 import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
 import FooterNavigation from '../../components/tabNavigationFooter/TabNavigationFooter';
-import { showToast, ToastMessage } from '../../components/toastMessage/ToastMessage';
+import {
+  showToast,
+  ToastMessage,
+} from '../../components/toastMessage/ToastMessage';
 
 const formFields = [
   {
@@ -77,7 +80,7 @@ const ReceptionScreen = ({
   const handleSubmit = async (values, {resetForm}) => {
     try {
       setSubmitAttempted(true);
-      
+
       const existingPatient = patients.find(
         p =>
           p.mobile_number === values.mobile_number.trim() ||
@@ -133,24 +136,28 @@ const ReceptionScreen = ({
 
           {!isLoading && !isError && (
             <>
-              <SearchBar
-                data={patients}
-                onSelectItem={patient =>
-                  formikRef.current?.setValues({
-                    patient_id: patient.patient_id,
-                    ...Object.fromEntries(
-                      ['patient_name', 'mobile_number', 'area', 'email'].map(
-                        key => [key, patient[key]],
+              <View style={styles.searchBarContainer}>
+                <SearchBar
+                  data={patients}
+                  onSelectItem={patient =>
+                    formikRef.current?.setValues({
+                      patient_id: patient.patient_id,
+                      ...Object.fromEntries(
+                        ['patient_name', 'mobile_number', 'area', 'email'].map(
+                          key => [key, patient[key]],
+                        ),
                       ),
-                    ),
-                  })
-                }
-                placeholder="Search by Patient, Mobile, or Email"
-              />
+                    })
+                  }
+                  placeholder="Search by Patient, Mobile, or Email"
+                />
+              </View>
 
               <Formik
                 innerRef={formikRef}
-                initialValues={Object.fromEntries(formFields.map(f => [f.name, '']))}
+                initialValues={Object.fromEntries(
+                  formFields.map(f => [f.name, '']),
+                )}
                 validationSchema={ReceptionFormValidationSchema}
                 onSubmit={handleSubmit}
                 enableReinitialize>
@@ -166,11 +173,14 @@ const ReceptionScreen = ({
                   setFieldTouched,
                 }) => {
                   const isFormIncomplete = formFields.some(
-                    field => !values[field.name]?.trim() || errors[field.name]
+                    field => !values[field.name]?.trim() || errors[field.name],
                   );
 
-                  const shouldShowError = (fieldName) => {
-                   return (submitAttempted || touched[fieldName]) && errors[fieldName];
+                  const shouldShowError = fieldName => {
+                    return (
+                      (submitAttempted || touched[fieldName]) &&
+                      errors[fieldName]
+                    );
                   };
 
                   return (
@@ -188,7 +198,9 @@ const ReceptionScreen = ({
                               handleChange(field.name)(text);
                               setFieldTouched(field.name, true, false);
                             }}
-                            onBlur={() => setFieldTouched(field.name, true, false)}
+                            onBlur={() =>
+                              setFieldTouched(field.name, true, false)
+                            }
                             value={values[field.name]}
                             keyboardType={field.keyboardType}
                             autoCapitalize={field.autoCapitalize || 'none'}

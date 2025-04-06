@@ -8,6 +8,13 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#fff',
   },
+  
+  searchBarContainer : {
+    width: '105%',
+    zIndex: 10,
+    height: height * 0.08,
+    alignSelf: 'center',
+  },
   formContainer: {
     marginTop: 20,
   },
