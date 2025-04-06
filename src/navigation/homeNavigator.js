@@ -73,6 +73,7 @@ const HomeNavigator = () => {
         component={TokenSuccessScreen}
         options={{
           title: 'Token Issued',
+          headerRight: () => null, 
         }}
       />
 
@@ -101,6 +102,7 @@ const HomeNavigator = () => {
         component={PatientInfoEditorScreen}
         options={{ 
           title: 'Edit Patient Record',
+          headerRight: () => null, 
         }}
       />
     </Stack.Navigator>
