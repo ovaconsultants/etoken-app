@@ -35,7 +35,6 @@ const Card = ({ title, description, isSelected, onPress, state, cardWidth }) => 
           styles.card,
           { 
             width: cardWidth, 
-            height: cardWidth/3, 
             transform: [{ scale: scaleValue }] 
           },
         ]}
@@ -77,6 +76,7 @@ const useStyles = () => {
       position: 'relative',
       overflow: 'hidden',
       marginBottom: 16,
+      height: 250,
     },
     borderHighlight: {
       position: 'absolute',
@@ -90,6 +90,7 @@ const useStyles = () => {
     content: {
       alignItems: 'center',
       justifyContent: 'center',
+      textAlign: 'left',
       width: '100%',
       padding: isSmallDevice ? 12 : 16,
     },
@@ -102,6 +103,7 @@ const useStyles = () => {
       letterSpacing: 0.5,
     },
     description: {
+      alignSelf: 'flex-start',
       fontSize: isSmallDevice ? 15 : 17,
       color: '#4A5568',
       textAlign: 'left',
