@@ -26,7 +26,7 @@ const DrawerLeftNavigationButton = () => {
 const styles = StyleSheet.create({
   container: {
     marginLeft: 15,  // Adjust as needed
-    marginTop: 14,
+    marginTop: 6,
   }
 });
 

@@ -42,7 +42,9 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
+    width: '105%',
     justifyContent: 'space-between',
+    alignSelf: 'center',
     marginTop: 20,
   },
   clearButton: {
@@ -66,8 +68,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   disabledButton: {
-    backgroundColor: 'grey',
-    opacity: 0.6,
+    backgroundColor: 'rgba(8, 128, 248,0.6)',
   },
 
   clearButtonText: {
