@@ -86,7 +86,7 @@ const CustomSearchBar = ({data, onSelectItem}) => {
             setSearchTerm('');
             setDropdownVisible(false);
           }}
-          onPress={() => setDropdownVisible(true)}
+          onPress={() => setDropdownVisible(prev => !prev)}
           value={searchTerm}
           style={styles.searchBar}
           textInputStyle={styles.textInput}

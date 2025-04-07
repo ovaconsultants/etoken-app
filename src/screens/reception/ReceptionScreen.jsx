@@ -80,7 +80,6 @@ const ReceptionScreen = ({
   const handleSubmit = async (values, {resetForm}) => {
     try {
       setSubmitAttempted(true);
-
       const existingPatient = patients.find(
         p =>
           p.mobile_number === values.mobile_number.trim() ||
@@ -108,15 +107,13 @@ const ReceptionScreen = ({
       resetForm();
       setSubmitAttempted(false);
       queryClient.invalidateQueries(['fetchingPatients']);
-
+      showToast('Token Generated successfully!');
       const token_no = await GenerateTokenRequest({
         patient_id: patientIdToUse,
         doctor_id,
         clinic_id,
         created_by: 'receptionist',
       });
-
-      showToast('Token Generated successfully!');
       navigation.navigate('TokenSuccess', {
         tokenNumber: token_no,
         patientName: values.patient_name,
@@ -172,9 +169,12 @@ const ReceptionScreen = ({
                   isValid,
                   setFieldTouched,
                 }) => {
-                  const isFormIncomplete = formFields.some(
-                    field => !values[field.name]?.trim() || errors[field.name],
-                  );
+                  const isFormIncomplete = formFields.some(field => {
+                    if (field.name === 'email') {
+                      return !!errors[field.name];
+                    }
+                    return !values[field.name]?.trim() || errors[field.name];
+                  });
 
                   const shouldShowError = fieldName => {
                     return (
