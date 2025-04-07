@@ -12,8 +12,7 @@ import {SignInRequest} from '../../services/authService';
 import {setAuthToken} from '../../utils/tokenManager';
 import {showToast} from '../../components/toastMessage/ToastMessage';
 import styles from './SignInScreen.styles';
-import { SignInValidationSchema } from '../../utils/ClinicValidationSchema';
-
+import {SignInValidationSchema} from '../../utils/ClinicValidationSchema';
 
 const SignInScreen = ({navigation}) => {
   const setUserToken = useSetAtom(userTokenAtom);
@@ -23,32 +22,31 @@ const SignInScreen = ({navigation}) => {
 
   const handleSignIn = async (values, {setSubmitting}) => {
     const {email, password} = values;
-  
+
     try {
       const data = await SignInRequest(email, password);
       if (!data.success) {
         throw new Error(data.message || 'Sign-in failed');
       }
-  
+      showToast('Login successful!', {
+        type: 'success',
+        duration: 3000,
+      });
+      setTimeout(() => {
+        setUserToken(data.token);
+      }, 2000);
       const doctorDetails = data.doctor;
       const doctor_id = doctorDetails.doctor_id?.toString() || '';
-  
-      setUserToken(data.token);
+
       setAuthToken(data.token);
       setDoctorIdAtom(doctor_id);
       setDoctorInfoAtom(doctorDetails);
       setDoctorClinicDetails(data.clinics);
-  
-      console.log('Showing success toast');
-  showToast('Login successful!', {
-    type: 'success',
-    duration: 3000
-  });
     } catch (error) {
       console.error('Error signing in:', error);
       showToast(error.message || 'Login failed. Please try again.', {
         type: 'error',
-        duration: 3000
+        duration: 3000,
       });
     } finally {
       setSubmitting(false);
@@ -61,7 +59,7 @@ const SignInScreen = ({navigation}) => {
 
       <Formik
         initialValues={{email: '', password: ''}}
-        validationSchema={SignInValidationSchema} 
+        validationSchema={SignInValidationSchema}
         onSubmit={handleSignIn}
         validateOnChange={true}>
         {({

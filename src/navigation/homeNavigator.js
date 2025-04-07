@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Platform } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useProfileURI } from '../hooks/useProfileURI';
 import DrawerLeftNavigationButton from '../components/profileImage/ProfileImage';
 import HomeScreen from '../screens/home/HomeScreen';
 import TokenManagementScreen from '../screens/token/TokenManagementTVScreen';
@@ -17,7 +16,7 @@ import DoctorAddClinicScreen from '../screens/clinic/DoctorAddClinicScreen';
 const Stack = createNativeStackNavigator();
 
 const HeaderHomeIcon = () => (
-  <View style={{ alignItems: 'center', marginTop: 12, marginLeft: 8 }}>
+  <View style={{ alignItems: 'center', marginTop: 5, marginLeft: 8 }}>
     <Home size={24} color={'#000'} />
   </View>
 );
