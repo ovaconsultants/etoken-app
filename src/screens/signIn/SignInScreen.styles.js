@@ -32,6 +32,7 @@ export default StyleSheet.create({
     borderColor: 'red',
   },
   footerText: {
+    fontSize: 16,
     marginTop: 20,
     color: '#666',
   },

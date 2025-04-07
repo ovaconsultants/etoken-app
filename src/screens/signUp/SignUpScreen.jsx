@@ -317,7 +317,11 @@ const SignUpScreen = ({navigation}) => {
       <TextInput
         placeholder="Mobile Number *"
         value={formData.mobileNumber}
-        onChangeText={text => handleInputChange('mobileNumber', text)}
+        onChangeText={text => {
+          const numericText = text.replace(/[^0-9]/g, '');
+          const limitedText = numericText.slice(0, 10);
+          handleInputChange('mobileNumber', limitedText);
+        }}
         onBlur={() => handleBlur('mobileNumber')}
         keyboardType="phone-pad"
         style={[
