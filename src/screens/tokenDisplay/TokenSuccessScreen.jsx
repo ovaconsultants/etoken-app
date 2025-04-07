@@ -65,7 +65,7 @@ const TokenSuccessScreen = ({ route, navigation }) => {
     // Auto navigate back after 10 seconds
     const timer = setTimeout(() => {
       navigation.goBack();
-    }, 5000);
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, [glowValue, navigation, opacityValue, pulseValue, scaleValue]);
