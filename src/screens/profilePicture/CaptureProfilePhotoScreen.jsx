@@ -9,6 +9,7 @@ import {
 import ImagePickerComponent from '../../imagePickerComponent/ImagePickerComponent';
 import styles from './CaptureProfilePhotoScreen.styles';
 import {UploadDoctorProfileImageRequest} from '../../services/profileImageService';
+import {showToast} from '../../components/toastMessage/ToastMessage';
 import RNFS from 'react-native-fs';
 
 const CaptureProfilePhotoScreen = ({navigation, route}) => {
@@ -52,12 +53,27 @@ const CaptureProfilePhotoScreen = ({navigation, route}) => {
         preparedImage,
         doctor_id,
       );
-      Alert.alert('Success', 'Profile image updated successfully');
+      showToast(result.message, {
+        type: result.success ? 'success' : 'error',
+        duration: 3000,
+      });
     } catch (error) {
       console.error('Upload error:', error);
-      Alert.alert('Upload Error', error.message || 'Failed to upload image');
+      showToast(error.message || 'Failed to upload image', {
+        type: 'error',
+        duration: 3000,
+      });
     } finally {
       setIsUploading(false);
+      setTimeout(() => {
+        navigation.navigate({
+          name: 'DoctorClinicNavigator',
+          params: {
+            screen: 'DoctorAddClinic',
+            params: {doctor_id: doctor_id},
+          },
+        });
+      }, 2000);
     }
   };
 
@@ -74,26 +90,24 @@ const CaptureProfilePhotoScreen = ({navigation, route}) => {
             }}
             initialImage={selectedImage?.uri}
           />
+          {isUploading ? (
+            <ActivityIndicator
+              size="large"
+              color="#007AFF"
+              style={styles.loadingIndicator}
+            />
+          ) : (
+            <TouchableOpacity
+              style={[
+                styles.uploadButton,
+                !selectedImage && styles.buttonDisabled,
+              ]}
+              onPress={handleImageUpload}
+              disabled={!selectedImage}>
+              <Text style={styles.uploadButtonText}>Update Profile Image</Text>
+            </TouchableOpacity>
+          )}
         </View>
-
-        {isUploading ? (
-          <ActivityIndicator
-            size="large"
-            color="#007AFF"
-            style={styles.loadingIndicator}
-          />
-        ) : (
-          <TouchableOpacity
-            style={[
-              styles.uploadButton,
-              !selectedImage && styles.buttonDisabled,
-            ]}
-            onPress={handleImageUpload}
-            disabled={!selectedImage}>
-            <Text style={styles.uploadButtonText}>Update Profile Image</Text>
-          </TouchableOpacity>
-        )}
-
         <View style={styles.navigationButtonsContainer}>
           <TouchableOpacity
             style={[styles.navButton, styles.skipButton]}
@@ -101,7 +115,7 @@ const CaptureProfilePhotoScreen = ({navigation, route}) => {
               navigation.navigate({
                 name: 'DoctorClinicNavigator',
                 params: {
-                  screen: 'Clinic',
+                  screen: 'DoctorAddClinic',
                   params: {doctor_id: doctor_id},
                 },
               })

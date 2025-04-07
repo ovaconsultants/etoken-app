@@ -1,122 +1,126 @@
-import { StyleSheet } from 'react-native';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+// Updated styles for colorful rainbow profile layout and reordered clinic info
+import { StyleSheet, Dimensions } from 'react-native';
+
+const { width, height } = Dimensions.get('window');
+const isLandscape = width > height;
+const isTablet = width >= 600;
 
 export const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: wp('5%'),
-    backgroundColor: '#F9FAFB', // Light background for contrast
+    flexGrow: 1,
+    flexDirection: isLandscape ? 'row' : 'column',
+    backgroundColor: '#f0f4fa',
+    padding: isTablet ? 24 : 16,
+    gap: isLandscape ? 24 : 16,
   },
-  leftSection: {
-    flex: 1,
+
+  profileCard: {
+    flex: isLandscape ? 0.4 : null,
+    backgroundColor: '#ffffff',
+    borderRadius: 20,
+    padding: isTablet ? 20 : 16,
     alignItems: 'center',
-    justifyContent: 'center',
-  },
-  rightSection: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  imageContainer: {
-    width: wp('50%'),
-    height: wp('50%'),
-    borderRadius: wp('25%'),
-    overflow: 'hidden',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
-    elevation: 10,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+    elevation: 4,
   },
-  gradientBackground: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+
+  rainbowBorder: {
+    padding: 4,
+    borderRadius: 100,
+    backgroundColor: 'transparent',
+    backgroundImage: 'linear-gradient(135deg, #ff6b6b, #feca57, #48dbfb, #1dd1a1)',
+    overflow: 'hidden',
+    marginBottom: 16,
   },
+
+  imageContainer: {
+    width: isTablet ? 180 : 140,
+    height: isTablet ? 180 : 140,
+    borderRadius: 90,
+    overflow: 'hidden',
+  },
+
   doctorImage: {
-    width: wp('45%'),
-    height: wp('45%'),
-    borderRadius: wp('22.5%'),
-    borderWidth: 4,
-    borderColor: '#FFF',
-  },
-  doctorName: {
-    fontSize: wp('6%'),
-    fontWeight: 'bold',
-    color: '#1E3A8A',
-    marginTop: hp('2%'),
-    textAlign: 'center',
-  },
-  doctorTitle: {
-    fontSize: wp('4%'),
-    color: '#4B5563',
-    marginTop: hp('1%'),
-    textAlign: 'center',
-    fontStyle: 'italic',
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: hp('2%'),
-  },
-  clinicName: {
-    fontSize: wp('7%'),
-    fontWeight: 'bold',
-    color: '#1E3A8A',
-    textAlign: 'center',
-    textTransform: 'uppercase',
-  },
-  clinicAddress: {
-    fontSize: wp('4%'),
-    color: '#4B5563',
-    marginTop: hp('0.5%'),
-    textAlign: 'center',
-  },
-  mainContent: {
     width: '100%',
-    paddingVertical: hp('3%'),
+    height: '100%',
   },
-  detailRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: hp('1%'),
-    paddingHorizontal: wp('5%'),
+
+  doctorName: {
+    fontSize: isTablet ? 24 : 20,
+    fontWeight: '700',
+    color: '#1a1a1a',
+    textAlign: 'center',
   },
-  detailLabel: {
-    fontSize: wp('4.5%'),
-    fontWeight: 'bold',
-    color: '#1E3A8A',
+
+  doctorTitle: {
+    fontSize: isTablet ? 18 : 16,
+    color: '#34495e',
+    textAlign: 'center',
+    marginBottom: 4,
   },
-  detailValue: {
-    fontSize: wp('4.5%'),
-    color: '#374151',
+
+  clinicName: {
+    fontSize: isTablet ? 16 : 14,
+    color: '#3498db',
+    textAlign: 'center',
+    marginTop: 8,
     fontWeight: '500',
   },
-  contactSection: {
-    width: '90%',
-    alignItems: 'center',
-    marginVertical: hp('2%'),
-    backgroundColor: '#E0F2FE',
-    padding: hp('2%'),
-    borderRadius: wp('2%'),
+
+  clinicAddress: {
+    fontSize: isTablet ? 14 : 12,
+    color: '#7f8c8d',
+    textAlign: 'center',
+    marginBottom: 12,
+  },
+
+  detailsCard: {
+    flex: isLandscape ? 0.6 : null,
+    backgroundColor: '#ffffff',
+    borderRadius: 20,
+    padding: isTablet ? 24 : 16,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 4,
   },
-  contactLabel: {
-    fontSize: wp('5%'),
-    fontWeight: 'bold',
-    color: '#1E3A8A',
-    marginBottom: hp('1%'),
-    textTransform: 'uppercase',
+
+  detailRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    marginBottom: 12,
+    flexWrap: 'wrap',
   },
-  contactValue: {
-    fontSize: wp('4.5%'),
-    color: '#1F2937',
-    marginBottom: hp('0.5%'),
+
+  detailLabel: {
+    fontSize: isTablet ? 16 : 14,
+    fontWeight: '600',
+    color: '#2c3e50',
+    marginRight: 8,
+    width: isTablet ? 160 : 120,
+  },
+
+  detailValue: {
+    flex: 1,
+    fontSize: isTablet ? 16 : 14,
+    color: '#2c3e50',
+    lineHeight: 22,
+  },
+
+  contactBox: {
+    marginTop: 24,
+    borderTopWidth: 1,
+    borderTopColor: '#ecf0f1',
+    paddingTop: 16,
+  },
+
+  contactText: {
+    fontSize: isTablet ? 16 : 14,
+    color: '#2c3e50',
+    marginBottom: 4,
   },
 });

@@ -206,9 +206,12 @@ const SignUpScreen = ({navigation}) => {
         specializationId: false,
       });
 
-      navigation.navigate('AddProfilePicture', {
-        doctor_id: data.doctor_id,
-      });
+     setTimeout(() =>  navigation.navigate('DoctorClinicNavigator', {
+        screen: 'AddProfilePicture',
+        params: {
+          doctor_id: data.doctor_id,
+        },
+      }), 2000);
     } catch (err) {
       showToast('error', 'Error', err.message);
     } finally {
