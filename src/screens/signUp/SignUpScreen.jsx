@@ -50,7 +50,7 @@ const SignUpScreen = ({navigation}) => {
       try {
         const data = await FetchAccountRequest();
         if (!data.success) {
-          throw new Error(data.message || 'Failed to load accounts');
+          throw new Error(data.message || 'Failed to load account options');
         }
         setAccounts(
           data.accounts.map(acc => ({
@@ -59,7 +59,7 @@ const SignUpScreen = ({navigation}) => {
           })),
         );
       } catch (err) {
-        showToast('Network error!', 'error');
+        showToast('Failed to load account options. Please try again.', 'error');
       } finally {
         setLoading(prev => ({...prev, accounts: false}));
       }
@@ -89,10 +89,10 @@ const SignUpScreen = ({navigation}) => {
             })),
           );
         } else {
-          showToast('error', 'Error', 'Failed to load specializations');
+          showToast('Failed to load specialization options. Please try again.', 'error');
         }
       } catch (err) {
-        showToast('error', 'Error', err.message);
+        showToast('Network error occurred while loading specializations.', 'error');
         setSpecializations([]);
       } finally {
         setLoading(prev => ({...prev, specializations: false}));
@@ -145,7 +145,7 @@ const SignUpScreen = ({navigation}) => {
     ];
 
     if (requiredFields.some(field => !field)) {
-      showToast('error', 'Validation Error', 'Please fill all required fields');
+      showToast('Please complete all required fields marked with *', 'error');
       return;
     }
 
@@ -159,9 +159,8 @@ const SignUpScreen = ({navigation}) => {
     if (!isValid) {
       setErrors(validationErrors);
       showToast(
-        'error',
-        'Validation Error',
-        'Please fix the errors in the form',
+        'Please correct the highlighted errors in the form',
+        'error'
       );
       return;
     }
@@ -182,11 +181,22 @@ const SignUpScreen = ({navigation}) => {
       const data = await SignUpRequest(dataObject);
 
       if (!data.success) {
-        throw new Error(data.message || 'Failed to submit form');
+        throw new Error(data.message || 'Registration failed. Please verify your information.');
       }
 
-      showToast('success', 'success', 'Doctor registered successfully!');
+      showToast('Doctor registration completed successfully!', 'success', {
+        duration: 1000,
+        onHide: () => {
+          navigation.navigate('DoctorClinicNavigator', {
+            screen: 'AddProfilePicture',
+            params: {
+              doctor_id: data.doctor_id,
+            },
+          });
+        }
+      });
 
+      // Reset form
       setSelectedAccount(null);
       setSelectedSpecialization(null);
       setFormData({
@@ -206,14 +216,11 @@ const SignUpScreen = ({navigation}) => {
         specializationId: false,
       });
 
-     setTimeout(() =>  navigation.navigate('DoctorClinicNavigator', {
-        screen: 'AddProfilePicture',
-        params: {
-          doctor_id: data.doctor_id,
-        },
-      }), 2000);
     } catch (err) {
-      showToast('error', 'Error', err.message);
+      showToast(
+        err.message || 'Registration failed. Please try again later.',
+        'error'
+      );
     } finally {
       setLoading(prev => ({...prev, submit: false}));
     }

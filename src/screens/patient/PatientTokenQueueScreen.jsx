@@ -22,6 +22,8 @@ import DefaultReceptionScreen from '../noTokenReceptionState/DefaultReceptionScr
 import {TranslateNameToHindi} from '../../services/langTranslationService';
 import FooterNavigation from '../../components/tabNavigationFooter/TabNavigationFooter';
 import {UpdateTokenRequest} from '../../services/tokenService';
+import { showToast } from '../../components/toastMessage/ToastMessage';
+
 const PatientTokenQueueScreen = ({navigation, route}) => {
   // State initialization
   const {clinic_id, doctor_id} = route.params;
@@ -83,9 +85,11 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
     setIsLoading(true);
     try {
       await refetchTokens();
+      showToast('Tokens refreshed successfully');
       setIsLoading(false);
     } catch (refreshError) {
       console.error('Error refreshing tokens:', refreshError);
+      showToast('Failed to refresh tokens', 'error');
     }
   }, [refetchTokens]);
 
@@ -94,12 +98,15 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
       try {
         await UpdateTokenRequest(updatedTokenStatusDataObj);
         await refetchTokens();
+        showToast('Token updated successfully');
       } catch (updateError) {
         console.error('Error updating token status:', updateError);
+        showToast('Failed to update token', 'error');
       }
     },
     [refetchTokens], // Make sure refetchTokens is stable
   );
+
   // Side effects
   useEffect(() => {
     if (patientTokens && patientTokens.length > 0) {
@@ -210,6 +217,7 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
     </SafeAreaView>
   );
 };
+
 // Memoized Components for better performance
 import {Switch, Alert} from 'react-native';
 import {Dropdown} from 'react-native-element-dropdown';
@@ -305,6 +313,7 @@ const TokenCard = React.memo(
         ],
       );
     };
+
     return (
       <TouchableOpacity
         style={[

@@ -81,17 +81,16 @@ const DoctorClinicScheduleScreen = ({navigation , route}) => {
       const response = await AddDoctorClinicScheduleRequest(payload);
   
       if (response.success) {
-        showToast('Schedule added successfully!', 'success', {
+        showToast('Schedule successfully created', 'success', {
           duration: 3000,
           onHide: () => {
-            // After toast hides, show action options
             showToast(
-              'Add another schedule?',
+              'Would you like to add another schedule?',
               'info',
               {
                 duration: 4000,
                 action: {
-                  text: 'No, go back',
+                  text: 'Return to Dashboard',
                   onPress: () => {
                     setIsAuthenticated(null);
                     navigation.navigate('AppNavigator');
@@ -116,10 +115,16 @@ const DoctorClinicScheduleScreen = ({navigation , route}) => {
           endTime: false
         });
       } else {
-        showToast(response.error || 'Failed to create schedule', 'error');
+        showToast(
+          response.error || 'Unable to create schedule. Please verify your details and try again.', 
+          'error'
+        );
       }
     } catch (err) {
-      showToast('Network error. Please try again.', 'error');
+      showToast(
+        'An error occurred while processing your request. Please check your connection and try again.', 
+        'error'
+      );
     } finally {
       setSubmitting(false);
     }

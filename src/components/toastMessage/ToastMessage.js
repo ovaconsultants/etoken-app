@@ -45,10 +45,6 @@ const styles = StyleSheet.create({
 });
 
 const toastConfig = {
-  /*
-    Overwrite 'success' type,
-    by modifying the existing `BaseToast` component
-  */
   success: ({ text1, text2, props }) => (
     <View style={[styles.toastContainer, { borderLeftColor: '#4CAF50' }]}>
       <View style={styles.content}>
@@ -65,14 +61,13 @@ const toastConfig = {
     </View>
   ),
   
-  /*
-    Overwrite 'error' type,
-    by modifying the existing `ErrorToast` component
-  */
   error: ({ text1, text2, props }) => (
-    <View style={[styles.toastContainer, { borderLeftColor: 'red' }]}>
+    <View style={[styles.toastContainer, { 
+      borderLeftColor: '#F44336',
+      backgroundColor: '#FFFFFF'
+    }]}>
       <View style={styles.content}>
-        <Text style={styles.text}>{text1}</Text>
+        <Text style={[styles.text, { color: '#D32F2F' }]}>{text1}</Text>
         {text2 && <Text style={[styles.text, { fontSize: 12, color: '#666' }]}>{text2}</Text>}
       </View>
       <TouchableOpacity 
@@ -80,15 +75,11 @@ const toastConfig = {
         onPress={() => Toast.hide()}
         hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
       >
-        <Text style={styles.closeText}>×</Text>
+        <Text style={[styles.closeText, { color: '#D32F2F' }]}>×</Text>
       </TouchableOpacity>
     </View>
   ),
   
-  /*
-    Or create a completely new type - `info`,
-    building the layout from scratch
-  */
   info: ({ text1, text2, props }) => (
     <View style={[styles.toastContainer, { borderLeftColor: '#2196F3' }]}>
       <View style={styles.content}>
@@ -113,8 +104,8 @@ export const showToast = (message, options = {}) => {
     duration = 3000,
     onHide = null,
     onPress = null,
-    navigation = null, // Add navigation parameter
-    navigateTo = null, // Add screen name to navigate to
+    navigation = null,
+    navigateTo = null,
   } = options;
 
   Toast.show({

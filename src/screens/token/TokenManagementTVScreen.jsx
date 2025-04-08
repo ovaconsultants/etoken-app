@@ -52,8 +52,10 @@ const TokenManagementScreen = ({route}) => {
     try {
       setIsRefreshReloading(true);
       await refetch();
+      showToast('Tokens refreshed successfully');
     } catch (err) {
       console.error('Refresh error:', err);
+      showToast('Failed to refresh tokens', 'error');
     } finally {
       setIsRefreshReloading(false);
     }
@@ -65,6 +67,7 @@ const TokenManagementScreen = ({route}) => {
   }
 
   if (isError) {
+    showToast('Error loading tokens', 'error');
     return <LoadingErrorHandler isError={true} error={error} />;
   }
 
