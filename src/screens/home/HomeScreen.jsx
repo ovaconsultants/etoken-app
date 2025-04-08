@@ -45,9 +45,9 @@ const HomeScreen = ({navigation}) => {
 
   const handleAddClinicPress = useCallback(() => {
     navigation.navigate('Clinic', {
-      doctor_id: doctorId, 
+      doctor_id: doctorId,
     });
-  }, [navigation, doctorId]); 
+  }, [navigation, doctorId]);
 
   const isNextButtonDisabled = useMemo(
     () => !(selectedScreen && selectedClinicId),
@@ -100,7 +100,6 @@ const HomeScreen = ({navigation}) => {
           onAddClinicPress={handleAddClinicPress}
         />
       </View>
-
       <View style={styles.selectionContainer}>
         <View style={styles.optionContainer}>
           <TouchableOpacity
@@ -121,7 +120,6 @@ const HomeScreen = ({navigation}) => {
                 ]}>
                 TV Display
               </Text>
-              <Text style={styles.optionDescription}> </Text>
             </View>
           </TouchableOpacity>
 
@@ -143,19 +141,19 @@ const HomeScreen = ({navigation}) => {
                 ]}>
                 Reception
               </Text>
-              <Text style={styles.optionDescription}> </Text>
             </View>
           </TouchableOpacity>
         </View>
       </View>
-
-      <TouchableOpacity
-        style={[styles.button, isNextButtonDisabled && styles.buttonDisabled]}
-        onPress={handleNextButtonPress}
-        disabled={isNextButtonDisabled}
-        activeOpacity={0.8}>
-        <Text style={styles.buttonText}>Next</Text>
-      </TouchableOpacity>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={[styles.button, isNextButtonDisabled && styles.buttonDisabled]}
+          onPress={handleNextButtonPress}
+          disabled={isNextButtonDisabled}
+          activeOpacity={0.8}>
+          <Text style={styles.buttonText}>Next</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
