@@ -7,6 +7,7 @@ import InProgressTokenNotificationScreen from '../notification/InProgressTokenNo
 import DefaultTVScreen from '../television/DefaultTVScreen';
 import {TokenTable} from './TokenTable';
 import withQueryClientProvider from '../../hooks/useQueryClientProvider';
+import ProfileImageRenderer from '../../components/profileImage/ProfileImage';
 import {
   doctorClinicDetailsAtom,
   doctorInfoAtom,
@@ -15,7 +16,6 @@ import {useAtomValue} from 'jotai';
 import {useProfileURI} from '../../hooks/useProfileURI';
 import {RotateCcw} from 'lucide-react-native';
 import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
-import DrawerLeftNavigationButton from '../../components/profileImage/ProfileImage';
 
 const TokenManagementScreen = ({route}) => {
   const profileUri = useProfileURI();
@@ -77,7 +77,9 @@ const TokenManagementScreen = ({route}) => {
       <View style={styles.headerContainer}>
         <View style={styles.doctorSection}>
           <View style={styles.profileCircle}>
-            <DrawerLeftNavigationButton profileUri={profileUri} />
+            <ProfileImageRenderer
+              imageUrl={profileUri}
+            />
           </View>
           <View style={styles.doctorInfo}>
             <Text style={styles.doctorName}>Dr. {doctorData.doctor_name}</Text>

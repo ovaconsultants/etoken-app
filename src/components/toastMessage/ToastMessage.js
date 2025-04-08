@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
-import { useNavigation } from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
 
 const styles = StyleSheet.create({
   toastContainer: {
@@ -20,6 +19,7 @@ const styles = StyleSheet.create({
     borderLeftWidth: 6,
     borderTopLeftRadius: 12,
     borderBottomLeftRadius: 12,
+    zIndex : 100000,
   },
   content: {
     flex: 1,
@@ -124,8 +124,9 @@ export const showToast = (message, options = {}) => {
     position: 'top',
     visibilityTime: duration,
     autoHide: true,
-    topOffset: 60,
+    topOffset: 100,
     bottomOffset: 40,
+    // zIndex: 100000,
     onHide: () => {
       onHide?.();
       if (navigation && navigateTo) {

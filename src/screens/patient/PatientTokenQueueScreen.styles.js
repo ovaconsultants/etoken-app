@@ -1,11 +1,20 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+// Detect tablet mode
+const { width } = Dimensions.get('window');
+const isTablet = width >= 600; // Adjust threshold as needed
+const tabletFontScale = 1.2; // 20% larger fonts on tablets
+
+// Font scaling function
+const scaledFont = (size) => isTablet ? size * tabletFontScale : size;
 
 export const styles = StyleSheet.create({
   // Main Containers
   fullScreenContainer: {
     flex: 1,
     backgroundColor: '#fff',
+    width: '100%',
+    height: '100%',
   },
   loadingContainer: {
     flex: 1,
@@ -19,9 +28,6 @@ export const styles = StyleSheet.create({
 
   // Header Styles
   headerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
     paddingVertical: wp('3%'),
     paddingHorizontal: wp('5%'),
     borderBottomWidth: 1,
@@ -34,7 +40,7 @@ export const styles = StyleSheet.create({
     gap: wp('5%'),
   },
   screenTitle: {
-    fontSize: wp('5%'),
+    fontSize: wp(scaledFont(5) + '%'),
     fontWeight: 'bold',
     flex: 1,
     textAlign: 'center',
@@ -50,7 +56,7 @@ export const styles = StyleSheet.create({
   greenBadge: { backgroundColor: '#e6f7e6' },
   yellowBadge: { backgroundColor: '#fff8e6' },
   redBadge: { backgroundColor: '#ffebee' },
-  badgeText: { fontSize: wp('3%') },
+  badgeText: { fontSize: wp(scaledFont(3) + '%') },
 
   // Action Buttons
   actionButtonsContainer: {
@@ -110,17 +116,17 @@ export const styles = StyleSheet.create({
   patientName: {
     flexDirection: 'row',
     alignItems: 'center',
-    fontSize: wp('4%'),
+    fontSize: wp(scaledFont(4) + '%'),
     fontWeight: 'bold',
   },
   tokenNumber: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    fontSize: wp('5%'),
+    fontSize: wp(scaledFont(5) + '%'),
     fontWeight: 'bold',
   },
-  tokenNumberText: { marginLeft: '5%'  , fontSize: wp('5%') , fontWeight: 'bold' },
+  tokenNumberText: { marginLeft: '5%'  , fontSize: wp(scaledFont(5) + '%') , fontWeight: 'bold' },
   tokenDetails: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -144,7 +150,7 @@ export const styles = StyleSheet.create({
   yellowDot: { backgroundColor: '#FFC107' },
   blueDot: { backgroundColor: '#2196F3' },
   orangeDot: { backgroundColor: '#FF9800' },
-  statusText: { fontSize: wp('3.5%') },
+  statusText: { fontSize: wp(scaledFont(3.5) + '%') },
 
   // Dropdown Styles
   statusDropdownContainer: { width: 110, alignItems: 'flex-start' },
@@ -153,7 +159,7 @@ export const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   selectedStatusText: {
-    fontSize: wp('3.5%'),
+    fontSize: wp(scaledFont(3.5) + '%'),
     fontWeight: 'bold',
     color: '#333',
   },
@@ -200,5 +206,5 @@ export const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   footerButton: { alignItems: 'center' },
-  footerButtonText: { fontSize: wp('3%'), marginTop: hp('0.5%') },
+  footerButtonText: { fontSize: wp(scaledFont(3) + '%'), marginTop: hp('0.5%') },
 });
