@@ -23,39 +23,60 @@ export const SignUpValidationSchema = Yup.object().shape({
     .lowercase()
     .email('Invalid email address')
     .required('Email is required'),
-  specializationId: Yup.string()
-    .required('Specialization is required'),
-  accountId: Yup.string()
-    .required('Account is required')
+  specializationId: Yup.string().required('Specialization is required'),
+  accountId: Yup.string().required('Account is required'),
 });
 
-export const validateField = async (schema, fieldName, value, formData, selectedAccount, selectedSpecialization) => {
+export const validateField = async (
+  schema,
+  fieldName,
+  value,
+  formData,
+  selectedAccount,
+  selectedSpecialization,
+) => {
   try {
     await schema.validateAt(fieldName, {
       ...formData,
       [fieldName]: value,
       accountId: selectedAccount,
-      specializationId: selectedSpecialization
+      specializationId: selectedSpecialization,
     });
-    return { isValid: true, message: '' };
+    return {isValid: true, message: ''};
   } catch (err) {
-    return { isValid: false, message: err.message };
+    return {isValid: false, message: err.message};
   }
 };
 
-export const validateForm = async (schema, formData, selectedAccount, selectedSpecialization) => {
+export const validateForm = async (
+  schema,
+  formData,
+  selectedAccount,
+  selectedSpecialization,
+) => {
   try {
-    await schema.validate({
+    // Create a temporary copy of formData without phone number for validation
+    const validationData = {
       ...formData,
       accountId: selectedAccount,
-      specializationId: selectedSpecialization
-    }, { abortEarly: false });
-    return { isValid: true, errors: {} };
+      specializationId: selectedSpecialization,
+    };
+
+    // Remove phone number from validation if it exists
+    if ('phoneNumber' in validationData) {
+      delete validationData.phoneNumber;
+    }
+
+    await schema.validate(validationData, {abortEarly: false});
+    return {isValid: true, errors: {}};
   } catch (err) {
     const validationErrors = {};
     err.inner.forEach(error => {
-      validationErrors[error.path] = error.message;
+      // Skip phone number errors if they exist
+      if (error.path !== 'phoneNumber') {
+        validationErrors[error.path] = error.message;
+      }
     });
-    return { isValid: false, errors: validationErrors };
+    return {isValid: false, errors: validationErrors};
   }
 };

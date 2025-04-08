@@ -89,10 +89,16 @@ const SignUpScreen = ({navigation}) => {
             })),
           );
         } else {
-          showToast('Failed to load specialization options. Please try again.', 'error');
+          showToast(
+            'Failed to load specialization options. Please try again.',
+            'error',
+          );
         }
       } catch (err) {
-        showToast('Network error occurred while loading specializations.', 'error');
+        showToast(
+          'Network error occurred while loading specializations.',
+          'error',
+        );
         setSpecializations([]);
       } finally {
         setLoading(prev => ({...prev, specializations: false}));
@@ -158,10 +164,7 @@ const SignUpScreen = ({navigation}) => {
 
     if (!isValid) {
       setErrors(validationErrors);
-      showToast(
-        'Please correct the highlighted errors in the form',
-        'error'
-      );
+      showToast('Please correct the highlighted errors in the form', 'error');
       return;
     }
 
@@ -181,19 +184,14 @@ const SignUpScreen = ({navigation}) => {
       const data = await SignUpRequest(dataObject);
 
       if (!data.success) {
-        throw new Error(data.message || 'Registration failed. Please verify your information.');
+        throw new Error(
+          data.message ||
+            'Registration failed. Please verify your information.',
+        );
       }
 
       showToast('Doctor registration completed successfully!', 'success', {
         duration: 1000,
-        onHide: () => {
-          navigation.navigate('DoctorClinicNavigator', {
-            screen: 'AddProfilePicture',
-            params: {
-              doctor_id: data.doctor_id,
-            },
-          });
-        }
       });
 
       // Reset form
@@ -215,11 +213,20 @@ const SignUpScreen = ({navigation}) => {
         accountId: false,
         specializationId: false,
       });
-
+      setTimeout(
+        () =>
+          navigation.navigate('DoctorClinicNavigator', {
+            screen: 'AddProfilePicture',
+            params: {
+              doctor_id: data.doctor_id,
+            },
+          }),
+        2000,
+      );
     } catch (err) {
       showToast(
         err.message || 'Registration failed. Please try again later.',
-        'error'
+        'error',
       );
     } finally {
       setLoading(prev => ({...prev, submit: false}));
