@@ -2,8 +2,8 @@ import { StyleSheet, Dimensions } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 // Detect tablet mode
 const { width } = Dimensions.get('window');
-const isTablet = width >= 600; // Adjust threshold as needed
-const tabletFontScale = 1.2; // 20% larger fonts on tablets
+const isTablet = width >= 600;
+const tabletFontScale = 1.2; 
 
 // Font scaling function
 const scaledFont = (size) => isTablet ? size * tabletFontScale : size;

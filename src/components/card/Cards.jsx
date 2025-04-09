@@ -58,8 +58,9 @@ const Card = ({ title, description, isSelected, onPress, state, cardWidth }) => 
 };
 
 const useStyles = () => {
-  const { width } = useWindowDimensions();
+  const { width , height } = useWindowDimensions();
   const isSmallDevice = width < 375;
+  const isLandscapeMode = width > height ;
 
   return StyleSheet.create({
     card: {
@@ -76,7 +77,7 @@ const useStyles = () => {
       position: 'relative',
       overflow: 'hidden',
       marginBottom: 16,
-      height: 250,
+      height:  isLandscapeMode ? 120 : 250,
     },
     borderHighlight: {
       position: 'absolute',

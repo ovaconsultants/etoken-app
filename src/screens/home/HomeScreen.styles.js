@@ -1,10 +1,25 @@
-import { StyleSheet , Dimensions } from 'react-native';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
+import { StyleSheet, Dimensions, Platform } from 'react-native';
+
 const { width, height } = Dimensions.get('window');
 const isLandscape = width > height;
+
+// Simple scaling functions
+// const scale = (size) => Math.round((width / 375) * size);
+const verticalScale = (size) => Math.round((height / 812) * size);
+
+// Platform-specific shadows
+const shadowStyles = Platform.select({
+  ios: {
+    shadowColor: '#007AFF',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+  },
+  android: {
+    elevation: 6,
+  },
+});
+
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -12,18 +27,16 @@ export const styles = StyleSheet.create({
   },
   cardContainer: {
     flex: 3,
-    height: isLandscape ? hp('30%') : hp('45%'),
-    marginBottom: hp('3%'),
+    height: isLandscape ? verticalScale(135) : verticalScale(270),
+    marginBottom: verticalScale(18),
   },
   selectionContainer: {
-    flex : 1,
-    flexDirection : 'row',
-    marginBottom: hp('4%'),
-
+    flex: 1,
+    flexDirection: 'row',
+    marginBottom: verticalScale(24),
   },
   buttonContainer: {
     flex: 1,
-
   },
   optionContainer: {
     flex: 1,
@@ -31,11 +44,11 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   optionButton: {
-    flex : 2 ,
-    marginHorizontal : wp('1%'),
-    padding: wp('3%'),
+    flex: 2,
+    marginHorizontal: 4,
+    padding: 12,
     justifyContent: 'center',
-    borderRadius: wp('3%'),
+    borderRadius: 12,
     backgroundColor: '#FFF',
     alignItems: 'center',
     borderWidth: 1,
@@ -47,48 +60,44 @@ export const styles = StyleSheet.create({
   },
   optionContent: {
     flex: 1,
-    flexDirection : 'row',
+    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
   },
   optionText: {
-    fontSize: wp('4%'),
+    fontSize: isLandscape ? 16 : 20,
     fontWeight: '500',
     color: '#333',
-    marginTop: hp('1%'),
-    marginHorizontal : wp('2%'),
-    marginBottom: hp('0.5%'),
+    marginTop: 6,
+    marginHorizontal: isLandscape ? 0 : 8,
+    marginBottom: 3,
   },
   selectedOptionText: {
     color: '#007AFF',
     fontWeight: '600',
   },
   optionDescription: {
-    fontSize: wp('3.2%'),
+    fontSize: 14,
     color: '#666',
     textAlign: 'center',
   },
   button: {
-    flex : 0.5 ,
-    marginVertical: hp('2%'),
-    marginHorizontal : wp('1%'),
+    flex: 0.5,
+    marginVertical: 12,
+    marginHorizontal: 4,
     backgroundColor: '#007AFF',
-    borderRadius: wp('1%'),
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#007AFF',
-    shadowOffset: { width: 0, height: hp('0.5%') },
-    shadowOpacity: 0.3,
-    shadowRadius: wp('1.5%'),
-    elevation: 6,
+    ...shadowStyles,
   },
   buttonDisabled: {
     opacity: 0.7,
   },
   buttonText: {
     color: 'white',
-    fontSize: wp('4.5%'),
+    fontSize: isLandscape ? 18 : 24,
     fontWeight: '600',
   },
 });
