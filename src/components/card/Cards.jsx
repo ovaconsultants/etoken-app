@@ -10,7 +10,7 @@ const Card = ({ title, description, isSelected, onPress, state, cardWidth }) => 
   useEffect(() => {
     Animated.parallel([
       Animated.spring(scaleValue, {
-        toValue: isSelected ? 1.03 : 1,
+        toValue: isSelected ? 1.01 : 1,
         tension: 100,
         friction: 5,
         useNativeDriver: true,

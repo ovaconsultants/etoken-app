@@ -2,9 +2,6 @@ import { StyleSheet, Dimensions, Platform } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 const isLandscape = width > height;
-
-// Simple scaling functions
-// const scale = (size) => Math.round((width / 375) * size);
 const verticalScale = (size) => Math.round((height / 812) * size);
 
 // Platform-specific shadows
@@ -24,6 +21,7 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'rgb(240, 240, 246)',
+    gap: 12,
   },
   cardContainer: {
     flex: 3,
@@ -46,7 +44,7 @@ export const styles = StyleSheet.create({
   optionButton: {
     flex: 2,
     marginHorizontal: 4,
-    padding: 12,
+    padding: 6,
     justifyContent: 'center',
     borderRadius: 12,
     backgroundColor: '#FFF',
@@ -84,7 +82,7 @@ export const styles = StyleSheet.create({
   },
   button: {
     flex: 0.5,
-    marginVertical: 12,
+    marginVertical:  isLandscape ? 0 : 12,
     marginHorizontal: 4,
     backgroundColor: '#007AFF',
     borderRadius: 4,
