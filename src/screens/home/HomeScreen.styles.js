@@ -35,6 +35,7 @@ export const styles = StyleSheet.create({
   },
   buttonContainer: {
     flex: 1,
+    justifyContent : 'flex-end',
   },
   optionContainer: {
     flex: 1,
@@ -81,11 +82,11 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
   },
   button: {
-    flex: 0.5,
+    flex:  isLandscape ?   0.6 : 0.5,
     marginVertical:  isLandscape ? 0 : 12,
     marginHorizontal: 4,
     backgroundColor: '#007AFF',
-    borderRadius: 4,
+    borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
     ...shadowStyles,

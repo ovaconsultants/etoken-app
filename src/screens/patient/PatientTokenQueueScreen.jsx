@@ -182,6 +182,7 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
         ))}
       </ScrollView>
 
+      <View style={styles.footerContainer}>
       <FooterNavigation
         navigation={navigation}
         currentRoute="PatientTokenQueue"
@@ -214,13 +215,14 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
           },
         ]}
       />
+      </View>
     </SafeAreaView>
   );
 };
 
 // Memoized Components for better performance
-import {Switch, Alert} from 'react-native';
-import {Dropdown} from 'react-native-element-dropdown';
+import { Switch, Alert } from 'react-native';
+import { Dropdown }  from 'react-native-element-dropdown';
 
 const statusOptions = [
   {label: 'Waiting', value: 'Waiting'},

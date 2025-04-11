@@ -16,7 +16,6 @@ httpClient.interceptors.request.use(
   async (config) => {
     const rawToken = await AsyncStorage.getItem('token');
     const token = rawToken?.replace(/^"(.*)"$/, '$1').trim();
-    console.log('token in api provider' , token);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
