@@ -1,4 +1,6 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet , Dimensions } from 'react-native';
+const { width , height }   = Dimensions.get('window');
+const isLandscape = width > height;
 export const styles = StyleSheet.create({
     footerNavigation: {
       flexDirection: 'row',
@@ -10,9 +12,12 @@ export const styles = StyleSheet.create({
       borderTopColor: '#e0e0e0',
     },
     footerButton: {
+      flex: 1,
+      flexDirection : isLandscape ? 'row' : 'column',
       alignItems: 'center',
-      padding: 8,
+      paddingHorizontal: 8,
       borderRadius: 8,
+      gap : '2%',
     },
     activeFooterButton: {
       backgroundColor: '#007bff',
