@@ -1,9 +1,5 @@
-import { StyleSheet, Dimensions } from 'react-native';
-
-const {width, height} = Dimensions.get('window');
-const isLandscape = width > height;
-
-const styles = StyleSheet.create({
+import { StyleSheet } from 'react-native';
+export const createStyles = (isLandscape) =>  StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#fff',
@@ -87,4 +83,3 @@ const styles = StyleSheet.create({
   },
 });
 
-export default styles;

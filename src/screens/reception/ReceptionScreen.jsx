@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useRef, useState, useMemo} from 'react';
 import {
   View,
   Text,
@@ -7,9 +7,6 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   SafeAreaView,
-  ScrollView,
-  Dimensions,
-  StyleSheet,
 } from 'react-native';
 import {Formik} from 'formik';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
@@ -31,8 +28,8 @@ import {
   showToast,
   ToastMessage,
 } from '../../components/toastMessage/ToastMessage';
-import styles from './ReceptionScreen.styles';
-
+import { useOrientation } from '../../hooks/useOrientation';
+import { createStyles } from './ReceptionScreen.styles';
 const formFields = [
   {
     name: 'patient_name',
@@ -63,6 +60,8 @@ export const ReceptionScreen = ({
     params: {doctor_id, clinic_id},
   },
 }) => {
+  const { isLandscape } = useOrientation();
+  const styles = useMemo(() => createStyles(isLandscape), [isLandscape]);
   const navigation = useNavigation();
   const queryClient = useQueryClient();
   const [patients, setPatients] = useAtom(patientsAtom);

@@ -1,11 +1,6 @@
-import {StyleSheet, Dimensions} from 'react-native';
-// Detect tablet mode
-const {width, height} = Dimensions.get('window');
-const isLandscape = width > height;
+import {StyleSheet} from 'react-native';
 
-// Font scaling function
-
-export const styles = StyleSheet.create({
+export const createStyles = (isLandscape) => StyleSheet.create({
   // Main Containers
   fullScreenContainer: {
     flex: 1,

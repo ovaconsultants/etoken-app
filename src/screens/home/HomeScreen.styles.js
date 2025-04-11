@@ -1,23 +1,10 @@
-import { StyleSheet, Dimensions, Platform } from 'react-native';
+import { StyleSheet} from 'react-native';
 
-const { width, height } = Dimensions.get('window');
-const isLandscape = width > height;
-const verticalScale = (size) => Math.round((height / 812) * size);
-
-// Platform-specific shadows
-const shadowStyles = Platform.select({
-  ios: {
-    shadowColor: '#007AFF',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-  },
-  android: {
-    elevation: 6,
-  },
-});
-
-export const styles = StyleSheet.create({
+export const createStyles = (isLandscape , dimensions) => { 
+  console.log('dimensions', dimensions);
+  const height = dimensions.height;
+  const verticalScale = (size) => Math.round((height / 812) * size);
+  return  StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'rgb(240, 240, 246)',
@@ -89,7 +76,6 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    ...shadowStyles,
   },
   buttonDisabled: {
     opacity: 0.7,
@@ -100,3 +86,4 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
+}

@@ -1,44 +1,41 @@
 import {StyleSheet, Platform} from 'react-native';
 
-const createStyles = (scale, fontScale) => StyleSheet.create({
+export const styles = StyleSheet.create({
   container: {
     width: '100%',
-    paddingHorizontal: scale(16),
   },
   searchBarContainer: {
     width: '100%',
     position: 'relative',
     zIndex: 100,
     shadowColor: '#3498db',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 4,
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.1,
+    shadowRadius: 1,
+    elevation: 2,
   },
   searchBar: {
     width: '100%',
-    borderRadius: scale(20),
-    borderWidth: 1,
+    borderRadius: (8),
     borderColor: '#dfe6e9',
-    height: scale(50),
   },
   textInput: {
-    paddingVertical: Platform.select({ios: scale(8), android: scale(4)}),
+    paddingVertical: Platform.select({ios: '2%', android: '1%'}),
   },
   searchIcon: {
-    width: scale(20),
-    height: scale(20),
+    width: (20),
+    height: (20),
   },
   clearIcon: {
-    width: scale(18),
-    height: scale(18),
-    padding: scale(1),
-    marginRight: scale(3),
+    width: (18),
+    height: (18),
+    padding: (1),
+    marginRight: (3),
   },
   spinnerContainer: {
     position: 'absolute',
-    right: scale(16),
-    top: scale(15),
+    right: '4%',
+    top: '30%',
     zIndex: 101,
   },
   dropdownContainer: {
@@ -47,9 +44,9 @@ const createStyles = (scale, fontScale) => StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: '#ffffff',
-    borderRadius: scale(8),
+    borderRadius: (8),
     zIndex: 99,
-    marginTop: scale(4),
+    marginTop: '1%',
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.2,
@@ -59,11 +56,11 @@ const createStyles = (scale, fontScale) => StyleSheet.create({
     borderColor: '#ecf0f1',
   },
   dropdownContent: {
-    paddingVertical: scale(8),
+    paddingVertical: '2%',
   },
   dropdownItem: {
-    paddingVertical: scale(12),
-    paddingHorizontal: scale(16),
+    paddingVertical: '3%',
+    paddingHorizontal: '4%',
   },
   itemContent: {
     flexDirection: 'row',
@@ -72,33 +69,33 @@ const createStyles = (scale, fontScale) => StyleSheet.create({
   },
   patientName: {
     color: '#2c3e50',
-    fontSize: fontScale(15),
+    fontSize: (15),
     fontWeight: '500',
     flex: 1,
   },
   patientPhone: {
     color: '#7f8c8d',
-    fontSize: fontScale(13),
-    marginLeft: scale(12),
+    fontSize: (13),
+    marginLeft: '3%',
   },
   separator: {
     height: 1,
     backgroundColor: '#ecf0f1',
-    marginTop: scale(12),
+    marginTop: '3%',
   },
   loadingContainer: {
-    padding: scale(20),
+    padding: '1%',
     alignItems: 'center',
     justifyContent: 'center',
   },
   noResultsContainer: {
-    padding: scale(20),
+    padding: '1%',
     alignItems: 'center',
   },
   noResultsText: {
     color: '#95a5a6',
-    fontSize: fontScale(14),
+    fontSize: (14),
+    fontWeight: '500',
+    fontStyle: 'Bold',
   },
 });
-
-export default createStyles;

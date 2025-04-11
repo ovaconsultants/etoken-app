@@ -16,15 +16,21 @@ import {
   FileText,
   UserPlus,
 } from 'lucide-react-native';
-import {styles} from './PatientTokenQueueScreen.styles';
 import {usePatientTokenManager} from '../../hooks/usePatientTokenManager';
+import { useOrientation } from '../../hooks/useOrientation';
 import DefaultReceptionScreen from '../noTokenReceptionState/DefaultReceptionScreen';
 import {TranslateNameToHindi} from '../../services/langTranslationService';
 import FooterNavigation from '../../components/tabNavigationFooter/TabNavigationFooter';
 import {UpdateTokenRequest} from '../../services/tokenService';
 import { showToast } from '../../components/toastMessage/ToastMessage';
+import {createStyles} from './PatientTokenQueueScreen.styles';
+
+
 
 const PatientTokenQueueScreen = ({navigation, route}) => {
+  // Orientation hook
+  const {isLandscape} = useOrientation();
+  const styles = createStyles(isLandscape);
   // State initialization
   const {clinic_id, doctor_id} = route.params;
   const [isLoading, setIsLoading] = useState(true);
@@ -178,6 +184,7 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
             onPress={() => handleRowPress(token.token_id)}
             onLongPress={() => handleLongPress(token)}
             handleTokenUpdate={handleTokenUpdate}
+            styles={styles}
           />
         ))}
       </ScrollView>
@@ -240,6 +247,7 @@ const TokenCard = React.memo(
     onLongPress,
     translateNameToHindi,
     handleTokenUpdate,
+    styles
   }) => {
     const [pendingStatus, setPendingStatus] = useState(null);
     const [pendingPayment, setPendingPayment] = useState(null);

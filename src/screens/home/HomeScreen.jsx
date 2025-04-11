@@ -1,17 +1,18 @@
 import React, {useState, useCallback, useMemo, useEffect} from 'react';
 import {SafeAreaView, View, Text, TouchableOpacity} from 'react-native';
+import {createStyles} from './HomeScreen.styles';
 import {useAtomValue} from 'jotai';
-import {styles} from './HomeScreen.styles';
 import CardGrid from '../../components/cardGrid/CardGrid';
-import useOrientationLocker from '../../hooks/useOrientationLocker';
 import {
   doctorClinicDetailsAtom,
   doctorIdAtom,
 } from '../../atoms/doctorAtoms/doctorAtom';
+import { useOrientation } from '../../hooks/useOrientation';
 import {Tv, Users, Plus} from 'lucide-react-native';
 
 const HomeScreen = ({navigation}) => {
-  useOrientationLocker('PORTRAIT');
+  const {isLandscape , dimensions}  = useOrientation();
+  const styles = createStyles(isLandscape, dimensions);
   const [selectedScreen, setSelectedScreen] = useState(null);
   const [selectedClinicId, setSelectedClinicId] = useState(null);
   const doctorId = useAtomValue(doctorIdAtom);

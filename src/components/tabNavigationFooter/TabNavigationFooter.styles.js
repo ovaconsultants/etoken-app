@@ -14,6 +14,7 @@ export const styles = StyleSheet.create({
     footerButton: {
       flex: 1,
       flexDirection : isLandscape ? 'row' : 'column',
+      justifyContent: 'center',
       alignItems: 'center',
       paddingHorizontal: 8,
       borderRadius: 8,
