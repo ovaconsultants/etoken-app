@@ -36,6 +36,8 @@ export const styles = StyleSheet.create({
 
   footerContainer: {
     flex: isLandscape ? 0.2 : 0.1,
+    justifyContent: 'center',
+    alignItems: 'center',
     paddingHorizontal : '1%',
   },
 

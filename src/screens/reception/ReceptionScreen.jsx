@@ -7,6 +7,9 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   SafeAreaView,
+  ScrollView,
+  Dimensions,
+  StyleSheet,
 } from 'react-native';
 import {Formik} from 'formik';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
@@ -14,7 +17,6 @@ import {useNavigation} from '@react-navigation/native';
 import {useAtom} from 'jotai';
 import {Users, Home} from 'lucide-react-native';
 import {patientsAtom} from '../../atoms/patientAtoms/patientAtom';
-import styles from './ReceptionScreen.styles';
 import {ReceptionFormValidationSchema} from '../../utils/ReceptionFormValidation';
 import {
   FetchPatientsRequest,
@@ -29,6 +31,7 @@ import {
   showToast,
   ToastMessage,
 } from '../../components/toastMessage/ToastMessage';
+import styles from './ReceptionScreen.styles';
 
 const formFields = [
   {
@@ -55,7 +58,7 @@ const formFields = [
   },
 ];
 
-const ReceptionScreen = ({
+export const ReceptionScreen = ({
   route: {
     params: {doctor_id, clinic_id},
   },
@@ -125,14 +128,14 @@ const ReceptionScreen = ({
   };
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.safeArea}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={styles.container}>
           <LoadingErrorHandler {...{isLoading, isError, error}} />
           <ToastMessage />
 
           {!isLoading && !isError && (
-            <>
+            <View style={styles.contentContainer}>
               <View style={styles.searchBarContainer}>
                 <SearchBar
                   data={patients}
@@ -185,29 +188,32 @@ const ReceptionScreen = ({
 
                   return (
                     <View style={styles.formContainer}>
-                      {formFields.map(field => (
-                        <View key={field.name} style={styles.inputContainer}>
-                          <TextInput
-                            style={[
-                              styles.input,
-                              shouldShowError(field.name) && styles.inputError,
-                            ]}
-                            placeholder={field.placeholder}
-                            placeholderTextColor="#888"
-                            onChangeText={text => {
-                              handleChange(field.name)(text);
-                              setFieldTouched(field.name, true, false);
-                            }}
-                            onBlur={() =>
-                              setFieldTouched(field.name, true, false)
-                            }
-                            value={values[field.name]}
-                            keyboardType={field.keyboardType}
-                            autoCapitalize={field.autoCapitalize || 'none'}
-                            maxLength={field.maxLength}
-                          />
-                        </View>
-                      ))}
+                      <View style={styles.inputsWrapper}>
+                        {formFields.map(field => (
+                          <View key={field.name} style={styles.inputContainer}>
+                            <TextInput
+                              style={[
+                                styles.input,
+                                shouldShowError(field.name) &&
+                                  styles.inputError,
+                              ]}
+                              placeholder={field.placeholder}
+                              placeholderTextColor="#888"
+                              onChangeText={text => {
+                                handleChange(field.name)(text);
+                                setFieldTouched(field.name, true, false);
+                              }}
+                              onBlur={() =>
+                                setFieldTouched(field.name, true, false)
+                              }
+                              value={values[field.name]}
+                              keyboardType={field.keyboardType}
+                              autoCapitalize={field.autoCapitalize || 'none'}
+                              maxLength={field.maxLength}
+                            />  
+                          </View>
+                        ))}
+                      </View>
 
                       <View style={styles.buttonContainer}>
                         <TouchableOpacity
@@ -231,7 +237,6 @@ const ReceptionScreen = ({
                             if (!isFormIncomplete) {
                               formikHandleSubmit();
                             } else {
-                              // Mark all fields as touched when submit is attempted
                               formFields.forEach(field => {
                                 setFieldTouched(field.name, true, false);
                               });
@@ -245,10 +250,10 @@ const ReceptionScreen = ({
                   );
                 }}
               </Formik>
-            </>
+            </View>
           )}
 
-          <View style={styles.footerNavigation}>
+          <View style={styles.footerContainer}>
             <FooterNavigation
               navigation={navigation}
               currentRoute="Reception"

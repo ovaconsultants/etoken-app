@@ -8,7 +8,6 @@ import {
   ActivityIndicator,
   Dimensions,
   Platform,
-  PixelRatio,
   Keyboard,
 } from 'react-native';
 import SearchBar from 'react-native-dynamic-search-bar';
@@ -16,8 +15,7 @@ import {calculateSearchRelevance} from '../../utils/globalUtil';
 
 // Responsive sizing functions
 const {width, height} = Dimensions.get('window');
-const scale = size => (width / 375) * size;
-const fontScale = size => size * PixelRatio.getFontScale();
+
 
 const CustomSearchBar = ({data, onSelectItem}) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -69,32 +67,29 @@ const CustomSearchBar = ({data, onSelectItem}) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.searchBarContainer}>
-        <SearchBar
-          height={scale(30)}
-          fontSize={fontScale(16)}
-          fontColor="#2c3e50"
-          iconColor="#3498db"
-          shadowColor="rgba(52, 152, 219, 0.3)"
-          cancelIconColor="#e74c3c"
-          backgroundColor="#ffffff"
-          spinnerVisibility={false}
-          placeholder="Search by Patient, Mobile, or Email"
-          placeholderTextColor="#95a5a6"
-          onChangeText={filterList}
-          onClearPress={() => {
-            setSearchTerm('');
-            setDropdownVisible(false);
-          }}
-          onPress={() => setDropdownVisible(prev => !prev)}
-          value={searchTerm}
-          style={styles.searchBar}
-          textInputStyle={styles.textInput}
-          searchIconImageStyle={styles.searchIcon}
-          clearIconImageStyle={styles.clearIcon}
-        />
-      </View>
-
+      <SearchBar
+        height={10}
+        fontSize={(16)}
+        fontColor="#2c3e50"
+        iconColor="#3498db"
+        shadowColor="rgba(52, 152, 219, 0.3)"
+        cancelIconColor="#e74c3c"
+        backgroundColor="#ffffff"
+        spinnerVisibility={false}
+        placeholder="Search by Patient, Mobile, or Email"
+        placeholderTextColor="#95a5a6"
+        onChangeText={filterList}
+        onClearPress={() => {
+          setSearchTerm('');
+          setDropdownVisible(false);
+        }}
+        onPress={() => setDropdownVisible(prev => !prev)}
+        value={searchTerm}
+        style={styles.searchBar}
+        textInputStyle={styles.textInput}
+        searchIconImageStyle={styles.searchIcon}
+        clearIconImageStyle={styles.clearIcon}
+      />
       {dropdownVisible && (
         <View
           style={[
@@ -116,7 +111,9 @@ const CustomSearchBar = ({data, onSelectItem}) => {
                   onPress={() => handleItemSelect(item)}>
                   <View style={styles.itemContent}>
                     <Text style={styles.patientName}>{item.patient_name}</Text>
-                    <Text style={styles.patientPhone}>{item.mobile_number}</Text>
+                    <Text style={styles.patientPhone}>
+                      {item.mobile_number}
+                    </Text>
                   </View>
                   <View style={styles.separator} />
                 </TouchableOpacity>
@@ -151,22 +148,21 @@ const styles = StyleSheet.create({
   },
   searchBar: {
     width: '100%',
-    borderRadius: scale(8),
+    borderRadius: (8),
     borderColor: '#dfe6e9',
-    height : scale(50),
   },
   textInput: {
     paddingVertical: Platform.select({ios: '2%', android: '1%'}),
   },
   searchIcon: {
-    width: scale(20),
-    height: scale(20),
+    width: (20),
+    height: (20),
   },
   clearIcon: {
-    width: scale(18),
-    height: scale(18),
-    padding : scale(1),
-    marginRight : scale(3),
+    width: (18),
+    height: (18),
+    padding: (1),
+    marginRight: (3),
   },
   spinnerContainer: {
     position: 'absolute',
@@ -180,7 +176,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: '#ffffff',
-    borderRadius: scale(8),
+    borderRadius: (8),
     zIndex: 99,
     marginTop: '1%',
     shadowColor: '#000',
@@ -205,13 +201,13 @@ const styles = StyleSheet.create({
   },
   patientName: {
     color: '#2c3e50',
-    fontSize: fontScale(15),
+    fontSize: (15),
     fontWeight: '500',
     flex: 1,
   },
   patientPhone: {
     color: '#7f8c8d',
-    fontSize: fontScale(13),
+    fontSize: (13),
     marginLeft: '3%',
   },
   separator: {
@@ -220,17 +216,19 @@ const styles = StyleSheet.create({
     marginTop: '3%',
   },
   loadingContainer: {
-    padding: '5%',
+    padding: '1%',
     alignItems: 'center',
     justifyContent: 'center',
   },
   noResultsContainer: {
-    padding: '5%',
+    padding: '1%',
     alignItems: 'center',
   },
   noResultsText: {
     color: '#95a5a6',
-    fontSize: fontScale(14),
+    fontSize: (14),
+    fontWeight: '500',
+    fontStyle: 'Bold',
   },
 });
 

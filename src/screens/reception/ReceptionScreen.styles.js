@@ -1,55 +1,59 @@
 import { StyleSheet, Dimensions } from 'react-native';
 
-const { width, height } = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
+const isLandscape = width > height;
 
 const styles = StyleSheet.create({
-  container: {
-    height: '100%',
-    padding: 20,
+  safeArea: {
+    flex: 1,
     backgroundColor: '#fff',
   },
-  
-  searchBarContainer : {
-    width: '105%',
-    zIndex: 10,
-    height: height * 0.08,
-    alignSelf: 'center',
+  container: {
+    padding : '1%',
+    flex: 1,
+  },
+  contentContainer: {
+    flex: 1,
+  },
+  searchBarContainer: {
+    marginVertical: isLandscape ? 5 : 15,
   },
   formContainer: {
-    marginTop: 20,
-  },
-  inputContainer: {
-    marginBottom: height * 0.02,
-  },
-  input: {
-    height: height * 0.06,
-    width: '105%',
-    marginLeft: -width * 0.025,
-    marginRight: -width * 0.025,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: width * 0.03,
-    paddingHorizontal: width * 0.03,
-    fontSize: width * 0.04,
-    backgroundColor: '#fff',
-    marginVertical: 1,
+    marginVertical: isLandscape ? 5 : 0,
+    flexDirection : 'column',
+    flex: 1,
+    justifyContent: 'flex-start',
   },
 
+  inputContainer: {
+    marginBottom: isLandscape ? 7 : 10,
+  },
+  input: {
+    height: isLandscape ?  30 : 50,
+    paddingLeft : '2%',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    fontSize: 16,
+    backgroundColor: '#fff',
+  },
+  inputError: {
+    borderColor: 'red',
+  },
   errorText: {
     color: 'red',
-    fontSize: width * 0.03,
-    marginTop: height * 0.005,
+    fontSize: 12,
+    marginTop: 5,
   },
   buttonContainer: {
     flexDirection: 'row',
-    width: '105%',
     justifyContent: 'space-between',
-    alignSelf: 'center',
-    marginTop: 20,
+
   },
   clearButton: {
     backgroundColor: '#f0f0f0',
-    padding: 15,
+    paddingHorizontal: 15,
+    paddingVertical: isLandscape ? 10 : 15,
     borderRadius: 8,
     alignItems: 'center',
     flex: 1,
@@ -57,33 +61,29 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     backgroundColor: '#007AFF',
-    padding: 15,
+    paddingHorizontal: 15,
+    paddingVertical: isLandscape ? 10 : 15,
     borderRadius: 8,
     alignItems: 'center',
     flex: 1,
   },
-
-  inputError: {
-    borderColor: 'red',
-    borderWidth: 1,
-  },
   disabledButton: {
-    backgroundColor: 'rgba(8, 128, 248,0.6)',
+    backgroundColor: 'rgba(0, 122, 255, 0.6)',
   },
-
   clearButtonText: {
     color: '#333',
     fontWeight: 'bold',
+    fontSize: 16,
   },
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
+    fontSize: 16,
   },
-  footerNavigation: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
+  footerContainer: {
+    flex: isLandscape ? 0.2 : 0.1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
