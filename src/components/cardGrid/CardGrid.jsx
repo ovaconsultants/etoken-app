@@ -1,12 +1,12 @@
 import React from 'react';
-import {FlatList, StyleSheet, View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, useWindowDimensions, StyleSheet, ScrollView} from 'react-native';
 import Card from '../card/Cards';
 import {Plus} from 'lucide-react-native';
 
 const CardGrid = ({data, onPress, isSelectedCard, onAddClinicPress}) => {
-  const cardWidth = '100%';
+  const {width, height} = useWindowDimensions();
+  const isLandscape = width > height;
 
-  // Handle null/undefined data or empty array
   if (!data || data.length === 0) {
     return (
       <View style={styles.emptyContainer}>
@@ -20,10 +20,8 @@ const CardGrid = ({data, onPress, isSelectedCard, onAddClinicPress}) => {
     );
   }
 
-  // Filter out any null/undefined items
   const validData = data.filter(item => item?.id != null);
 
-  // If all items were invalid
   if (validData.length === 0) {
     return (
       <View style={styles.emptyContainer}>
@@ -38,49 +36,49 @@ const CardGrid = ({data, onPress, isSelectedCard, onAddClinicPress}) => {
   }
 
   return (
-    <FlatList
-      data={validData}
-      numColumns={1}
-      keyExtractor={item => item.id.toString()}
-      renderItem={({item}) => (
-        <Card
-          title={item.title || 'No Title'}
-          description={item.description || 'No Description'}
-          state={item.state || 'No Status'}
-          isSelected={isSelectedCard === item.id}
-          onPress={() => onPress(item.id)}
-          cardWidth={cardWidth}
-        />
-      )}
-      contentContainerStyle={styles.container}
-      ListEmptyComponent={
-        <View style={styles.emptyContainer}>
-          <TouchableOpacity
-            style={styles.addClinicButton}
-            onPress={onAddClinicPress}>
-            <Plus size={24} color="#007AFF" />
-            <Text style={styles.addClinicText}>Add Clinic</Text>
-          </TouchableOpacity>
+    <ScrollView contentContainerStyle={[styles.container, isLandscape && styles.landscapeContainer]}>
+      {validData.map(item => (
+        <View 
+          key={item.id.toString()} 
+          style={[styles.cardWrapper, isLandscape && styles.landscapeCardWrapper]}
+        >
+          <Card
+            title={item.title || 'No Title'}
+            description={item.description || 'No Description'}
+            state={item.state || 'No Status'}
+            isSelected={isSelectedCard === item.id}
+            onPress={() => onPress(item.id)}
+            cardWidth="100%"
+          />
         </View>
-      }
-    />
+      ))}
+     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     padding: 8,
+  },
+  landscapeContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  cardWrapper: {
+    width: '100%',
+    padding: 4,
+    marginBottom: 8,
+  },
+  landscapeCardWrapper: {
+    width: '48%',
   },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-  },
-  emptyText: {
-    fontSize: 16,
-    color: '#888',
-    textAlign: 'center',
   },
   addClinicButton: {
     flexDirection: 'row',

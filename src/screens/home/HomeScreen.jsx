@@ -7,11 +7,11 @@ import {
   doctorClinicDetailsAtom,
   doctorIdAtom,
 } from '../../atoms/doctorAtoms/doctorAtom';
-import { useOrientation } from '../../hooks/useOrientation';
+import {useOrientation} from '../../hooks/useOrientation';
 import {Tv, Users, Plus} from 'lucide-react-native';
 
 const HomeScreen = ({navigation}) => {
-  const {isLandscape , dimensions}  = useOrientation();
+  const {isLandscape, dimensions} = useOrientation();
   const styles = createStyles(isLandscape, dimensions);
   const [selectedScreen, setSelectedScreen] = useState(null);
   const [selectedClinicId, setSelectedClinicId] = useState(null);
@@ -93,14 +93,6 @@ const HomeScreen = ({navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.cardContainer}>
-        <CardGrid
-          data={cards}
-          onPress={handleCardPress}
-          isSelectedCard={selectedClinicId}
-          onAddClinicPress={handleAddClinicPress}
-        />
-      </View>
       <View style={styles.selectionContainer}>
         <View style={styles.optionContainer}>
           <TouchableOpacity
@@ -145,6 +137,14 @@ const HomeScreen = ({navigation}) => {
             </View>
           </TouchableOpacity>
         </View>
+      </View>
+      <View style={styles.cardContainer}>
+        <CardGrid
+          data={cards}
+          onPress={handleCardPress}
+          isSelectedCard={selectedClinicId}
+          onAddClinicPress={handleAddClinicPress}
+        />
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity

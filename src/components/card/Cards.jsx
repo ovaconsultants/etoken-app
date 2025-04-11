@@ -1,8 +1,8 @@
-import React, { useRef, useEffect } from 'react';
-import { Text, TouchableOpacity, StyleSheet, Animated, View } from 'react-native';
-import { useWindowDimensions } from 'react-native';
+import React, {useRef, useEffect} from 'react';
+import {Text, TouchableOpacity, StyleSheet, Animated, View} from 'react-native';
+import {useWindowDimensions} from 'react-native';
 
-const Card = ({ title, description, isSelected, onPress, state, cardWidth }) => {
+const Card = ({title, description, isSelected, onPress, state, cardWidth}) => {
   const styles = useStyles();
   const scaleValue = useRef(new Animated.Value(1)).current;
   const borderAnim = useRef(new Animated.Value(0)).current;
@@ -19,13 +19,13 @@ const Card = ({ title, description, isSelected, onPress, state, cardWidth }) => 
         toValue: isSelected ? 1 : 0,
         duration: 200,
         useNativeDriver: false,
-      })
+      }),
     ]).start();
   }, [borderAnim, isSelected, scaleValue]);
 
   const borderColor = borderAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: ['rgba(255,255,255,0)', '#6200ee']
+    outputRange: ['rgba(255,255,255,0)', '#6200ee'],
   });
 
   return (
@@ -33,24 +33,17 @@ const Card = ({ title, description, isSelected, onPress, state, cardWidth }) => 
       <Animated.View
         style={[
           styles.card,
-          { 
-            width: cardWidth, 
-            transform: [{ scale: scaleValue }] 
+          {
+            width: cardWidth,
+            transform: [{scale: scaleValue}],
           },
-        ]}
-      >
-        <Animated.View style={[styles.borderHighlight, { borderColor }]} />
+        ]}>
+        <Animated.View style={[styles.borderHighlight, {borderColor}]} />
         <View style={styles.content}>
-          {/* Title */}
           <Text style={styles.title}>{title}</Text>
-
-          {/* Description */}
-          <Text style={styles.description}>{description}</Text>
-
-          {/* Status Badge */}
-          <View>
-            <Text style={styles.stateText}>{state}</Text>
-          </View>
+          <Text style={styles.description}>
+            {description} - {state}
+          </Text>
         </View>
       </Animated.View>
     </TouchableOpacity>
@@ -58,26 +51,25 @@ const Card = ({ title, description, isSelected, onPress, state, cardWidth }) => 
 };
 
 const useStyles = () => {
-  const { width , height } = useWindowDimensions();
+  const {width,} = useWindowDimensions();
   const isSmallDevice = width < 375;
-  const isLandscapeMode = width > height ;
 
   return StyleSheet.create({
     card: {
       backgroundColor: 'rgba(217, 223, 249, 0.9)',
       borderRadius: 16,
-      padding: isSmallDevice ? 12 : 16,
+      // padding: isSmallDevice ? 12 : 16,
       justifyContent: 'center',
       alignItems: 'center',
       shadowColor: '#000',
-      shadowOffset: { width: 0, height: 4 },
+      shadowOffset: {width: 0, height: 4},
       shadowOpacity: 0.1,
       shadowRadius: 6,
       elevation: 5,
       position: 'relative',
       overflow: 'hidden',
-      marginBottom: 16,
-      height:  isLandscapeMode ? 120 : 250,
+      marginBottom: 10,
+      height:200,
     },
     borderHighlight: {
       position: 'absolute',
@@ -96,7 +88,7 @@ const useStyles = () => {
       padding: isSmallDevice ? 12 : 16,
     },
     title: {
-      fontSize: isSmallDevice ? 22 : 26, 
+      fontSize: isSmallDevice ? 22 : 26,
       fontWeight: 'bold',
       color: '#1E293B',
       textAlign: 'left',
@@ -111,19 +103,6 @@ const useStyles = () => {
       lineHeight: isSmallDevice ? 22 : 24,
       marginBottom: 12,
       fontWeight: '500',
-      letterSpacing: 0.3,
-    },
-    stateBadge: {
-      paddingHorizontal: 14,
-      borderRadius: 12,
-      marginTop: 10,
-    },
-    stateText: {
-      fontSize: isSmallDevice ? 13 : 15,
-      fontWeight: '500',
-      color: '#718096',
-      textTransform: 'none',
-      textAlign : 'left',
       letterSpacing: 0.3,
     },
   });
