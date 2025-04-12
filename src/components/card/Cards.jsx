@@ -88,6 +88,7 @@ const useStyles = () => {
       padding: isSmallDevice ? 12 : 16,
     },
     title: {
+      alignSelf: 'flex-start',
       fontSize: isSmallDevice ? 22 : 26,
       fontWeight: 'bold',
       color: '#1E293B',
