@@ -7,7 +7,7 @@ import InProgressTokenNotificationScreen from '../notification/InProgressTokenNo
 import DefaultTVScreen from '../television/DefaultTVScreen';
 import {TokenTable} from './TokenTable';
 import withQueryClientProvider from '../../hooks/useQueryClientProvider';
-import ProfileImageRenderer from '../../components/profileImage/ProfileImage';
+import ProfileImageRenderer from '../../components/profileImage/profileImagetemp';
 import {
   doctorClinicDetailsAtom,
   doctorInfoAtom,
