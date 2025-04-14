@@ -1,24 +1,25 @@
 import React from 'react';
-import { View, Platform } from 'react-native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import DrawerLeftNavigationButton from '../components/profileImage/ProfileImage';
+import {View, Platform, TouchableOpacity} from 'react-native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import DrawerLeftNavigationButton from '../components/drawerNavigation/drawerNavigation';
 import HomeScreen from '../screens/home/HomeScreen';
 import TokenManagementScreen from '../screens/token/TokenManagementTVScreen';
 import DefaultTVScreen from '../screens/television/DefaultTVScreen';
 import ReceptionScreen from '../screens/reception/ReceptionScreen';
 import TokenSuccessScreen from '../screens/tokenDisplay/TokenSuccessScreen';
 import PatientTokenQueueScreen from '../screens/patient/PatientTokenQueueScreen';
-import { PatientInfoEditorScreen } from '../screens/patientEditor/PatientInfoEditorReceptionScreen';
+import {PatientInfoEditorScreen} from '../screens/patientEditor/PatientInfoEditorReceptionScreen';
 import DefaultReceptionScreen from '../screens/noTokenReceptionState/DefaultReceptionScreen';
-import { Home } from 'lucide-react-native';
-import DoctorAddClinicScreen from '../screens/clinic/DoctorAddClinicScreen';
+import {Home} from 'lucide-react-native';
 
 const Stack = createNativeStackNavigator();
 
-const HeaderHomeIcon = () => (
-  <View style={{ alignItems: 'center', marginTop: 5, marginLeft: 8 }}>
-    <Home size={24} color={'#000'} />
-  </View>
+const HeaderHomeIcon = ({onPress}) => (
+  <TouchableOpacity onPress={onPress}>
+    <View style={{alignItems: 'center', marginTop: 5, marginLeft: 8}}>
+      <Home size={24} color={'#000'} />
+    </View>
+  </TouchableOpacity>
 );
 
 export const HeaderRightProfile = React.memo(() => (
@@ -26,7 +27,6 @@ export const HeaderRightProfile = React.memo(() => (
 ));
 
 const HomeNavigator = () => {
-
   return (
     <Stack.Navigator
       initialRouteName="Home"
@@ -36,15 +36,16 @@ const HomeNavigator = () => {
         headerBackTitle: 'Back',
         headerBackTitleVisible: Platform.OS === 'ios',
         gestureEnabled: true,
-      }}
-    >
+        headerStyle: {
+          backgroundColor: 'rgb(240, 240, 246)',
+        },
+      }}>
       <Stack.Screen
         name="Home"
         component={HomeScreen}
-        options={{
-          headerTitle: HeaderHomeIcon,
-          headerBackVisible: false,
-        }}
+        options={() => ({
+          headerTitle: () => <HeaderHomeIcon />,
+        })}
       />
 
       <Stack.Screen
@@ -58,13 +59,7 @@ const HomeNavigator = () => {
       <Stack.Screen
         name="DefaultNoTokenReception"
         component={DefaultReceptionScreen}
-        options={{ title: 'Queue Status' }}
-      />
-
-      <Stack.Screen
-        name="Clinic"
-        component={DoctorAddClinicScreen}
-        options={{ title: 'Add Clinic' }}
+        options={{title: 'Queue Status'}}
       />
 
       <Stack.Screen
@@ -72,7 +67,7 @@ const HomeNavigator = () => {
         component={TokenSuccessScreen}
         options={{
           title: 'Token Issued',
-          headerRight: () => null, 
+          headerRight: () => null,
         }}
       />
 
@@ -87,21 +82,21 @@ const HomeNavigator = () => {
       <Stack.Screen
         name="DefaultNoTokenTV"
         component={DefaultTVScreen}
-        options={{ title: 'Tokens' }}
+        options={{title: 'Tokens'}}
       />
 
       <Stack.Screen
         name="TokenManagement"
         component={TokenManagementScreen}
-        options={{ title: 'Patients' }}
+        options={{title: 'Patients'}}
       />
 
       <Stack.Screen
         name="PatientInfoEditor"
         component={PatientInfoEditorScreen}
-        options={{ 
+        options={{
           title: 'Edit Patient Record',
-          headerRight: () => null, 
+          headerRight: () => null,
         }}
       />
     </Stack.Navigator>

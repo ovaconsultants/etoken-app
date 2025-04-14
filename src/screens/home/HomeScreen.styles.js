@@ -5,7 +5,7 @@ export const createStyles = (isLandscape , dimensions) => {
   container: {
     flex: 1,
     margin : 10,
-    backgroundColor: 'rgb(240, 240, 246)',
+    backgroundColor :' rgb(240, 240, 246)',
   },
 
   selectionContainer: {
@@ -13,7 +13,9 @@ export const createStyles = (isLandscape , dimensions) => {
     flexDirection: 'row',
   },
   cardContainer: {
+
     flex: isLandscape ? 3 : 4,
+    width : '100%',
     marginVertical : isLandscape ? 5 : 10,
   },
   buttonContainer: {
@@ -32,8 +34,8 @@ export const createStyles = (isLandscape , dimensions) => {
     marginHorizontal: 4,
     padding: 6,
     justifyContent: 'center',
-    borderRadius: 12,
-    backgroundColor: '#FFF',
+    borderRadius: 6,
+    backgroundColor : 'rgba(217, 223, 249, 0.9)',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#E0E0E0',

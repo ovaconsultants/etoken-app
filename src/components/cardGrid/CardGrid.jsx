@@ -59,7 +59,7 @@ const CardGrid = ({data, onPress, isSelectedCard, onAddClinicPress}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 8,
+    padding : 4 ,
   },
   landscapeContainer: {
     flexDirection: 'row',
@@ -68,7 +68,6 @@ const styles = StyleSheet.create({
   },
   cardWrapper: {
     width: '100%',
-    padding: 4,
     marginBottom: 8,
   },
   landscapeCardWrapper: {

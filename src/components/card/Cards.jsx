@@ -57,8 +57,7 @@ const useStyles = () => {
   return StyleSheet.create({
     card: {
       backgroundColor: 'rgba(217, 223, 249, 0.9)',
-      borderRadius: 16,
-      // padding: isSmallDevice ? 12 : 16,
+      borderRadius: 6,
       justifyContent: 'center',
       alignItems: 'center',
       shadowColor: '#000',
@@ -69,7 +68,7 @@ const useStyles = () => {
       position: 'relative',
       overflow: 'hidden',
       marginBottom: 10,
-      height:200,
+      height:  200,
     },
     borderHighlight: {
       position: 'absolute',
@@ -78,7 +77,7 @@ const useStyles = () => {
       right: 0,
       bottom: 0,
       borderWidth: 2,
-      borderRadius: 16,
+      borderRadius: 6,
     },
     content: {
       alignItems: 'center',
@@ -89,23 +88,26 @@ const useStyles = () => {
     },
     title: {
       alignSelf: 'flex-start',
-      fontSize: isSmallDevice ? 22 : 26,
+      fontSize: isSmallDevice ? 18 : 22,
       fontWeight: 'bold',
       color: '#1E293B',
       textAlign: 'left',
-      marginBottom: 8,
       letterSpacing: 0.5,
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
     },
     description: {
       alignSelf: 'flex-start',
       fontSize: isSmallDevice ? 15 : 17,
-      color: '#4A5568',
+      color: '#555',
+      wordWrap: 'break-word',
       textAlign: 'left',
       lineHeight: isSmallDevice ? 22 : 24,
       marginBottom: 12,
       fontWeight: '500',
       letterSpacing: 0.3,
-    },
+    }
   });
 };
 
