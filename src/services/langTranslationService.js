@@ -20,8 +20,8 @@ export const InterLanguageTranslationRequest = async (text, from, to) => {
   };
 
   try {
-    const response = await axios.request(options);
-    return response.data;
+    // const response = await axios.request(options);
+    return text;
   } catch (error) {
     console.error(error);
     return error;
