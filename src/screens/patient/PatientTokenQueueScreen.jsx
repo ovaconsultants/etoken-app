@@ -258,8 +258,7 @@ const TokenCard = React.memo(
         return translateNameToHindi(name) || null ;
       },
       [translateNameToHindi],
-    ); // Empty dependency array makes it stable
-
+    );
     useEffect(() => {
       if (token.patient_name && !hindiName) {
         memoizedTranslate(token.patient_name)
