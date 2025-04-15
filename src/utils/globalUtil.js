@@ -15,7 +15,8 @@ export const calculateSearchRelevance = (item, searchWords) => {
     const name = item.patient_name?.toLowerCase() || '';
     const mobile = item.mobile_number || '';
     const email = item.email?.toLowerCase() || '';
-    const fullText = `${name} ${mobile} ${email}`;
+    const area = item.area?.toLowerCase() || '';
+    const fullText = `${name} ${mobile} ${email} ${area}`;
 
     let score = 0;
 

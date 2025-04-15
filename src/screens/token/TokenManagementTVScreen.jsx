@@ -1,10 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {
-  View,
-  Text,
-  ActivityIndicator,
-  TouchableOpacity,
-} from 'react-native';
+import {View, Text, ActivityIndicator, TouchableOpacity} from 'react-native';
 import {styles} from './TokenManagementTVScreen.styles';
 import Orientation from 'react-native-orientation-locker';
 import {usePatientTokens} from '../../hooks/usePatientTokens';
@@ -12,6 +7,7 @@ import InProgressTokenNotificationScreen from '../notification/InProgressTokenNo
 import DefaultTVScreen from '../television/DefaultTVScreen';
 import {TokenTable} from './TokenTable';
 import withQueryClientProvider from '../../hooks/useQueryClientProvider';
+import ProfileImageRenderer from '../../components/profileImage/ProfileImage';
 import {
   doctorClinicDetailsAtom,
   doctorInfoAtom,
@@ -19,8 +15,8 @@ import {
 import {useAtomValue} from 'jotai';
 import {useProfileURI} from '../../hooks/useProfileURI';
 import {RotateCcw} from 'lucide-react-native';
-import LoadingErrorHandler from '../../components/LoadingErrorHandler';
-import ProfileCircle from '../../components/ProfileImage';
+import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
+import { showToast } from '../../components/toastMessage/ToastMessage';
 
 const TokenManagementScreen = ({route}) => {
   const profileUri = useProfileURI();
@@ -57,8 +53,10 @@ const TokenManagementScreen = ({route}) => {
     try {
       setIsRefreshReloading(true);
       await refetch();
+      showToast('Tokens refreshed successfully');
     } catch (err) {
       console.error('Refresh error:', err);
+      showToast('Failed to refresh tokens', 'error');
     } finally {
       setIsRefreshReloading(false);
     }
@@ -70,6 +68,7 @@ const TokenManagementScreen = ({route}) => {
   }
 
   if (isError) {
+    showToast('Error loading tokens', 'error');
     return <LoadingErrorHandler isError={true} error={error} />;
   }
 
@@ -82,7 +81,9 @@ const TokenManagementScreen = ({route}) => {
       <View style={styles.headerContainer}>
         <View style={styles.doctorSection}>
           <View style={styles.profileCircle}>
-          <ProfileCircle profileUri={profileUri} />
+            <ProfileImageRenderer
+              imageUrl={profileUri}
+            />
           </View>
           <View style={styles.doctorInfo}>
             <Text style={styles.doctorName}>Dr. {doctorData.doctor_name}</Text>
@@ -91,11 +92,10 @@ const TokenManagementScreen = ({route}) => {
             </Text>
           </View>
         </View>
-        <TouchableOpacity 
-          style={styles.reloadButton} 
+        <TouchableOpacity
+          style={styles.reloadButton}
           onPress={handleReloadPress}
-          disabled={isRefreshReloading}
-        >
+          disabled={isRefreshReloading}>
           {isRefreshReloading ? (
             <ActivityIndicator size="small" color="#007BFF" />
           ) : (

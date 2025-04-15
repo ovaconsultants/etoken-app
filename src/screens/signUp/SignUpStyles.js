@@ -1,4 +1,5 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet,Dimensions } from 'react-native';
+const { width, height } = Dimensions.get('window');
 
 const SignUpStyles = StyleSheet.create({
   container: {
@@ -11,10 +12,13 @@ const SignUpStyles = StyleSheet.create({
     color: '#333',
   },
   dropdown: {
-    height: 50,
+    height: height * 0.07,
+    width: '105%',
+    marginLeft: -width * 0.025,
+    marginRight: -width * 0.025,
     borderColor: '#ccc',
     borderWidth: 1,
-    borderRadius: 8,
+    borderRadius: width * 0.03,
     paddingHorizontal: 10,
     marginVertical: 10,
     backgroundColor: '#fff',
@@ -22,10 +26,10 @@ const SignUpStyles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
-    elevation: 3, // For Android shadow
+    elevation: 3,
   },
   disabledDropdown: {
-    opacity: 0.6, // Fade effect when disabled
+    opacity: 0.6,
   },
   placeholderText: {
     color: '#999',
@@ -34,11 +38,20 @@ const SignUpStyles = StyleSheet.create({
     color: '#333',
   },
   input: {
+    height: height * 0.06,
+    width: '105%',
+    marginLeft: -width * 0.025,
+    marginRight: -width * 0.025,
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 5,
-    padding: 10,
+    borderRadius: width * 0.03,
+    paddingHorizontal: width * 0.03,
+    fontSize: width * 0.04,
+    backgroundColor: '#fff',
     marginVertical: 10,
+  },
+  errorInput: {
+    borderColor: 'red',
   },
   errorText: {
     color: 'red',

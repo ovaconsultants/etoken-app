@@ -33,9 +33,9 @@ export const InterLanguageTranslationRequest = async (text, from, to) => {
 export const TranslateNameToHindi = async (englishName) => {
   try {
     const translation = await InterLanguageTranslationRequest(englishName, 'English', 'Hindi');
-    return translation?.trans || englishName;
+    return translation?.trans || '';
   } catch (error) {
     console.error('Translation error:', error);
-    return englishName;
+    return '';
   }
 };

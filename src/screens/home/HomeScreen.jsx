@@ -1,37 +1,28 @@
-import React, {useState, useCallback, useMemo , useEffect} from 'react';
-import {
-  SafeAreaView,
-  View,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
+import React, {useState, useCallback, useMemo, useEffect} from 'react';
+import {SafeAreaView, View, Text, TouchableOpacity} from 'react-native';
+import {createStyles} from './HomeScreen.styles';
 import {useAtomValue} from 'jotai';
-import {styles} from './HomeScreen.styles';
-import CardGrid from '../../components/CardGrid';
-import useOrientationLocker from '../../hooks/useOrientationLocker';
+import CardGrid from '../../components/cardGrid/CardGrid';
 import {
   doctorClinicDetailsAtom,
   doctorIdAtom,
 } from '../../atoms/doctorAtoms/doctorAtom';
-import {Tv, Users} from 'lucide-react-native';
+import {useOrientation} from '../../hooks/useOrientation';
+import {Tv, Users, Plus} from 'lucide-react-native';
 
 const HomeScreen = ({navigation}) => {
-  useOrientationLocker('PORTRAIT');
+  const {isLandscape, dimensions} = useOrientation();
+  const styles = createStyles(isLandscape, dimensions);
   const [selectedScreen, setSelectedScreen] = useState(null);
   const [selectedClinicId, setSelectedClinicId] = useState(null);
   const doctorId = useAtomValue(doctorIdAtom);
   const rawClinicData = useAtomValue(doctorClinicDetailsAtom);
 
   const cards = useMemo(() => {
-    if (!Array.isArray(rawClinicData)) {return [];}
-
-    const uniqueClinics = Array.from(
-      new Map(
-        rawClinicData.map(c => [`${c.clinic_name}_${c.clinic_address}`, c]),
-      ).values(),
-    );
-
-    return uniqueClinics.map(clinic => ({
+    if (!Array.isArray(rawClinicData)) {
+      return [];
+    }
+    return rawClinicData.map(clinic => ({
       id: clinic.clinic_id,
       title: clinic.clinic_name,
       description: `${clinic.clinic_address || 'Not specified'}, ${
@@ -52,6 +43,13 @@ const HomeScreen = ({navigation}) => {
       prevClinicId === clinicId ? null : clinicId,
     );
   }, []);
+
+  const handleAddClinicPress = useCallback(() => {
+    navigation.navigate('Clinic', {
+      doctor_id: doctorId,
+    });
+  }, [navigation, doctorId]);
+
   const isNextButtonDisabled = useMemo(
     () => !(selectedScreen && selectedClinicId),
     [selectedScreen, selectedClinicId],
@@ -77,16 +75,24 @@ const HomeScreen = ({navigation}) => {
     isNextButtonDisabled,
   ]);
 
+  // Render add clinic button if no clinics available
+  if (!cards.length) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.emptyContainer}>
+          <TouchableOpacity
+            style={styles.addClinicButton}
+            onPress={handleAddClinicPress}>
+            <Plus size={24} color="#007AFF" />
+            <Text style={styles.addClinicText}>Add Clinic</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.cardContainer}>
-        <CardGrid
-          data={cards}
-          onPress={handleCardPress}
-          isSelectedCard={selectedClinicId}
-        />
-      </View>
-
       <View style={styles.selectionContainer}>
         <View style={styles.optionContainer}>
           <TouchableOpacity
@@ -107,7 +113,6 @@ const HomeScreen = ({navigation}) => {
                 ]}>
                 TV Display
               </Text>
-              <Text style={styles.optionDescription}> </Text>
             </View>
           </TouchableOpacity>
 
@@ -129,19 +134,27 @@ const HomeScreen = ({navigation}) => {
                 ]}>
                 Reception
               </Text>
-              <Text style={styles.optionDescription}> </Text>
             </View>
           </TouchableOpacity>
         </View>
       </View>
-
-      <TouchableOpacity
-        style={[styles.button, isNextButtonDisabled && styles.buttonDisabled]}
-        onPress={handleNextButtonPress}
-        disabled={isNextButtonDisabled}
-        activeOpacity={0.8}>
-        <Text style={styles.buttonText}>Next</Text>
-      </TouchableOpacity>
+      <View style={styles.cardContainer}>
+        <CardGrid
+          data={cards}
+          onPress={handleCardPress}
+          isSelectedCard={selectedClinicId}
+          onAddClinicPress={handleAddClinicPress}
+        />
+      </View>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={[styles.button, isNextButtonDisabled && styles.buttonDisabled]}
+          onPress={handleNextButtonPress}
+          disabled={isNextButtonDisabled}
+          activeOpacity={0.8}>
+          <Text style={styles.buttonText}>Next</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };

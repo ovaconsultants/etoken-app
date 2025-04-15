@@ -15,7 +15,7 @@ export const TokenTable = ({ tokens }) => {
               const hindiName = await TranslateNameToHindi(token.patient_name);
               return { ...token, hindi_name: hindiName };
             } catch (error) {
-              return token; // Return original if translation fails
+              return token;
             }
           }
           return token;
@@ -32,15 +32,19 @@ export const TokenTable = ({ tokens }) => {
       case 'in progress': return { backgroundColor: '#f3faf5', borderLeftWidth: 4, borderLeftColor: '#2e7d32' };
       case 'waiting': return { backgroundColor: '#fffbf2' };
       case 'on hold': return { backgroundColor: '#fff5f5', borderLeftWidth: 4, borderLeftColor: '#d32f2f' };
+      case 'cancelled': return { backgroundColor: '#f3f4f6' };
+      case 'completed': return { backgroundColor: '#e8f5e9' };
       default: return {};
     }
   };
 
   const getStatusDot = (status) => {
     switch (status?.toLowerCase()) {
-      case 'in progress': return <View style={[styles.dot, styles.green]} />;
-      case 'waiting': return <View style={[styles.dot, styles.orange]} />;
-      case 'on hold': return <View style={[styles.dot, styles.red]} />;
+      case 'in progress': return <View style={[styles.dot, styles.greenDot]} />;
+      case 'waiting': return <View style={[styles.dot, styles.yellowDot]} />;
+      case 'on hold': return <View style={[styles.dot, styles.orangeDot]} />;
+      case 'cancelled': return <View style={[styles.dot, styles.red]} />;
+      case 'completed': return <View style={[styles.dot, styles.blueDot]} />;
       default: return null;
     }
   };

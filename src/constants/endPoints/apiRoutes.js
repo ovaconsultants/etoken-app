@@ -9,8 +9,10 @@ export const API_ENDPOINTS = {
   },
   DOCTOR: {
     ADD_DOCTOR: '/doctor/addDoctor',
+    UPDATE_DOCTOR_DETAILS: '/doctor/updateDoctor',
     ADD_CLINIC:'/doctor/addClinic',
     ADD_DOCTOR_CLINIC_SCHEDULE:'/doctor/schedule',
+    FETCH_ALL_CLINICS_OF_A_DOCTOR:'/doctor/fetchClinicsByDoctorId',
     ADD_DOCTOR_PROFILE_PICTURE:'/doctor/uploadDoctorProfilePicture',
 },
   ACCOUNT: {

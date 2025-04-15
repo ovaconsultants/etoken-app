@@ -1,12 +1,12 @@
-import { StyleSheet } from 'react-native';
+import {StyleSheet} from 'react-native';
+
 
 export const styles = StyleSheet.create({
   fullScreenContainer: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     paddingVertical: 10,
-
   },
 
   /** HEADER SECTION **/
@@ -15,7 +15,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 15,
-    paddingHorizontal: 10,
+    paddingHorizontal: (10),
   },
 
   /** DOCTOR PROFILE SECTION **/
@@ -26,27 +26,28 @@ export const styles = StyleSheet.create({
   profileCircle: {
     width: 60,
     height: 60,
-    borderRadius: 30,
+    overflow: 'hidden',
+    borderRadius: (30),
     backgroundColor: '#ddd',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 12,
+    marginRight: (12),
   },
   profileImage: {
     width: '100%',
     height: '100%',
-    borderRadius: 30,
+    borderRadius: (30),
   },
   doctorInfo: {
     justifyContent: 'center',
   },
   doctorName: {
-    fontSize: 18,
+    fontSize: (18),
     fontWeight: 'bold',
     color: '#000',
   },
   doctorQualification: {
-    fontSize: 14,
+    fontSize: (14),
     color: '#444',
     fontWeight: '600',
   },
@@ -54,7 +55,7 @@ export const styles = StyleSheet.create({
   /** RELOAD BUTTON **/
   reloadButton: {
     padding: 8,
-    borderRadius: 8,
+    borderRadius: (8),
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -65,33 +66,29 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
     overflow: 'hidden',
   },
+
   tableHeader: {
     flexDirection: 'row',
-    paddingVertical: 10,
-    paddingHorizontal: 12,
+    paddingVertical: (10),
+    paddingHorizontal: (12),
     backgroundColor: '#f8f8f8',
-    borderBottomWidth: 1,
+    borderBottomWidth: (1),
     borderBottomColor: '#ddd',
   },
   tableHeaderText: {
     flex: 1,
-    fontSize: 14,
+    fontSize: (14),
     fontWeight: 'bold',
     color: '#333',
     textAlign: 'flex-start',
   },
-  // patientCell: {
-  //   flex: 2,
-  //   textAlign: 'left',
-  // },
 
-  /** TOKEN ROWS **/
   tableRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    borderBottomWidth: 1,
+    paddingVertical: (12),
+    paddingHorizontal: (12),
+    borderBottomWidth: (1),
     borderBottomColor: '#eee',
   },
   tableCell: {
@@ -101,22 +98,22 @@ export const styles = StyleSheet.create({
     textAlign: 'flex-start',
   },
 
-  /** STATUS STYLES **/
   statusCell: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
   },
   dot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: 'red',
-    marginRight: 6,
+    width: (10),
+    height: (10),
+    borderRadius: (5),
+    marginRight: (6),
   },
-  green: { backgroundColor: '#2e7d32' },
-  orange: { backgroundColor: '#f9a825' },
-  red: { backgroundColor: '#d32f2f' },
+  greenDot: { backgroundColor: '#4CAF50' },
+  redDot: { backgroundColor: '#F44336' },
+  yellowDot: { backgroundColor: '#FFC107' },
+  blueDot: { backgroundColor: '#2196F3' },
+  orangeDot: { backgroundColor: '#FF9800' },
 
   /** ROW COLORS BASED ON STATUS **/
   inProgressRow: {
@@ -124,28 +121,10 @@ export const styles = StyleSheet.create({
     borderLeftWidth: 4,
     borderLeftColor: '#2e7d32',
   },
-  waitingRow: {
-    backgroundColor: '#fffbf2',
-    borderLeftWidth: 4,
-    borderLeftColor: '#f9a825',
-  },
-  onHoldRow: {
-    backgroundColor: '#fff5f5',
-    borderLeftWidth: 4,
-    borderLeftColor: '#d32f2f',
-  },
-  notificationInProgress : {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    backgroundColor: '#f3faf5',
-    margin: 10,
-    marginRight: 20,
-  },
+
   hindi: {
     fontSize: 12,
     color: '#666',
-    fontFamily: 'Your-Hindi-Font', // Add a Hindi font if needed
-    marginTop: 2,
+    marginTop: (2),
   },
 });

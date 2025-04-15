@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, TextInput, Button, Alert} from 'react-native';
+import {View, Text, TextInput, Button} from 'react-native';
 import {Formik} from 'formik';
 import {useSetAtom} from 'jotai';
 import {userTokenAtom} from '../../atoms/authAtoms/authAtom';
@@ -8,21 +8,18 @@ import {
   doctorIdAtom,
   doctorInfoAtom,
 } from '../../atoms/doctorAtoms/doctorAtom';
-import {styles} from './SignInScreen.styles';
 import {SignInRequest} from '../../services/authService';
-import {SignInValidationSchema} from '../../utils/formFields/validationSchemas/clinicSchemas';
 import {setAuthToken} from '../../utils/tokenManager';
-
-// Validation Schema using Yup
+import {showToast} from '../../components/toastMessage/ToastMessage';
+import styles from './SignInScreen.styles';
+import {SignInValidationSchema} from '../../utils/ClinicValidationSchema';
 
 const SignInScreen = ({navigation}) => {
-  // Jotai state management
   const setUserToken = useSetAtom(userTokenAtom);
   const setDoctorClinicDetails = useSetAtom(doctorClinicDetailsAtom);
   const setDoctorIdAtom = useSetAtom(doctorIdAtom);
   const setDoctorInfoAtom = useSetAtom(doctorInfoAtom);
 
-  // Form submission handler
   const handleSignIn = async (values, {setSubmitting}) => {
     const {email, password} = values;
 
@@ -31,20 +28,26 @@ const SignInScreen = ({navigation}) => {
       if (!data.success) {
         throw new Error(data.message || 'Sign-in failed');
       }
-
-      console.log('Sign in response:', data);
+      showToast('Login successful!', {
+        type: 'success',
+        duration: 3000,
+      });
+      setTimeout(() => {
+        setUserToken(data.token);
+      }, 2000);
       const doctorDetails = data.doctor;
       const doctor_id = doctorDetails.doctor_id?.toString() || '';
 
-      setUserToken(data.token);
       setAuthToken(data.token);
       setDoctorIdAtom(doctor_id);
       setDoctorInfoAtom(doctorDetails);
       setDoctorClinicDetails(data.clinics);
-
     } catch (error) {
       console.error('Error signing in:', error);
-      Alert.alert('Login Failed', error.message);
+      showToast(error.message || 'Login failed. Please try again.', {
+        type: 'error',
+        duration: 3000,
+      });
     } finally {
       setSubmitting(false);
     }
@@ -57,7 +60,8 @@ const SignInScreen = ({navigation}) => {
       <Formik
         initialValues={{email: '', password: ''}}
         validationSchema={SignInValidationSchema}
-        onSubmit={handleSignIn}>
+        onSubmit={handleSignIn}
+        validateOnChange={true}>
         {({
           handleChange,
           handleBlur,
@@ -66,41 +70,43 @@ const SignInScreen = ({navigation}) => {
           errors,
           touched,
           isSubmitting,
+          isValid,
+          dirty,
         }) => (
           <>
-            {/* Email Input */}
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                touched.email && errors.email && styles.inputError,
+              ]}
               placeholder="Email"
               value={values.email}
               onChangeText={handleChange('email')}
               onBlur={handleBlur('email')}
               keyboardType="email-address"
               autoCapitalize="none"
+              maxLength={50}
             />
-            {touched.email && errors.email && (
-              <Text style={styles.errorText}>{errors.email}</Text>
-            )}
 
-            {/* Password Input */}
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                touched.password && errors.password && styles.inputError,
+              ]}
               placeholder="Password"
               value={values.password}
               onChangeText={handleChange('password')}
               onBlur={handleBlur('password')}
               secureTextEntry
               autoCapitalize="none"
+              maxLength={15}
             />
-            {touched.password && errors.password && (
-              <Text style={styles.errorText}>{errors.password}</Text>
-            )}
 
-            {/* Submit Button */}
             <Button
               title="Log In"
               onPress={handleSubmit}
-              disabled={isSubmitting}
+              disabled={!isValid || !dirty || isSubmitting}
+              color={!isValid || !dirty || isSubmitting ? '#add8e6' : undefined}
             />
           </>
         )}

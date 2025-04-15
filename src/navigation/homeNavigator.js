@@ -1,83 +1,103 @@
 import React from 'react';
+import {View, Platform, TouchableOpacity} from 'react-native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {useProfileURI} from '../hooks/useProfileURI';
-import ProfileCircle from '../components/ProfileImage';
+import DrawerLeftNavigationButton from '../components/drawerNavigation/drawerNavigation';
 import HomeScreen from '../screens/home/HomeScreen';
 import TokenManagementScreen from '../screens/token/TokenManagementTVScreen';
 import DefaultTVScreen from '../screens/television/DefaultTVScreen';
 import ReceptionScreen from '../screens/reception/ReceptionScreen';
 import TokenSuccessScreen from '../screens/tokenDisplay/TokenSuccessScreen';
 import PatientTokenQueueScreen from '../screens/patient/PatientTokenQueueScreen';
-import { PatientInfoEditorScreen } from '../screens/patientEditor/PatientInfoEditorReceptionScreen';
+import {PatientInfoEditorScreen} from '../screens/patientEditor/PatientInfoEditorReceptionScreen';
 import DefaultReceptionScreen from '../screens/noTokenReceptionState/DefaultReceptionScreen';
-import { Home } from 'lucide-react-native';
-// Create stack navigator
+import {Home} from 'lucide-react-native';
+
 const Stack = createNativeStackNavigator();
 
-const HeaderHomeIcon = () => (
-  <Home size={30} color={'#000'} style={{ marginTop: 15 }}/>
-  );
+const HeaderHomeIcon = ({onPress}) => (
+  <TouchableOpacity onPress={onPress}>
+    <View style={{alignItems: 'center', marginTop: 5, marginLeft: 8}}>
+      <Home size={24} color={'#000'} />
+    </View>
+  </TouchableOpacity>
+);
 
-export const HeaderRightProfile = React.memo(({imageUrl}) => (
-  <ProfileCircle imageUrl={imageUrl} />
+export const HeaderRightProfile = React.memo(() => (
+  <DrawerLeftNavigationButton />
 ));
 
 const HomeNavigator = () => {
-  const profileUri = useProfileURI();
-
   return (
-    <Stack.Navigator initialRouteName="Home">
+    <Stack.Navigator
+      initialRouteName="Home"
+      screenOptions={{
+        headerTitleAlign: 'center',
+        headerRight: () => <HeaderRightProfile />,
+        headerBackTitle: 'Back',
+        headerBackTitleVisible: Platform.OS === 'ios',
+        gestureEnabled: true,
+        headerStyle: {
+          backgroundColor: 'rgb(240, 240, 246)',
+        },
+      }}>
       <Stack.Screen
         name="Home"
         component={HomeScreen}
-        options={{
-          headerTitle: HeaderHomeIcon,
-          headerRight: () => <HeaderRightProfile imageUrl={profileUri} />,
-          headerBackVisible: false,
-          gestureEnabled: false,
-        }}
+        options={() => ({
+          headerTitle: () => <HeaderHomeIcon />,
+        })}
       />
+
       <Stack.Screen
         name="Reception"
         component={ReceptionScreen}
-        options={{title: 'Registration',
-          headerRight: () => <HeaderRightProfile imageUrl={profileUri} />
-
+        options={{
+          title: 'Patient Registration',
         }}
       />
+
       <Stack.Screen
         name="DefaultNoTokenReception"
         component={DefaultReceptionScreen}
-        options={{title: 'No Active Tokens'}}
+        options={{title: 'Queue Status'}}
       />
+
       <Stack.Screen
         name="TokenSuccess"
         component={TokenSuccessScreen}
-        options={{title: 'Token Display'}}
+        options={{
+          title: 'Token Issued',
+          headerRight: () => null,
+        }}
       />
+
       <Stack.Screen
         name="TokenListing"
         component={PatientTokenQueueScreen}
         options={{
-          headerTitle: '',
-          headerRight: () => <HeaderRightProfile imageUrl={profileUri} />,
-          headerTitleAlign: 'center',
+          title: 'Token Queue',
         }}
       />
+
       <Stack.Screen
         name="DefaultNoTokenTV"
         component={DefaultTVScreen}
         options={{title: 'Tokens'}}
       />
+
       <Stack.Screen
         name="TokenManagement"
         component={TokenManagementScreen}
         options={{title: 'Patients'}}
       />
+
       <Stack.Screen
         name="PatientInfoEditor"
         component={PatientInfoEditorScreen}
-        options={{title: 'Edit Patient Info'}}
+        options={{
+          title: 'Edit Patient Record',
+          headerRight: () => null,
+        }}
       />
     </Stack.Navigator>
   );

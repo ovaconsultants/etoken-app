@@ -1,34 +1,41 @@
-import { StyleSheet } from 'react-native';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
+import { StyleSheet} from 'react-native';
 
-export const styles = StyleSheet.create({
+export const createStyles = (isLandscape , dimensions) => { 
+  return  StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor : 'rgb(240, 240, 246)',
-    padding: wp('5%'),
-    margin : wp('5%'),
+    margin : 10,
+    backgroundColor :' rgb(240, 240, 246)',
+  },
+
+  selectionContainer: {
+    flex: isLandscape ? 0.7 : 0.5,
+    flexDirection: 'row',
   },
   cardContainer: {
-    height: hp('45%'),
-    marginBottom: hp('3%'),
-    marginLeft : hp('2%'),
+
+    flex: isLandscape ? 3 : 4,
+    width : '100%',
+    marginVertical : isLandscape ? 5 : 10,
   },
-  selectionContainer: {
-    marginBottom: hp('5%'),
+  buttonContainer: {
+    flex: 0.5 ,
+    justifyContent : 'center',
   },
 
   optionContainer: {
+    flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
   },
+
   optionButton: {
-    width: wp('40%'),
-    padding: wp('3%'),
-    borderRadius: 12,
-    backgroundColor: '#FFF',
+    flex: 2,
+    marginHorizontal: 4,
+    padding: 6,
+    justifyContent: 'center',
+    borderRadius: 6,
+    backgroundColor : 'rgba(217, 223, 249, 0.9)',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#E0E0E0',
@@ -38,43 +45,45 @@ export const styles = StyleSheet.create({
     backgroundColor: '#F0F7FF',
   },
   optionContent: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
+    alignSelf: 'center',
   },
   optionText: {
-    fontSize: wp('4%'),
+    fontSize: isLandscape ? 16 : 20,
     fontWeight: '500',
     color: '#333',
-    marginTop: hp('1%'),
-    marginBottom: hp('0.5%'),
+    marginTop: 6,
+    marginHorizontal: isLandscape ? 0 : 8,
+    marginBottom: 3,
   },
   selectedOptionText: {
     color: '#007AFF',
     fontWeight: '600',
   },
   optionDescription: {
-    fontSize: wp('3.2%'),
+    fontSize: 14,
     color: '#666',
     textAlign: 'center',
   },
   button: {
-    margin: hp('1.9%'),
-    height: hp('6%'),
+    flex: 1,
+    marginVertical:  isLandscape ? 0 : 12,
+    marginHorizontal: 4,
     backgroundColor: '#007AFF',
-    borderRadius: 10,
+    borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#007AFF',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 6,
   },
   buttonDisabled: {
     opacity: 0.7,
   },
   buttonText: {
     color: 'white',
-    fontSize: wp('4.5%'),
+    fontSize: 16,
     fontWeight: '600',
   },
 });
+}
