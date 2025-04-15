@@ -5,12 +5,12 @@ import Toast from 'react-native-toast-message';
 const styles = StyleSheet.create({
   toastContainer: {
     height: 70,
-    width: '90%',
-    backgroundColor: '#FFFFFF',
+    width: '100%',
+    backgroundColor: '#E4EFE7',
     padding: 16,
     borderRadius: 12,
     flexDirection: 'row',
-    overflow: 'hidden',
+    overflow: 'scroll',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     borderLeftWidth: 6,
     borderTopLeftRadius: 12,
     borderBottomLeftRadius: 12,
-    zIndex : 100000,
+    zIndex : 10,
   },
   content: {
     flex: 1,
@@ -115,7 +115,7 @@ export const showToast = (message, options = {}) => {
     position: 'top',
     visibilityTime: duration,
     autoHide: true,
-    topOffset: 100,
+    topOffset: 50,
     bottomOffset: 40,
     // zIndex: 100000,
     onHide: () => {

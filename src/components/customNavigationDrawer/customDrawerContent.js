@@ -18,10 +18,7 @@ const CustomDrawerContent = () => {
       icon: <User size={20} color="#4A5568" />,
       onPress: () =>
         navigation.navigate('DoctorClinicNavigator', {
-          screen: 'AddProfilePicture',
-          params: {
-            doctor_id: doctor_id,
-          },
+          screen: 'DoctorEditor',
         }),
     },
     {
