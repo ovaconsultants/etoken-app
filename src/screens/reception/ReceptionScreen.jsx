@@ -28,8 +28,8 @@ import {
   showToast,
   ToastMessage,
 } from '../../components/toastMessage/ToastMessage';
-import { useOrientation } from '../../hooks/useOrientation';
-import { createStyles } from './ReceptionScreen.styles';
+import {useOrientation} from '../../hooks/useOrientation';
+import {createStyles} from './ReceptionScreen.styles';
 const formFields = [
   {
     name: 'patient_name',
@@ -60,7 +60,7 @@ export const ReceptionScreen = ({
     params: {doctor_id, clinic_id},
   },
 }) => {
-  const { isLandscape } = useOrientation();
+  const {isLandscape} = useOrientation();
   const styles = useMemo(() => createStyles(isLandscape), [isLandscape]);
   const navigation = useNavigation();
   const queryClient = useQueryClient();
@@ -209,24 +209,12 @@ export const ReceptionScreen = ({
                               keyboardType={field.keyboardType}
                               autoCapitalize={field.autoCapitalize || 'none'}
                               maxLength={field.maxLength}
-                            />  
+                            />
                           </View>
                         ))}
                       </View>
 
                       <View style={styles.buttonContainer}>
-                        <TouchableOpacity
-                          style={styles.clearButton}
-                          onPress={() => {
-                            resetForm();
-                            formFields.forEach(field => {
-                              setFieldTouched(field.name, false);
-                            });
-                            setSubmitAttempted(false);
-                          }}>
-                          <Text style={styles.clearButtonText}>Clear</Text>
-                        </TouchableOpacity>
-
                         <TouchableOpacity
                           style={[
                             styles.submitButton,
@@ -243,6 +231,17 @@ export const ReceptionScreen = ({
                           }}
                           disabled={isFormIncomplete}>
                           <Text style={styles.buttonText}>GO</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={styles.clearButton}
+                          onPress={() => {
+                            resetForm();
+                            formFields.forEach(field => {
+                              setFieldTouched(field.name, false);
+                            });
+                            setSubmitAttempted(false);
+                          }}>
+                          <Text style={styles.clearButtonText}>Clear</Text>
                         </TouchableOpacity>
                       </View>
                     </View>
