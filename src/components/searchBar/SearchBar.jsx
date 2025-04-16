@@ -68,11 +68,10 @@ const CustomSearchBar = ({data, onSelectItem}) => {
   return (
     <View style={styles.container}>
       <SearchBar
-        height={10}
+
         fontSize={(16)}
         fontColor="#2c3e50"
         iconColor="#3498db"
-        shadowColor="rgba(52, 152, 219, 0.3)"
         cancelIconColor="#e74c3c"
         backgroundColor="#ffffff"
         spinnerVisibility={false}

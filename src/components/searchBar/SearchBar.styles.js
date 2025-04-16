@@ -7,30 +7,31 @@ export const styles = StyleSheet.create({
   searchBarContainer: {
     width: '100%',
     position: 'relative',
-    zIndex: 100,
-    shadowColor: '#3498db',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.1,
-    shadowRadius: 1,
-    elevation: 2,
   },
   searchBar: {
     width: '100%',
-    borderRadius: (8),
-    borderColor: '#dfe6e9',
+    height: 55, 
+    borderRadius: 8, 
+    borderWidth: 1, 
+    borderColor: '#ccc',
+    backgroundColor: '#fff',
+    opacity : 0.8 ,
+    paddingLeft: '4%',
   },
   textInput: {
-    paddingVertical: Platform.select({ios: '2%', android: '1%'}),
+    fontSize: 16, // Match your input font size
+    color: '#333', // Match your input text color
+    paddingVertical: Platform.select({ios: 0, android: 0}), // Remove extra padding
   },
   searchIcon: {
-    width: (20),
-    height: (20),
+    width: 20,
+    height: 20,
+    tintColor: '#888', // More subtle icon color
   },
   clearIcon: {
-    width: (18),
-    height: (18),
-    padding: (1),
-    marginRight: (3),
+    width: 18,
+    height: 18,
+    tintColor: '#888', // More subtle icon color
   },
   spinnerContainer: {
     position: 'absolute',
@@ -51,7 +52,6 @@ export const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.2,
     shadowRadius: 4,
-    elevation: 5,
     borderWidth: 1,
     borderColor: '#ecf0f1',
   },
