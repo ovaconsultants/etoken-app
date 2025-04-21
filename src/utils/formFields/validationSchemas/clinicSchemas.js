@@ -10,7 +10,7 @@ export const ClinicValidationSchema = Yup.object().shape({
     .trim()
     .required('Address is required')
     .min(5, 'Address must be at least 5 characters')
-    .max(100, 'Address cannot exceed 100 characters'),
+    .max(500, 'Address cannot exceed 100 characters'),
   city: Yup.string()
     .trim()
     .required('City is required')

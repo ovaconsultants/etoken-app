@@ -110,7 +110,7 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
         showToast('Failed to update token', 'error');
       }
     },
-    [refetchTokens], // Make sure refetchTokens is stable
+    [refetchTokens],
   );
 
   // Side effects
