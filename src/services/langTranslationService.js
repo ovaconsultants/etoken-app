@@ -1,9 +1,24 @@
 import axios from 'axios';
 import LanguageToCodeMap from '../utils/languageMap';
 
+// Helper function to sanitize text
+const sanitizeText = text => {
+  if (!text) {return '';}
+  return text
+    .toString()
+    .replace(/%/g, '')
+    .replace(/[^\w\s\u0900-\u097F]/g, '')
+    .trim();
+};
+
 export const InterLanguageTranslationRequest = async (text, from, to) => {
-  from = LanguageToCodeMap[from];
-  to = LanguageToCodeMap[to];
+
+  const cleanText = sanitizeText(text);
+  if (!cleanText) {return '';}
+
+  from = LanguageToCodeMap[from] || 'en'; // Default to English
+  to = LanguageToCodeMap[to] || 'hi'; // Default to Hindi
+
   const options = {
     method: 'POST',
     url: 'https://google-translate113.p.rapidapi.com/api/v1/translator/text',
@@ -15,27 +30,37 @@ export const InterLanguageTranslationRequest = async (text, from, to) => {
     data: {
       from: from,
       to: to,
-      text: text,
+      text: cleanText,
     },
+    timeout: 5000,
   };
 
   try {
-    // const response = await axios.request(options);
-    return text;
+    const response = await axios.request(options);
+    return sanitizeText(response.data?.trans || '');
   } catch (error) {
-    console.error(error);
-    return error;
+    console.error('Translation API error:', error);
+    return '';
   }
 };
 
+export const TranslateNameToHindi = async englishName => {
+  if (!englishName) {return '';}
 
-// Add this function to your translation service file
-export const TranslateNameToHindi = async (englishName) => {
   try {
-    const translation = await InterLanguageTranslationRequest(englishName, 'English', 'Hindi');
-    return translation?.trans || '';
+    const cleanName = sanitizeText(englishName);
+    if (!cleanName) {return '';}
+
+    const translation = await InterLanguageTranslationRequest(
+      cleanName,
+      'English',
+      'Hindi',
+    );
+
+    // Return original name if translation is empty
+    return translation || cleanName;
   } catch (error) {
-    console.error('Translation error:', error);
-    return '';
+    console.error('Translation service error:', error);
+    return englishName; // Fallback to original name
   }
 };
