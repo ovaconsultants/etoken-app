@@ -14,6 +14,9 @@ import {UpdateDoctorProfileDetailsRequest} from '../../services/doctorService';
 import * as yup from 'yup';
 import {Formik} from 'formik';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { FetchDoctorWithIdRequest } from '../../services/doctorService';
+import { useSetAtom } from 'jotai';
+import { doctorClinicDetailsAtom } from '../../atoms/doctorAtoms/doctorAtom';
 import {useTheme} from '@react-navigation/native';
 import { useOrientation } from '../../hooks/useOrientation';
 import { createStyles } from './DoctorEditor.styles';
@@ -40,6 +43,7 @@ const doctorProfileSchema = yup.object().shape({
 
 const DoctorEditorScreen = ({navigation}) => {
   const {isLandscape} = useOrientation();
+  const setDoctorClinicDetails = useSetAtom(doctorClinicDetailsAtom);
   const styles = createStyles(isLandscape);
   const doctorInfo = useAtomValue(doctorInfoAtom);
   console.log('Doctor Info:', doctorInfo);
@@ -77,6 +81,8 @@ const DoctorEditorScreen = ({navigation}) => {
       };
 
       const response = await UpdateDoctorProfileDetailsRequest(formattedValues);
+      const fetchedDoctorDetailsFromApi = await FetchDoctorWithIdRequest(doctorInfo.doctor_id);
+      setDoctorClinicDetails(fetchedDoctorDetailsFromApi);
       console.log('Update response:', response);
       Alert.alert('Success', 'Profile updated successfully');
     } catch (error) {

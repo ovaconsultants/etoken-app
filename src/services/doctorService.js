@@ -25,8 +25,16 @@ export const UpdateDoctorProfileDetailsRequest = async doctorDataObj => {
 };
 
 
-
-
+export const FetchDoctorWithIdRequest = async (doctor_id) => {
+  try {
+    const route = API_ENDPOINTS.DOCTOR.FETCH_DOCTORS_WITH_ID;
+    const data = await fetchData(route, { doctor_id });
+    return data;
+  } catch (error) {
+    console.error('Failed to get clinics:', error);
+    throw error;
+  }
+}
 // // update a Profile for doctor
 // export const UpdateDoctorProfileRequest = async (dataObject) => {
 //   try {
