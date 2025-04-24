@@ -10,6 +10,7 @@ export const API_ENDPOINTS = {
   DOCTOR: {
     ADD_DOCTOR: '/doctor/addDoctor',
     UPDATE_DOCTOR_DETAILS: '/doctor/updateDoctor',
+    FETCH_DOCTORS_WITH_ID : '/doctor/fetchAllDoctors',
     ADD_CLINIC:'/doctor/addClinic',
     ADD_DOCTOR_CLINIC_SCHEDULE:'/doctor/schedule',
     FETCH_ALL_CLINICS_OF_A_DOCTOR:'/doctor/fetchClinicsByDoctorId',
