@@ -255,7 +255,7 @@ const TokenCard = React.memo(
     const [isPaid, setIsPaid] = useState(token.fee_status === 'Paid');
     const memoizedTranslate = useCallback(
       name => {
-        return translateNameToHindi(name) || null ;
+        return translateNameToHindi(name) || null;
       },
       [translateNameToHindi],
     );

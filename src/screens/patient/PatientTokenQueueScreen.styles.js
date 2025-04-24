@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
 
-export const createStyles = (isLandscape) => StyleSheet.create({
+export const createStyles = (isLandscape ) => StyleSheet.create({
   // Main Containers
   fullScreenContainer: {
     flex: 1,
@@ -11,34 +11,34 @@ export const createStyles = (isLandscape) => StyleSheet.create({
   },
 
   loadingContainer: {
-    flex: isLandscape ? 1.2 : 1, // Increased in landscape
+    flex: isLandscape ? 1.2 : 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal : '1%',
+    paddingHorizontal: '1%',
   },
 
   actionButtonsContainer: {
     flex: isLandscape ? 0.2 : 0.1,
     flexDirection: 'row',
-    paddingHorizontal : '1%',
-    gap: ('4%'),
+    paddingHorizontal: '1%',
+    gap: '4%',
   },
 
   tokenListContainer: {
     flex: isLandscape ? 0.7 : 3,
-    paddingHorizontal : '1%',
+    paddingHorizontal: '1%',
   },
 
   footerContainer: {
     flex: isLandscape ? 0.2 : 0.1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal : '1%',
+    paddingHorizontal: '1%',
   },
 
   headerContainer: {
     flex: isLandscape ? 0.15 : 0.1, 
-    paddingHorizontal : '1%',
+    paddingHorizontal: '1%',
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
   },
@@ -48,10 +48,10 @@ export const createStyles = (isLandscape) => StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     alignItems: 'center',
-    gap: ('5%'),
+    gap: '5%',
   },
   screenTitle: {
-    fontSize: (5 + '%'),
+    fontSize: '5%',
     fontWeight: 'bold',
     flex: 1,
     textAlign: 'center',
@@ -60,21 +60,21 @@ export const createStyles = (isLandscape) => StyleSheet.create({
   // Badge Styles
   badge: {
     backgroundColor: '#f1f1f1',
-    paddingHorizontal: ('2%'),
-    paddingVertical: ('0.5%'),
+    paddingHorizontal: '2%',
+    paddingVertical: '0.5%',
     borderRadius: 20,
   },
   greenBadge: {backgroundColor: '#e6f7e6'},
   yellowBadge: {backgroundColor: '#fff8e6'},
   redBadge: {backgroundColor: '#ffebee'},
-  badgeText: {fontSize: (3 + '%')},
+  badgeText: {fontSize: '3%'},
 
   primaryButton: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: ('2%'),
+    gap: '2%',
     backgroundColor: '#007BFF',
     borderRadius: 10,
   },
@@ -83,7 +83,7 @@ export const createStyles = (isLandscape) => StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: ('2%'),
+    gap: '2%',
     backgroundColor: 'white',
     borderWidth: 1,
     borderColor: '#ddd',
@@ -96,8 +96,8 @@ export const createStyles = (isLandscape) => StyleSheet.create({
   tokenCard: {
     backgroundColor: 'white',
     borderRadius: 10,
-    paddingHorizontal: ('4%'),
-    paddingVertical :  isLandscape ? ('1%') : ('4%'),
+    paddingHorizontal: '4%',
+    paddingVertical: isLandscape ? '1%' : '4%',
     borderWidth: 1,
     borderColor: '#eee',
   },
@@ -113,24 +113,24 @@ export const createStyles = (isLandscape) => StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: ('1%'),
+    marginBottom: '1%',
   },
   patientName: {
     flexDirection: 'row',
     alignItems: 'center',
-    fontSize: (4 + '%'),
+    fontSize: '4%',
     fontWeight: 'bold',
   },
   tokenNumber: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    fontSize: (5 + '%'),
+    fontSize: '5%',
     fontWeight: 'bold',
   },
   tokenNumberText: {
     marginLeft: '5%',
-    fontSize: (5 + '%'),
+    fontSize: '5%',
     fontWeight: 'bold',
   },
   tokenDetails: {
@@ -144,19 +144,19 @@ export const createStyles = (isLandscape) => StyleSheet.create({
   statusContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: ('1%'),
+    gap: '1%',
   },
   statusDot: {
-    width: ('2%'),
-    height: ('2%'),
-    borderRadius: ('1%'),
+    width: '2%',
+    height: '2%',
+    borderRadius: '1%',
   },
   greenDot: {backgroundColor: '#4CAF50'},
   redDot: {backgroundColor: '#F44336'},
   yellowDot: {backgroundColor: '#FFC107'},
   blueDot: {backgroundColor: '#2196F3'},
   orangeDot: {backgroundColor: '#FF9800'},
-  statusText: {fontSize: (3.5 + '%')},
+  statusText: {fontSize: '3.5%'},
 
   // Dropdown Styles
   statusDropdownContainer: {width: 110, alignItems: 'flex-start'},
@@ -165,7 +165,7 @@ export const createStyles = (isLandscape) => StyleSheet.create({
     alignItems: 'flex-start',
   },
   selectedStatusText: {
-    fontSize: (3.5 + '%'),
+    fontSize: '3.5%',
     fontWeight: 'bold',
     color: '#333',
   },
@@ -210,5 +210,5 @@ export const createStyles = (isLandscape) => StyleSheet.create({
     backgroundColor: 'white',
   },
   footerButton: {alignItems: 'center'},
-  footerButtonText: {fontSize: (3 + '%'), marginTop: ('0.5%')},
+  footerButtonText: {fontSize: '3%', marginTop: '0.5%'},
 });
