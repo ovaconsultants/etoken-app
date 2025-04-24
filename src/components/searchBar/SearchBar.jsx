@@ -11,13 +11,16 @@ import {
 } from 'react-native';
 import SearchBar from 'react-native-dynamic-search-bar';
 import {calculateSearchRelevance} from '../../utils/globalUtil';
-import { styles } from './SearchBar.styles';
+import { useOrientation } from '../../hooks/useOrientation';
+import { createStyles } from './SearchBar.styles';
+
 
 // Responsive sizing functions
 const { height} = Dimensions.get('window');
 
-
 const CustomSearchBar = ({data, onSelectItem}) => {
+  const  { isLandscape } = useOrientation();
+  const styles =  createStyles(isLandscape);
   const [searchTerm, setSearchTerm] = useState('');
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -68,9 +71,6 @@ const CustomSearchBar = ({data, onSelectItem}) => {
   return (
     <View style={styles.container}>
       <SearchBar
-
-        fontSize={(16)}
-        fontColor="#2c3e50"
         iconColor="#3498db"
         cancelIconColor="#e74c3c"
         backgroundColor="#ffffff"
