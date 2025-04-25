@@ -80,17 +80,11 @@ export const ReceptionScreen = ({
   });
 
   const handleSubmit = async (values, {resetForm}) => {
+    console.log('Form Values:', values);
     try {
       setSubmitAttempted(true);
-      const existingPatient = patients.find(
-        p =>
-          p.patient_name === values.patient_name.trim() &&
-          p.mobile_number === values.mobile_number.trim() &&
-          p.email === values.email.trim().toLowerCase(),
-      );
-      console.log('Existing Patient:', existingPatient);
       const patientIdToUse =
-        existingPatient?.patient_id ||
+        values?.patient_id ||
         (await InsertPatientRequest({
           ...Object.fromEntries(
             Object.entries(values).map(([k, v]) => [
