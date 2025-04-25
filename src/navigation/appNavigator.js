@@ -4,19 +4,18 @@ import AuthNavigator from './authNavigator';
 import { isAuthenticatedAtom } from '../atoms/authAtoms/authAtom';
 import { useAtomValue } from 'jotai';
 import { ActivityIndicator, View } from 'react-native';
+import LoadingErrorHandler from '../screens/token/TokenManagementTVScreen';
 import DrawerNavigator from './drawerNavigator';
 
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
-  const isLoggedIn = useAtomValue(isAuthenticatedAtom);
+  const isLoggedIn = useAtomValue(isAuthenticatedAtom) || undefined ;
 
   // Handle loading state while checking auth
   if (isLoggedIn === undefined) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" />
-      </View>
+     <LoadingErrorHandler isLoading={true}/>
     );
   }
 

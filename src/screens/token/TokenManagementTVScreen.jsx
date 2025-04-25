@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 
-const LoadingErrorHandler = ({ isLoading, isError, error, isLandscape }) => {
+const LoadingErrorHandler = ({ isLoading = false, isError = false, error = '', isLandscape = false }) => {
   const colorScheme = {
     loading: {
       primary: '#007BFF',  // Soft blue
@@ -13,7 +13,7 @@ const LoadingErrorHandler = ({ isLoading, isError, error, isLandscape }) => {
       background: '#FFF5F5',  // Very light red
       text: '#718096',  // Gray-blue
       accent: '#E53E3E',  // Stronger red for titles
-    }
+    },
   };
 
   const styles = createStyles(isLandscape, colorScheme);
