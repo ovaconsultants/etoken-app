@@ -1,6 +1,7 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
+import { setAuthToken } from '../utils/tokenManager';
 import { API_URL } from '../config/apiUrl';
 
 const apiURL = API_URL || 'https://etoken-api-dev.vercel.app/';
@@ -68,7 +69,8 @@ httpClient.interceptors.response.use(
       // Handle specific HTTP errors
       switch (error.response.status) {
         case 401:
-          console.warn('Unauthorized: Redirecting to login...');
+          AsyncStorage.clear();
+          setAuthToken(null);
           break;
         case 404:
           console.warn('Resource not found:', error.config.url);
