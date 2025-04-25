@@ -121,7 +121,7 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
   }, [patientTokens, patientTokens.length]);
 
   if (isError) {
-    return <LoadingErrorHandler isError={true} error={error} />;
+    return <LoadingErrorHandler isError={true} error={error} isLandscape={isLandscape}/>;
   }
 
   if (patientTokens.length === 0) {

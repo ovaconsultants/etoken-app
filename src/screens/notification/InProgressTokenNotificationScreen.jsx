@@ -47,6 +47,7 @@ const InProgressTokenNotificationScreen = ({
         isLoading={isLoading}
         isError={isError}
         error={error}
+        isLandscape={true}
       />
 
       {/* Notification Card */}

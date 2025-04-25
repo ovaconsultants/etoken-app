@@ -84,10 +84,11 @@ export const ReceptionScreen = ({
       setSubmitAttempted(true);
       const existingPatient = patients.find(
         p =>
-          p.mobile_number === values.mobile_number.trim() ||
+          p.patient_name === values.patient_name.trim() &&
+          p.mobile_number === values.mobile_number.trim() &&
           p.email === values.email.trim().toLowerCase(),
       );
-
+      console.log('Existing Patient:', existingPatient);
       const patientIdToUse =
         existingPatient?.patient_id ||
         (await InsertPatientRequest({
@@ -130,7 +131,7 @@ export const ReceptionScreen = ({
     <SafeAreaView style={styles.safeArea}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={styles.container}>
-          <LoadingErrorHandler {...{isLoading, isError, error}} />
+          <LoadingErrorHandler {...{isLoading, isError, error ,isLandscape}} />
 
           {!isLoading && !isError && (
             <View style={styles.contentContainer}>
