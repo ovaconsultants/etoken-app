@@ -1,23 +1,71 @@
 import httpClient from './apiProvider';
+import {Platform , DeviceInfo} from 'react-native';
 /**
- * Logs an exception to the server
- * @param {string} description - Description of the exception
- * @param {string} platform - Platform where the error occurred (e.g., "Mobile-IOS/Android")
- * @param {string} createdBy - User or system that created the log
+ * Logs exceptions to the server with enhanced debugging information
+ * @param {string} description - Human-readable error description
+ * @param {Error|null} error - Original error object (optional)
+ * @param {object|null} context - Additional context data (optional)
+ * @param {string} platform - Platform identifier (auto-detected)
+ * @param {string} createdBy - Identifying who triggered the log
+ * @returns {Promise<void>}
  */
 const logException = async (
   description,
-  platform = 'Mobile-IOS/Android',
+  error = null,
+  context = null,
+  platform = Platform.OS === 'ios' ? 'Mobile-IOS' : 'Mobile-Android',
   createdBy = 'AdminUser',
 ) => {
+  // Construct comprehensive payload
+  const payload = {
+    exception_description: description,
+    platform,
+    created_by: createdBy,
+    timestamp: new Date().toISOString(),
+    device_info: {
+      os_version: Platform.Version,
+      device_model: DeviceInfo?.getModel() || 'unknown',
+      app_version: DeviceInfo?.getVersion() || 'unknown',
+    },
+    ...(error && {
+      error_details: {
+        name: error.name,
+        message: error.message,
+        stack: error.stack,
+        ...(error.response && {
+          response_status: error.response?.status,
+          response_data: error.response?.data,
+        }),
+        ...(error.config && {
+          request_url: error.config?.url,
+          request_method: error.config?.method,
+          request_data: error.config?.data,
+        }),
+      },
+    }),
+    ...(context && {context}),
+  };
+
   try {
-    await httpClient.post('/exception/logException', {
-      exception_description: description,
-      platform,
-      created_by: createdBy,
+    console.debug('[ExceptionLogger] Sending error payload:', payload);
+
+    const response = await httpClient.post('/exception/logException', payload, {
+      timeout: 5000,
     });
-  } catch (error) {
-    console.error('Failed to log exception:', error);
+
+    console.debug('[ExceptionLogger] Successfully logged exception');
+  } catch (loggingError) {
+    console.error(
+      '[ExceptionLogger] Failed to submit error to server',
+      '\nOriginal Error:',
+      error,
+      '\nLogging Error:',
+      loggingError,
+      '\nContext:',
+      context,
+      '\nPayload:',
+      payload,
+    );
   }
 };
 
@@ -44,7 +92,9 @@ export const fetchData = async (endpoint, params = {}, headers = {}) => {
     });
 
     // Log the exception
-    await logException(`GET Request Failed: ${error.message} at this endpoint: ${endpoint}`);
+    await logException(
+      `GET Request Failed: ${error.message} at this endpoint: ${endpoint}`,
+    );
     throw error;
   }
 };
@@ -71,7 +121,9 @@ export const postData = async (endpoint, data = {}, headers = {}) => {
     });
 
     // Log the exception
-    await logException(`POST Request Failed: ${error.message} at this endpoint: ${endpoint}`);
+    await logException(
+      `POST Request Failed: ${error.message} at this endpoint: ${endpoint}`,
+    );
     throw error;
   }
 };
@@ -126,7 +178,9 @@ export const deleteData = async (endpoint, params = {}, headers = {}) => {
     });
 
     // Log the exception
-    await logException(`DELETE Request Failed: ${error.message} at this endpoint: ${endpoint}`);
+    await logException(
+      `DELETE Request Failed: ${error.message} at this endpoint: ${endpoint}`,
+    );
     throw error;
   }
 };
@@ -154,7 +208,9 @@ export const patchData = async (endpoint, data = {}, headers = {}) => {
     });
 
     // Log the exception
-    await logException(`PATCH Request Failed: ${error.message} at this endpoint: ${endpoint}`);
+    await logException(
+      `PATCH Request Failed: ${error.message} at this endpoint: ${endpoint}`,
+    );
     throw error;
   }
 };
