@@ -2,17 +2,12 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, TextInput, ScrollView, Alert, ActivityIndicator, Button, TouchableOpacity, FlatList, StyleSheet, Dimensions} from 'react-native';
 import {Formik} from 'formik';
 import {RefreshCw, Plus} from 'lucide-react-native';
-import * as Yup from 'yup';
 import ErrorMessage from '../../components/errorMessage/ErrorMessage';
 import {AddClinicRequest, FetchAllClinicRequestForDoctor} from '../../services/clinicService';
+import { ClinicValidationSchema } from '../../utils/formFields/validationSchemas/clinicSchemas';
+import { styles } from './DoctorAddClinicScreen.styles';
 
-const ClinicValidationSchema = Yup.object().shape({
-  clinic_name: Yup.string().trim().required('Required').min(3).max(50),
-  address: Yup.string().trim().required('Required').min(5).max(100),
-  city: Yup.string().trim().required('Required').min(2).max(50),
-  state: Yup.string().trim().required('Required').min(2).max(50),
-  zip_code: Yup.string().trim().required('Required').matches(/^\d{5}$/, 'Must be 5 digits')
-});
+
 
 const DoctorAddClinicScreen = ({navigation, route}) => {
   const {doctor_id} = route?.params;
@@ -50,7 +45,7 @@ const DoctorAddClinicScreen = ({navigation, route}) => {
     }
   };
 
-  if (loading) return <ActivityIndicator size="large" style={styles.container} />;
+  if (loading) {return <ActivityIndicator size="large" style={styles.container} />;}
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -94,7 +89,7 @@ const DoctorAddClinicScreen = ({navigation, route}) => {
           validateOnBlur={true}
           onSubmit={handleSubmit}
         >
-          {({handleChange, handleBlur, handleSubmit, values, errors, touched, isSubmitting, resetForm}) => (
+          {({handleChange, handleBlur, handleSubmit: formikHandleSubmit, values, errors, touched, isSubmitting, resetForm}) => (
             <>
               <View style={styles.formHeader}>
                 <Text style={styles.title}>Add New Clinic</Text>
@@ -121,7 +116,7 @@ const DoctorAddClinicScreen = ({navigation, route}) => {
                 <TouchableOpacity onPress={() => resetForm()} style={styles.refreshButton}>
                   <RefreshCw size={24} color="#007AFF" />
                 </TouchableOpacity>
-                <Button title="Submit" onPress={handleSubmit} disabled={isSubmitting} />
+                <Button title="Submit" onPress={formikHandleSubmit} disabled={isSubmitting} />
               </View>
             </>
           )}
@@ -131,52 +126,6 @@ const DoctorAddClinicScreen = ({navigation, route}) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {flexGrow: 1, padding: 16},
-  header: {flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20},
-  formHeader: {flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20},
-  title: {fontSize: 24, fontWeight: 'bold'},
-  addButton: {flexDirection: 'row', alignItems: 'center', backgroundColor: '#007AFF', padding: 8, borderRadius: 5},
-  addButtonText: {color: 'white', marginLeft: 5, fontWeight: 'bold'},
-  listContainer: {width: '100%'},
-  clinicCard: {
-    backgroundColor: 'white',
-    borderRadius: 8,
-    padding: 15,
-    margin: 8,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-    flex: 1,
-    minWidth: Dimensions.get('window').width > 600 ? '45%' : '90%',
-  },
-  clinicName: {fontSize: 18, fontWeight: 'bold', marginBottom: 5},
-  clinicAddress: {fontSize: 14, color: '#666', marginBottom: 3},
-  clinicCityState: {fontSize: 14, color: '#666'},
-  emptyContainer: {flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 50},
-  emptyText: {fontSize: 18, color: '#666', marginBottom: 20},
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    padding: 15,
-    fontSize: 16,
-  },
-  errorBox: {
-    height: 25, // Fixed height for error message
-    marginTop: 4,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 20
-  },
-  refreshButton: {
-    marginRight: 20
-  }
-});
+
 
 export default DoctorAddClinicScreen;

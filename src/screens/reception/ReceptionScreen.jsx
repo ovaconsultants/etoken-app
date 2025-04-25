@@ -109,7 +109,7 @@ export const ReceptionScreen = ({
       resetForm();
       setSubmitAttempted(false);
       queryClient.invalidateQueries(['fetchingPatients']);
-      showToast('Token Generated successfully!');
+      showToast('Token generated successfully', 'success');
       const token_no = await GenerateTokenRequest({
         patient_id: patientIdToUse,
         doctor_id,
@@ -131,7 +131,6 @@ export const ReceptionScreen = ({
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={styles.container}>
           <LoadingErrorHandler {...{isLoading, isError, error}} />
-          <ToastMessage />
 
           {!isLoading && !isError && (
             <View style={styles.contentContainer}>
@@ -274,6 +273,7 @@ export const ReceptionScreen = ({
           </View>
         </View>
       </TouchableWithoutFeedback>
+      <ToastMessage />
     </SafeAreaView>
   );
 };
