@@ -36,8 +36,8 @@ export const InterLanguageTranslationRequest = async (text, from, to) => {
   };
 
   try {
-    const response = await axios.request(options);
-    return sanitizeText(response.data?.trans || '');
+    // const response = await axios.request(options);
+    return sanitizeText(from || '');
   } catch (error) {
     console.error('Translation API error:', error);
     return '';
