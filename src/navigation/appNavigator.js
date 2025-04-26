@@ -1,41 +1,30 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AuthNavigator from './authNavigator';
-import { isAuthenticatedAtom } from '../atoms/authAtoms/authAtom';
 import { useAtomValue } from 'jotai';
-import { ActivityIndicator, View } from 'react-native';
+import { userTokenAtom } from '../atoms/authAtoms/authAtom';
 import LoadingErrorHandler from '../screens/token/TokenManagementTVScreen';
 import DrawerNavigator from './drawerNavigator';
 
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
-  const isLoggedIn = useAtomValue(isAuthenticatedAtom) || undefined ;
+  const [isReady, setIsReady] = React.useState(false);
+  const token = useAtomValue(userTokenAtom);
 
-  // Handle loading state while checking auth
-  if (isLoggedIn === undefined) {
-    return (
-     <LoadingErrorHandler isLoading={true}/>
-    );
-  }
+  React.useEffect(() => {
+    setTimeout(() => setIsReady(true), 300);
+  }, []);
+
+  if (!isReady) return <LoadingErrorHandler isLoading={true} />;
 
   return (
-    <Stack.Navigator>
-      {isLoggedIn ? (
-        <Stack.Screen
-          name="DrawerNavigator"
-          component={DrawerNavigator}
-          options={{ headerShown: false }}
-        />
-      ) : (
-        <Stack.Screen
-          name="AuthNavigator"
-          component={AuthNavigator}
-          options={{ headerShown: false }}
-        />
-      )}
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen
+        name={token ? 'DrawerNavigator' : 'AuthNavigator'}
+        component={token ? DrawerNavigator : AuthNavigator}
+      />
     </Stack.Navigator>
   );
 };
-
 export default AppNavigator; 

@@ -47,9 +47,7 @@ const logException = async (
       os_version: Platform.Version,
       os: Platform.OS,
       device_model: deviceModel,
-      app_version: NativeModules.SettingsManager?.settings.AppVersion || 
-                  NativeModules.I18nManager?.localeIdentifier || 
-                  'unknown',
+
     },
     ...(error && {
       error_details: {
