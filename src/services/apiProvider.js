@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
 import { setAuthToken } from '../utils/tokenManager';
 import { API_URL } from '../config/apiUrl';
+import ErrorMessage from '../components/errorMessage/ErrorMessage';
 
 const apiURL = API_URL || 'https://etoken-api-dev.vercel.app/';
 
@@ -74,12 +75,25 @@ httpClient.interceptors.response.use(
           break;
         case 404:
           console.warn('Resource not found:', error.config.url);
+          ErrorMessage({
+            message: 'Resource not found',
+            description: 'The requested resource could not be found.',
+          });
           break;
         case 500:
           console.error('Server error:', error.response.data);
+          ErrorMessage({
+            message: 'Server error',
+            description: 'An unexpected error occurred on the server.',
+          });
           break;
         default:
+
           console.warn('Unhandled error:', error.response.status);
+          ErrorMessage({
+            message: 'Unhandled error',
+            description: 'An unexpected error occurred.',
+          });
           break;
       }
 
@@ -91,6 +105,10 @@ httpClient.interceptors.response.use(
     } else if (error.request) {
       // Network errors (no response received)
       console.error('No response received:', error.request);
+      ErrorMessage({
+        message: 'Network error',
+        description: 'No response received from the server.',
+      });
       return Promise.reject({
         isNetworkError: true,
         message: 'Network error - no response received',
@@ -98,7 +116,12 @@ httpClient.interceptors.response.use(
       });
     } else {
       // Request setup errors
+
       console.error('Request setup error:', error.message);
+      ErrorMessage({
+        message: 'Request error',
+        description: 'An error occurred while setting up the request.',
+      });
       return Promise.reject({
         isNetworkError: false,
         message: error.message,

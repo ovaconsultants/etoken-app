@@ -33,7 +33,7 @@ export const createStyles = isLandscape =>
     },
     content: {
       flex: isLandscape ? 0.7 : 0.6,
-      gap: 16, // Gap between content items
+      gap: 16,
     },
     inputContainer: {
       flexDirection: 'row',

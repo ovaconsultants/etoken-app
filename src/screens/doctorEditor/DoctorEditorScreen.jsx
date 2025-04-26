@@ -19,7 +19,7 @@ import { useSetAtom } from 'jotai';
 import { doctorClinicDetailsAtom } from '../../atoms/doctorAtoms/doctorAtom';
 import {useTheme} from '@react-navigation/native';
 import { useOrientation } from '../../hooks/useOrientation';
-import { createStyles } from './DoctorEditor.styles';
+import { createStyles } from './DoctorEditorScreen.styles';
 
 
 // Validation Schema
@@ -43,8 +43,9 @@ const doctorProfileSchema = yup.object().shape({
 
 const DoctorEditorScreen = ({navigation}) => {
   const {isLandscape} = useOrientation();
-  const setDoctorClinicDetails = useSetAtom(doctorClinicDetailsAtom);
   const styles = createStyles(isLandscape);
+  const setDoctorClinicDetails = useSetAtom(doctorClinicDetailsAtom);
+ 
   const doctorInfo = useAtomValue(doctorInfoAtom);
   console.log('Doctor Info:', doctorInfo);
   const {colors} = useTheme();
@@ -98,7 +99,7 @@ const DoctorEditorScreen = ({navigation}) => {
       initialValues={initialValues}
       validationSchema={doctorProfileSchema}
       onSubmit={handleSubmit}
-      styles= {styles}>
+      >
       {({
         handleChange,
         handleBlur,

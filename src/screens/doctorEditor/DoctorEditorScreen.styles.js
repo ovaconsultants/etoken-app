@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
 export const createStyles = (isLandscape) => {
-  StyleSheet.create({
+  return StyleSheet.create({
     container: {
       flex: 1,
     },
