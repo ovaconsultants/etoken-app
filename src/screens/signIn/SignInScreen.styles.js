@@ -23,6 +23,7 @@ export const createStyles = isLandscape =>
       fontSize: 24,
       fontWeight: 'bold',
       alignSelf: 'center',
+      margin : isLandscape ? '1%' : '3%',
     },
     content: {
       flex: isLandscape ? 0.7 : 0.6,
@@ -49,18 +50,14 @@ export const createStyles = isLandscape =>
     buttonContainer: {
       flexDirection: 'row',
       justifyContent: 'space-around',
-      marginTop: '5%',
+      margin: '3%',
     },
-    footer: {
-      flex: isLandscape ? 0.1 : 0.2,
-      justifyContent: 'flex-end',
-      alignItems: 'center',
-      paddingBottom: '5%',
-    },
+
     footerText: {
       fontSize: 16,
       color: '#666',
       textAlign: 'center',
+      margin: '3%',
     },
     link: {
       color: '#007bff',
@@ -69,6 +66,23 @@ export const createStyles = isLandscape =>
     disabledButton: {
       backgroundColor: '#cccccc',
       opacity: 0.7,
+    },
+
+    button: {
+      backgroundColor: '#007AFF',
+      padding: 15,
+      borderRadius: 8,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginHorizontal: isLandscape ? '3%' : '3%',
+    },
+    buttonDisabled: {
+      backgroundColor: '#add8e6',
+    },
+    buttonText: {
+      color: 'white',
+      fontSize: 16,
+      fontWeight: 'bold',
     },
 
     row: {

@@ -1,5 +1,12 @@
 import React from 'react';
-import {View, Text, TextInput, Button, SafeAreaView} from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ActivityIndicator,
+  SafeAreaView,
+} from 'react-native';
 import {Formik} from 'formik';
 import {useSetAtom} from 'jotai';
 import {userTokenAtom} from '../../atoms/authAtoms/authAtom';
@@ -63,7 +70,7 @@ const SignInScreen = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.formContainer}>
-      <Text style={styles.title}>Sign In</Text>
+        <Text style={styles.title}>Sign In</Text>
         <Formik
           initialValues={{email: '', password: ''}}
           validationSchema={SignInValidationSchema}
@@ -107,16 +114,19 @@ const SignInScreen = ({navigation}) => {
                 autoCapitalize="none"
                 maxLength={15}
               />
-              <Button
-
-                title="Log In"
+              <TouchableOpacity
+                style={[
+                  styles.button,
+                  (!isValid || !dirty || isSubmitting) && styles.buttonDisabled,
+                ]}
                 onPress={handleSubmit}
-                disabled={!isValid || !dirty || isSubmitting}
-                styles={styles.buttonContainer}
-                color={
-                  !isValid || !dirty || isSubmitting ? '#add8e6' : undefined
-                }
-              />
+                disabled={!isValid || !dirty || isSubmitting}>
+                {isSubmitting ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={styles.buttonText}>Log In</Text>
+                )}
+              </TouchableOpacity>
             </>
           )}
         </Formik>
