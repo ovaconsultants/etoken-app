@@ -62,12 +62,8 @@ const SignInScreen = ({navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-   
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>Sign In</Text>
-      </View>
-
       <View style={styles.formContainer}>
+      <Text style={styles.title}>Sign In</Text>
         <Formik
           initialValues={{email: '', password: ''}}
           validationSchema={SignInValidationSchema}
@@ -112,9 +108,11 @@ const SignInScreen = ({navigation}) => {
                 maxLength={15}
               />
               <Button
+
                 title="Log In"
                 onPress={handleSubmit}
                 disabled={!isValid || !dirty || isSubmitting}
+                styles={styles.buttonContainer}
                 color={
                   !isValid || !dirty || isSubmitting ? '#add8e6' : undefined
                 }
@@ -122,9 +120,6 @@ const SignInScreen = ({navigation}) => {
             </>
           )}
         </Formik>
-      </View>
-
-      <View style={styles.footerContainer}>
         <Text style={styles.footerText}>
           Don't have an account?{' '}
           <Text

@@ -4,32 +4,25 @@ export const createStyles = isLandscape =>
   StyleSheet.create({
     container: {
       flex: 1,
-      justifyContent: 'space-between',
+      justifyContent: 'center',
       padding: 10,
       backgroundColor: '#fff',
-      gap: 16,
     },
-    titleContainer: {
-      flex: isLandscape ? 0.3 : 0.3,
-      justifyContent:  isLandscape ? 'flex-end' : 'flex-end',
-      alignItems: 'center',
-    },
+
     formContainer: {
-      flex: isLandscape ? 0.7 : 0.5,
-    },
-    footerContainer: {
-      flex: isLandscape ? 0.1 : 0.3,
+      flex:  1,
+      justifyContent:  'center',
     },
 
     header: {
-      flex: isLandscape ? 0.1 : 0.2, // Flex-based proportions
+      flex: isLandscape ? 0.1 : 0.2,
       justifyContent: 'center',
       alignItems: 'center',
     },
     title: {
-      fontSize: 24, // Fixed size (could use Platform.select for different sizes)
+      fontSize: 24,
       fontWeight: 'bold',
-      marginBottom: '5%', // Percentage-based margin
+      alignSelf: 'center',
     },
     content: {
       flex: isLandscape ? 0.7 : 0.6,
@@ -42,11 +35,12 @@ export const createStyles = isLandscape =>
     input: {
       flex: 0.1,
       minHeight: 48,
+      maxHeight: 55,
       borderWidth: 1,
       borderColor: '#ccc',
       borderRadius: 8,
       paddingHorizontal: '3%',
-      backgroundColor: '#red',
+      backgroundColor: '#fff',
       margin : '3%',
     },
     inputError: {
@@ -55,7 +49,6 @@ export const createStyles = isLandscape =>
     buttonContainer: {
       flexDirection: 'row',
       justifyContent: 'space-around',
-      gap: 16, // Gap between buttons
       marginTop: '5%',
     },
     footer: {
@@ -77,7 +70,7 @@ export const createStyles = isLandscape =>
       backgroundColor: '#cccccc',
       opacity: 0.7,
     },
-    // Additional layout helpers
+
     row: {
       flexDirection: 'row',
       gap: 16,
