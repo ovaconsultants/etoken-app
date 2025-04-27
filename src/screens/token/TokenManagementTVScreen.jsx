@@ -1,125 +1,121 @@
-import React from 'react';
-import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, ActivityIndicator, TouchableOpacity} from 'react-native';
+import {styles} from './TokenManagementTVScreen.styles';
+import Orientation from 'react-native-orientation-locker';
+import {usePatientTokens} from '../../hooks/usePatientTokens';
+import InProgressTokenNotificationScreen from '../notification/InProgressTokenNotificationScreen';
+import DefaultTVScreen from '../television/DefaultTVScreen';
+import {TokenTable} from './TokenTable';
+import withQueryClientProvider from '../../hooks/useQueryClientProvider';
+import ProfileImageRenderer from '../../components/profileImage/ProfileImage';
+import {
+  doctorClinicDetailsAtom,
+  doctorInfoAtom,
+} from '../../atoms/doctorAtoms/doctorAtom';
+import {useAtomValue} from 'jotai';
+import {useProfileURI} from '../../hooks/useProfileURI';
+import {RotateCcw} from 'lucide-react-native';
+import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
+import { showToast } from '../../components/toastMessage/ToastMessage';
 
-const LoadingErrorHandler = ({ isLoading = false, isError = false, error = '', isLandscape = false }) => {
-  const colorScheme = {
-    loading: {
-      primary: '#007BFF',  // Soft blue
-      background: '#F8FAFD',  // Very light blue-gray
-      text: '#4A5568',  // Dark gray-blue
-    },
-    error: {
-      primary: '#FC8181',  // Soft red
-      background: '#FFF5F5',  // Very light red
-      text: '#718096',  // Gray-blue
-      accent: '#E53E3E',  // Stronger red for titles
-    },
+const TokenManagementScreen = ({route}) => {
+  const profileUri = useProfileURI();
+  const clinicData = useAtomValue(doctorClinicDetailsAtom);
+  const doctorData = useAtomValue(doctorInfoAtom);
+  const [isRefreshReloading, setIsRefreshReloading] = useState(false);
+  const {doctor_id, clinic_id} = route.params;
+  const {
+    data: tokens = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = usePatientTokens(doctor_id, clinic_id);
+  const currentClinicData = clinicData.find(
+    clinic => clinic.clinic_id === clinic_id,
+  );
+  const [inProgressPatient, setInProgressPatient] = useState(null);
+
+  // Find the in-progress patient
+  useEffect(() => {
+    Orientation.lockToLandscape();
+    const inProgress =
+      tokens.find(token => token.status === 'In Progress') ||
+      tokens.find(token => token.recall === true);
+    setInProgressPatient(inProgress || null);
+    return () => {
+      Orientation.lockToPortrait();
+    };
+  }, [tokens]);
+
+  // Reload button handler
+  const handleReloadPress = async () => {
+    try {
+      setIsRefreshReloading(true);
+      await refetch();
+      showToast('Tokens refreshed successfully');
+    } catch (err) {
+      console.error('Refresh error:', err);
+      showToast('Failed to refresh tokens', 'error');
+    } finally {
+      setIsRefreshReloading(false);
+    }
   };
 
-  const styles = createStyles(isLandscape, colorScheme);
-
-  if (isLoading) {
-    return (
-      <View style={styles.loaderContainer}>
-        <View style={styles.loaderCard}>
-          <ActivityIndicator size="large" color={colorScheme.loading.primary} />
-          <Text style={styles.loaderText}>Loading content...</Text>
-        </View>
-      </View>
-    );
+  // Show loading state during initial load or refresh
+  if (isLoading || isRefreshReloading) {
+    return <LoadingErrorHandler isLoading={true} isLandscape={true}/>;
   }
 
   if (isError) {
-    return (
-      <View style={styles.loaderContainer}>
-        <View style={styles.errorCard}>
-          <Text style={styles.errorIcon}>⚠️</Text>
-          <Text style={styles.errorTitle}>Connection Error</Text>
-          <Text style={styles.errorMessage}>
-            {error?.message || 'Unable to load content. Please try again.'}
-          </Text>
-          <Text style={styles.errorTip}>Check your connection and pull to refresh</Text>
-        </View>
-      </View>
-    );
+    showToast('Error loading tokens', 'error');
+    return <LoadingErrorHandler isError={true} error={error} isLandscape={true}/>;
   }
 
-  return null;
+  if (!tokens || tokens.length === 0) {
+    return <DefaultTVScreen clinicInfo={currentClinicData} />;
+  }
+
+  return (
+    <View style={styles.fullScreenContainer}>
+      <View style={styles.headerContainer}>
+        <View style={styles.doctorSection}>
+          <View style={styles.profileCircle}>
+            <ProfileImageRenderer
+              imageUrl={profileUri}
+            />
+          </View>
+          <View style={styles.doctorInfo}>
+            <Text style={styles.doctorName}>Dr. {doctorData.doctor_name}</Text>
+            <Text style={styles.doctorQualification}>
+              {doctorData.specialization_name}
+            </Text>
+          </View>
+        </View>
+        <TouchableOpacity
+          style={styles.reloadButton}
+          onPress={handleReloadPress}
+          disabled={isRefreshReloading}>
+          {isRefreshReloading ? (
+            <ActivityIndicator size="small" color="#007BFF" />
+          ) : (
+            <RotateCcw />
+          )}
+        </TouchableOpacity>
+      </View>
+      <TokenTable tokens={tokens} />
+      <View style={styles.notificationInProgress}>
+        {inProgressPatient && (
+          <InProgressTokenNotificationScreen
+            inProgressPatient={inProgressPatient}
+            isLoading={isLoading}
+            isError={isError}
+            error={error}
+          />
+        )}
+      </View>
+    </View>
+  );
 };
 
-const createStyles = (isLandscape, colors) => StyleSheet.create({
-  loaderContainer: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(248, 250, 253, 0.95)',
-    zIndex: 1000,
-  },
-  loaderCard: {
-    backgroundColor: colors.loading.background,
-    padding: 24,
-    borderRadius: 14,
-    alignItems: 'center',
-    width: isLandscape ? '65%' : '85%',
-    maxWidth: 450,
-    borderWidth: 1,
-    borderColor: 'rgba(93, 156, 236, 0.15)',
-    elevation: 3,
-    shadowColor: colors.loading.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-  },
-  loaderText: {
-    marginTop: 16,
-    fontSize: 16,
-    color: colors.loading.text,
-    fontWeight: '500',
-    letterSpacing: 0.15,
-  },
-  errorCard: {
-    backgroundColor: colors.error.background,
-    padding: 24,
-    borderRadius: 14,
-    alignItems: 'center',
-    width: isLandscape ? '65%' : '85%',
-    maxWidth: 450,
-    borderWidth: 1,
-    borderColor: 'rgba(252, 129, 129, 0.15)',
-    elevation: 3,
-    shadowColor: colors.error.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-  },
-  errorIcon: {
-    fontSize: 32,
-    marginBottom: 12,
-    color: colors.error.accent,
-  },
-  errorTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.error.accent,
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  errorMessage: {
-    fontSize: 15,
-    color: colors.error.text,
-    textAlign: 'center',
-    lineHeight: 22,
-    marginBottom: 16,
-    paddingHorizontal: 8,
-  },
-  errorTip: {
-    fontSize: 13,
-    color: colors.error.text,
-    fontStyle: 'italic',
-    textAlign: 'center',
-    marginTop: 8,
-    opacity: 0.8,
-  },
-});
-
-export default LoadingErrorHandler;
+export default withQueryClientProvider(TokenManagementScreen);
