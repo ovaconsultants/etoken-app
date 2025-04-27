@@ -4,62 +4,61 @@ import {
   FlatList,
   TouchableOpacity,
   Text,
-  ActivityIndicator,
-  Dimensions,
-  Platform,
   Keyboard,
+  Platform
 } from 'react-native';
 import SearchBar from 'react-native-dynamic-search-bar';
 import {calculateSearchRelevance} from '../../utils/globalUtil';
-import { useOrientation } from '../../hooks/useOrientation';
-import { createStyles } from './SearchBar.styles';
-
-
-// Responsive sizing functions
-const { height} = Dimensions.get('window');
+import {useOrientation} from '../../hooks/useOrientation';
+import {createStyles} from './SearchBar.styles';
 
 const CustomSearchBar = ({data, onSelectItem}) => {
-  const  { isLandscape } = useOrientation();
-  const styles =  createStyles(isLandscape);
+  const {isLandscape} = useOrientation();
+  const styles = createStyles(isLandscape);
+
+  // State management
   const [searchTerm, setSearchTerm] = useState('');
   const [dropdownVisible, setDropdownVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const [, setKeyboardHeight] = useState(0);
 
+  // Keyboard listeners
   useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
+    const showListener = Keyboard.addListener(
       Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
       e => setKeyboardHeight(e.endCoordinates.height),
     );
-    const keyboardDidHideListener = Keyboard.addListener(
+    const hideListener = Keyboard.addListener(
       Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
       () => setKeyboardHeight(0),
     );
 
     return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
+      showListener.remove();
+      hideListener.remove();
     };
   }, []);
 
-  const filterList = async text => {
+  // Filter data based on search term
+  const filteredData = React.useMemo(() => {
+    if (!searchTerm) {return data || [];}
+
+    return [...(data || [])]
+      .map(item => {
+        const searchWords = searchTerm.toLowerCase().trim().split(/\s+/);
+        return {
+          ...item,
+          matchScore: calculateSearchRelevance(item, searchWords),
+        };
+      })
+      .filter(item => item.matchScore > 0)
+      .sort((a, b) => b.matchScore - a.matchScore);
+  }, [data, searchTerm]);
+
+  // Handlers
+  const handleSearchChange = text => {
     setSearchTerm(text);
-    setLoading(true);
-    setDropdownVisible(!!text);
-
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 300));
-    setLoading(false);
+    setDropdownVisible(true);
   };
-
-  const filteredData = [...(data || [])]
-    .map(item => {
-      const searchWords = searchTerm.toLowerCase().trim().split(/\s+/);
-      const score = calculateSearchRelevance(item, searchWords);
-      return {...item, matchScore: score};
-    })
-    .filter(item => item.matchScore > 0)
-    .sort((a, b) => b.matchScore - a.matchScore);
 
   const handleItemSelect = item => {
     onSelectItem(item);
@@ -68,63 +67,64 @@ const CustomSearchBar = ({data, onSelectItem}) => {
     Keyboard.dismiss();
   };
 
+  const handleSearchPress = () => {
+    setDropdownVisible(prev => !prev);
+    if (!dropdownVisible) {
+      setSearchTerm(''); // Clear search when opening dropdown
+    }
+  };
+
+  const handleClearPress = () => {
+    setSearchTerm('');
+    setDropdownVisible(true); // Keep dropdown open after clear
+  };
+
   return (
     <View style={styles.container}>
       <SearchBar
         iconColor="#3498db"
         cancelIconColor="#e74c3c"
         backgroundColor="#ffffff"
-        spinnerVisibility={false}
         placeholder="Search by Patient, Mobile, or Email"
         placeholderTextColor="#95a5a6"
-        onChangeText={filterList}
-        onClearPress={() => {
-          setSearchTerm('');
-          setDropdownVisible(false);
-        }}
-        onPress={() => setDropdownVisible(prev => !prev)}
+        onChangeText={handleSearchChange}
+        onClearPress={handleClearPress}
+        onPress={handleSearchPress}
         value={searchTerm}
         style={styles.searchBar}
         textInputStyle={styles.textInput}
         searchIconImageStyle={styles.searchIcon}
         clearIconImageStyle={styles.clearIcon}
       />
+
       {dropdownVisible && (
-        <View
-          style={[
-            styles.dropdownContainer,
-            {maxHeight: height * 0.4 - keyboardHeight},
-          ]}>
-          {loading ? (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="small" color="#3498db" />
-            </View>
-          ) : (
-            <FlatList
-              data={filteredData}
-              keyExtractor={item => item.patient_id.toString()}
-              keyboardShouldPersistTaps="always"
-              renderItem={({item}) => (
-                <TouchableOpacity
-                  style={styles.dropdownItem}
-                  onPress={() => handleItemSelect(item)}>
-                  <View style={styles.itemContent}>
-                    <Text style={styles.patientName}>{item.patient_name}</Text>
-                    <Text style={styles.patientPhone}>
-                      {item.mobile_number}
-                    </Text>
-                  </View>
-                  <View style={styles.separator} />
-                </TouchableOpacity>
-              )}
-              ListEmptyComponent={
-                <View style={styles.noResultsContainer}>
-                  <Text style={styles.noResultsText}>No patients found</Text>
+        <View style={[styles.dropdownContainer, {maxHeight: 300}]}>
+          <FlatList
+            data={filteredData}
+            keyExtractor={item => item.patient_id.toString()}
+            keyboardShouldPersistTaps="always"
+            renderItem={({item}) => (
+              <TouchableOpacity
+                style={styles.dropdownItem}
+                onPress={() => handleItemSelect(item)}>
+                <View style={styles.itemContent}>
+                  <Text style={styles.patientName}>{item.patient_name}</Text>
+                  <Text style={styles.patientPhone}>{item.mobile_number}</Text>
                 </View>
-              }
-              contentContainerStyle={styles.dropdownContent}
-            />
-          )}
+                <View style={styles.separator} />
+              </TouchableOpacity>
+            )}
+            ListEmptyComponent={
+              <View style={styles.noResultsContainer}>
+                <Text style={styles.noResultsText}>
+                  {searchTerm
+                    ? 'No matching patients found'
+                    : 'No patients available'}
+                </Text>
+              </View>
+            }
+            contentContainerStyle={styles.dropdownContent}
+          />
         </View>
       )}
     </View>
