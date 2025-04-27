@@ -55,11 +55,7 @@ const formFields = [
   },
 ];
 
-export const ReceptionScreen = ({
-  route: {
-    params: {doctor_id, clinic_id},
-  },
-}) => {
+export const ReceptionScreen = ({doctor_id, clinic_id}) => {
   const {isLandscape} = useOrientation();
   const styles = useMemo(() => createStyles(isLandscape), [isLandscape]);
   const navigation = useNavigation();
@@ -80,7 +76,6 @@ export const ReceptionScreen = ({
   });
 
   const handleSubmit = async (values, {resetForm}) => {
-    console.log('Form Values:', values);
     try {
       setSubmitAttempted(true);
       const patientIdToUse =
@@ -142,7 +137,7 @@ export const ReceptionScreen = ({
                       ),
                     })
                   }
-                  placeholder="Search by Patient, Mobile, or Email"
+                  placeholder="Search by Patient Name, Mobile, or Email"
                 />
               </View>
 
