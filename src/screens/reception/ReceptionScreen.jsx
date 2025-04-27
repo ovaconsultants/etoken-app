@@ -55,7 +55,11 @@ const formFields = [
   },
 ];
 
-export const ReceptionScreen = ({doctor_id, clinic_id}) => {
+export const ReceptionScreen = ({
+  route: {
+    params: {doctor_id, clinic_id},
+  },
+}) => {
   const {isLandscape} = useOrientation();
   const styles = useMemo(() => createStyles(isLandscape), [isLandscape]);
   const navigation = useNavigation();
