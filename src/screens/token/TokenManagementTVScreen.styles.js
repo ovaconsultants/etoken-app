@@ -7,6 +7,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingHorizontal: 10,
     paddingVertical: 10,
+    margin: 10,
   },
 
   /** HEADER SECTION **/
@@ -126,5 +127,13 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     color: '#666',
     marginTop: (2),
+  },
+  notificationInProgress : {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    backgroundColor: '#f3faf5',
+    margin: 10,
+    marginRight: 20,
   },
 });
