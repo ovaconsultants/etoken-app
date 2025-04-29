@@ -1,11 +1,19 @@
 import { StyleSheet} from 'react-native';
 
 export const createStyles = (isLandscape , dimensions) => { 
+  const fontscale = (fontsize) => {
+    if (isLandscape) {
+      return fontsize * (dimensions.width / 640);
+    }
+    return fontsize * (dimensions.width / 360);
+  }
+
   return  StyleSheet.create({
   container: {
     flex: 1,
     margin : 10,
     backgroundColor :' rgb(251, 251, 251)',
+    gap : 5 ,
   },
 
   selectionContainer: {
@@ -13,10 +21,8 @@ export const createStyles = (isLandscape , dimensions) => {
     flexDirection: 'row',
   },
   cardContainer: {
-
     flex: isLandscape ? 3 : 4,
     width : '100%',
-    marginVertical : isLandscape ? 5 : 10,
   },
   buttonContainer: {
     flex: 0.5 ,
@@ -52,7 +58,7 @@ export const createStyles = (isLandscape , dimensions) => {
     alignSelf: 'center',
   },
   optionText: {
-    fontSize: isLandscape ? 16 : 20,
+    fontSize: fontscale(14),
     fontWeight: '500',
     color: '#333',
     marginTop: 6,
@@ -64,13 +70,13 @@ export const createStyles = (isLandscape , dimensions) => {
     fontWeight: '600',
   },
   optionDescription: {
-    fontSize: 14,
+    fontSize: fontscale(14),
     color: '#666',
     textAlign: 'center',
   },
   button: {
     flex: 1,
-    marginVertical:  isLandscape ? 0 : 12,
+    marginVertical:  isLandscape ? 1 : 12,
     marginHorizontal: 4,
     backgroundColor: '#007AFF',
     borderRadius: 8,
@@ -82,7 +88,7 @@ export const createStyles = (isLandscape , dimensions) => {
   },
   buttonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: fontscale(16),
     fontWeight: '600',
   },
 });

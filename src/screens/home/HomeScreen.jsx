@@ -12,6 +12,7 @@ import {Tv, Users, Plus} from 'lucide-react-native';
 
 const HomeScreen = ({navigation}) => {
   const {isLandscape, dimensions} = useOrientation();
+  console.log('HomeScreen: rendering');
   const styles = createStyles(isLandscape, dimensions);
   const [selectedScreen, setSelectedScreen] = useState(null);
   const [selectedClinicId, setSelectedClinicId] = useState(null);
@@ -33,6 +34,8 @@ const HomeScreen = ({navigation}) => {
   }, [rawClinicData]);
 
   useEffect(() => {
+    setSelectedScreen(null);
+    setSelectedClinicId(null);
     navigation.setOptions({
       headerBackTitle: '',
       headerLeft: () => null,
