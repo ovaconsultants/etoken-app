@@ -116,8 +116,6 @@ export const showToast = (message, options = {}) => {
     visibilityTime: duration,
     autoHide: true,
     topOffset: 50,
-    bottomOffset: 40,
-    // zIndex: 100000,
     onHide: () => {
       onHide?.();
       if (navigation && navigateTo) {

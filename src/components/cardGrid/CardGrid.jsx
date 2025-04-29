@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   landscapeCardWrapper: {
-    width: '48%',
+    width: '49.1%',
   },
   emptyContainer: {
     flex: 1,

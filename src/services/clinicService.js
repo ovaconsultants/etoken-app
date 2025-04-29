@@ -1,4 +1,4 @@
-import { postData } from './apiService';
+import { postData, fetchData } from './apiService';
 import { API_ENDPOINTS } from '../constants/endPoints/apiRoutes';
 
 // Adding a new clinic
@@ -12,3 +12,14 @@ export const AddClinicRequest = async (dataObject) => {
     throw error;
   }
 };
+
+export const FetchAllClinicRequestForDoctor = async (doctor_id) => {
+  try {
+    const route = API_ENDPOINTS.DOCTOR.FETCH_ALL_CLINICS_OF_A_DOCTOR;
+    const data = await fetchData(route, { doctor_id });
+    return data.clinics ;
+  } catch (error) {
+    console.error('Failed to get clinics:', error);
+    throw error;
+  }
+} 

@@ -1,11 +1,11 @@
 import * as Yup from 'yup';
 
-export const ClinicValidationSchema = Yup.object().shape({
-  clinic_name: Yup.string().trim().required().min(3).max(50),
-  address: Yup.string().trim().required().min(5).max(100),
-  city: Yup.string().trim().required().min(2).max(50),
-  state: Yup.string().trim().required().min(2).max(50),
-  zip_code: Yup.string().trim().required().matches(/^\d{5}(-\d{4})?$/),
+const ClinicValidationSchema = Yup.object().shape({
+  clinic_name: Yup.string().trim().required('Required').min(3).max(50),
+  address: Yup.string().trim().required('Required').min(5).max(100),
+  city: Yup.string().trim().required('Required').min(2).max(50),
+  state: Yup.string().trim().required('Required').min(2).max(50),
+  zip_code: Yup.string().trim().required('Required').matches(/^\d{6}$/, 'Must be 6 digits')
 });
 
 

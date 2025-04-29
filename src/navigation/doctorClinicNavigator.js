@@ -4,6 +4,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import DoctorAddClinicScreen from '../screens/clinic/DoctorAddClinicScreen';
 import DoctorClinicScheduleScreen from '../screens/schedule/DoctorClinicScheduleScreen';
 import CaptureProfilePhotoScreen from '../screens/profilePicture/CaptureProfilePhotoScreen';
+import DoctorEditorScreen from '../screens/doctorEditor/DoctorEditorScreen';
 import {HeaderBackButton} from '@react-navigation/elements';
 
 const Stack = createNativeStackNavigator();
@@ -19,7 +20,7 @@ const DoctorClinicNavigator = () => {
           <HeaderBackButton
             {...props}
             labelVisible={false}
-            label="Back"
+            label=""
             onPress={() => navigation.goBack()}
           />
         ),
@@ -27,17 +28,22 @@ const DoctorClinicNavigator = () => {
       <Stack.Screen
         name="AddProfilePicture"
         component={CaptureProfilePhotoScreen}
-        options={{title: 'Take a picture'}}
+        options={{title: 'Profile Picture'}}
       />
       <Stack.Screen
         name="DoctorAddClinic"
         component={DoctorAddClinicScreen}
-        options={{title: 'Add Clinic'}}
+        options={{title: 'Clinics'}}
       />
       <Stack.Screen
         name="DoctorClinicSchedule"
         component={DoctorClinicScheduleScreen}
-        options={{title: 'Add Clinic Schedule'}}
+        options={{title: 'Clinic Schedule'}}
+      />
+      <Stack.Screen
+        name="DoctorEditor"
+        component={DoctorEditorScreen}
+        options={{title: 'Edit Profile'}}
       />
     </Stack.Navigator>
   );

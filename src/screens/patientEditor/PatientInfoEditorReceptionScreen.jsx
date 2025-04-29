@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import {
   View,
   Text,
@@ -45,7 +45,7 @@ export const PatientInfoEditorScreen = ({route, navigation}) => {
       title: `Edit Token No ${patientInfo.token_no} `,
     });
   }, [navigation, patientInfo.token_no]);
-  
+
   // Initial form values
   const initialValues = {
     patient: {
@@ -196,7 +196,6 @@ export const PatientInfoEditorScreen = ({route, navigation}) => {
 
           {/* Medical Information Section */}
           <View style={styles.section}>
-
             <View style={styles.inputContainer}>
               <Text style={styles.label}>On Hold Status:</Text>
               <View
@@ -240,32 +239,42 @@ export const PatientInfoEditorScreen = ({route, navigation}) => {
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Payment Status:</Text>
               <Switch
-      value={values.token.fee_status === 'Paid'}
-      onValueChange={(value) => {
-        Alert.alert(
-          'Change Payment Status',
-          `Are you sure you want to change payment status to ${value ? 'Paid' : 'Not Paid'}?`,
-          [
-            {
-              text: 'Cancel',
-              style: 'cancel',
-              onPress: () => {
-                // Revert the switch visually if cancelled
-                setFieldValue('token.fee_status', values.token.fee_status);
-              },
-            },
-            {
-              text: 'Confirm',
-              onPress: () => {
-                setFieldValue('token.fee_status', value ? 'Paid' : 'Not Paid');
-              },
-            },
-          ]
-        );
-      }}
-      trackColor={{false: '#767577', true: '#81b0ff'}}
-      thumbColor={values.token.fee_status === 'Paid' ? '#007BFF' : '#f4f3f4'}
-    />
+                value={values.token.fee_status === 'Paid'}
+                onValueChange={value => {
+                  Alert.alert(
+                    'Change Payment Status',
+                    `Are you sure you want to change payment status to ${
+                      value ? 'Paid' : 'Not Paid'
+                    }?`,
+                    [
+                      {
+                        text: 'Cancel',
+                        style: 'cancel',
+                        onPress: () => {
+                          // Revert the switch visually if cancelled
+                          setFieldValue(
+                            'token.fee_status',
+                            values.token.fee_status,
+                          );
+                        },
+                      },
+                      {
+                        text: 'Confirm',
+                        onPress: () => {
+                          setFieldValue(
+                            'token.fee_status',
+                            value ? 'Paid' : 'Not Paid',
+                          );
+                        },
+                      },
+                    ],
+                  );
+                }}
+                trackColor={{false: '#767577', true: '#81b0ff'}}
+                thumbColor={
+                  values.token.fee_status === 'Paid' ? '#007BFF' : '#f4f3f4'
+                }
+              />
               <Text style={styles.toggleText}>
                 {values.token.fee_status === 'Paid' ? 'Paid' : 'Not Paid'}
               </Text>

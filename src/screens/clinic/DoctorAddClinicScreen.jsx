@@ -1,156 +1,131 @@
-import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  ScrollView,
-  Alert,
-  ActivityIndicator,
-  Button,
-  TouchableOpacity,
-} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, TextInput, ScrollView, Alert, ActivityIndicator, Button, TouchableOpacity, FlatList, StyleSheet, Dimensions} from 'react-native';
 import {Formik} from 'formik';
-import {RefreshCw} from 'lucide-react-native';
-import {ClinicValidationSchema} from '../../utils/formFields/validationSchemas/clinicSchemas';
+import {RefreshCw, Plus} from 'lucide-react-native';
 import ErrorMessage from '../../components/errorMessage/ErrorMessage';
-import {AddClinicRequest} from '../../services/clinicService';
-import styles from './DoctorAddClinicScreen.styles';
+import {AddClinicRequest, FetchAllClinicRequestForDoctor} from '../../services/clinicService';
+import { ClinicValidationSchema } from '../../utils/formFields/validationSchemas/clinicSchemas';
+import { styles } from './DoctorAddClinicScreen.styles';
+
+
 
 const DoctorAddClinicScreen = ({navigation, route}) => {
-  console.log('Route Params:', route.params);
   const {doctor_id} = route?.params;
-  const [submitted, setSubmitted] = useState(false);
+  const [clinics, setClinics] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
 
-  const handleSubmit = async (
-    values,
-    {resetForm, setSubmitting, setErrors},
-  ) => {
-    const appendedValues = {
-      ...values,
-      doctor_id: doctor_id,
-      created_by: 'admin',
+  useEffect(() => {
+    const fetchClinics = async () => {
+      try {
+        setLoading(true);
+        const fetchedClinics = await FetchAllClinicRequestForDoctor(doctor_id);
+        setClinics(fetchedClinics);
+      } catch (error) {
+        Alert.alert('Error', 'Failed to fetch clinics');
+      } finally {
+        setLoading(false);
+      }
     };
+    fetchClinics();
+  }, [doctor_id, showForm]);
+
+  const handleSubmit = async (values, {resetForm, setSubmitting}) => {
     try {
-      const data = await AddClinicRequest(appendedValues);
+      const data = await AddClinicRequest({...values, doctor_id, created_by: 'admin'});
       if (data.success) {
         Alert.alert('Success', data.message);
         resetForm();
-        setSubmitted(true);
-      } else {
-        setErrors({general: data.error || 'Failed to create clinic'});
+        setShowForm(false);
       }
     } catch (err) {
-      setErrors({general: 'Network error. Please try again.'});
+      Alert.alert('Error', 'Failed to create clinic');
     } finally {
       setSubmitting(false);
     }
   };
 
+  if (loading) {return <ActivityIndicator size="large" style={styles.container} />;}
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Formik
-        initialValues={{
-          clinic_name: '',
-          address: '',
-          city: '',
-          state: '',
-          zip_code: '',
-        }}
-        validationSchema={ClinicValidationSchema}
-        onSubmit={handleSubmit}>
-        {({
-          handleChange,
-          handleBlur,
-          handleSubmit: formikSubmit,
-          values,
-          errors,
-          touched,
-          isSubmitting,
-          resetForm,
-        }) => (
-          <>
-            {submitted ? (
-              <View style={styles.successContainer}>
-                <Text style={styles.successText}>
-                  Clinic added successfully!
-                </Text>
-                <Button
-                  title="Add Another Clinic"
-                  onPress={() => {
-                    resetForm();
-                    setSubmitted(false);
-                  }}
-                />
+      {!showForm ? (
+        <>
+          <View style={styles.header}>
+            <Text style={styles.title}>Your Clinics</Text>
+            <TouchableOpacity style={styles.addButton} onPress={() => setShowForm(true)}>
+              <Plus size={24} color="white" />
+              <Text style={styles.addButtonText}>Add Clinic</Text>
+            </TouchableOpacity>
+          </View>
+
+          {clinics.length > 0 ? (
+            <FlatList
+              data={clinics}
+              renderItem={({item}) => (
+                <View style={styles.clinicCard}>
+                  <Text style={styles.clinicName}>{item.clinic_name}</Text>
+                  <Text style={styles.clinicAddress}>{item.address}</Text>
+                  <Text style={styles.clinicCityState}>{item.city}, {item.state} {item.zip_code}</Text>
+                </View>
+              )}
+              keyExtractor={item => item.clinic_id.toString()}
+              numColumns={Dimensions.get('window').width > 600 ? 2 : 1}
+              contentContainerStyle={styles.listContainer}
+              scrollEnabled={false}
+            />
+          ) : (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>No clinics found</Text>
+              <Button title="Add Your First Clinic" onPress={() => setShowForm(true)} />
+            </View>
+          )}
+        </>
+      ) : (
+        <Formik
+          initialValues={{clinic_name: '', address: '', city: '', state: '', zip_code: ''}}
+          validationSchema={ClinicValidationSchema}
+          validateOnChange={true}
+          validateOnBlur={true}
+          onSubmit={handleSubmit}
+        >
+          {({handleChange, handleBlur, handleSubmit: formikHandleSubmit, values, errors, touched, isSubmitting, resetForm}) => (
+            <>
+              <View style={styles.formHeader}>
+                <Text style={styles.title}>Add New Clinic</Text>
+                <Button title="Cancel" onPress={() => setShowForm(false)} />
               </View>
-            ) : (
-              <>
-                {Object.keys(values).map(key => (
-                  <View key={key} style={styles.inputContainer}>
-                    <Text style={styles.label}>
-                      {key.replace(/_/g, ' ').toUpperCase()}
-                    </Text>
-                    <TextInput
-                      style={styles.input}
-                      value={values[key]}
-                      onChangeText={handleChange(key)}
-                      onBlur={handleBlur(key)}
-                      placeholder={`Enter ${key.replace(/_/g, ' ')}`}
-                      keyboardType={key === 'zip_code' ? 'numeric' : 'default'}
-                      editable={!isSubmitting}
-                    />
+
+              {['clinic_name', 'address', 'city', 'state', 'zip_code'].map(key => (
+                <View key={key} style={styles.inputWrapper}>
+                  <TextInput
+                    style={styles.input}
+                    value={values[key]}
+                    onChangeText={handleChange(key)}
+                    onBlur={handleBlur(key)}
+                    placeholder={`Enter ${key.replace(/_/g, ' ')}`}
+                    keyboardType={key === 'zip_code' ? 'numeric' : 'default'}
+                  />
+                  <View style={styles.errorBox}>
                     <ErrorMessage error={errors[key]} visible={touched[key]} />
                   </View>
-                ))}
-
-                <ErrorMessage
-                  error={errors.general}
-                  visible={!!errors.general}
-                />
-
-                <View style={styles.buttonContainer}>
-                  {isSubmitting ? (
-                    <ActivityIndicator size="large" color="#007AFF" />
-                  ) : (
-                    <>
-                      <TouchableOpacity
-                        onPress={() => {
-                          resetForm();
-                          setSubmitted(false);
-                        }}
-                        style={styles.refreshButton}
-                        disabled={isSubmitting}>
-                        <RefreshCw
-                          size={24}
-                          color={isSubmitting ? '#ccc' : '#007AFF'}
-                        />
-                      </TouchableOpacity>
-                      <Button
-                        title="Submit"
-                        onPress={formikSubmit}
-                        disabled={isSubmitting}
-                      />
-                    </>
-                  )}
                 </View>
-              </>
-            )}
-          </>
-        )}
-      </Formik>
+              ))}
 
-      <View style={styles.footer}>
-        <Button
-          title="Skip"
-          onPress={() =>
-            navigation.navigate('AppNavigator', {
-              screen: 'AuthNavigator',
-              params: {screen: 'SignIn'},
-            })
-          }
-        />
-      </View>
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity onPress={() => resetForm()} style={styles.refreshButton}>
+                  <RefreshCw size={24} color="#007AFF" />
+                </TouchableOpacity>
+                <Button title="Submit" onPress={formikHandleSubmit} disabled={isSubmitting} />
+              </View>
+            </>
+          )}
+        </Formik>
+      )}
     </ScrollView>
   );
 };
+
+
 
 export default DoctorAddClinicScreen;

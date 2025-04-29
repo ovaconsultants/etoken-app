@@ -5,24 +5,26 @@ export const createStyles = (isLandscape) =>  StyleSheet.create({
     backgroundColor: '#fff',
   },
   container: {
-    padding : '1%',
+    padding : '2%',
     flex: 1,
+    gap : isLandscape ? 0 : '4%',
   },
   contentContainer: {
     flex: 1,
+    gap: isLandscape ? '5%' : '4%',
   },
   searchBarContainer: {
-    marginVertical: isLandscape ? 5 : 15,
+    marginVertical: isLandscape ? 0 : 15,
+
   },
   formContainer: {
-    marginVertical: isLandscape ? 5 : 0,
     flexDirection : 'column',
     flex: 1,
     justifyContent: 'flex-start',
   },
 
   inputContainer: {
-    marginBottom: isLandscape ? 7 : 10,
+    marginBottom: isLandscape ? 7 : 15,
   },
   input: {
     height: isLandscape ?  30 : 50,
@@ -42,24 +44,26 @@ export const createStyles = (isLandscape) =>  StyleSheet.create({
     marginTop: 5,
   },
   buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flex: isLandscape ? 0.6 : 0.4,
+    flexDirection: isLandscape ? 'row' : 'column',
+    gap :  isLandscape ? '2%' :   '10%',
+    justifyContent: 'center',
+    marginTop : isLandscape ? 0 : 5,
 
   },
   clearButton: {
     backgroundColor: '#f0f0f0',
     paddingHorizontal: 15,
-    paddingVertical: isLandscape ? 10 : 15,
+  justifyContent: 'center',
+  alignItems: 'center',
     borderRadius: 8,
-    alignItems: 'center',
     flex: 1,
-    marginRight: 10,
   },
   submitButton: {
     backgroundColor: '#007AFF',
     paddingHorizontal: 15,
-    paddingVertical: isLandscape ? 10 : 15,
     borderRadius: 8,
+    justifyContent: 'center',
     alignItems: 'center',
     flex: 1,
   },

@@ -28,8 +28,8 @@ import {
   showToast,
   ToastMessage,
 } from '../../components/toastMessage/ToastMessage';
-import { useOrientation } from '../../hooks/useOrientation';
-import { createStyles } from './ReceptionScreen.styles';
+import {useOrientation} from '../../hooks/useOrientation';
+import {createStyles} from './ReceptionScreen.styles';
 const formFields = [
   {
     name: 'patient_name',
@@ -60,7 +60,7 @@ export const ReceptionScreen = ({
     params: {doctor_id, clinic_id},
   },
 }) => {
-  const { isLandscape } = useOrientation();
+  const {isLandscape} = useOrientation();
   const styles = useMemo(() => createStyles(isLandscape), [isLandscape]);
   const navigation = useNavigation();
   const queryClient = useQueryClient();
@@ -82,14 +82,8 @@ export const ReceptionScreen = ({
   const handleSubmit = async (values, {resetForm}) => {
     try {
       setSubmitAttempted(true);
-      const existingPatient = patients.find(
-        p =>
-          p.mobile_number === values.mobile_number.trim() ||
-          p.email === values.email.trim().toLowerCase(),
-      );
-
       const patientIdToUse =
-        existingPatient?.patient_id ||
+        values?.patient_id ||
         (await InsertPatientRequest({
           ...Object.fromEntries(
             Object.entries(values).map(([k, v]) => [
@@ -109,7 +103,7 @@ export const ReceptionScreen = ({
       resetForm();
       setSubmitAttempted(false);
       queryClient.invalidateQueries(['fetchingPatients']);
-      showToast('Token Generated successfully!');
+      showToast('Token generated successfully', 'success');
       const token_no = await GenerateTokenRequest({
         patient_id: patientIdToUse,
         doctor_id,
@@ -130,8 +124,7 @@ export const ReceptionScreen = ({
     <SafeAreaView style={styles.safeArea}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={styles.container}>
-          <LoadingErrorHandler {...{isLoading, isError, error}} />
-          <ToastMessage />
+          <LoadingErrorHandler {...{isLoading, isError, error ,isLandscape}} />
 
           {!isLoading && !isError && (
             <View style={styles.contentContainer}>
@@ -148,7 +141,7 @@ export const ReceptionScreen = ({
                       ),
                     })
                   }
-                  placeholder="Search by Patient, Mobile, or Email"
+                  placeholder="Search by Patient Name, Mobile, or Email"
                 />
               </View>
 
@@ -209,24 +202,12 @@ export const ReceptionScreen = ({
                               keyboardType={field.keyboardType}
                               autoCapitalize={field.autoCapitalize || 'none'}
                               maxLength={field.maxLength}
-                            />  
+                            />
                           </View>
                         ))}
                       </View>
 
                       <View style={styles.buttonContainer}>
-                        <TouchableOpacity
-                          style={styles.clearButton}
-                          onPress={() => {
-                            resetForm();
-                            formFields.forEach(field => {
-                              setFieldTouched(field.name, false);
-                            });
-                            setSubmitAttempted(false);
-                          }}>
-                          <Text style={styles.clearButtonText}>Clear</Text>
-                        </TouchableOpacity>
-
                         <TouchableOpacity
                           style={[
                             styles.submitButton,
@@ -243,6 +224,17 @@ export const ReceptionScreen = ({
                           }}
                           disabled={isFormIncomplete}>
                           <Text style={styles.buttonText}>GO</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={styles.clearButton}
+                          onPress={() => {
+                            resetForm();
+                            formFields.forEach(field => {
+                              setFieldTouched(field.name, false);
+                            });
+                            setSubmitAttempted(false);
+                          }}>
+                          <Text style={styles.clearButtonText}>Clear</Text>
                         </TouchableOpacity>
                       </View>
                     </View>
@@ -275,6 +267,7 @@ export const ReceptionScreen = ({
           </View>
         </View>
       </TouchableWithoutFeedback>
+      <ToastMessage />
     </SafeAreaView>
   );
 };

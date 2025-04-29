@@ -56,7 +56,7 @@ const useStyles = () => {
 
   return StyleSheet.create({
     card: {
-      backgroundColor: 'rgba(217, 223, 249, 0.9)',
+      backgroundColor: 'rgba(236, 238, 255, 0.7)',
       borderRadius: 6,
       justifyContent: 'center',
       alignItems: 'center',

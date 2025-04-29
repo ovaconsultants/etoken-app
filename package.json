@@ -8,11 +8,12 @@
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
-    "start:android": "react-native start & react-native run-android"
+    "start:android": "react-native start && react-native run-android"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^2.1.1",
     "@react-native-community/datetimepicker": "^8.3.0",
+    "@react-native-community/netinfo": "^11.4.1",
     "@react-native-picker/picker": "^2.11.0",
     "@react-navigation/drawer": "^7.3.6",
     "@react-navigation/native": "^7.0.14",

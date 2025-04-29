@@ -110,7 +110,7 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
         showToast('Failed to update token', 'error');
       }
     },
-    [refetchTokens], // Make sure refetchTokens is stable
+    [refetchTokens],
   );
 
   // Side effects
@@ -121,7 +121,7 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
   }, [patientTokens, patientTokens.length]);
 
   if (isError) {
-    return <LoadingErrorHandler isError={true} error={error} />;
+    return <LoadingErrorHandler isError={true} error={error} isLandscape={isLandscape}/>;
   }
 
   if (patientTokens.length === 0) {
@@ -255,11 +255,10 @@ const TokenCard = React.memo(
     const [isPaid, setIsPaid] = useState(token.fee_status === 'Paid');
     const memoizedTranslate = useCallback(
       name => {
-        return translateNameToHindi(name) || null ;
+        return translateNameToHindi(name) || null;
       },
       [translateNameToHindi],
-    ); // Empty dependency array makes it stable
-
+    );
     useEffect(() => {
       if (token.patient_name && !hindiName) {
         memoizedTranslate(token.patient_name)

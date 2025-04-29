@@ -15,15 +15,17 @@ import {
 import {useAtomValue} from 'jotai';
 import {useProfileURI} from '../../hooks/useProfileURI';
 import {RotateCcw} from 'lucide-react-native';
-import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
 import { showToast } from '../../components/toastMessage/ToastMessage';
+import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
 
-const TokenManagementScreen = ({route}) => {
+
+const TokenManagementScreen = ({doctor_id, clinic_id}) => {
+  // console.log('TokenManagementScreen route perameter ', route.params);
   const profileUri = useProfileURI();
   const clinicData = useAtomValue(doctorClinicDetailsAtom);
   const doctorData = useAtomValue(doctorInfoAtom);
   const [isRefreshReloading, setIsRefreshReloading] = useState(false);
-  const {doctor_id, clinic_id} = route.params;
+
   const {
     data: tokens = [],
     isLoading,
@@ -64,12 +66,12 @@ const TokenManagementScreen = ({route}) => {
 
   // Show loading state during initial load or refresh
   if (isLoading || isRefreshReloading) {
-    return <LoadingErrorHandler isLoading={true} />;
+    return <LoadingErrorHandler isLoading={true} isLandscape={true}/>;
   }
 
   if (isError) {
     showToast('Error loading tokens', 'error');
-    return <LoadingErrorHandler isError={true} error={error} />;
+    return <LoadingErrorHandler isError={true} error={error} isLandscape={true}/>;
   }
 
   if (!tokens || tokens.length === 0) {

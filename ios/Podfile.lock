@@ -1249,6 +1249,8 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - react-native-netinfo (11.4.1):
+    - React-Core
   - react-native-orientation-locker (1.7.0):
     - React-Core
   - react-native-safe-area-context (5.3.0):
@@ -2021,6 +2023,7 @@ DEPENDENCIES:
   - React-microtasksnativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
   - react-native-config (from `../node_modules/react-native-config`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
+  - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-orientation-locker (from `../node_modules/react-native-orientation-locker`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-video (from `../node_modules/react-native-video`)
@@ -2152,6 +2155,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-config"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
+  react-native-netinfo:
+    :path: "../node_modules/@react-native-community/netinfo"
   react-native-orientation-locker:
     :path: "../node_modules/react-native-orientation-locker"
   react-native-safe-area-context:
@@ -2280,6 +2285,7 @@ SPEC CHECKSUMS:
   React-microtasksnativemodule: 19230cd0933df6f6dc1336c9a9edc382d62638ae
   react-native-config: 3367df9c1f25bb96197007ec531c7087ed4554c3
   react-native-image-picker: 0452fc9efc21101946746663bf34e0db5741f00c
+  react-native-netinfo: f0a9899081c185db1de5bb2fdc1c88c202a059ac
   react-native-orientation-locker: 5819fd23ca89cbac0d736fb4314745f62716d517
   react-native-safe-area-context: 286b3e7b5589795bb85ffc38faf4c0706c48a092
   react-native-video: 7509d1077cf69ebbdd177e2bc26456b14a826868

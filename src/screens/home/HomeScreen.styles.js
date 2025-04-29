@@ -5,7 +5,7 @@ export const createStyles = (isLandscape , dimensions) => {
   container: {
     flex: 1,
     margin : 10,
-    backgroundColor :' rgb(240, 240, 246)',
+    backgroundColor :' rgb(251, 251, 251)',
   },
 
   selectionContainer: {
@@ -35,7 +35,7 @@ export const createStyles = (isLandscape , dimensions) => {
     padding: 6,
     justifyContent: 'center',
     borderRadius: 6,
-    backgroundColor : 'rgba(217, 223, 249, 0.9)',
+    backgroundColor : 'rgba(236, 238, 255, 0.7)',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#E0E0E0',
