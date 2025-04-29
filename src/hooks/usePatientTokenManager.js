@@ -7,7 +7,6 @@ export const usePatientTokenManager = (clinic_id, doctor_id) => {
   const [selectedTokenId, setSelectedTokenId] = useState(null);
   const [isNextDone, setIsNextDone] = useState(false);
   const [pauseQuery, setPauseQuery] = useState(false);
-
   const selectedTokenRef = useRef(null);
   const {
     data: tokens = [],
@@ -34,8 +33,6 @@ export const usePatientTokenManager = (clinic_id, doctor_id) => {
 
   const handleNext = async () => {
     const currentTokenId = selectedTokenRef.current;
-    console.log('handleNext', currentTokenId);
-
     if (currentTokenId) {
       setPauseQuery(true);
 
@@ -65,10 +62,8 @@ export const usePatientTokenManager = (clinic_id, doctor_id) => {
     const currentTokenId = selectedTokenRef.current; // Use ref value
     if (currentTokenId) {
       setPauseQuery(true);
-
       try {
         await updateTokenStatus(currentTokenId, 'Completed');
-
         setPatientTokens(prevTokens =>
           prevTokens.filter(token => token.token_id !== currentTokenId),
         );
