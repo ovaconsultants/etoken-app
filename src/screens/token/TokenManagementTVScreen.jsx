@@ -15,24 +15,17 @@ import {
 import {useAtomValue} from 'jotai';
 import {useProfileURI} from '../../hooks/useProfileURI';
 import {RotateCcw} from 'lucide-react-native';
-import { showToast } from '../../components/toastMessage/ToastMessage';
+import {showToast} from '../../components/toastMessage/ToastMessage';
 import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
 
-
-const TokenManagementScreen = ({doctor_id, clinic_id}) => {
-  // console.log('TokenManagementScreen route perameter ', route.params);
+const TokenManagementTVScreen = ({route}) => {
+  const { doctor_id = null, clinic_id = null } = route.params ?? {};
   const profileUri = useProfileURI();
   const clinicData = useAtomValue(doctorClinicDetailsAtom);
   const doctorData = useAtomValue(doctorInfoAtom);
   const [isRefreshReloading, setIsRefreshReloading] = useState(false);
-
-  const {
-    data: tokens = [],
-    isLoading,
-    isError,
-    error,
-    refetch,
-  } = usePatientTokens(doctor_id, clinic_id);
+  const { data: tokens = [], isLoading, isError,error,refetch} = usePatientTokens(doctor_id, clinic_id);
+  console.log('Patient token in TV screen', tokens);
   const currentClinicData = clinicData.find(
     clinic => clinic.clinic_id === clinic_id,
   );
@@ -66,12 +59,14 @@ const TokenManagementScreen = ({doctor_id, clinic_id}) => {
 
   // Show loading state during initial load or refresh
   if (isLoading || isRefreshReloading) {
-    return <LoadingErrorHandler isLoading={true} isLandscape={true}/>;
+    return <LoadingErrorHandler isLoading={true} isLandscape={true} />;
   }
 
   if (isError) {
     showToast('Error loading tokens', 'error');
-    return <LoadingErrorHandler isError={true} error={error} isLandscape={true}/>;
+    return (
+      <LoadingErrorHandler isError={true} error={error} isLandscape={true} />
+    );
   }
 
   if (!tokens || tokens.length === 0) {
@@ -83,9 +78,7 @@ const TokenManagementScreen = ({doctor_id, clinic_id}) => {
       <View style={styles.headerContainer}>
         <View style={styles.doctorSection}>
           <View style={styles.profileCircle}>
-            <ProfileImageRenderer
-              imageUrl={profileUri}
-            />
+            <ProfileImageRenderer imageUrl={profileUri} />
           </View>
           <View style={styles.doctorInfo}>
             <Text style={styles.doctorName}>Dr. {doctorData.doctor_name}</Text>
@@ -120,4 +113,4 @@ const TokenManagementScreen = ({doctor_id, clinic_id}) => {
   );
 };
 
-export default withQueryClientProvider(TokenManagementScreen);
+export default withQueryClientProvider(TokenManagementTVScreen);

@@ -55,13 +55,11 @@ const formFields = [
   },
 ];
 
-export const ReceptionScreen = ({
-  route: {
-    params: {doctor_id, clinic_id},
-  },
-}) => {
-  const {isLandscape} = useOrientation();
-  const styles = useMemo(() => createStyles(isLandscape), [isLandscape]);
+
+export const ReceptionScreen = ({route}) => {
+  const { doctor_id = null, clinic_id = null } = route.params ?? {};
+  const {isLandscape , dimensions} = useOrientation();
+  const styles = useMemo(() => createStyles(isLandscape ,dimensions), [dimensions, isLandscape]);
   const navigation = useNavigation();
   const queryClient = useQueryClient();
   const [patients, setPatients] = useAtom(patientsAtom);

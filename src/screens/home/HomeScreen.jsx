@@ -12,8 +12,7 @@ import {Tv, Users, Plus} from 'lucide-react-native';
 
 const HomeScreen = ({navigation}) => {
   const {isLandscape, dimensions} = useOrientation();
-  console.log('HomeScreen: rendering');
-  const styles = createStyles(isLandscape, dimensions);
+  const styles = useMemo(() => createStyles(isLandscape , dimensions),[dimensions, isLandscape]);
   const [selectedScreen, setSelectedScreen] = useState(null);
   const [selectedClinicId, setSelectedClinicId] = useState(null);
   const doctorId = useAtomValue(doctorIdAtom);
