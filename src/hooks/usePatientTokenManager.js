@@ -30,7 +30,6 @@ export const usePatientTokenManager = (clinic_id, doctor_id) => {
   const handleSelectToken = tokenId => {
     setSelectedTokenId(tokenId);
     selectedTokenRef.current = tokenId;
-    const selectedToken = patientTokens.find(t => t.token_id === tokenId);
   };
 
   const handleNext = async () => {
@@ -123,6 +122,6 @@ export const usePatientTokenManager = (clinic_id, doctor_id) => {
     refetchTokens,
     isFetching,
     error,
-    isError
+    isError,
   };
 };

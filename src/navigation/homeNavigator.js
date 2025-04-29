@@ -3,12 +3,12 @@ import {View, Platform, TouchableOpacity} from 'react-native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import DrawerLeftNavigationButton from '../components/drawerNavigation/drawerNavigation';
 import HomeScreen from '../screens/home/HomeScreen';
-import TokenManagementScreen from '../screens/token/TokenManagementTVScreen';
+import TokenManagementTVScreen from '../screens/token/TokenManagementTVScreen';
 import DefaultTVScreen from '../screens/television/DefaultTVScreen';
 import ReceptionScreen from '../screens/reception/ReceptionScreen';
 import TokenSuccessScreen from '../screens/tokenDisplay/TokenSuccessScreen';
 import PatientTokenQueueScreen from '../screens/patient/PatientTokenQueueScreen';
-import {PatientInfoEditorScreen} from '../screens/patientEditor/PatientInfoEditorReceptionScreen';
+import { PatientInfoEditorScreen } from '../screens/patientEditor/PatientInfoEditorReceptionScreen';
 import DefaultReceptionScreen from '../screens/noTokenReceptionState/DefaultReceptionScreen';
 import {Home} from 'lucide-react-native';
 
@@ -27,6 +27,7 @@ export const HeaderRightProfile = React.memo(() => (
 ));
 
 const HomeNavigator = () => {
+  console.log('HomeNavigator');
   return (
     <Stack.Navigator
       initialRouteName="Home"
@@ -87,7 +88,7 @@ const HomeNavigator = () => {
 
       <Stack.Screen
         name="TokenManagement"
-        component={TokenManagementScreen}
+        component={TokenManagementTVScreen}
         options={{title: 'Patients'}}
       />
 
