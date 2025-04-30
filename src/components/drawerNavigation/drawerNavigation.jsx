@@ -8,12 +8,11 @@ import { Menu } from 'lucide-react-native';
 import {useNavigation} from '@react-navigation/native';
 
 const DrawerLeftNavigationButton = () => {
-  const navigation = useNavigation(); 
+  const navigation = useNavigation();
   return (
     <View style={styles.container}>
       <TouchableOpacity
         onPress={() => {
-          console.log('pressed');
           navigation.toggleDrawer();
         }}>
         <View>

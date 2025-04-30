@@ -25,7 +25,7 @@ const Card = ({title, description, isSelected, onPress, state, cardWidth}) => {
 
   const borderColor = borderAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: ['rgba(255,255,255,0)', '#6200ee'],
+    outputRange: ['rgba(255,255,255,0)', '#007AFF'],
   });
 
   return (

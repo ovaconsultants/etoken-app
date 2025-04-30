@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, ActivityIndicator, TouchableOpacity} from 'react-native';
-import {styles} from './TokenManagementTVScreen.styles';
+import {styles} from './TokenListingTVScreen.styles';
 import Orientation from 'react-native-orientation-locker';
 import {usePatientTokens} from '../../hooks/usePatientTokens';
 import InProgressTokenNotificationScreen from '../notification/InProgressTokenNotificationScreen';
@@ -18,13 +18,19 @@ import {RotateCcw} from 'lucide-react-native';
 import {showToast} from '../../components/toastMessage/ToastMessage';
 import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
 
-const TokenManagementTVScreen = ({route}) => {
-  const { doctor_id = null, clinic_id = null } = route.params ?? {};
+const TokenListingTVScreen = ({route}) => {
+  const {doctor_id = null, clinic_id = null} = route.params ?? {};
   const profileUri = useProfileURI();
   const clinicData = useAtomValue(doctorClinicDetailsAtom);
   const doctorData = useAtomValue(doctorInfoAtom);
   const [isRefreshReloading, setIsRefreshReloading] = useState(false);
-  const { data: tokens = [], isLoading, isError,error,refetch} = usePatientTokens(doctor_id, clinic_id);
+  const {
+    data: tokens = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = usePatientTokens(doctor_id, clinic_id);
   console.log('Patient token in TV screen', tokens);
   const currentClinicData = clinicData.find(
     clinic => clinic.clinic_id === clinic_id,
@@ -113,4 +119,4 @@ const TokenManagementTVScreen = ({route}) => {
   );
 };
 
-export default withQueryClientProvider(TokenManagementTVScreen);
+export default withQueryClientProvider(TokenListingTVScreen);

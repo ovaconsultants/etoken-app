@@ -77,7 +77,6 @@ const HomeScreen = ({navigation}) => {
     isNextButtonDisabled,
   ]);
 
-  // Render add clinic button if no clinics available
   if (!cards.length) {
     return (
       <SafeAreaView style={styles.container}>
@@ -113,7 +112,7 @@ const HomeScreen = ({navigation}) => {
                   styles.optionText,
                   selectedScreen === '1' && styles.selectedOptionText,
                 ]}>
-                TV Display
+                Tokens
               </Text>
             </View>
           </TouchableOpacity>

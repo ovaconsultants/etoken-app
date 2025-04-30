@@ -61,9 +61,8 @@ export const createStyles = (isLandscape , dimensions) => {
     fontSize: fontscale(14),
     fontWeight: '500',
     color: '#333',
-    marginTop: 6,
-    marginHorizontal: isLandscape ? 0 : 8,
-    marginBottom: 3,
+    alignSelf: 'center',
+    marginHorizontal: 8,
   },
   selectedOptionText: {
     color: '#007AFF',
