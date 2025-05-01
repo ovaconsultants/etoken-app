@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text} from 'react-native';
+import {View, Text, ScrollView} from 'react-native';
 import {styles} from './TokenListingTVScreen.styles';
 import {TranslateNameToHindi} from '../../services/langTranslationService';
 export const TokenTable = ({tokens}) => {
@@ -82,33 +82,37 @@ export const TokenTable = ({tokens}) => {
       </View>
 
       {/* Table Rows */}
-      {(processedTokens.length > 0 ? processedTokens : tokens).map(token => (
-        <View
-          key={token.token_id}
-          style={[styles.tableRow, getRowStyle(token.status)]}>
-          <View style={[styles.tableCell]}>
-            <Text>{token.patient_name}</Text>
-            {token.hindi_name && (
-              <Text style={styles.hindi}>{token.hindi_name}</Text>
-            )}
+      <ScrollView>
+        {(processedTokens.length > 0 ? processedTokens : tokens).map(token => (
+          <View
+            key={token.token_id}
+            style={[styles.tableRow, getRowStyle(token.status)]}>
+            <View style={[styles.tableCell]}>
+              <Text>{token.patient_name}</Text>
+              {token.hindi_name && (
+                <Text style={styles.hindi}>{token.hindi_name}</Text>
+              )}
+            </View>
+            <Text style={styles.tableCell}>
+              {token.mobile_number?.replace(
+                /(\d{3})(\d{3})(\d{4})/,
+                'xxx-xxx-$3',
+              )}
+            </Text>
+            <Text style={styles.tableCell}>
+              {token.fee_status || 'Not Paid'}
+            </Text>
+            <Text style={styles.tableCell}>
+              {token.emegency === 'Y' ? 'Yes' : 'No'}
+            </Text>
+            <View style={[styles.tableCell, styles.statusCell]}>
+              {getStatusDot(token.status)}
+              <Text>{token.status}</Text>
+            </View>
+            <Text style={styles.tableCell}>{token.token_no}</Text>
           </View>
-          <Text style={styles.tableCell}>
-            {token.mobile_number?.replace(
-              /(\d{3})(\d{3})(\d{4})/,
-              'xxx-xxx-$3',
-            )}
-          </Text>
-          <Text style={styles.tableCell}>{token.fee_status || 'Not Paid'}</Text>
-          <Text style={styles.tableCell}>
-            {token.emegency === 'Y' ? 'Yes' : 'No'}
-          </Text>
-          <View style={[styles.tableCell, styles.statusCell]}>
-            {getStatusDot(token.status)}
-            <Text>{token.status}</Text>
-          </View>
-          <Text style={styles.tableCell}>{token.token_no}</Text>
-        </View>
-      ))}
+        ))}
+      </ScrollView>
     </View>
   );
 };

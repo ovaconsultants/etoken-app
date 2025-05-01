@@ -23,7 +23,7 @@ const CustomDrawerContent = () => {
         }),
     },
     {
-      label: 'Add Clinic',
+      label: 'Clinic',
       icon: <PlusCircle size={20} color="#4A5568" />,
       onPress: () =>
         navigation.navigate('DoctorClinicNavigator', {

@@ -2,6 +2,7 @@ import {Switch, View, TouchableOpacity, Text} from 'react-native';
 import {Dropdown} from 'react-native-element-dropdown';
 import React, {useState, useCallback, useEffect} from 'react';
 import ConfirmationModal from '../../components/confirmationModal/ConfirmationModal';
+import { formatTokenTime , maskPhoneNumber } from '../../utils/globalUtil';
 
 const statusOptions = [
   {label: 'Waiting', value: 'Waiting'},
@@ -109,11 +110,7 @@ export const TokenCard = React.memo(
             </View>
             <View style={styles.tokenNumber}>
               <Text>
-                {new Date(token.created_date).toLocaleTimeString('en-US', {
-                  hour12: true,
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
+              { formatTokenTime(token.created_date)} 
               </Text>
               <Text style={styles.tokenNumberText}>{token.token_no}</Text>
             </View>
@@ -121,10 +118,7 @@ export const TokenCard = React.memo(
 
           <View style={styles.tokenDetails}>
             <Text style={styles.detailText}>
-              {token.mobile_number?.replace(
-                /(\d{3})(\d{3})(\d{4})/,
-                'xxx-xxx-$3',
-              )}
+              { maskPhoneNumber(token.mobile_number)}
             </Text>
 
             {/* Payment Switch */}

@@ -89,7 +89,7 @@ const HomeNavigator = () => {
       <Stack.Screen
         name="TokenManagement"
         component={TokenListingTVScreen}
-        options={{title: 'Patients Listing'}}
+        options={{title: 'Patients Queue'}}
       />
 
       <Stack.Screen
