@@ -12,7 +12,7 @@ export const styles = StyleSheet.create({
     alignItems: 'space-evenly',
   },
   card: {
-    width: wp('40%'),
+    width: wp('30%'),
     borderRadius: wp('3%'), // Responsive border radius
     elevation: 4,
     shadowColor: '#000',
@@ -23,14 +23,14 @@ export const styles = StyleSheet.create({
     backgroundColor : 'rgba(217, 223, 249, 0.9)'
   },
   tableCell: {
-    fontSize: wp('5%'),
+    fontSize: wp('3%'),
     fontFamily: 'Roboto',
     textAlign: 'center',
     fontWeight: 'bold',
     color: '#333',
   },
   noTokenText: {
-    fontSize: wp('5%'), // Responsive font size
+    fontSize: wp('3%'), // Responsive font size
     textAlign: 'center',
     marginBottom: hp('2%'), // Responsive margin bottom
     color: '#555',

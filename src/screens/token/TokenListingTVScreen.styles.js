@@ -1,13 +1,13 @@
 import {StyleSheet} from 'react-native';
+import { Dimensions } from 'react-native';
 
-
+const { width } = Dimensions.get('window');
+const marginWidth = width * 0.04; 
 export const styles = StyleSheet.create({
   fullScreenContainer: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    margin: 10,
+    margin: marginWidth,
   },
 
   /** HEADER SECTION **/
@@ -56,9 +56,10 @@ export const styles = StyleSheet.create({
   /** RELOAD BUTTON **/
   reloadButton: {
     padding: 8,
-    borderRadius: (8),
     alignItems: 'center',
     justifyContent: 'center',
+    alingSelf: 'center',
+    marginRight: 10,
   },
 
   /** TOKEN TABLE **/

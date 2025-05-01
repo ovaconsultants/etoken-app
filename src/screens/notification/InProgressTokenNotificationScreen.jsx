@@ -24,9 +24,7 @@ const InProgressTokenNotificationScreen = ({
       speakMessages();
     }
 
-    return () => {
-      // stopSpeaking(); // Clean up any ongoing speech when component unmounts or patient changes
-    };
+    return () => { stopSpeaking(); };
   }, [inProgressPatient, speakMessages, stopSpeaking]); // Only re-run when inProgressPatient changes
 
   // If no token is available, show a message
@@ -54,16 +52,17 @@ const InProgressTokenNotificationScreen = ({
       <Card style={styles.card}>
         <Card.Content>
           <Text style={[styles.tableCell, {color: theme.colors.text}]}>
-            {inProgressPatient.token_no}
-          </Text>
-          <Text style={[styles.tableCell, {color: theme.colors.text}]}>
             {inProgressPatient.patient_name}
           </Text>
+
           {translatedData?.translatedPatientName && (
             <Text style={[styles.tableCell, {color: theme.colors.text}]}>
               {translatedData.translatedPatientName}
             </Text>
           )}
+          <Text style={[styles.tableCell, {color: theme.colors.text}]}>
+            #{inProgressPatient.token_no}
+          </Text>
         </Card.Content>
       </Card>
     </View>
