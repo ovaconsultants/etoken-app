@@ -1,28 +1,36 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect , useMemo} from 'react';
 import {
   Text,
   TextInput,
-  Button,
   ActivityIndicator,
   ScrollView,
+  TouchableOpacity,
 } from 'react-native';
 import {Dropdown} from 'react-native-element-dropdown';
 import {SignUpRequest} from '../../services/authService';
-import SignUpStyles from './SignUpStyles';
-import {FetchAccountRequest} from '../../services/accountService';
-import {FetchSpecializationsRequest} from '../../services/accountService';
+import { FetchAccountRequest } from '../../services/accountService';
+import { FetchSpecializationsRequest } from '../../services/accountService'; 
 import {showToast} from '../../components/toastMessage/ToastMessage';
 import {
   SignUpValidationSchema,
   validateField,
   validateForm,
 } from '../../utils/SignUpValidation';
+import { useOrientation  } from '../../hooks/useOrientation';
+import { createStyles } from './SignUpScreen.styles';
+
+
 
 const SignUpScreen = ({navigation}) => {
+  const {isLandscape , dimensions } = useOrientation();
+  const styles = useMemo(() => createStyles(isLandscape , dimensions),[dimensions, isLandscape]);
+
+
   const [accounts, setAccounts] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [specializations, setSpecializations] = useState([]);
   const [selectedSpecialization, setSelectedSpecialization] = useState(null);
+  const [isValid , setIsValid] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -155,14 +163,15 @@ const SignUpScreen = ({navigation}) => {
       return;
     }
 
-    const {isValid, errors: validationErrors} = await validateForm(
+    const {valid, errors: validationErrors} = await validateForm(
       SignUpValidationSchema,
       formData,
       selectedAccount,
       selectedSpecialization,
     );
 
-    if (!isValid) {
+    if (!valid) {
+      setIsValid(valid);
       setErrors(validationErrors);
       showToast('Please correct the highlighted errors in the form', 'error');
       return;
@@ -234,8 +243,8 @@ const SignUpScreen = ({navigation}) => {
   };
 
   return (
-    <ScrollView contentContainerStyle={SignUpStyles.container}>
-      <Text style={SignUpStyles.label}>Account:</Text>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.label}>Account:</Text>
       {loading.accounts ? (
         <ActivityIndicator />
       ) : (
@@ -251,20 +260,20 @@ const SignUpScreen = ({navigation}) => {
               setSelectedAccount(item.value);
             }}
             style={[
-              SignUpStyles.dropdown,
-              touched.accountId && !selectedAccount && SignUpStyles.errorInput,
+              styles.dropdown,
+              touched.accountId && !selectedAccount && styles.errorInput,
             ]}
-            placeholderStyle={SignUpStyles.placeholderText}
-            selectedTextStyle={SignUpStyles.selectedText}
-            inputSearchStyle={SignUpStyles.inputSearch}
+            placeholderStyle={styles.placeholderText}
+            selectedTextStyle={styles.selectedText}
+            inputSearchStyle={styles.inputSearch}
           />
           {errors.accountId && (
-            <Text style={SignUpStyles.errorText}>{errors.accountId}</Text>
+            <Text style={styles.errorText}>{errors.accountId}</Text>
           )}
         </>
       )}
 
-      <Text style={SignUpStyles.label}>Specialization:</Text>
+      <Text style={styles.label}>Specialization:</Text>
       {loading.specializations ? (
         <ActivityIndicator />
       ) : (
@@ -281,21 +290,16 @@ const SignUpScreen = ({navigation}) => {
             }}
             disabled={!selectedAccount}
             style={[
-              SignUpStyles.dropdown,
-              !selectedAccount && SignUpStyles.disabledDropdown,
+              styles.dropdown,
+              !selectedAccount && styles.disabledDropdown,
               touched.specializationId &&
                 !selectedSpecialization &&
-                SignUpStyles.errorInput,
+                styles.errorInput,
             ]}
-            placeholderStyle={SignUpStyles.placeholderText}
-            selectedTextStyle={SignUpStyles.selectedText}
-            inputSearchStyle={SignUpStyles.inputSearch}
+            placeholderStyle={styles.placeholderText}
+            selectedTextStyle={styles.selectedText}
+            inputSearchStyle={styles.inputSearch}
           />
-          {errors.specializationId && (
-            <Text style={SignUpStyles.errorText}>
-              {errors.specializationId}
-            </Text>
-          )}
         </>
       )}
 
@@ -305,31 +309,24 @@ const SignUpScreen = ({navigation}) => {
         onChangeText={text => handleInputChange('firstName', text)}
         onBlur={() => handleBlur('firstName')}
         style={[
-          SignUpStyles.input,
-          touched.firstName && !formData.firstName && SignUpStyles.errorInput,
-          errors.firstName && SignUpStyles.errorInput,
+          styles.input,
+          touched.firstName && !formData.firstName && styles.errorInput,
+          errors.firstName && styles.errorInput,
         ]}
         maxLength={50}
       />
-      {errors.firstName && (
-        <Text style={SignUpStyles.errorText}>{errors.firstName}</Text>
-      )}
-
       <TextInput
         placeholder="Last Name *"
         value={formData.lastName}
         onChangeText={text => handleInputChange('lastName', text)}
         onBlur={() => handleBlur('lastName')}
         style={[
-          SignUpStyles.input,
-          touched.lastName && !formData.lastName && SignUpStyles.errorInput,
-          errors.lastName && SignUpStyles.errorInput,
+          styles.input,
+          touched.lastName && !formData.lastName && styles.errorInput,
+          errors.lastName && styles.errorInput,
         ]}
         maxLength={50}
       />
-      {errors.lastName && (
-        <Text style={SignUpStyles.errorText}>{errors.lastName}</Text>
-      )}
 
       <TextInput
         placeholder="Mobile Number *"
@@ -342,24 +339,20 @@ const SignUpScreen = ({navigation}) => {
         onBlur={() => handleBlur('mobileNumber')}
         keyboardType="phone-pad"
         style={[
-          SignUpStyles.input,
+          styles.input,
           touched.mobileNumber &&
             !formData.mobileNumber &&
-            SignUpStyles.errorInput,
-          errors.mobileNumber && SignUpStyles.errorInput,
+            styles.errorInput,
+          errors.mobileNumber && styles.errorInput,
         ]}
         maxLength={10}
       />
-      {errors.mobileNumber && (
-        <Text style={SignUpStyles.errorText}>{errors.mobileNumber}</Text>
-      )}
-
       <TextInput
         placeholder="Phone Number"
         value={formData.phoneNumber}
         onChangeText={text => handleInputChange('phoneNumber', text)}
         keyboardType="phone-pad"
-        style={SignUpStyles.input}
+        style={styles.input}
         maxLength={10}
       />
 
@@ -371,20 +364,19 @@ const SignUpScreen = ({navigation}) => {
         keyboardType="email-address"
         autoCapitalize="none"
         style={[
-          SignUpStyles.input,
-          touched.email && !formData.email && SignUpStyles.errorInput,
-          errors.email && SignUpStyles.errorInput,
+          styles.input,
+          touched.email && !formData.email && styles.errorInput,
+          errors.email && styles.errorInput,
         ]}
       />
-      {errors.email && (
-        <Text style={SignUpStyles.errorText}>{errors.email}</Text>
-      )}
-
-      <Button
+      <TouchableOpacity
+       style={[styles.button , !isValid && styles.buttonDisabled]}
         title={loading.submit ? 'Submitting...' : 'Submit'}
         onPress={handleSubmit}
         disabled={loading.submit}
-      />
+      >
+       <Text style={styles.buttonText}>{loading.submit ? 'Submitting...' : 'Submit'}</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };
