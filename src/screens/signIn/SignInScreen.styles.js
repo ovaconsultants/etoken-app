@@ -12,6 +12,7 @@ export const createStyles = isLandscape =>
     formContainer: {
       flex:  1,
       justifyContent:  'center',
+      gap : 20 ,
     },
 
     header: {
@@ -42,7 +43,6 @@ export const createStyles = isLandscape =>
       borderRadius: 8,
       paddingHorizontal: '3%',
       backgroundColor: '#fff',
-      margin : '3%',
     },
     inputError: {
       borderColor: 'red',
@@ -50,14 +50,12 @@ export const createStyles = isLandscape =>
     buttonContainer: {
       flexDirection: 'row',
       justifyContent: 'space-around',
-      margin: '3%',
     },
 
     footerText: {
       fontSize: 16,
       color: '#666',
       textAlign: 'center',
-      margin: '3%',
     },
     link: {
       color: '#007bff',
@@ -74,7 +72,6 @@ export const createStyles = isLandscape =>
       borderRadius: 8,
       alignItems: 'center',
       justifyContent: 'center',
-      marginHorizontal: isLandscape ? '3%' : '3%',
     },
     buttonDisabled: {
       backgroundColor: '#add8e6',

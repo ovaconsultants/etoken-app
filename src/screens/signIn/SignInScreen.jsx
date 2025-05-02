@@ -6,6 +6,9 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   SafeAreaView,
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
 } from 'react-native';
 import {Formik} from 'formik';
 import {useSetAtom} from 'jotai';
@@ -35,6 +38,7 @@ const SignInScreen = ({navigation}) => {
 
   // handle sign Logic
   const handleSignIn = async (values, {setSubmitting}) => {
+    Keyboard.dismiss();
     const {email, password} = values;
 
     try {
@@ -69,76 +73,85 @@ const SignInScreen = ({navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.formContainer}>
-        <Text style={styles.title}>Sign In</Text>
-        <Formik
-          initialValues={{email: '', password: ''}}
-          validationSchema={SignInValidationSchema}
-          onSubmit={handleSignIn}
-          validateOnChange={true}>
-          {({
-            handleChange,
-            handleBlur,
-            handleSubmit,
-            values,
-            errors,
-            touched,
-            isSubmitting,
-            isValid,
-            dirty,
-          }) => (
-            <>
-              <TextInput
-                style={[
-                  styles.input,
-                  touched.email && errors.email && styles.inputError,
-                ]}
-                placeholder="Email"
-                value={values.email}
-                onChangeText={handleChange('email')}
-                onBlur={handleBlur('email')}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                maxLength={50}
-              />
-              <TextInput
-                style={[
-                  styles.input,
-                  touched.password && errors.password && styles.inputError,
-                ]}
-                placeholder="Password"
-                value={values.password}
-                onChangeText={handleChange('password')}
-                onBlur={handleBlur('password')}
-                secureTextEntry
-                autoCapitalize="none"
-                maxLength={15}
-              />
-              <TouchableOpacity
-                style={[
-                  styles.button,
-                  (!isValid || !dirty || isSubmitting) && styles.buttonDisabled,
-                ]}
-                onPress={handleSubmit}
-                disabled={!isValid || !dirty || isSubmitting}>
-                {isSubmitting ? (
-                  <ActivityIndicator color="#fff" />
-                ) : (
-                  <Text style={styles.buttonText}>Log In</Text>
-                )}
-              </TouchableOpacity>
-            </>
-          )}
-        </Formik>
-        <Text style={styles.footerText}>
-          Don't have an account?{' '}
-          <Text
-            style={styles.link}
-            onPress={() => navigation.navigate('SignUp')}>
-            Sign Up
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.container}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
+      >
+        <View style={styles.formContainer}>
+          <Text style={styles.title}>Sign In</Text>
+          <Formik
+            initialValues={{email: '', password: ''}}
+            validationSchema={SignInValidationSchema}
+            onSubmit={handleSignIn}
+            validateOnChange={true}>
+            {({
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              values,
+              errors,
+              touched,
+              isSubmitting,
+              isValid,
+              dirty,
+            }) => (
+              <>
+                <TextInput
+                  style={[
+                    styles.input,
+                    touched.email && errors.email && styles.inputError,
+                  ]}
+                  placeholder="Email"
+                  value={values.email}
+                  onChangeText={handleChange('email')}
+                  onBlur={handleBlur('email')}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  maxLength={50}
+                />
+                <TextInput
+                  style={[
+                    styles.input,
+                    touched.password && errors.password && styles.inputError,
+                  ]}
+                  placeholder="Password"
+                  value={values.password}
+                  onChangeText={handleChange('password')}
+                  onBlur={handleBlur('password')}
+                  secureTextEntry
+                  autoCapitalize="none"
+                  maxLength={15}
+                  onSubmitEditing={handleSubmit}
+                  returnKeyType="go"
+                />
+                <TouchableOpacity
+                  style={[
+                    styles.button,
+                    (!isValid || !dirty || isSubmitting) &&
+                      styles.buttonDisabled,
+                  ]}
+                  onPress={handleSubmit}
+                  disabled={!isValid || !dirty || isSubmitting}>
+                  {isSubmitting ? (
+                    <ActivityIndicator color="#fff" />
+                  ) : (
+                    <Text style={styles.buttonText}>Log In</Text>
+                  )}
+                </TouchableOpacity>
+              </>
+            )}
+          </Formik>
+          <Text style={styles.footerText}>
+            Don't have an account?{' '}
+            <Text
+              style={styles.link}
+              onPress={() => navigation.navigate('SignUp')}>
+              Sign Up
+            </Text>
           </Text>
-        </Text>
-      </View>
+        </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
