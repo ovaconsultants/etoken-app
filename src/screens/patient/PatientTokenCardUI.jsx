@@ -1,8 +1,9 @@
 import {Switch, View, TouchableOpacity, Text} from 'react-native';
 import {Dropdown} from 'react-native-element-dropdown';
 import React, {useState, useCallback, useEffect} from 'react';
-import ConfirmationModal from '../../components/confirmationModal/ConfirmationModal';
-import { formatTokenTime , maskPhoneNumber } from '../../utils/globalUtil';
+import {formatTokenTime, maskPhoneNumber} from '../../utils/globalUtil';
+import {BadgeIndianRupee, BadgeX} from 'lucide-react-native';
+import { green } from 'react-native-reanimated/lib/typescript/Colors';
 
 const statusOptions = [
   {label: 'Waiting', value: 'Waiting'},
@@ -22,13 +23,9 @@ export const TokenCard = React.memo(
     updateToken,
     styles,
   }) => {
-    const [ _ , setPendingStatus] = useState(null);
-    const [pendingPayment, setPendingPayment] = useState(null);
     const [hindiName, setHindiName] = useState('');
-    const [isPaid, setIsPaid] = useState(token.fee_status === 'Paid');
-    const [showStatusModal, setShowStatusModal] = useState(false);
-    const [showPaymentModal, setShowPaymentModal] = useState(false);
-    const [modalConfig, setModalConfig] = useState({});
+    const [paidStatus, setPaidStatus] = useState(token.fee_status === 'Paid');
+    const [status, setStatus] = useState(token.status);
 
     const memoizedTranslate = useCallback(
       name => {
@@ -45,47 +42,30 @@ export const TokenCard = React.memo(
       }
     }, [token.patient_name, hindiName, memoizedTranslate]);
 
-    const handleStatusChange = item => {
-      setPendingStatus(item.value);
-      setModalConfig({
-        title: 'Confirm Status Change',
-        message: `Are you sure you want to change status from ${token.status} to ${item.value}?`,
-        onConfirm: async () => {
-          console.log(`Updating status to ${item.value}`);
-          const updateTokenDataObj = {
-            ...token,
-            status: item.value,
-          };
-          await updateToken(updateTokenDataObj);
-          setPendingStatus(null);
-        },
-        onCancel: () => setPendingStatus(null),
-      });
-      setShowStatusModal(true);
+    const handleStatusChange = async item => {
+      setStatus(item.value);
+      const updateTokenDataObj = {
+        ...token,
+        status: item.value,
+      };
+      await updateToken(updateTokenDataObj);
     };
 
-    const handlePaymentToggle = value => {
-      console.log(`Payment status current value  is ${token.fee_status}`);
-      setPendingPayment(value);
-      const newStatus = value ? 'Paid' : 'Not Paid';
-      setModalConfig({
-        title: 'Confirm Payment Change',
-        message: `Are you sure you want to change payment status from ${token.fee_status} to ${newStatus}?`,
-        paymentStatus: value ? 'paid' : 'Not Paid',
-        statusText: token.fee_status,
-        showStatus: true,
-        onConfirm: async () => {
-          console.log(`Updating payment status to ${newStatus}`);
-          setIsPaid(value);
-          const updateTokenDataObj = {
-            ...token,
-            fee_status: newStatus,
-          };
-          await updateToken(updateTokenDataObj);
-        },
-        onCancel: () => setPendingPayment(null),
-      });
-      setShowPaymentModal(true);
+    const handlePaymentToggle = async () => {
+      const newStatus = !paidStatus; // Toggle the current state
+      setPaidStatus(newStatus); // Update local state immediately
+
+      try {
+        const updateTokenDataObj = {
+          ...token,
+          fee_status: newStatus ? 'Paid' : 'Not Paid',
+        };
+        await updateToken(updateTokenDataObj);
+      } catch (error) {
+        // If API call fails, revert the state
+        setPaidStatus(!newStatus);
+        console.error('Failed to update payment status:', error);
+      }
     };
 
     return (
@@ -109,29 +89,28 @@ export const TokenCard = React.memo(
               <Text>{hindiName || ''}</Text>
             </View>
             <View style={styles.tokenNumber}>
-              <Text>
-              { formatTokenTime(token.created_date)} 
-              </Text>
+              <Text>{formatTokenTime(token.created_date)}</Text>
               <Text style={styles.tokenNumberText}>{token.token_no}</Text>
             </View>
           </View>
 
           <View style={styles.tokenDetails}>
             <Text style={styles.detailText}>
-              { maskPhoneNumber(token.mobile_number)}
+              {maskPhoneNumber(token.mobile_number)}
             </Text>
 
             {/* Payment Switch */}
             <View style={styles.paymentSwitchContainer}>
               <Switch
-                value={pendingPayment !== null ? pendingPayment : isPaid}
+                value={paidStatus}
                 onValueChange={handlePaymentToggle}
-                trackColor={{false: 'grey', true: 'grey'}}
-                thumbColor={isPaid ? '#27AE60' : '#d63031'}
+                trackColor={{false: 'blue', true: 'grey'}}
+                thumbColor={paidStatus ? '#27AE60' : '#d63031'}
                 style={styles.smallSwitch}
               />
-              <Text style={styles.paymentStatus}>
-                {isPaid ? 'Paid' : 'Not Paid'}
+              {paidStatus ? <BadgeIndianRupee color={'#27AE60'}/> : <BadgeX  color={'#d63031'}/>}
+              <Text style={styles.paymentStatus &&  paidStatus ? styles.paidStatusTextColor : styles.notPaidStatusTextColor}>
+                Paid
               </Text>
             </View>
 
@@ -139,13 +118,15 @@ export const TokenCard = React.memo(
             <View style={styles.statusDropdownContainer}>
               <Dropdown
                 style={styles.dropdown}
+                containerStyle={styles.dropdownContainer}
+                itemContainerStyle={styles.itemContainer}
                 placeholder={token.status}
                 placeholderStyle={styles.placeholderText}
                 selectedTextStyle={styles.selectedStatusText}
                 data={statusOptions.filter(item => item.value !== token.status)}
                 labelField="label"
                 valueField="value"
-                value={ token.status}
+                value={status}
                 onChange={handleStatusChange}
                 renderItem={item => (
                   <View style={styles.dropdownItem}>
@@ -159,46 +140,15 @@ export const TokenCard = React.memo(
                         item.value === 'Cancelled' && styles.redDot,
                       ]}
                     />
-                    <Text style={styles.smallDropdownItemText}>{item.label}</Text>
+                    <Text style={styles.smallDropdownItemText}>
+                      {item.label}
+                    </Text>
                   </View>
                 )}
               />
             </View>
           </View>
         </TouchableOpacity>
-
-        {/* Status Change Confirmation Modal */}
-        <ConfirmationModal
-          visible={showStatusModal}
-          title={modalConfig.title}
-          message={modalConfig.message}
-          onConfirm={() => {
-            modalConfig.onConfirm();
-            setShowStatusModal(false);
-          }}
-          onCancel={() => {
-            modalConfig.onCancel?.();
-            setShowStatusModal(false);
-          }}
-        />
-
-        {/* Payment Change Confirmation Modal */}
-        <ConfirmationModal
-          visible={showPaymentModal}
-          title={modalConfig.title}
-          message={modalConfig.message}
-          paymentStatus={modalConfig.paymentStatus}
-          statusText={modalConfig.statusText}
-          showStatus={modalConfig.showStatus}
-          onConfirm={() => {
-            modalConfig.onConfirm();
-            setShowPaymentModal(false);
-          }}
-          onCancel={() => {
-            modalConfig.onCancel?.();
-            setShowPaymentModal(false);
-          }}
-        />
       </>
     );
   },

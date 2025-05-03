@@ -73,7 +73,9 @@ const logException = async (
     const response = await httpClient.post('/exception/logException', payload, {
       timeout: 5000,
     });
+    if (response.status === 200) {
     console.debug('[ExceptionLogger] Successfully logged exception');
+    }
   } catch (loggingError) {
     console.error(
       '[ExceptionLogger] Failed to submit error to server',
@@ -108,7 +110,7 @@ export const fetchData = async (endpoint, params = {}, headers = {}) => {
 
     // Log the exception
     await logException(
-      `GET Request Failed: ${error.message} at this endpoint: ${endpoint}`,
+      `GET Request Failed: ${error.message}  ${error.stack} at this endpoint: ${endpoint}`,
     );
     throw error;
   }
@@ -137,7 +139,7 @@ export const postData = async (endpoint, data = {}, headers = {}) => {
 
     // Log the exception
     await logException(
-      `POST Request Failed: ${error.message} at this endpoint: ${endpoint}`,
+      `POST Request Failed: ${error.message}   ${error.stack} at this endpoint: ${endpoint}`,
     );
     throw error;
   }
@@ -165,7 +167,7 @@ export const putData = async (endpoint, data = {}, headers = {}) => {
     });
 
     // Log the exception
-    await logException(`PUT Request Failed: ${error.message}`);
+    await logException(`PUT Request Failed: ${error.message}  ${error.stack}`);
     throw error;
   }
 };
@@ -194,7 +196,7 @@ export const deleteData = async (endpoint, params = {}, headers = {}) => {
 
     // Log the exception
     await logException(
-      `DELETE Request Failed: ${error.message} at this endpoint: ${endpoint}`,
+      `DELETE Request Failed: ${error.message}  ${error.stack} at this endpoint: ${endpoint}`,
     );
     throw error;
   }
@@ -224,7 +226,7 @@ export const patchData = async (endpoint, data = {}, headers = {}) => {
 
     // Log the exception
     await logException(
-      `PATCH Request Failed: ${error.message} at this endpoint: ${endpoint}`,
+      `PATCH Request Failed: ${error.message}  ${error.stack} at this endpoint: ${endpoint}`,
     );
     throw error;
   }
