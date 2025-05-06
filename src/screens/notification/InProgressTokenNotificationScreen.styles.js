@@ -1,38 +1,55 @@
-// InProgressTokenNotificationScreen.styles.js
-import { StyleSheet } from 'react-native';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
+import { StyleSheet, Dimensions } from 'react-native';
+
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+
+// Helper function to scale font size based on screen width
+const scaleFont = (size) => {
+  const scaleFactor = SCREEN_WIDTH / 375; // 375 = base width (iPhone 6/7/8)
+  return size * scaleFactor;
+};
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'space-evenly',
+    alignItems: 'center',
   },
-  card: {
-    width: wp('30%'),
-    borderRadius: wp('3%'), // Responsive border radius
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4, // Responsive padding
-    marginBottom: hp('2%'),
-    backgroundColor : 'rgba(217, 223, 249, 0.9)'
+  cardWrapper: {
+    alignItems: 'center',
   },
-  tableCell: {
-    fontSize: wp('3%'),
-    fontFamily: 'Roboto',
-    textAlign: 'center',
+  badgeCircle: {
+    backgroundColor: '#fbbd05',
+    borderWidth: 3,
+    borderColor: '#d45a00',
+    borderRadius: 50,
+    width: 80,
+    height: 80,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 2,
+  },
+  tokenNumber: {
+    fontSize: scaleFont(22),
     fontWeight: 'bold',
-    color: '#333',
+    color: '#2b1b0e',
   },
-  noTokenText: {
-    fontSize: wp('3%'), // Responsive font size
+  nameCard: {
+    marginTop: -40,
+    backgroundColor: '#fef5e7', // light cream
+    borderRadius: 12,
+    borderWidth: 3,
+    borderColor: '#d45a00',
+    paddingTop: 20,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    zIndex: 1,
+  },
+  patientName: {
+    paddingTop : 10,
+    paddingBottom: 10,
+    fontSize: scaleFont(18),
+    fontWeight: 'bold',
+    color: '#2b1b0e',
     textAlign: 'center',
-    marginBottom: hp('2%'), // Responsive margin bottom
-    color: '#555',
   },
 });

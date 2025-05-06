@@ -1,16 +1,10 @@
 import React, {useState, useEffect} from 'react';
-import {
-  View,
-  TouchableOpacity,
-  Image,
-  Alert,
-  Text,
-} from 'react-native';
+import {View, TouchableOpacity, Image, Alert, Text} from 'react-native';
 import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
 import RNFS from 'react-native-fs';
-import styles from './ImagePickerComponent.styles';
+import styles from './ImagePicker.styles';
 
-const ImagePickerComponent = ({initialImage, onImageSelected}) => {
+const ImagePicker = ({initialImage, onImageSelected}) => {
   const [imageUri, setImageUri] = useState(initialImage);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -24,7 +18,9 @@ const ImagePickerComponent = ({initialImage, onImageSelected}) => {
       if (uri.startsWith('file://')) {
         const filePath = uri.replace('file://', '');
         const exists = await RNFS.exists(filePath);
-        if (!exists) throw new Error('Image file not found');
+        if (!exists) {
+          throw new Error('Image file not found');
+        }
       }
 
       const fileInfo = await RNFS.stat(uri.replace('file://', ''));
@@ -41,8 +37,12 @@ const ImagePickerComponent = ({initialImage, onImageSelected}) => {
   };
 
   const handleImageResponse = async response => {
-    if (!isMounted) return;
-    if (response.didCancel) return;
+    if (!isMounted) {
+      return;
+    }
+    if (response.didCancel) {
+      return;
+    }
 
     if (response.errorMessage) {
       Alert.alert('Error', response.errorMessage);
@@ -50,7 +50,9 @@ const ImagePickerComponent = ({initialImage, onImageSelected}) => {
     }
 
     const imageAsset = response.assets?.[0];
-    if (!imageAsset) return;
+    if (!imageAsset) {
+      return;
+    }
 
     try {
       const preparedImage = await prepareImageForUpload(imageAsset.uri);
@@ -91,7 +93,9 @@ const ImagePickerComponent = ({initialImage, onImageSelected}) => {
   };
 
   const handleImagePicker = () => {
-    if (!isMounted) return;
+    if (!isMounted) {
+      return;
+    }
     Alert.alert(
       'Upload Image',
       'Choose an option',
@@ -120,4 +124,4 @@ const ImagePickerComponent = ({initialImage, onImageSelected}) => {
   );
 };
 
-export default ImagePickerComponent;
+export default ImagePicker;
