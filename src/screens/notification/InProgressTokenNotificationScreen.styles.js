@@ -1,6 +1,6 @@
 import { StyleSheet, Dimensions } from 'react-native';
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { width: SCREEN_WIDTH, } = Dimensions.get('window');
 
 // Helper function to scale font size based on screen width
 const scaleFont = (size) => {
@@ -35,7 +35,7 @@ export const styles = StyleSheet.create({
   },
   nameCard: {
     marginTop: -40,
-    backgroundColor: '#fef5e7', // light cream
+    backgroundColor: '#fef5e7',
     borderRadius: 12,
     borderWidth: 3,
     borderColor: '#d45a00',
@@ -46,7 +46,6 @@ export const styles = StyleSheet.create({
   },
   patientName: {
     paddingTop : 10,
-    paddingBottom: 10,
     fontSize: scaleFont(18),
     fontWeight: 'bold',
     color: '#2b1b0e',
