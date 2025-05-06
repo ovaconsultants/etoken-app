@@ -23,43 +23,56 @@ export const styles = StyleSheet.create({
   doctorSection: {
     flexDirection: 'row',
     alignItems: 'center',
+    flex: 1,
   },
   profileCircle: {
-    width: 60,
-    height: 60,
-    overflow: 'hidden',
-    borderRadius: (30),
-    backgroundColor: '#ddd',
+    width: 80,
+    height: 80,
+    borderRadius: 10,
+    backgroundColor: '#f0f0f0',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: (12),
-  },
-  profileImage: {
-    width: '100%',
-    height: '100%',
-    borderRadius: (30),
-  },
-  doctorInfo: {
-    justifyContent: 'center',
-  },
-  doctorName: {
-    fontSize: (18),
-    fontWeight: 'bold',
-    color: '#000',
-  },
-  doctorQualification: {
-    fontSize: (14),
-    color: '#444',
-    fontWeight: '600',
+    marginRight: 16,
+    overflow: 'hidden',
   },
 
-  /** RELOAD BUTTON **/
+  doctorNameContainer: {
+    flexDirection: 'row',
+    flex: 1,
+  },
+  infoContainer: {
+    flexDirection: 'row',
+    flex: 1,
+    justifyContent: 'space-evenly',
+    margin: 8,
+  },
+  doctorName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 4,
+  },
+  infoRow: {
+    flexDirection: 'column',
+    marginBottom: 2,
+  },
+  infoLabel: {
+    fontSize: 14,
+    color: '#666',
+    fontWeight: '500',
+  },
+  infoText: {
+    fontSize: 14,
+    color: '#333',
+    fontWeight: '700',
+  },
   reloadButton: {
     padding: 8,
-    alignItems: 'center',
+    marginLeft: 12,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 20,
     justifyContent: 'center',
-    alingSelf: 'center',
-    marginRight: 10,
+    alignItems: 'center',
   },
 
   /** TOKEN TABLE **/
@@ -130,6 +143,7 @@ export const styles = StyleSheet.create({
     marginTop: (2),
   },
   notificationInProgress : {
+    width : 200 , 
     position: 'absolute',
     bottom: 0,
     right: 0,

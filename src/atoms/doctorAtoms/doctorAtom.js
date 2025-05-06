@@ -24,6 +24,7 @@ const initialDoctorInfo = {
   consultation_fee: null,
   biography: null,
   address: null,
+  phone_number: null,
   registration_number: null,
   specialization: null,
   specialization_name: 'Oral Surgeon Dentist',

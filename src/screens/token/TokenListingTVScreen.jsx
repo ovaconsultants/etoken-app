@@ -17,12 +17,14 @@ import {useProfileURI} from '../../hooks/useProfileURI';
 import {RotateCcw} from 'lucide-react-native';
 import {showToast} from '../../components/toastMessage/ToastMessage';
 import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
+import {Phone, Briefcase , Stethoscope } from 'lucide-react-native';
 
 const TokenListingTVScreen = ({route}) => {
   const {doctor_id = null, clinic_id = null} = route.params ?? {};
   const profileUri = useProfileURI();
   const clinicData = useAtomValue(doctorClinicDetailsAtom);
   const doctorData = useAtomValue(doctorInfoAtom);
+  console.log('Doctor data in TV screen', doctorData);
   const [isRefreshReloading, setIsRefreshReloading] = useState(false);
   const {
     data: tokens = [],
@@ -86,13 +88,40 @@ const TokenListingTVScreen = ({route}) => {
           <View style={styles.profileCircle}>
             <ProfileImageRenderer imageUrl={profileUri} />
           </View>
-          <View style={styles.doctorInfo}>
-            <Text style={styles.doctorName}>Dr. {doctorData.doctor_name}</Text>
-            <Text style={styles.doctorQualification}>
-              {doctorData.specialization_name}
-            </Text>
+
+          <View style={styles.doctorNameContainer}>
+            <View>
+              <Text style={styles.doctorName}>
+                Dr. {doctorData.doctor_name}
+              </Text>
+              <Text style = {styles.infoText}>
+                {doctorData.qualification}
+              </Text>
+            </View>
+
+            <View style= {styles.infoContainer}>
+              <View >
+                <Stethoscope />
+                <Text style={styles.infoText}>
+                  {doctorData.specialization_name}
+                </Text>
+              </View>
+
+              <View >
+                <Briefcase />
+                <Text style={styles.infoText}>
+                  {doctorData.experience_years} years
+                </Text>
+              </View>
+
+              <View>
+                <Phone />
+                <Text style={styles.infoText}>{doctorData.phone_number}</Text>
+              </View>
+            </View>
           </View>
         </View>
+
         <TouchableOpacity
           style={styles.reloadButton}
           onPress={handleReloadPress}
