@@ -17,7 +17,6 @@ import {useProfileURI} from '../../hooks/useProfileURI';
 import {RotateCcw} from 'lucide-react-native';
 import {showToast} from '../../components/toastMessage/ToastMessage';
 import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
-import {Phone, Briefcase , Stethoscope } from 'lucide-react-native';
 
 const TokenListingTVScreen = ({route}) => {
   const {doctor_id = null, clinic_id = null} = route.params ?? {};
@@ -90,38 +89,36 @@ const TokenListingTVScreen = ({route}) => {
           </View>
 
           <View style={styles.doctorNameContainer}>
-            <View>
+            <View style={styles.leftColumn}>
               <Text style={styles.doctorName}>
                 Dr. {doctorData.doctor_name}
               </Text>
-              <Text style = {styles.infoText}>
+              <Text style={styles.qualificationText}>
                 {doctorData.qualification}
               </Text>
             </View>
 
-            <View style= {styles.infoContainer}>
-              <View >
-                <Stethoscope />
-                <Text style={styles.infoText}>
-                  {doctorData.specialization_name}
-                </Text>
+            <View style={styles.rightColumn}>
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Specialization: </Text>
+                <Text style={styles.infoText}>{doctorData.specialization}</Text>
               </View>
 
-              <View >
-                <Briefcase />
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Experience: </Text>
                 <Text style={styles.infoText}>
                   {doctorData.experience_years} years
                 </Text>
               </View>
 
-              <View>
-                <Phone />
+              <View style={[styles.infoRow, styles.phoneRow]}>
+                <Text style={styles.infoLabel}>Ph: </Text>
                 <Text style={styles.infoText}>{doctorData.phone_number}</Text>
               </View>
             </View>
           </View>
         </View>
-
+         <View  style={styles.reloadButtonContainer}> 
         <TouchableOpacity
           style={styles.reloadButton}
           onPress={handleReloadPress}
@@ -132,6 +129,7 @@ const TokenListingTVScreen = ({route}) => {
             <RotateCcw />
           )}
         </TouchableOpacity>
+        </View>
       </View>
       <TokenTable tokens={tokens} />
       <View style={styles.notificationInProgress}>

@@ -55,8 +55,6 @@ const InProgressTokenNotificationScreen = ({
 
   <View style={styles.nameCard}>
     <Text style={styles.patientName}>{inProgressPatient.patient_name}</Text>
-    <Text style={styles.patientName}>{inProgressPatient.patient_name}</Text>
-
     {translatedData?.translatedPatientName && (
       <Text style={styles.patientName}>
         {translatedData.translatedPatientName}

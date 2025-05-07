@@ -1,8 +1,8 @@
 import {StyleSheet} from 'react-native';
-import { Dimensions } from 'react-native';
+import {Dimensions} from 'react-native';
 
-const { width } = Dimensions.get('window');
-const marginWidth = width * 0.04; 
+const {width} = Dimensions.get('window');
+const marginWidth = width * 0.04;
 export const styles = StyleSheet.create({
   fullScreenContainer: {
     flex: 1,
@@ -16,14 +16,14 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 15,
-    paddingHorizontal: (10),
+    paddingHorizontal: 10,
   },
 
   /** DOCTOR PROFILE SECTION **/
   doctorSection: {
     flexDirection: 'row',
     alignItems: 'center',
-    flex: 1,
+    flex: 0.8,
   },
   profileCircle: {
     width: 80,
@@ -33,38 +33,68 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
+    marginVertical: 8,
     overflow: 'hidden',
   },
 
   doctorNameContainer: {
     flexDirection: 'row',
-    flex: 1,
-  },
-  infoContainer: {
-    flexDirection: 'row',
-    flex: 1,
-    justifyContent: 'space-evenly',
+    paddingVertical: 16,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
     margin: 8,
   },
+  leftColumn: {
+    flex: 0.3,
+    paddingRight: 16,
+    borderRightWidth: 1,
+    borderRightColor: '#eee',
+  },
+  rightColumn: {
+    flex: 1,
+    paddingLeft: 16,
+    justifyContent: 'space-between',
+  },
   doctorName: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#2a3f54',
     marginBottom: 4,
   },
-  infoRow: {
-    flexDirection: 'column',
-    marginBottom: 2,
-  },
-  infoLabel: {
+  qualificationText: {
     fontSize: 14,
     color: '#666',
-    fontWeight: '500',
+    fontStyle: 'Roboto',
+    fontWeight: '800',
+  },
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  phoneRow: {
+    marginBottom: 0,
+  },
+  infoLabel: {
+    fontSize: 16,
+    color: '#666',
+    marginRight: 4,
+    fontWeight: '800',
   },
   infoText: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#333',
-    fontWeight: '700',
+    fontWeight: '500',
+  },
+  reloadButtonContainer: {
+    flex: 0.1,
+    flexDirection: 'row',
+    alignSelf: 'center',
+    marginRight: 10,
   },
   reloadButton: {
     padding: 8,
@@ -84,15 +114,15 @@ export const styles = StyleSheet.create({
 
   tableHeader: {
     flexDirection: 'row',
-    paddingVertical: (10),
-    paddingHorizontal: (12),
+    paddingVertical: 10,
+    paddingHorizontal: 12,
     backgroundColor: '#f8f8f8',
-    borderBottomWidth: (1),
+    borderBottomWidth: 1,
     borderBottomColor: '#ddd',
   },
   tableHeaderText: {
     flex: 1,
-    fontSize: (14),
+    fontSize: 14,
     fontWeight: 'bold',
     color: '#333',
     textAlign: 'flex-start',
@@ -101,9 +131,9 @@ export const styles = StyleSheet.create({
   tableRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: (12),
-    paddingHorizontal: (12),
-    borderBottomWidth: (1),
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    borderBottomWidth: 1,
     borderBottomColor: '#eee',
   },
   tableCell: {
@@ -119,16 +149,16 @@ export const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   dot: {
-    width: (10),
-    height: (10),
-    borderRadius: (5),
-    marginRight: (6),
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginRight: 6,
   },
-  greenDot: { backgroundColor: '#4CAF50' },
-  redDot: { backgroundColor: '#F44336' },
-  yellowDot: { backgroundColor: '#FFC107' },
-  blueDot: { backgroundColor: '#2196F3' },
-  orangeDot: { backgroundColor: '#FF9800' },
+  greenDot: {backgroundColor: '#4CAF50'},
+  redDot: {backgroundColor: '#F44336'},
+  yellowDot: {backgroundColor: '#FFC107'},
+  blueDot: {backgroundColor: '#2196F3'},
+  orangeDot: {backgroundColor: '#FF9800'},
 
   /** ROW COLORS BASED ON STATUS **/
   inProgressRow: {
@@ -140,10 +170,10 @@ export const styles = StyleSheet.create({
   hindi: {
     fontSize: 12,
     color: '#666',
-    marginTop: (2),
+    marginTop: 2,
   },
-  notificationInProgress : {
-    width : 200 , 
+  notificationInProgress: {
+    width: 200,
     position: 'absolute',
     bottom: 0,
     right: 0,
