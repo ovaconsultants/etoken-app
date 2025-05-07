@@ -12,13 +12,12 @@ import {calculateSearchRelevance} from '../../utils/globalUtil';
 import {useOrientation} from '../../hooks/useOrientation';
 import {createStyles} from './SearchBar.styles';
 
-const CustomSearchBar = ({data, onSelectItem}) => {
+const CustomSearchBar = ({data, onSelectItem, dropdownVisible, setDropdownVisible}) => {
   const {isLandscape} = useOrientation();
   const styles = createStyles(isLandscape);
 
   // State management
   const [searchTerm, setSearchTerm] = useState('');
-  const [dropdownVisible, setDropdownVisible] = useState(false);
   const [, setKeyboardHeight] = useState(0);
 
   // Keyboard listeners
@@ -70,7 +69,7 @@ const CustomSearchBar = ({data, onSelectItem}) => {
   const handleSearchPress = () => {
     setDropdownVisible(prev => !prev);
     if (!dropdownVisible) {
-      setSearchTerm(''); // Clear search when opening dropdown
+      setSearchTerm('');
     }
   };
 

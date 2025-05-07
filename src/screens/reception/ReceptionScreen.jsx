@@ -65,6 +65,7 @@ export const ReceptionScreen = ({route}) => {
   const [patients, setPatients] = useAtom(patientsAtom);
   const formikRef = useRef();
   const [submitAttempted, setSubmitAttempted] = useState(false);
+  const [searchDropdownVisible, setSearchDropdownVisible] = useState(false);
 
   const {isLoading, isError, error} = useQuery({
     queryKey: ['fetchingPatients'],
@@ -97,7 +98,7 @@ export const ReceptionScreen = ({route}) => {
       if (!patientIdToUse) {
         throw new Error('Failed to insert patient or generate token');
       }
-
+     setSearchDropdownVisible(false);
       resetForm();
       setSubmitAttempted(false);
       queryClient.invalidateQueries(['fetchingPatients']);
@@ -120,7 +121,7 @@ export const ReceptionScreen = ({route}) => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <TouchableWithoutFeedback onPress={() => { setSearchDropdownVisible(false); Keyboard.dismiss(); }}>
         <View style={styles.container}>
           <LoadingErrorHandler {...{isLoading, isError, error ,isLandscape}} />
 
@@ -139,6 +140,8 @@ export const ReceptionScreen = ({route}) => {
                       ),
                     })
                   }
+                  dropdownVisible={searchDropdownVisible}
+                  setDropdownVisible={setSearchDropdownVisible}
                   placeholder="Search by Patient Name, Mobile, or Email"
                 />
               </View>
