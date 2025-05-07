@@ -5,7 +5,7 @@ export const createStyles = (isLandscape , dimensions) => {
     if (isLandscape) {
       return fontsize * (dimensions.width / 640);
     }
-    return fontsize * (dimensions.width / 360);
+    return fontsize * (dimensions.width / 300);
   }
 
   return  StyleSheet.create({
@@ -25,7 +25,7 @@ export const createStyles = (isLandscape , dimensions) => {
     width : '100%',
   },
   buttonContainer: {
-    flex: 0.5 ,
+    flex:  isLandscape ? 0.5 : 0.7 ,
     justifyContent : 'center',
   },
 
@@ -58,7 +58,7 @@ export const createStyles = (isLandscape , dimensions) => {
     alignSelf: 'center',
   },
   optionText: {
-    fontSize: fontscale(14),
+    fontSize: fontscale(16),
     fontWeight: '500',
     color: '#333',
     alignSelf: 'center',
@@ -69,13 +69,13 @@ export const createStyles = (isLandscape , dimensions) => {
     fontWeight: '600',
   },
   optionDescription: {
-    fontSize: fontscale(14),
+    fontSize: fontscale(16),
     color: '#666',
     textAlign: 'center',
   },
   button: {
     flex: 1,
-    marginVertical:  isLandscape ? 1 : 12,
+    marginVertical:  isLandscape ? 0 : 12,
     marginHorizontal: 4,
     backgroundColor: '#007AFF',
     borderRadius: 8,
@@ -87,7 +87,7 @@ export const createStyles = (isLandscape , dimensions) => {
   },
   buttonText: {
     color: 'white',
-    fontSize: fontscale(16),
+    fontSize: fontscale(18),
     fontWeight: '600',
   },
 });

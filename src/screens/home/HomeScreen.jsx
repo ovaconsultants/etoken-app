@@ -1,6 +1,7 @@
 import React, {useState, useCallback, useMemo, useEffect} from 'react';
 import {SafeAreaView, View, Text, TouchableOpacity} from 'react-native';
 import {createStyles} from './HomeScreen.styles';
+import {globalStyles} from '../../styles/globalStyles';
 import {useAtomValue} from 'jotai';
 import {getHomeRefreshKey} from '../../atoms/refreshAtoms/homePageRefreshAtom';
 import CardGrid from '../../components/cardGrid/CardGrid';
@@ -15,10 +16,7 @@ import {homeRefreshKeyAtom} from '../../atoms/refreshAtoms/homePageRefreshAtom';
 const HomeScreen = ({navigation}) => {
   const refreshKey = useAtomValue(homeRefreshKeyAtom);
   const {isLandscape, dimensions} = useOrientation();
-  const styles = useMemo(
-    () => createStyles(isLandscape, dimensions),
-    [dimensions, isLandscape],
-  );
+  const styles = useMemo(() => createStyles(isLandscape, dimensions),[dimensions, isLandscape]);
 
   const [selectedScreen, setSelectedScreen] = useState(null);
   const [selectedClinicId, setSelectedClinicId] = useState(null);
@@ -41,12 +39,12 @@ const HomeScreen = ({navigation}) => {
 
   useEffect(() => {
     setSelectedScreen(null);
-    setSelectedClinicId(null);
+    setSelectedClinicId(cards[0]?.id || null);
     navigation.setOptions({
       headerBackTitle: '',
       headerLeft: () => null,
     });
-  }, [navigation , refreshKey]);
+  }, [navigation, refreshKey, cards]);
 
   const handleCardPress = useCallback(clinicId => {
     setSelectedClinicId(prevClinicId =>
@@ -120,7 +118,7 @@ const HomeScreen = ({navigation}) => {
                   styles.optionText,
                   selectedScreen === '1' && styles.selectedOptionText,
                 ]}>
-                Tokens
+                TV
               </Text>
             </View>
           </TouchableOpacity>
@@ -157,11 +155,11 @@ const HomeScreen = ({navigation}) => {
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          style={[styles.button, isNextButtonDisabled && styles.buttonDisabled]}
+          style={[styles.button, isNextButtonDisabled && globalStyles.disabledButton]}
           onPress={handleNextButtonPress}
           disabled={isNextButtonDisabled}
           activeOpacity={0.8}>
-          <Text style={styles.buttonText}>Next</Text>
+          <Text style={styles.buttonText}>Go</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
