@@ -45,7 +45,7 @@ export const createStyles = (isLandscape, dimensions) => {
     },
     input: {
       width: '100%',
-      height: isLandscape ? spacing.xl * 3 : spacing.xl * 2.5,
+      height: isLandscape ? spacing.xl * 2 : spacing.xl * 2.5,
       paddingHorizontal: spacing.md,
       borderWidth: 1,
       borderColor: '#ccc',
@@ -55,7 +55,7 @@ export const createStyles = (isLandscape, dimensions) => {
     },
     dropdown: {
       width: '100%',
-      height: isLandscape ? spacing.xl * 3 : spacing.xl * 2.5,
+      height: isLandscape ? spacing.xl * 2 : spacing.xl * 2.5,
       paddingHorizontal: spacing.md,
       borderWidth: 1,
       borderColor: '#ccc',
@@ -79,19 +79,15 @@ export const createStyles = (isLandscape, dimensions) => {
     errorBorder: {
       borderColor: '#ff3b30',
     },
-    errorText: {
-      marginTop: spacing.xs,
-      color: '#ff3b30',
-      fontSize: fontSize.small,
-    },
+
     button: {
       width: '100%',
-      height: isLandscape ? spacing.xl * 3 : spacing.xl * 2.5,
+      height: isLandscape ? spacing.xl * 2 : spacing.xl * 2.5,
       justifyContent: 'center',
       alignItems: 'center',
-      marginTop: spacing.lg,
+      marginTop: isLandscape ? 0 : spacing.lg,
       backgroundColor: '#007AFF',
-      padding: 15,
+      padding: isLandscape ? 5 : 15,
       borderRadius: 8,
 
     },

@@ -10,7 +10,10 @@ import TokenSuccessScreen from '../screens/tokenDisplay/TokenSuccessScreen';
 import PatientTokenQueueScreen from '../screens/patient/PatientTokenQueueScreen';
 import {PatientInfoEditorScreen} from '../screens/patientEditor/PatientInfoEditorReceptionScreen';
 import DefaultReceptionScreen from '../screens/noTokenReceptionState/DefaultReceptionScreen';
+import { incrementHomeRefreshKey } from '../atoms/refreshAtoms/homePageRefreshAtom';
+import {useSetAtom} from 'jotai';
 import {Home} from 'lucide-react-native';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -21,13 +24,12 @@ const HeaderHomeIcon = ({onPress}) => (
     </View>
   </TouchableOpacity>
 );
-
 export const HeaderRightProfile = React.memo(() => (
   <DrawerLeftNavigationButton />
 ));
 
 const HomeNavigator = () => {
-  console.log('HomeNavigator');
+  const handleRefresh = useSetAtom(incrementHomeRefreshKey);
   return (
     <Stack.Navigator
       initialRouteName="Home"
@@ -45,7 +47,7 @@ const HomeNavigator = () => {
         name="Home"
         component={HomeScreen}
         options={() => ({
-          headerTitle: () => <HeaderHomeIcon />,
+          headerTitle: () => <HeaderHomeIcon onPress={handleRefresh}/>,
         })}
       />
 

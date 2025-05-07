@@ -2,6 +2,7 @@ import React, {useState, useCallback, useMemo, useEffect} from 'react';
 import {SafeAreaView, View, Text, TouchableOpacity} from 'react-native';
 import {createStyles} from './HomeScreen.styles';
 import {useAtomValue} from 'jotai';
+import {getHomeRefreshKey} from '../../atoms/refreshAtoms/homePageRefreshAtom';
 import CardGrid from '../../components/cardGrid/CardGrid';
 import {
   doctorClinicDetailsAtom,
@@ -9,10 +10,16 @@ import {
 } from '../../atoms/doctorAtoms/doctorAtom';
 import {useOrientation} from '../../hooks/useOrientation';
 import {Tv, Users, Plus} from 'lucide-react-native';
+import {homeRefreshKeyAtom} from '../../atoms/refreshAtoms/homePageRefreshAtom';
 
 const HomeScreen = ({navigation}) => {
+  const refreshKey = useAtomValue(homeRefreshKeyAtom);
   const {isLandscape, dimensions} = useOrientation();
-  const styles = useMemo(() => createStyles(isLandscape , dimensions),[dimensions, isLandscape]);
+  const styles = useMemo(
+    () => createStyles(isLandscape, dimensions),
+    [dimensions, isLandscape],
+  );
+
   const [selectedScreen, setSelectedScreen] = useState(null);
   const [selectedClinicId, setSelectedClinicId] = useState(null);
   const doctorId = useAtomValue(doctorIdAtom);
@@ -39,7 +46,8 @@ const HomeScreen = ({navigation}) => {
       headerBackTitle: '',
       headerLeft: () => null,
     });
-  }, [navigation]);
+  }, [navigation , refreshKey]);
+
   const handleCardPress = useCallback(clinicId => {
     setSelectedClinicId(prevClinicId =>
       prevClinicId === clinicId ? null : clinicId,
@@ -79,7 +87,7 @@ const HomeScreen = ({navigation}) => {
 
   if (!cards.length) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.container} key={getHomeRefreshKey()}>
         <View style={styles.emptyContainer}>
           <TouchableOpacity
             style={styles.addClinicButton}

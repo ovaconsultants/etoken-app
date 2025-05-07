@@ -1,52 +1,30 @@
-import React, {useState, useEffect , useMemo} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
+  ScrollView,
   Text,
   TextInput,
   ActivityIndicator,
-  ScrollView,
   TouchableOpacity,
 } from 'react-native';
 import {Dropdown} from 'react-native-element-dropdown';
-import {SignUpRequest} from '../../services/authService';
-import { FetchAccountRequest } from '../../services/accountService';
-import { FetchSpecializationsRequest } from '../../services/accountService'; 
-import {showToast} from '../../components/toastMessage/ToastMessage';
+import {Formik} from 'formik';
+import { SignUpValidationSchema } from '../../utils/SignUpValidation';
 import {
-  SignUpValidationSchema,
-  validateField,
-  validateForm,
-} from '../../utils/SignUpValidation';
-import { useOrientation  } from '../../hooks/useOrientation';
-import { createStyles } from './SignUpScreen.styles';
-
+  FetchAccountRequest,
+  FetchSpecializationsRequest,
+  SignUpRequest,
+} from '../../services/accountService';
+import {showToast} from '../../components/toastMessage/ToastMessage';
+import {useOrientation} from '../../hooks/useOrientation';
+import {createStyles} from './SignUpScreen.styles';
 
 
 const SignUpScreen = ({navigation}) => {
-  const {isLandscape , dimensions } = useOrientation();
-  const styles = useMemo(() => createStyles(isLandscape , dimensions),[dimensions, isLandscape]);
-
+  const {isLandscape, dimensions} = useOrientation();
+  const styles = createStyles(isLandscape, dimensions);
 
   const [accounts, setAccounts] = useState([]);
-  const [selectedAccount, setSelectedAccount] = useState(null);
   const [specializations, setSpecializations] = useState([]);
-  const [selectedSpecialization, setSelectedSpecialization] = useState(null);
-  const [isValid , setIsValid] = useState(false);
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    mobileNumber: '',
-    phoneNumber: '',
-    email: '',
-  });
-  const [errors, setErrors] = useState({});
-  const [touched, setTouched] = useState({
-    firstName: false,
-    lastName: false,
-    mobileNumber: false,
-    email: false,
-    accountId: false,
-    specializationId: false,
-  });
   const [loading, setLoading] = useState({
     accounts: true,
     specializations: false,
@@ -54,329 +32,233 @@ const SignUpScreen = ({navigation}) => {
   });
 
   useEffect(() => {
-    const fetchAccounts = async () => {
-      try {
-        const data = await FetchAccountRequest();
-        if (!data.success) {
-          throw new Error(data.message || 'Failed to load account options');
-        }
+    FetchAccountRequest().then(res => {
+      if (res.success) {
         setAccounts(
-          data.accounts.map(acc => ({
-            label: acc.account_name,
-            value: acc.account_id,
-          })),
+          res.accounts.map(a => ({label: a.account_name, value: a.account_id})),
         );
-      } catch (err) {
-        showToast('Failed to load account options. Please try again.', 'error');
-      } finally {
-        setLoading(prev => ({...prev, accounts: false}));
+      } else {
+        showToast('Failed to load account options', 'error');
       }
-    };
-    fetchAccounts();
+      setLoading(p => ({...p, accounts: false}));
+    });
   }, []);
 
-  useEffect(() => {
-    const loadSpecializations = async () => {
-      setSpecializations([]);
-      setSelectedSpecialization(null);
-
-      if (!selectedAccount) {
-        return;
-      }
-
-      setLoading(prev => ({...prev, specializations: true}));
-
-      try {
-        const data = await FetchSpecializationsRequest(selectedAccount);
-        const fetchedSpecializations = await data.specializations;
-        if (data.success) {
-          setSpecializations(
-            fetchedSpecializations.map(spec => ({
-              label: spec.specialization_name,
-              value: spec.specialization_id,
-            })),
-          );
-        } else {
-          showToast(
-            'Failed to load specialization options. Please try again.',
-            'error',
-          );
-        }
-      } catch (err) {
-        showToast(
-          'Network error occurred while loading specializations.',
-          'error',
-        );
-        setSpecializations([]);
-      } finally {
-        setLoading(prev => ({...prev, specializations: false}));
-      }
-    };
-
-    loadSpecializations();
-  }, [selectedAccount]);
-
-  const handleInputChange = async (fieldName, value) => {
-    if (!touched[fieldName]) {
-      setTouched(prev => ({...prev, [fieldName]: true}));
-    }
-
-    const validation = await validateField(
-      SignUpValidationSchema,
-      fieldName,
-      value,
-      formData,
-      selectedAccount,
-      selectedSpecialization,
-    );
-
-    if (!validation.isValid) {
-      setErrors(prev => ({...prev, [fieldName]: validation.message}));
-    } else {
-      setErrors(prev => {
-        const newErrors = {...prev};
-        delete newErrors[fieldName];
-        return newErrors;
-      });
-    }
-
-    setFormData(prev => ({...prev, [fieldName]: value}));
-  };
-
-  const handleBlur = fieldName => {
-    if (!touched[fieldName]) {
-      setTouched(prev => ({...prev, [fieldName]: true}));
-    }
-  };
-
-  const handleSubmit = async () => {
-    const requiredFields = [
-      formData.firstName,
-      formData.lastName,
-      selectedSpecialization,
-      formData.mobileNumber,
-      formData.email,
-    ];
-
-    if (requiredFields.some(field => !field)) {
-      showToast('Please complete all required fields marked with *', 'error');
+  const fetchSpecializations = async accountId => {
+    if (!accountId) {
       return;
     }
-
-    const {valid, errors: validationErrors} = await validateForm(
-      SignUpValidationSchema,
-      formData,
-      selectedAccount,
-      selectedSpecialization,
-    );
-
-    if (!valid) {
-      setIsValid(valid);
-      setErrors(validationErrors);
-      showToast('Please correct the highlighted errors in the form', 'error');
-      return;
-    }
-
-    setLoading(prev => ({...prev, submit: true}));
-
+    setLoading(p => ({...p, specializations: true}));
     try {
-      const dataObject = {
-        first_name: formData.firstName,
-        last_name: formData.lastName,
-        specialization_id: selectedSpecialization,
-        mobile_number: formData.mobileNumber,
-        phone_number: formData.phoneNumber,
-        email: formData.email.toLowerCase().trim(),
+      const res = await FetchSpecializationsRequest(accountId);
+      setSpecializations(
+        res.success
+          ? res.specializations.map(s => ({
+              label: s.specialization_name,
+              value: s.specialization_id,
+            }))
+          : [],
+      );
+    } catch (e) {
+      showToast('Failed to load specializations', 'error');
+    } finally {
+      setLoading(p => ({...p, specializations: false}));
+    }
+  };
+
+  const onSubmit = async (values, {resetForm}) => {
+    setLoading(p => ({...p, submit: true}));
+    try {
+      const payload = {
+        first_name: values.firstName,
+        last_name: values.lastName,
+        specialization_id: values.specialization,
+        mobile_number: values.mobileNumber,
+        phone_number: values.phoneNumber,
+        email: values.email.toLowerCase(),
         created_by: 'Receptionist',
       };
-
-      const data = await SignUpRequest(dataObject);
-
+      const data = await SignUpRequest(payload);
       if (!data.success) {
-        throw new Error(
-          data.message ||
-            'Registration failed. Please verify your information.',
-        );
+        throw new Error(data.message || 'Registration failed');
       }
-
-      showToast('Doctor registration completed successfully!', 'success', {
-        duration: 1000,
-      });
-
-      // Reset form
-      setSelectedAccount(null);
-      setSelectedSpecialization(null);
-      setFormData({
-        firstName: '',
-        lastName: '',
-        mobileNumber: '',
-        phoneNumber: '',
-        email: '',
-      });
-      setErrors({});
-      setTouched({
-        firstName: false,
-        lastName: false,
-        mobileNumber: false,
-        email: false,
-        accountId: false,
-        specializationId: false,
-      });
+      showToast('Doctor registered successfully!', 'success');
+      resetForm();
       setTimeout(
         () =>
           navigation.navigate('DoctorClinicNavigator', {
             screen: 'AddProfilePicture',
-            params: {
-              doctor_id: data.doctor_id,
-            },
+            params: {doctor_id: data.doctor_id},
           }),
         2000,
       );
     } catch (err) {
-      showToast(
-        err.message || 'Registration failed. Please try again later.',
-        'error',
-      );
+      showToast(err.message || 'Something went wrong', 'error');
     } finally {
-      setLoading(prev => ({...prev, submit: false}));
+      setLoading(p => ({...p, submit: false}));
     }
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.label}>Account:</Text>
-      {loading.accounts ? (
-        <ActivityIndicator />
-      ) : (
-        <>
-          <Dropdown
-            data={accounts}
-            labelField="label"
-            valueField="value"
-            placeholder="Select Account"
-            value={selectedAccount}
-            onChange={item => {
-              setTouched(prev => ({...prev, accountId: true}));
-              setSelectedAccount(item.value);
-            }}
-            style={[
-              styles.dropdown,
-              touched.accountId && !selectedAccount && styles.errorInput,
-            ]}
-            placeholderStyle={styles.placeholderText}
-            selectedTextStyle={styles.selectedText}
-            inputSearchStyle={styles.inputSearch}
-          />
-          {errors.accountId && (
-            <Text style={styles.errorText}>{errors.accountId}</Text>
-          )}
-        </>
-      )}
-
-      <Text style={styles.label}>Specialization:</Text>
-      {loading.specializations ? (
-        <ActivityIndicator />
-      ) : (
-        <>
-          <Dropdown
-            data={specializations}
-            labelField="label"
-            valueField="value"
-            placeholder="Select Specialization"
-            value={selectedSpecialization}
-            onChange={item => {
-              setTouched(prev => ({...prev, specializationId: true}));
-              setSelectedSpecialization(item.value);
-            }}
-            disabled={!selectedAccount}
-            style={[
-              styles.dropdown,
-              !selectedAccount && styles.disabledDropdown,
-              touched.specializationId &&
-                !selectedSpecialization &&
-                styles.errorInput,
-            ]}
-            placeholderStyle={styles.placeholderText}
-            selectedTextStyle={styles.selectedText}
-            inputSearchStyle={styles.inputSearch}
-          />
-        </>
-      )}
-
-      <TextInput
-        placeholder="First Name *"
-        value={formData.firstName}
-        onChangeText={text => handleInputChange('firstName', text)}
-        onBlur={() => handleBlur('firstName')}
-        style={[
-          styles.input,
-          touched.firstName && !formData.firstName && styles.errorInput,
-          errors.firstName && styles.errorInput,
-        ]}
-        maxLength={50}
-      />
-      <TextInput
-        placeholder="Last Name *"
-        value={formData.lastName}
-        onChangeText={text => handleInputChange('lastName', text)}
-        onBlur={() => handleBlur('lastName')}
-        style={[
-          styles.input,
-          touched.lastName && !formData.lastName && styles.errorInput,
-          errors.lastName && styles.errorInput,
-        ]}
-        maxLength={50}
-      />
-
-      <TextInput
-        placeholder="Mobile Number *"
-        value={formData.mobileNumber}
-        onChangeText={text => {
-          const numericText = text.replace(/[^0-9]/g, '');
-          const limitedText = numericText.slice(0, 10);
-          handleInputChange('mobileNumber', limitedText);
+      <Formik
+        initialValues={{
+          firstName: '',
+          lastName: '',
+          mobileNumber: '',
+          phoneNumber: '',
+          email: '',
+          account: '',
+          specialization: '',
         }}
-        onBlur={() => handleBlur('mobileNumber')}
-        keyboardType="phone-pad"
-        style={[
-          styles.input,
-          touched.mobileNumber &&
-            !formData.mobileNumber &&
-            styles.errorInput,
-          errors.mobileNumber && styles.errorInput,
-        ]}
-        maxLength={10}
-      />
-      <TextInput
-        placeholder="Phone Number"
-        value={formData.phoneNumber}
-        onChangeText={text => handleInputChange('phoneNumber', text)}
-        keyboardType="phone-pad"
-        style={styles.input}
-        maxLength={10}
-      />
+        validationSchema={SignUpValidationSchema}
+        onSubmit={onSubmit}>
+        {({
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          values,
+          errors,
+          touched,
+          setFieldValue,
+        }) => (
+          <>
+            {loading.accounts ? (
+              <ActivityIndicator />
+            ) : (
+              <Dropdown
+                data={accounts}
+                labelField="label"
+                valueField="value"
+                placeholder="Select Account"
+                value={values.account}
+                onChange={item => {
+                  setFieldValue('account', item.value);
+                  setFieldValue('specialization', '');
+                  fetchSpecializations(item.value);
+                }}
+                style={[
+                  styles.dropdown,
+                  !values.account && styles.disabledDropdown,
+                  !values.account && touched.account && errors.account
+                    ? styles.errorBorder
+                    : null,
+                ]}
+              />
+            )}
 
-      <TextInput
-        placeholder="Email *"
-        value={formData.email}
-        onChangeText={text => handleInputChange('email', text)}
-        onBlur={() => handleBlur('email')}
-        keyboardType="email-address"
-        autoCapitalize="none"
-        style={[
-          styles.input,
-          touched.email && !formData.email && styles.errorInput,
-          errors.email && styles.errorInput,
-        ]}
-      />
-      <TouchableOpacity
-       style={[styles.button , !isValid && styles.buttonDisabled]}
-        title={loading.submit ? 'Submitting...' : 'Submit'}
-        onPress={handleSubmit}
-        disabled={loading.submit}
-      >
-       <Text style={styles.buttonText}>{loading.submit ? 'Submitting...' : 'Submit'}</Text>
-      </TouchableOpacity>
+            {loading.specializations ? (
+              <ActivityIndicator />
+            ) : (
+              <Dropdown
+                data={specializations}
+                labelField="label"
+                valueField="value"
+                placeholder="Select Specialization"
+                value={values.specialization}
+                disabled={!values.account}
+                onChange={item => setFieldValue('specialization', item.value)}
+                style={[
+                  styles.dropdown,
+                  !values.account && styles.disabledDropdown,
+                  !values.specialization &&
+                  touched.specialization &&
+                  errors.specialization
+                    ? styles.errorBorder
+                    : null,
+                ]}
+              />
+            )}
+
+            <TextInput
+              placeholder="First Name *"
+              value={values.firstName}
+              onChangeText={handleChange('firstName')}
+              onBlur={handleBlur('firstName')}
+              style={[
+                styles.input,
+                touched.firstName && errors.firstName
+                  ? styles.errorBorder
+                  : null,
+              ]}
+              maxLength={50}
+            />
+
+            <TextInput
+              placeholder="Last Name *"
+              value={values.lastName}
+              onChangeText={handleChange('lastName')}
+              onBlur={handleBlur('lastName')}
+              style={[
+                styles.input,
+                touched.lastName && errors.lastName ? styles.errorBorder : null,
+              ]}
+              maxLength={50}
+            />
+            <TextInput
+              placeholder="Mobile Number *"
+              keyboardType="phone-pad"
+              value={values.mobileNumber}
+              onChangeText={text =>
+                setFieldValue(
+                  'mobileNumber',
+                  text.replace(/[^0-9]/g, '').slice(0, 10),
+                )
+              }
+              onBlur={handleBlur('mobileNumber')}
+              maxLength={10}
+              style={[
+                styles.input,
+                touched.mobileNumber && errors.mobileNumber
+                  ? styles.errorBorder
+                  : null,
+              ]}
+            />
+            {/* {touched.mobileNumber && errors.mobileNumber && <Text style={}>{errors.mobileNumber}</Text>} */}
+
+            <TextInput
+              placeholder="Phone Number"
+              keyboardType="phone-pad"
+              value={values.phoneNumber}
+              onChangeText={text =>
+                setFieldValue(
+                  'phoneNumber',
+                  text.replace(/[^0-9]/g, '').slice(0, 10),
+                )
+              }
+              maxLength={10}
+              style={[
+                styles.input,
+                touched.phoneNumber && errors.phoneNumber
+                  ? styles.errorBorder
+                  : null,
+              ]}
+            />
+
+            <TextInput
+              placeholder="Email *"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              value={values.email}
+              onChangeText={handleChange('email')}
+              onBlur={handleBlur('email')}
+              style={[
+                styles.input,
+                touched.email && errors.email ? styles.errorBorder : null,
+              ]}
+            />
+
+            <TouchableOpacity
+              style={[styles.button, loading.submit && styles.buttonDisabled]}
+              onPress={handleSubmit}
+              disabled={loading.submit}>
+              <Text style={styles.buttonText}>
+                {loading.submit ? 'Submitting...' : 'Submit'}
+              </Text>
+            </TouchableOpacity>
+          </>
+        )}
+      </Formik>
     </ScrollView>
   );
 };
