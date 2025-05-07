@@ -9,7 +9,6 @@ import {
   Button,
   TouchableOpacity,
   FlatList,
-  StyleSheet,
   Dimensions,
 } from 'react-native';
 import {Formik} from 'formik';
@@ -21,6 +20,7 @@ import {
 } from '../../services/clinicService';
 import {ClinicValidationSchema} from '../../utils/formFields/validationSchemas/clinicSchemas';
 import {styles} from './DoctorAddClinicScreen.styles';
+import { showToast } from '../../components/toastMessage/ToastMessage';
 
 const DoctorAddClinicScreen = ({navigation, route}) => {
   const {doctor_id} = route?.params;
@@ -51,7 +51,15 @@ const DoctorAddClinicScreen = ({navigation, route}) => {
         created_by: 'admin',
       });
       if (data.success) {
-        Alert.alert('Success', data.message);
+        showToast('Clinic added successfully', {
+          type: 'success',
+          duration: 3000,
+        });
+        navigation.navigate('DoctorClinicScheduleScreen', {
+          doctor_id,
+          clinic_id: data.clinic.clinic_id,
+          fromSignUp: true,
+        });
         resetForm();
         setShowForm(false);
       }
