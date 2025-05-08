@@ -31,7 +31,7 @@ export const styles = StyleSheet.create({
     zIndex: 2,
   },
   tokenNumber: {
-    fontSize: scaleFont(22),
+    fontSize: scaleFont(14),
     fontWeight: 'bold',
     color: '#2b1b0e',
   },
@@ -40,7 +40,7 @@ export const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 3,
     borderColor: 'rgb(141, 170, 170)',
-    backgroundColor :  'rgb(202, 210, 210)',
+    backgroundColor :  'rgb(231, 233, 233)',
     paddingTop: 20,
     paddingHorizontal: 20,
     alignItems: 'center',
@@ -48,7 +48,7 @@ export const styles = StyleSheet.create({
   },
   patientName: {
     paddingVertical : 20,
-    fontSize: scaleFont(18),
+    fontSize: scaleFont(14),
     fontWeight: 'bold',
     color: '#2b1b0e',
     textAlign: 'center',

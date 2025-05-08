@@ -16,16 +16,16 @@ const InProgressTokenNotificationScreen = ({
 
   // Use the custom hook for speech functionality
   const {speakMessages, translatedData} =
-    useSpeechNotification(inProgressPatient);
+  useSpeechNotification(inProgressPatient);
 
   // Trigger speech when inProgressPatient changes
   useEffect(() => {
-    if (inProgressPatient) {
+    if (inProgressPatient.status) {
       speakMessages();
     }
 
     return () => {};
-  }, [inProgressPatient, speakMessages]);
+  }, [inProgressPatient.status , speakMessages]);
 
   // If no token is available, show a message
   if (!inProgressPatient) {
