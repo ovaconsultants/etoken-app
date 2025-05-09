@@ -9,6 +9,7 @@ export const createStyles = isLandscape =>
       width: '100%',
       height: '100%',
       gap: isLandscape ? 12 : 8,
+      position: 'relative',
     },
 
     loadingContainer: {
@@ -225,4 +226,12 @@ export const createStyles = isLandscape =>
     },
     footerButton: {alignItems: 'center', padding: 8},
     footerButtonText: {fontSize: 12, marginTop: 4},
+
+       overlay: {
+      ...StyleSheet.absoluteFillObject, // Covers the entire screen
+      backgroundColor: 'rgba(255, 255, 255, 0.7)', // Semi-transparent white
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 1, // Ensures it appears above everything
+    },
   });

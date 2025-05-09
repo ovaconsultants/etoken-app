@@ -75,6 +75,7 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
   }
 
   return (
+    <View style={styles.fullScreenContainer}>
     <SafeAreaView style={styles.fullScreenContainer}>
       <View style={styles.headerContainer}>
         <View style={styles.headerBadges}>
@@ -94,10 +95,6 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
           </View>
         </View>
       </View>
-      {isMutating && (
-              <ActivityIndicator />
-            )}
-
       <View style={styles.actionButtonsContainer}>
         <TouchableOpacity
           style={styles.primaryButton}
@@ -155,6 +152,12 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
         ]}
       />
     </SafeAreaView>
+        {isMutating && (
+        <View style={styles.overlay}>
+          <ActivityIndicator size="large" color="#007BFF" />
+        </View>
+      )}
+ </View>
   );
 };
 
