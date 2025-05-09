@@ -1,38 +1,56 @@
-// InProgressTokenNotificationScreen.styles.js
-import { StyleSheet } from 'react-native';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
+import { StyleSheet, Dimensions } from 'react-native';
+
+const { width: SCREEN_WIDTH, } = Dimensions.get('window');
+
+// Helper function to scale font size based on screen width
+const scaleFont = (size) => {
+  const scaleFactor = SCREEN_WIDTH / 375;
+  return size * scaleFactor;
+};
 
 export const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex : 1 ,
     justifyContent: 'center',
-    alignItems: 'space-evenly',
   },
-  card: {
-    width: wp('40%'),
-    borderRadius: wp('3%'), // Responsive border radius
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4, // Responsive padding
-    marginBottom: hp('2%'),
-    backgroundColor : 'rgba(217, 223, 249, 0.9)'
+  cardWrapper: {
+    flex : 1 ,
+    justifyContent: 'center',
+    backgroundColor : '#fff',
   },
-  tableCell: {
-    fontSize: wp('5%'),
-    fontFamily: 'Roboto',
-    textAlign: 'center',
+  badgeCircle: {
+    backgroundColor: '#fff',
+    borderWidth: 3,
+    borderColor: 'rgb(89, 120, 120)',
+    alignSelf : 'center',
+    borderRadius: 50,
+    width: 80,
+    height: 80,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 2,
+  },
+  tokenNumber: {
+    fontSize: scaleFont(14),
     fontWeight: 'bold',
-    color: '#333',
+    color: '#2b1b0e',
   },
-  noTokenText: {
-    fontSize: wp('5%'), // Responsive font size
+  nameCard: {
+    marginTop: -40,
+    borderRadius: 12,
+    borderWidth: 3,
+    borderColor: 'rgb(141, 170, 170)',
+    backgroundColor :  'rgb(231, 233, 233)',
+    paddingTop: 20,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    zIndex: 1,
+  },
+  patientName: {
+    paddingVertical : 20,
+    fontSize: scaleFont(14),
+    fontWeight: 'bold',
+    color: '#2b1b0e',
     textAlign: 'center',
-    marginBottom: hp('2%'), // Responsive margin bottom
-    color: '#555',
   },
 });

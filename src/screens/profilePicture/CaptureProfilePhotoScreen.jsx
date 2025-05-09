@@ -6,15 +6,18 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
-import ImagePickerComponent from '../../imagePickerComponent/ImagePickerComponent';
-import styles from './CaptureProfilePhotoScreen.styles';
+import ImagePicker from '../../components/imagePicker/ImagePicker';
 import {UploadDoctorProfileImageRequest} from '../../services/profileImageService';
 import {showToast} from '../../components/toastMessage/ToastMessage';
+import createStyles from './CaptureProfilePhotoScreen.styles';
 import RNFS from 'react-native-fs';
+import { useOrientation } from '../../hooks/useOrientation';
 
 const CaptureProfilePhotoScreen = ({navigation, route}) => {
-  const {doctor_id} = route.params;
-  console.log('Doctor ID:', doctor_id);
+  const { isLandscape, dimensions } = useOrientation(); 
+  const styles = createStyles(isLandscape, dimensions);
+  const { doctor_id } = route.params;
+
   const [selectedImage, setSelectedImage] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -81,7 +84,7 @@ const CaptureProfilePhotoScreen = ({navigation, route}) => {
     <View style={styles.container}>
       <View style={styles.contentContainer}>
         <View style={styles.imagePickerContainer}>
-          <ImagePickerComponent
+          <ImagePicker
             onImageSelected={image => {
               setSelectedImage({
                 uri: image.uri,

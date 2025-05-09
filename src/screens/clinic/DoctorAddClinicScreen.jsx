@@ -1,13 +1,26 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, TextInput, ScrollView, Alert, ActivityIndicator, Button, TouchableOpacity, FlatList, StyleSheet, Dimensions} from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  ScrollView,
+  Alert,
+  ActivityIndicator,
+  Button,
+  TouchableOpacity,
+  FlatList,
+  Dimensions,
+} from 'react-native';
 import {Formik} from 'formik';
 import {RefreshCw, Plus} from 'lucide-react-native';
 import ErrorMessage from '../../components/errorMessage/ErrorMessage';
-import {AddClinicRequest, FetchAllClinicRequestForDoctor} from '../../services/clinicService';
-import { ClinicValidationSchema } from '../../utils/formFields/validationSchemas/clinicSchemas';
-import { styles } from './DoctorAddClinicScreen.styles';
-
-
+import {
+  AddClinicRequest,
+  FetchAllClinicForDoctorRequest,
+} from '../../services/clinicService';
+import {ClinicValidationSchema} from '../../utils/formFields/validationSchemas/clinicSchemas';
+import {styles} from './DoctorAddClinicScreen.styles';
+import { showToast } from '../../components/toastMessage/ToastMessage';
 
 const DoctorAddClinicScreen = ({navigation, route}) => {
   const {doctor_id} = route?.params;
@@ -19,7 +32,7 @@ const DoctorAddClinicScreen = ({navigation, route}) => {
     const fetchClinics = async () => {
       try {
         setLoading(true);
-        const fetchedClinics = await FetchAllClinicRequestForDoctor(doctor_id);
+        const fetchedClinics = await FetchAllClinicForDoctorRequest(doctor_id) || [];
         setClinics(fetchedClinics);
       } catch (error) {
         Alert.alert('Error', 'Failed to fetch clinics');
@@ -32,9 +45,21 @@ const DoctorAddClinicScreen = ({navigation, route}) => {
 
   const handleSubmit = async (values, {resetForm, setSubmitting}) => {
     try {
-      const data = await AddClinicRequest({...values, doctor_id, created_by: 'admin'});
+      const data = await AddClinicRequest({
+        ...values,
+        doctor_id,
+        created_by: 'admin',
+      });
       if (data.success) {
-        Alert.alert('Success', data.message);
+        showToast('Clinic added successfully', {
+          type: 'success',
+          duration: 3000,
+        });
+        navigation.navigate('DoctorClinicScheduleScreen', {
+          doctor_id,
+          clinic_id: data.clinic.clinic_id,
+          fromSignUp: true,
+        });
         resetForm();
         setShowForm(false);
       }
@@ -45,7 +70,9 @@ const DoctorAddClinicScreen = ({navigation, route}) => {
     }
   };
 
-  if (loading) {return <ActivityIndicator size="large" style={styles.container} />;}
+  if (loading) {
+    return <ActivityIndicator size="large" style={styles.container} />;
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -53,7 +80,9 @@ const DoctorAddClinicScreen = ({navigation, route}) => {
         <>
           <View style={styles.header}>
             <Text style={styles.title}>Your Clinics</Text>
-            <TouchableOpacity style={styles.addButton} onPress={() => setShowForm(true)}>
+            <TouchableOpacity
+              style={styles.addButton}
+              onPress={() => setShowForm(true)}>
               <Plus size={24} color="white" />
               <Text style={styles.addButtonText}>Add Clinic</Text>
             </TouchableOpacity>
@@ -66,7 +95,9 @@ const DoctorAddClinicScreen = ({navigation, route}) => {
                 <View style={styles.clinicCard}>
                   <Text style={styles.clinicName}>{item.clinic_name}</Text>
                   <Text style={styles.clinicAddress}>{item.address}</Text>
-                  <Text style={styles.clinicCityState}>{item.city}, {item.state} {item.zip_code}</Text>
+                  <Text style={styles.clinicCityState}>
+                    {item.city}, {item.state} {item.zip_code}
+                  </Text>
                 </View>
               )}
               keyExtractor={item => item.clinic_id.toString()}
@@ -77,46 +108,74 @@ const DoctorAddClinicScreen = ({navigation, route}) => {
           ) : (
             <View style={styles.emptyContainer}>
               <Text style={styles.emptyText}>No clinics found</Text>
-              <Button title="Add Your First Clinic" onPress={() => setShowForm(true)} />
+              <Button
+                title="Add Your First Clinic"
+                onPress={() => setShowForm(true)}
+              />
             </View>
           )}
         </>
       ) : (
         <Formik
-          initialValues={{clinic_name: '', address: '', city: '', state: '', zip_code: ''}}
+          initialValues={{
+            clinic_name: '',
+            address: '',
+            city: '',
+            state: '',
+            zip_code: '',
+          }}
           validationSchema={ClinicValidationSchema}
           validateOnChange={true}
           validateOnBlur={true}
-          onSubmit={handleSubmit}
-        >
-          {({handleChange, handleBlur, handleSubmit: formikHandleSubmit, values, errors, touched, isSubmitting, resetForm}) => (
+          onSubmit={handleSubmit}>
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit: formikHandleSubmit,
+            values,
+            errors,
+            touched,
+            isSubmitting,
+            resetForm,
+          }) => (
             <>
               <View style={styles.formHeader}>
                 <Text style={styles.title}>Add New Clinic</Text>
                 <Button title="Cancel" onPress={() => setShowForm(false)} />
               </View>
 
-              {['clinic_name', 'address', 'city', 'state', 'zip_code'].map(key => (
-                <View key={key} style={styles.inputWrapper}>
-                  <TextInput
-                    style={styles.input}
-                    value={values[key]}
-                    onChangeText={handleChange(key)}
-                    onBlur={handleBlur(key)}
-                    placeholder={`Enter ${key.replace(/_/g, ' ')}`}
-                    keyboardType={key === 'zip_code' ? 'numeric' : 'default'}
-                  />
-                  <View style={styles.errorBox}>
-                    <ErrorMessage error={errors[key]} visible={touched[key]} />
+              {['clinic_name', 'address', 'city', 'state', 'zip_code'].map(
+                key => (
+                  <View key={key} style={styles.inputWrapper}>
+                    <TextInput
+                      style={styles.input}
+                      value={values[key]}
+                      onChangeText={handleChange(key)}
+                      onBlur={handleBlur(key)}
+                      placeholder={`Enter ${key.replace(/_/g, ' ')}`}
+                      keyboardType={key === 'zip_code' ? 'numeric' : 'default'}
+                    />
+                    <View style={styles.errorBox}>
+                      <ErrorMessage
+                        error={errors[key]}
+                        visible={touched[key]}
+                      />
+                    </View>
                   </View>
-                </View>
-              ))}
+                ),
+              )}
 
               <View style={styles.buttonContainer}>
-                <TouchableOpacity onPress={() => resetForm()} style={styles.refreshButton}>
+                <TouchableOpacity
+                  onPress={() => resetForm()}
+                  style={styles.refreshButton}>
                   <RefreshCw size={24} color="#007AFF" />
                 </TouchableOpacity>
-                <Button title="Submit" onPress={formikHandleSubmit} disabled={isSubmitting} />
+                <Button
+                  title="Submit"
+                  onPress={formikHandleSubmit}
+                  disabled={isSubmitting}
+                />
               </View>
             </>
           )}
@@ -125,7 +184,5 @@ const DoctorAddClinicScreen = ({navigation, route}) => {
     </ScrollView>
   );
 };
-
-
 
 export default DoctorAddClinicScreen;

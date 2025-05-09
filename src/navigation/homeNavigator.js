@@ -3,14 +3,17 @@ import {View, Platform, TouchableOpacity} from 'react-native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import DrawerLeftNavigationButton from '../components/drawerNavigation/drawerNavigation';
 import HomeScreen from '../screens/home/HomeScreen';
-import TokenManagementScreen from '../screens/token/TokenManagementTVScreen';
+import TokenListingTVScreen from '../screens/token/TokenListingTVScreen';
 import DefaultTVScreen from '../screens/television/DefaultTVScreen';
 import ReceptionScreen from '../screens/reception/ReceptionScreen';
 import TokenSuccessScreen from '../screens/tokenDisplay/TokenSuccessScreen';
 import PatientTokenQueueScreen from '../screens/patient/PatientTokenQueueScreen';
 import {PatientInfoEditorScreen} from '../screens/patientEditor/PatientInfoEditorReceptionScreen';
 import DefaultReceptionScreen from '../screens/noTokenReceptionState/DefaultReceptionScreen';
+import { incrementHomeRefreshKey } from '../atoms/refreshAtoms/homePageRefreshAtom';
+import {useSetAtom} from 'jotai';
 import {Home} from 'lucide-react-native';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -21,12 +24,12 @@ const HeaderHomeIcon = ({onPress}) => (
     </View>
   </TouchableOpacity>
 );
-
 export const HeaderRightProfile = React.memo(() => (
   <DrawerLeftNavigationButton />
 ));
 
 const HomeNavigator = () => {
+  const handleRefresh = useSetAtom(incrementHomeRefreshKey);
   return (
     <Stack.Navigator
       initialRouteName="Home"
@@ -44,7 +47,7 @@ const HomeNavigator = () => {
         name="Home"
         component={HomeScreen}
         options={() => ({
-          headerTitle: () => <HeaderHomeIcon />,
+          headerTitle: () => <HeaderHomeIcon onPress={handleRefresh}/>,
         })}
       />
 
@@ -87,8 +90,8 @@ const HomeNavigator = () => {
 
       <Stack.Screen
         name="TokenManagement"
-        component={TokenManagementScreen}
-        options={{title: 'Patients'}}
+        component={TokenListingTVScreen}
+        options={{title: 'Patients Queue'}}
       />
 
       <Stack.Screen

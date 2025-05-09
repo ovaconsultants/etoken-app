@@ -191,6 +191,7 @@ const DoctorEditorScreen = ({navigation}) => {
                   setShowDatePicker={setShowDatePicker}
                   navigation={navigation}
                   styles={styles}
+                  doctor_id={doctorInfo.doctor_id}
                 />
               )}
 
@@ -259,14 +260,15 @@ const BasicInfoSection = ({
   setFieldValue,
   setShowDatePicker,
   navigation,
-  styles
+  styles,
+  doctor_id
 }) => (
   <>
     <View style={styles.sectionHeader}>
       <Pressable
         onPress={() =>
           navigation.navigate('AddProfilePicture', {
-            doctor_id: values.doctor_id,
+            doctor_id: doctor_id,
           })
         }>
         <Text style={styles.sectionHeaderText}>change profile picture</Text>

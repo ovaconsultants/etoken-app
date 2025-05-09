@@ -1,11 +1,19 @@
 import { StyleSheet} from 'react-native';
 
 export const createStyles = (isLandscape , dimensions) => { 
+  const fontscale = (fontsize) => {
+    if (isLandscape) {
+      return fontsize * (dimensions.width / 640);
+    }
+    return fontsize * (dimensions.width / 300);
+  }
+
   return  StyleSheet.create({
   container: {
     flex: 1,
     margin : 10,
     backgroundColor :' rgb(251, 251, 251)',
+    gap : 5 ,
   },
 
   selectionContainer: {
@@ -13,13 +21,11 @@ export const createStyles = (isLandscape , dimensions) => {
     flexDirection: 'row',
   },
   cardContainer: {
-
     flex: isLandscape ? 3 : 4,
     width : '100%',
-    marginVertical : isLandscape ? 5 : 10,
   },
   buttonContainer: {
-    flex: 0.5 ,
+    flex:  isLandscape ? 0.5 : 0.7 ,
     justifyContent : 'center',
   },
 
@@ -52,19 +58,18 @@ export const createStyles = (isLandscape , dimensions) => {
     alignSelf: 'center',
   },
   optionText: {
-    fontSize: isLandscape ? 16 : 20,
+    fontSize: fontscale(16),
     fontWeight: '500',
     color: '#333',
-    marginTop: 6,
-    marginHorizontal: isLandscape ? 0 : 8,
-    marginBottom: 3,
+    alignSelf: 'center',
+    marginHorizontal: 8,
   },
   selectedOptionText: {
     color: '#007AFF',
     fontWeight: '600',
   },
   optionDescription: {
-    fontSize: 14,
+    fontSize: fontscale(16),
     color: '#666',
     textAlign: 'center',
   },
@@ -82,8 +87,31 @@ export const createStyles = (isLandscape , dimensions) => {
   },
   buttonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: fontscale(18),
     fontWeight: '600',
+  },
+  // Handling Empty Clinic Case 
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+
+  addClinicButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#007AFF',
+    backgroundColor: 'white',
+  },
+  addClinicText: {
+    color: '#007AFF',
+    fontSize: 16,
+    marginLeft: 8,
   },
 });
 }

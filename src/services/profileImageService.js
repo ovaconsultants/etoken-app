@@ -10,7 +10,11 @@ export const uploadProfileImage = async (
   userType = 'doctor',
 ) => {
   try {
-    // Create FormData object
+     console.log('Uploading profile image:', {
+      userId,
+      userType,
+      imageData,
+    });
     const formData = new FormData();
     formData.append(`${userType}_id`, userId.toString());
     formData.append('profile_picture', {
@@ -43,12 +47,15 @@ export const uploadProfileImage = async (
  * Specific doctor profile image upload
  */
 export const UploadDoctorProfileImageRequest = (imageData, doctorId) => {
-  return uploadProfileImage(imageData, doctorId, 'doctor');
+  console.log('Doctor ID:', doctorId);
+  const userId = doctorId;
+  return uploadProfileImage(imageData, userId, 'doctor');
 };
 
 /**
  * Specific patient profile image upload
  */
 export const UploadPatientProfileImageRequest = (imageData, patientId) => {
-  return uploadProfileImage(imageData, patientId, 'patient');
+  const userId = patientId;
+  return uploadProfileImage(imageData, userId, 'patient');
 };

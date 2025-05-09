@@ -1,128 +1,122 @@
-import {useState, useEffect, useRef} from 'react';
+import {useState, useRef, useMemo} from 'react';
+import {useQueryClient} from '@tanstack/react-query';
 import {UpdateTokenRequest, RecallTokenRequest} from '../services/tokenService';
 import {usePatientTokens} from './usePatientTokens';
+import {showToast} from '../components/toastMessage/ToastMessage';
 
 export const usePatientTokenManager = (clinic_id, doctor_id) => {
-  const [patientTokens, setPatientTokens] = useState([]);
-  const [selectedTokenId, setSelectedTokenId] = useState(null);
-  const [isNextDone, setIsNextDone] = useState(false);
-  const [pauseQuery, setPauseQuery] = useState(false);
-
+  const queryClient = useQueryClient();
+  const [isMutating, setIsMutating] = useState(false);
   const selectedTokenRef = useRef(null);
+  const [isLoading, setIsLoading] = useState(false);
+
   const {
-    data: tokens = [],
+    data: patientTokens = [],
     refetch: refetchTokens,
     isFetching,
     error,
     isError,
-  } = usePatientTokens(doctor_id, clinic_id, null, pauseQuery);
+  } = usePatientTokens(doctor_id, clinic_id, {
+    refetchInterval: isMutating ? false : 3000,
+  });
 
-  useEffect(() => {
-    if (tokens.length > 0) {
-      setPatientTokens(tokens);
-      if (!selectedTokenRef.current) {
-        setSelectedTokenId(tokens[0].token_id);
-        selectedTokenRef.current = tokens[0].token_id;
-      }
+  // Auto-select first token and calculate stats
+  const {stats, hasTokenInProgress} = useMemo(() => {
+    if (patientTokens.length > 0 && !selectedTokenRef.current) {
+      selectedTokenRef.current = patientTokens[0].token_id;
     }
-  }, [tokens]);
+
+    const inProgress = patientTokens.filter(t => t.status === 'In Progress');
+    return {
+      hasTokenInProgress: inProgress.length > 0,
+      stats: {
+        total: patientTokens.length,
+        attended: inProgress.length,
+        inQueue: patientTokens.filter(t => t.status === 'Waiting').length,
+        onHold: patientTokens.filter(t => t.status === 'On Hold').length,
+      },
+    };
+  }, [patientTokens]);
 
   const handleSelectToken = tokenId => {
-    setSelectedTokenId(tokenId);
     selectedTokenRef.current = tokenId;
-    const selectedToken = patientTokens.find(t => t.token_id === tokenId);
   };
 
-  const handleNext = async () => {
-    const currentTokenId = selectedTokenRef.current;
-    console.log('handleNext', currentTokenId);
-
-    if (currentTokenId) {
-      setPauseQuery(true);
-
-      try {
-        await updateTokenStatus(currentTokenId, 'In Progress');
-
-        setPatientTokens(prevTokens =>
-          prevTokens.map(token =>
-            token.token_id === currentTokenId
-              ? {...token, status: 'In Progress'}
-              : token,
-          ),
-        );
-
-        setIsNextDone(true);
-      } catch (updateError) {
-        console.error('Error updating token status:', updateError);
-        setPatientTokens(tokens);
-      } finally {
-        setPauseQuery(false);
-        await refetchTokens();
-      }
+  const updateToken = async updates => {
+    if (!selectedTokenRef.current) {
+      return;
     }
-  };
 
-  const handleDone = async () => {
-    const currentTokenId = selectedTokenRef.current; // Use ref value
-    if (currentTokenId) {
-      setPauseQuery(true);
+    setIsMutating(true);
+    try {
+      await UpdateTokenRequest({
+        token_id: selectedTokenRef.current,
+        ...updates,
+      });
 
-      try {
-        await updateTokenStatus(currentTokenId, 'Completed');
+      await queryClient.invalidateQueries(['tokens', doctor_id, clinic_id]);
+      showToast('Update successful');
 
-        setPatientTokens(prevTokens =>
-          prevTokens.filter(token => token.token_id !== currentTokenId),
-        );
-
-        // Reset selection
-        setSelectedTokenId(null);
+      if (updates.status === 'Completed') {
         selectedTokenRef.current = null;
-        setIsNextDone(false);
-      } catch (completionError) {
-        console.error('Error completing token:', completionError);
-        setPatientTokens(tokens);
-      } finally {
-        setPauseQuery(false);
-        await refetchTokens();
       }
+    } catch (tokenUpdateError) {
+      console.error('Update failed:', tokenUpdateError);
+      showToast(tokenUpdateError, 'error');
+    } finally {
+      setIsMutating(false);
     }
   };
 
-  const updateTokenStatus = async (token_id, status) => {
-    const updateTokenDataObj = {token_id, status};
-    return await UpdateTokenRequest(updateTokenDataObj);
-  };
+  const handleNext = () => updateToken({status: 'In Progress'});
+  const handleDone = () => updateToken({status: 'Completed'});
 
   const handleRecall = async () => {
-    if (selectedTokenId) {
-      setPauseQuery(true);
+    if (!selectedTokenRef.current) {return;}
 
-      try {
-        const recallTokenDataObj = {
-          token_id: selectedTokenId,
-          modified_by: 'Receptionist',
-        };
-        await RecallTokenRequest(recallTokenDataObj);
-      } catch (recallError) {
-        console.error('Error recalling token:', recallError);
-      } finally {
-        setPauseQuery(false);
-        await refetchTokens();
-      }
+    setIsMutating(true);
+    try {
+      await RecallTokenRequest({
+        token_id: selectedTokenRef.current,
+        modified_by: 'Receptionist',
+      });
+      await refetchTokens();
+    } catch (refetchTokensError) {
+      console.error('Recall failed:', refetchTokensError);
+      showToast('Recall failed', 'error');
+    } finally {
+      setIsMutating(false);
+    }
+  };
+
+  const handleRefresh = async () => {
+    setIsLoading(true);
+    try {
+      await refetchTokens();
+      showToast('Tokens refreshed');
+    } catch (refreshTokenError) {
+      console.error('Refresh failed:', refreshTokenError);
+      showToast('Refresh failed', 'error');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return {
     patientTokens,
-    selectedTokenId,
-    isNextDone,
+    selectedTokenId: selectedTokenRef.current,
     handleSelectToken,
     handleNext,
-    handleRecall,
     handleDone,
-    refetchTokens,
-    isFetching,
+    handleRecall,
+    handleRefresh,
+    updateToken,
+    isFetching: isFetching,
+    isMutating,
+    isError,
+    isLoading,
     error,
-    isError
+    ...stats,
+    hasTokenInProgress,
   };
 };

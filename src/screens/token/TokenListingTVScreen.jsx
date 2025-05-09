@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, ActivityIndicator, TouchableOpacity} from 'react-native';
-import {styles} from './TokenManagementTVScreen.styles';
+import {styles} from './TokenListingTVScreen.styles';
 import Orientation from 'react-native-orientation-locker';
 import {usePatientTokens} from '../../hooks/usePatientTokens';
 import InProgressTokenNotificationScreen from '../notification/InProgressTokenNotificationScreen';
@@ -15,17 +15,16 @@ import {
 import {useAtomValue} from 'jotai';
 import {useProfileURI} from '../../hooks/useProfileURI';
 import {RotateCcw} from 'lucide-react-native';
-import { showToast } from '../../components/toastMessage/ToastMessage';
+import {showToast} from '../../components/toastMessage/ToastMessage';
 import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
 
-
-const TokenManagementScreen = ({doctor_id, clinic_id}) => {
-  // console.log('TokenManagementScreen route perameter ', route.params);
+const TokenListingTVScreen = ({route}) => {
+  const {doctor_id = null, clinic_id = null} = route.params ?? {};
   const profileUri = useProfileURI();
   const clinicData = useAtomValue(doctorClinicDetailsAtom);
   const doctorData = useAtomValue(doctorInfoAtom);
+  console.log('Doctor data in TV screen', doctorData);
   const [isRefreshReloading, setIsRefreshReloading] = useState(false);
-
   const {
     data: tokens = [],
     isLoading,
@@ -33,6 +32,7 @@ const TokenManagementScreen = ({doctor_id, clinic_id}) => {
     error,
     refetch,
   } = usePatientTokens(doctor_id, clinic_id);
+  console.log('Patient token in TV screen', tokens);
   const currentClinicData = clinicData.find(
     clinic => clinic.clinic_id === clinic_id,
   );
@@ -66,12 +66,14 @@ const TokenManagementScreen = ({doctor_id, clinic_id}) => {
 
   // Show loading state during initial load or refresh
   if (isLoading || isRefreshReloading) {
-    return <LoadingErrorHandler isLoading={true} isLandscape={true}/>;
+    return <LoadingErrorHandler isLoading={true} isLandscape={true} />;
   }
 
   if (isError) {
     showToast('Error loading tokens', 'error');
-    return <LoadingErrorHandler isError={true} error={error} isLandscape={true}/>;
+    return (
+      <LoadingErrorHandler isError={true} error={error} isLandscape={true} />
+    );
   }
 
   if (!tokens || tokens.length === 0) {
@@ -83,17 +85,40 @@ const TokenManagementScreen = ({doctor_id, clinic_id}) => {
       <View style={styles.headerContainer}>
         <View style={styles.doctorSection}>
           <View style={styles.profileCircle}>
-            <ProfileImageRenderer
-              imageUrl={profileUri}
-            />
+            <ProfileImageRenderer imageUrl={profileUri} />
           </View>
-          <View style={styles.doctorInfo}>
-            <Text style={styles.doctorName}>Dr. {doctorData.doctor_name}</Text>
-            <Text style={styles.doctorQualification}>
-              {doctorData.specialization_name}
-            </Text>
+
+          <View style={styles.doctorNameContainer}>
+            <View style={styles.leftColumn}>
+              <Text style={styles.doctorName}>
+                Dr. {doctorData.doctor_name}
+              </Text>
+              <Text style={styles.qualificationText}>
+                {doctorData.qualification}
+              </Text>
+            </View>
+
+            <View style={styles.rightColumn}>
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Specialization: </Text>
+                <Text style={styles.infoText}>{doctorData.specialization}</Text>
+              </View>
+
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Experience: </Text>
+                <Text style={styles.infoText}>
+                  {doctorData.experience_years} years
+                </Text>
+              </View>
+
+              <View style={[styles.infoRow, styles.phoneRow]}>
+                <Text style={styles.infoLabel}>Ph: </Text>
+                <Text style={styles.infoText}>{doctorData.phone_number}</Text>
+              </View>
+            </View>
           </View>
         </View>
+         <View  style={styles.reloadButtonContainer}> 
         <TouchableOpacity
           style={styles.reloadButton}
           onPress={handleReloadPress}
@@ -104,6 +129,7 @@ const TokenManagementScreen = ({doctor_id, clinic_id}) => {
             <RotateCcw />
           )}
         </TouchableOpacity>
+        </View>
       </View>
       <TokenTable tokens={tokens} />
       <View style={styles.notificationInProgress}>
@@ -120,4 +146,4 @@ const TokenManagementScreen = ({doctor_id, clinic_id}) => {
   );
 };
 
-export default withQueryClientProvider(TokenManagementScreen);
+export default withQueryClientProvider(TokenListingTVScreen);

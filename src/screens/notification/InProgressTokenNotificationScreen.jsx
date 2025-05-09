@@ -1,7 +1,7 @@
 // InProgressTokenNotificationScreen.js
 import React, {useEffect} from 'react';
 import {View, Text} from 'react-native';
-import {Card, useTheme} from 'react-native-paper';
+import { useTheme} from 'react-native-paper';
 import {styles} from './InProgressTokenNotificationScreen.styles';
 import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
 import useSpeechNotification from '../../hooks/useSpeechNotification';
@@ -15,19 +15,17 @@ const InProgressTokenNotificationScreen = ({
   const theme = useTheme();
 
   // Use the custom hook for speech functionality
-  const {speakMessages, translatedData, stopSpeaking} =
-    useSpeechNotification(inProgressPatient);
+  const {speakMessages, translatedData} =
+  useSpeechNotification(inProgressPatient);
 
   // Trigger speech when inProgressPatient changes
   useEffect(() => {
-    if (inProgressPatient) {
+    if (inProgressPatient.status) {
       speakMessages();
     }
 
-    return () => {
-      // stopSpeaking(); // Clean up any ongoing speech when component unmounts or patient changes
-    };
-  }, [inProgressPatient, speakMessages, stopSpeaking]); // Only re-run when inProgressPatient changes
+    return () => {};
+  }, [inProgressPatient.status , speakMessages]);
 
   // If no token is available, show a message
   if (!inProgressPatient) {
@@ -42,31 +40,30 @@ const InProgressTokenNotificationScreen = ({
 
   return (
     <View style={styles.container}>
-      {/* Loading and Error Handler */}
-      <LoadingErrorHandler
-        isLoading={isLoading}
-        isError={isError}
-        error={error}
-        isLandscape={true}
-      />
+    <LoadingErrorHandler
+      isLoading={isLoading}
+      isError={isError}
+      error={error}
+      isLandscape={true}
+    />
 
-      {/* Notification Card */}
-      <Card style={styles.card}>
-        <Card.Content>
-          <Text style={[styles.tableCell, {color: theme.colors.text}]}>
-            {inProgressPatient.token_no}
-          </Text>
-          <Text style={[styles.tableCell, {color: theme.colors.text}]}>
-            {inProgressPatient.patient_name}
-          </Text>
-          {translatedData?.translatedPatientName && (
-            <Text style={[styles.tableCell, {color: theme.colors.text}]}>
-              {translatedData.translatedPatientName}
-            </Text>
-          )}
-        </Card.Content>
-      </Card>
-    </View>
+    {/* Notification Card */}
+    <View style={styles.cardWrapper}>
+  <View style={styles.badgeCircle}>
+    <Text style={styles.tokenNumber}>{inProgressPatient.token_no}</Text>
+  </View>
+
+  <View style={styles.nameCard}>
+    <Text style={styles.patientName}>{inProgressPatient.patient_name}</Text>
+    {translatedData?.translatedPatientName && (
+      <Text style={styles.patientName}>
+        {translatedData.translatedPatientName}
+      </Text>
+    )}
+  </View>
+</View>
+
+  </View>
   );
 };
 

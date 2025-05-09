@@ -55,18 +55,17 @@ const formFields = [
   },
 ];
 
-export const ReceptionScreen = ({
-  route: {
-    params: {doctor_id, clinic_id},
-  },
-}) => {
-  const {isLandscape} = useOrientation();
-  const styles = useMemo(() => createStyles(isLandscape), [isLandscape]);
+
+export const ReceptionScreen = ({route}) => {
+  const { doctor_id = null, clinic_id = null } = route.params ?? {};
+  const {isLandscape , dimensions} = useOrientation();
+  const styles = useMemo(() => createStyles(isLandscape ,dimensions), [dimensions, isLandscape]);
   const navigation = useNavigation();
   const queryClient = useQueryClient();
   const [patients, setPatients] = useAtom(patientsAtom);
   const formikRef = useRef();
   const [submitAttempted, setSubmitAttempted] = useState(false);
+  const [searchDropdownVisible, setSearchDropdownVisible] = useState(false);
 
   const {isLoading, isError, error} = useQuery({
     queryKey: ['fetchingPatients'],
@@ -99,7 +98,7 @@ export const ReceptionScreen = ({
       if (!patientIdToUse) {
         throw new Error('Failed to insert patient or generate token');
       }
-
+     setSearchDropdownVisible(false);
       resetForm();
       setSubmitAttempted(false);
       queryClient.invalidateQueries(['fetchingPatients']);
@@ -122,7 +121,7 @@ export const ReceptionScreen = ({
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <TouchableWithoutFeedback onPress={() => { setSearchDropdownVisible(false); Keyboard.dismiss(); }}>
         <View style={styles.container}>
           <LoadingErrorHandler {...{isLoading, isError, error ,isLandscape}} />
 
@@ -141,6 +140,8 @@ export const ReceptionScreen = ({
                       ),
                     })
                   }
+                  dropdownVisible={searchDropdownVisible}
+                  setDropdownVisible={setSearchDropdownVisible}
                   placeholder="Search by Patient Name, Mobile, or Email"
                 />
               </View>

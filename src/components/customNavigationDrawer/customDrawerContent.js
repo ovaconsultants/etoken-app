@@ -4,13 +4,14 @@ import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {User, Calendar, PlusCircle, LogOut} from 'lucide-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {doctorIdAtom} from '../../atoms/doctorAtoms/doctorAtom';
+import {doctorIdAtom , doctorInfoAtom } from '../../atoms/doctorAtoms/doctorAtom';
 import {useAtomValue} from 'jotai';
 import {userTokenAtom} from '../../atoms/authAtoms/authAtom';
 import {useSetAtom} from 'jotai';
 const CustomDrawerContent = () => {
   const navigation = useNavigation();
   const doctor_id = useAtomValue(doctorIdAtom);
+  const { doctor_name } = useAtomValue(doctorInfoAtom);
   const setUserTokenAtom = useSetAtom(userTokenAtom);
   const menuItems = [
     {
@@ -22,22 +23,22 @@ const CustomDrawerContent = () => {
         }),
     },
     {
-      label: 'Schedule',
-      icon: <Calendar size={20} color="#4A5568" />,
+      label: 'Clinic',
+      icon: <PlusCircle size={20} color="#4A5568" />,
       onPress: () =>
         navigation.navigate('DoctorClinicNavigator', {
-          screen: 'DoctorClinicSchedule',
+          screen: 'DoctorAddClinic',
           params: {
             doctor_id: doctor_id,
           },
         }),
     },
     {
-      label: 'Add Clinic',
-      icon: <PlusCircle size={20} color="#4A5568" />,
+      label: 'Schedule',
+      icon: <Calendar size={20} color="#4A5568" />,
       onPress: () =>
         navigation.navigate('DoctorClinicNavigator', {
-          screen: 'DoctorAddClinic',
+          screen: 'DoctorClinicSchedule',
           params: {
             doctor_id: doctor_id,
           },
@@ -57,7 +58,7 @@ const CustomDrawerContent = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>Own Space</Text>
+        <Text style={styles.headerText}>{doctor_name}</Text>
       </View>
       <View style={styles.menuSection}>
         {menuItems.map(item => (
@@ -88,6 +89,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 40,
     backgroundColor: '#FFF',
+    margin : 10 ,
   },
   header: {
     marginTop: 36,

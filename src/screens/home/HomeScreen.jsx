@@ -1,6 +1,7 @@
 import React, {useState, useCallback, useMemo, useEffect} from 'react';
 import {SafeAreaView, View, Text, TouchableOpacity} from 'react-native';
 import {createStyles} from './HomeScreen.styles';
+import {globalStyles} from '../../styles/globalStyles';
 import {useAtomValue} from 'jotai';
 import CardGrid from '../../components/cardGrid/CardGrid';
 import {
@@ -9,10 +10,13 @@ import {
 } from '../../atoms/doctorAtoms/doctorAtom';
 import {useOrientation} from '../../hooks/useOrientation';
 import {Tv, Users, Plus} from 'lucide-react-native';
+import {homeRefreshKeyAtom} from '../../atoms/refreshAtoms/homePageRefreshAtom';
 
 const HomeScreen = ({navigation}) => {
+  const refreshKey = useAtomValue(homeRefreshKeyAtom);
   const {isLandscape, dimensions} = useOrientation();
-  const styles = createStyles(isLandscape, dimensions);
+  const styles = useMemo(() => createStyles(isLandscape, dimensions),[dimensions, isLandscape]);
+
   const [selectedScreen, setSelectedScreen] = useState(null);
   const [selectedClinicId, setSelectedClinicId] = useState(null);
   const doctorId = useAtomValue(doctorIdAtom);
@@ -33,11 +37,14 @@ const HomeScreen = ({navigation}) => {
   }, [rawClinicData]);
 
   useEffect(() => {
+    setSelectedScreen(null);
+    setSelectedClinicId(cards[0]?.id || null);
     navigation.setOptions({
       headerBackTitle: '',
       headerLeft: () => null,
     });
-  }, [navigation]);
+  }, [navigation, refreshKey, cards]);
+
   const handleCardPress = useCallback(clinicId => {
     setSelectedClinicId(prevClinicId =>
       prevClinicId === clinicId ? null : clinicId,
@@ -45,8 +52,11 @@ const HomeScreen = ({navigation}) => {
   }, []);
 
   const handleAddClinicPress = useCallback(() => {
-    navigation.navigate('Clinic', {
-      doctor_id: doctorId,
+    navigation.navigate('DoctorClinicNavigator', {
+      screen: 'DoctorAddClinic',
+      params: {
+        doctor_id: doctorId,
+      },
     });
   }, [navigation, doctorId]);
 
@@ -74,11 +84,10 @@ const HomeScreen = ({navigation}) => {
     doctorId,
     isNextButtonDisabled,
   ]);
-
-  // Render add clinic button if no clinics available
-  if (!cards.length) {
+  console.log('HomeScreen rendered with these cards :', cards);
+  if (cards[0].id === null) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.container} key={refreshKey}>
         <View style={styles.emptyContainer}>
           <TouchableOpacity
             style={styles.addClinicButton}
@@ -111,7 +120,7 @@ const HomeScreen = ({navigation}) => {
                   styles.optionText,
                   selectedScreen === '1' && styles.selectedOptionText,
                 ]}>
-                TV Display
+                TV
               </Text>
             </View>
           </TouchableOpacity>
@@ -148,11 +157,11 @@ const HomeScreen = ({navigation}) => {
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          style={[styles.button, isNextButtonDisabled && styles.buttonDisabled]}
+          style={[styles.button, isNextButtonDisabled && globalStyles.disabledButton]}
           onPress={handleNextButtonPress}
           disabled={isNextButtonDisabled}
           activeOpacity={0.8}>
-          <Text style={styles.buttonText}>Next</Text>
+          <Text style={styles.buttonText}>Go</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

@@ -16,8 +16,8 @@ export const InterLanguageTranslationRequest = async (text, from, to) => {
   const cleanText = sanitizeText(text);
   if (!cleanText) {return '';}
 
-  from = LanguageToCodeMap[from] || 'en'; // Default to English
-  to = LanguageToCodeMap[to] || 'hi'; // Default to Hindi
+  from = LanguageToCodeMap[from] || 'en';
+  to = LanguageToCodeMap[to] || 'hi';
 
   const options = {
     method: 'POST',
@@ -37,7 +37,7 @@ export const InterLanguageTranslationRequest = async (text, from, to) => {
 
   try {
     // const response = await axios.request(options);
-    return sanitizeText(from || '');
+    return sanitizeText(text || '');
   } catch (error) {
     console.error('Translation API error:', error);
     return '';

@@ -44,7 +44,6 @@ const useSpeechNotification = (inProgressPatient) => {
     });
 
     return () => {
-      Tts.stop();
       finishListener.remove();
     };
   }, [englishMessage, translatedMessageInRegional]);
