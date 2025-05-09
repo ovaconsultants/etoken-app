@@ -32,7 +32,7 @@ const DoctorAddClinicScreen = ({navigation, route}) => {
     const fetchClinics = async () => {
       try {
         setLoading(true);
-        const fetchedClinics = await FetchAllClinicForDoctorRequest(doctor_id);
+        const fetchedClinics = await FetchAllClinicForDoctorRequest(doctor_id) || [];
         setClinics(fetchedClinics);
       } catch (error) {
         Alert.alert('Error', 'Failed to fetch clinics');

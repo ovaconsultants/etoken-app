@@ -135,6 +135,8 @@ export const createStyles = isLandscape =>
       marginLeft: 12,
       fontSize: 18,
       fontWeight: 'bold',
+      paddingRight: 5,
+      paddingLeft: 10,
     },
     tokenDetails: {
       flexDirection: 'row',
@@ -197,9 +199,7 @@ export const createStyles = isLandscape =>
       padding: 4,
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor : 'grey',
-      opacity : 0.4 ,
-    },
+      backgroundColor : 'rgba(209, 241, 247, 0.1)',     },
     selectedStatus: {
       flexDirection: 'row',
       alignItems: 'center',

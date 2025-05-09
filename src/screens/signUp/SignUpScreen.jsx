@@ -5,19 +5,20 @@ import {
   TextInput,
   ActivityIndicator,
   TouchableOpacity,
+  View,
 } from 'react-native';
 import {Dropdown} from 'react-native-element-dropdown';
 import {Formik} from 'formik';
-import { SignUpValidationSchema } from '../../utils/SignUpValidation';
+import {SignUpValidationSchema} from '../../utils/SignUpValidation';
 import {
   FetchAccountRequest,
   FetchSpecializationsRequest,
-  SignUpRequest,
 } from '../../services/accountService';
+import { SignUpRequest } from '../../services/authService';
 import {showToast} from '../../components/toastMessage/ToastMessage';
 import {useOrientation} from '../../hooks/useOrientation';
 import {createStyles} from './SignUpScreen.styles';
-
+import {globalStyles} from '../../styles/globalStyles';
 
 const SignUpScreen = ({navigation}) => {
   const {isLandscape, dimensions} = useOrientation();
@@ -66,7 +67,7 @@ const SignUpScreen = ({navigation}) => {
     }
   };
 
-  const onSubmit = async (values, {resetForm}) => {
+  const handleSubmit = async (values, {resetForm}) => {
     setLoading(p => ({...p, submit: true}));
     try {
       const payload = {
@@ -93,6 +94,7 @@ const SignUpScreen = ({navigation}) => {
         2000,
       );
     } catch (err) {
+      console.error('SignUp Error:', err); // Add logging
       showToast(err.message || 'Something went wrong', 'error');
     } finally {
       setLoading(p => ({...p, submit: false}));
@@ -112,146 +114,187 @@ const SignUpScreen = ({navigation}) => {
           specialization: '',
         }}
         validationSchema={SignUpValidationSchema}
-        onSubmit={onSubmit}>
+        onSubmit={handleSubmit}>
         {({
           handleChange,
           handleBlur,
-          handleSubmit,
+          handleSubmit: formikHandleSubmit,
           values,
           errors,
           touched,
           setFieldValue,
+          isValid,
+          dirty,
         }) => (
           <>
             {loading.accounts ? (
               <ActivityIndicator />
             ) : (
-              <Dropdown
-                data={accounts}
-                labelField="label"
-                valueField="value"
-                placeholder="Select Account"
-                value={values.account}
-                onChange={item => {
-                  setFieldValue('account', item.value);
-                  setFieldValue('specialization', '');
-                  fetchSpecializations(item.value);
-                }}
-                style={[
-                  styles.dropdown,
-                  !values.account && styles.disabledDropdown,
-                  !values.account && touched.account && errors.account
-                    ? styles.errorBorder
-                    : null,
-                ]}
-              />
+              <View>
+                <Dropdown
+                  data={accounts}
+                  labelField="label"
+                  valueField="value"
+                  placeholder="Select Account"
+                  value={values.account}
+                  onChange={item => {
+                    setFieldValue('account', item.value);
+                    setFieldValue('specialization', '');
+                    fetchSpecializations(item.value);
+                  }}
+                  style={[
+                    styles.dropdown,
+                    !values.account && styles.disabledDropdown,
+                    touched.account && errors.account
+                      ? styles.errorBorder
+                      : null,
+                  ]}
+                />
+                {touched.account && errors.account && (
+                  <Text style={styles.errorText}>{errors.account}</Text>
+                )}
+              </View>
             )}
 
             {loading.specializations ? (
               <ActivityIndicator />
             ) : (
-              <Dropdown
-                data={specializations}
-                labelField="label"
-                valueField="value"
-                placeholder="Select Specialization"
-                value={values.specialization}
-                disabled={!values.account}
-                onChange={item => setFieldValue('specialization', item.value)}
+              <View>
+                <Dropdown
+                  data={specializations}
+                  labelField="label"
+                  valueField="value"
+                  placeholder="Select Specialization"
+                  value={values.specialization}
+                  disabled={!values.account}
+                  onChange={item => setFieldValue('specialization', item.value)}
+                  style={[
+                    styles.dropdown,
+                    !values.account && styles.disabledDropdown,
+                    touched.specialization && errors.specialization
+                      ? styles.errorBorder
+                      : null,
+                  ]}
+                />
+                {touched.specialization && errors.specialization && (
+                  <Text style={styles.errorText}>{errors.specialization}</Text>
+                )}
+              </View>
+            )}
+
+            <View>
+              <TextInput
+                placeholder="First Name *"
+                value={values.firstName}
+                onChangeText={handleChange('firstName')}
+                onBlur={handleBlur('firstName')}
                 style={[
-                  styles.dropdown,
-                  !values.account && styles.disabledDropdown,
-                  !values.specialization &&
-                  touched.specialization &&
-                  errors.specialization
+                  styles.input,
+                  touched.firstName && errors.firstName
+                    ? styles.errorBorder
+                    : null,
+                ]}
+                maxLength={50}
+              />
+              {touched.firstName && errors.firstName && (
+                <Text style={styles.errorText}>{errors.firstName}</Text>
+              )}
+            </View>
+
+            <View>
+              <TextInput
+                placeholder="Last Name *"
+                value={values.lastName}
+                onChangeText={handleChange('lastName')}
+                onBlur={handleBlur('lastName')}
+                style={[
+                  styles.input,
+                  touched.lastName && errors.lastName
+                    ? styles.errorBorder
+                    : null,
+                ]}
+                maxLength={50}
+              />
+              {touched.lastName && errors.lastName && (
+                <Text style={styles.errorText}>{errors.lastName}</Text>
+              )}
+            </View>
+
+            <View>
+              <TextInput
+                placeholder="Mobile Number *"
+                keyboardType="phone-pad"
+                value={values.mobileNumber}
+                onChangeText={text =>
+                  setFieldValue(
+                    'mobileNumber',
+                    text.replace(/[^0-9]/g, '').slice(0, 10),
+                  )
+                }
+                onBlur={handleBlur('mobileNumber')}
+                maxLength={10}
+                style={[
+                  styles.input,
+                  touched.mobileNumber && errors.mobileNumber
                     ? styles.errorBorder
                     : null,
                 ]}
               />
-            )}
+              {touched.mobileNumber && errors.mobileNumber && (
+                <Text style={styles.errorText}>{errors.mobileNumber}</Text>
+              )}
+            </View>
 
-            <TextInput
-              placeholder="First Name *"
-              value={values.firstName}
-              onChangeText={handleChange('firstName')}
-              onBlur={handleBlur('firstName')}
-              style={[
-                styles.input,
-                touched.firstName && errors.firstName
-                  ? styles.errorBorder
-                  : null,
-              ]}
-              maxLength={50}
-            />
+            <View>
+              <TextInput
+                placeholder="Phone Number"
+                keyboardType="phone-pad"
+                value={values.phoneNumber}
+                onChangeText={text =>
+                  setFieldValue(
+                    'phoneNumber',
+                    text.replace(/[^0-9]/g, '').slice(0, 10),
+                  )
+                }
+                onBlur={handleBlur('phoneNumber')}
+                maxLength={10}
+                style={[
+                  styles.input,
+                  touched.phoneNumber && errors.phoneNumber
+                    ? styles.errorBorder
+                    : null,
+                ]}
+              />
+              {touched.phoneNumber && errors.phoneNumber && (
+                <Text style={styles.errorText}>{errors.phoneNumber}</Text>
+              )}
+            </View>
 
-            <TextInput
-              placeholder="Last Name *"
-              value={values.lastName}
-              onChangeText={handleChange('lastName')}
-              onBlur={handleBlur('lastName')}
-              style={[
-                styles.input,
-                touched.lastName && errors.lastName ? styles.errorBorder : null,
-              ]}
-              maxLength={50}
-            />
-            <TextInput
-              placeholder="Mobile Number *"
-              keyboardType="phone-pad"
-              value={values.mobileNumber}
-              onChangeText={text =>
-                setFieldValue(
-                  'mobileNumber',
-                  text.replace(/[^0-9]/g, '').slice(0, 10),
-                )
-              }
-              onBlur={handleBlur('mobileNumber')}
-              maxLength={10}
-              style={[
-                styles.input,
-                touched.mobileNumber && errors.mobileNumber
-                  ? styles.errorBorder
-                  : null,
-              ]}
-            />
-            {/* {touched.mobileNumber && errors.mobileNumber && <Text style={}>{errors.mobileNumber}</Text>} */}
-
-            <TextInput
-              placeholder="Phone Number"
-              keyboardType="phone-pad"
-              value={values.phoneNumber}
-              onChangeText={text =>
-                setFieldValue(
-                  'phoneNumber',
-                  text.replace(/[^0-9]/g, '').slice(0, 10),
-                )
-              }
-              maxLength={10}
-              style={[
-                styles.input,
-                touched.phoneNumber && errors.phoneNumber
-                  ? styles.errorBorder
-                  : null,
-              ]}
-            />
-
-            <TextInput
-              placeholder="Email *"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              value={values.email}
-              onChangeText={handleChange('email')}
-              onBlur={handleBlur('email')}
-              style={[
-                styles.input,
-                touched.email && errors.email ? styles.errorBorder : null,
-              ]}
-            />
+            <View>
+              <TextInput
+                placeholder="Email *"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                value={values.email}
+                onChangeText={handleChange('email')}
+                onBlur={handleBlur('email')}
+                style={[
+                  styles.input,
+                  touched.email && errors.email ? styles.errorBorder : null,
+                ]}
+              />
+              {touched.email && errors.email && (
+                <Text style={styles.errorText}>{errors.email}</Text>
+              )}
+            </View>
 
             <TouchableOpacity
-              style={[styles.button, loading.submit && styles.buttonDisabled]}
-              onPress={handleSubmit}
-              disabled={loading.submit}>
+              style={[
+                styles.button,
+                (!isValid || !dirty) && globalStyles.disabledButton,
+              ]}
+              onPress={formikHandleSubmit}
+              disabled={!isValid || !dirty}>
               <Text style={styles.buttonText}>
                 {loading.submit ? 'Submitting...' : 'Submit'}
               </Text>

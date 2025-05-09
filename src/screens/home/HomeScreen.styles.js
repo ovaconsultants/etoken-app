@@ -90,5 +90,28 @@ export const createStyles = (isLandscape , dimensions) => {
     fontSize: fontscale(18),
     fontWeight: '600',
   },
+  // Handling Empty Clinic Case 
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+
+  addClinicButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#007AFF',
+    backgroundColor: 'white',
+  },
+  addClinicText: {
+    color: '#007AFF',
+    fontSize: 16,
+    marginLeft: 8,
+  },
 });
 }

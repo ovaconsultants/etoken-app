@@ -23,8 +23,7 @@ export const SignUpValidationSchema = Yup.object().shape({
     .lowercase()
     .email('Invalid email address')
     .required('Email is required'),
-  specializationId: Yup.string().required('Specialization is required'),
-  accountId: Yup.string().required('Account is required'),
+  specialization: Yup.string().required('Specialization is required'), 
+  account: Yup.string().required('Account is required'),
 });
-
 

@@ -3,7 +3,6 @@ import {SafeAreaView, View, Text, TouchableOpacity} from 'react-native';
 import {createStyles} from './HomeScreen.styles';
 import {globalStyles} from '../../styles/globalStyles';
 import {useAtomValue} from 'jotai';
-import {getHomeRefreshKey} from '../../atoms/refreshAtoms/homePageRefreshAtom';
 import CardGrid from '../../components/cardGrid/CardGrid';
 import {
   doctorClinicDetailsAtom,
@@ -53,8 +52,11 @@ const HomeScreen = ({navigation}) => {
   }, []);
 
   const handleAddClinicPress = useCallback(() => {
-    navigation.navigate('Clinic', {
-      doctor_id: doctorId,
+    navigation.navigate('DoctorClinicNavigator', {
+      screen: 'DoctorAddClinic',
+      params: {
+        doctor_id: doctorId,
+      },
     });
   }, [navigation, doctorId]);
 
@@ -82,10 +84,10 @@ const HomeScreen = ({navigation}) => {
     doctorId,
     isNextButtonDisabled,
   ]);
-
-  if (!cards.length) {
+  console.log('HomeScreen rendered with these cards :', cards);
+  if (cards[0].id === null) {
     return (
-      <SafeAreaView style={styles.container} key={getHomeRefreshKey()}>
+      <SafeAreaView style={styles.container} key={refreshKey}>
         <View style={styles.emptyContainer}>
           <TouchableOpacity
             style={styles.addClinicButton}

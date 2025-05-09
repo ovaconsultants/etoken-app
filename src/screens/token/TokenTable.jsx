@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
-  Animated,
   View,
   Text,
   FlatList,
@@ -8,11 +7,11 @@ import {
 import { styles } from './TokenListingTVScreen.styles';
 import { TranslateNameToHindi } from '../../services/langTranslationService';
 
-const SCROLL_DURATION = 30; // ms between scrolls (smaller = faster)
+const SCROLL_DURATION = 100;
 
 export const TokenTable = ({ tokens }) => {
   const [processedTokens, setProcessedTokens] = useState([]);
-  const scrollY = useRef(new Animated.Value(0)).current;
+  // const scrollY = useRef(new Animated.Value(0)).current;
   const listRef = useRef(null);
 
   useEffect(() => {
@@ -48,7 +47,7 @@ export const TokenTable = ({ tokens }) => {
         listRef.current.scrollToOffset({ offset, animated: false });
       }
       // Reset offset when halfway scrolled
-      if (offset > data.length * 70) {
+      if (offset > data.length * 90) {
         offset = 0;
       }
     }, SCROLL_DURATION);

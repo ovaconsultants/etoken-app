@@ -5,6 +5,7 @@ import {
   ScrollView,
   TouchableOpacity,
   SafeAreaView,
+  ActivityIndicator,
 } from 'react-native';
 import {
   Phone,
@@ -39,6 +40,7 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
     handleRefresh,
     updateToken,
     isError,
+    isMutating,
     isLoading,
     error,
     hasTokenInProgress,
@@ -92,6 +94,9 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
           </View>
         </View>
       </View>
+      {isMutating && (
+              <ActivityIndicator />
+            )}
 
       <View style={styles.actionButtonsContainer}>
         <TouchableOpacity
@@ -107,7 +112,8 @@ const PatientTokenQueueScreen = ({navigation, route}) => {
           onPress={handleRecall}
           disabled={!hasTokenInProgress}>
           <Nfc size={16} color="#333" />
-          <Text style={styles.secondaryButtonText}>Recall</Text>
+          <Text style={styles.secondaryButtonText}>Recall
+          </Text>
         </TouchableOpacity>
       </View>
 

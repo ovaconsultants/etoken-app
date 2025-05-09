@@ -2,8 +2,7 @@ import {Switch, View, TouchableOpacity, Text} from 'react-native';
 import {Dropdown} from 'react-native-element-dropdown';
 import React, {useState, useCallback, useEffect} from 'react';
 import {formatTokenTime, maskPhoneNumber} from '../../utils/globalUtil';
-import {BadgeIndianRupee, BadgeX} from 'lucide-react-native';
-import { green } from 'react-native-reanimated/lib/typescript/Colors';
+
 
 const statusOptions = [
   {label: 'Waiting', value: 'Waiting'},
@@ -52,7 +51,7 @@ export const TokenCard = React.memo(
     };
 
     const handlePaymentToggle = async () => {
-      const newStatus = !paidStatus; // Toggle the current state
+      const newStatus = !paidStatus;
       setPaidStatus(newStatus); // Update local state immediately
 
       try {
@@ -86,7 +85,7 @@ export const TokenCard = React.memo(
           <View style={styles.tokenHeader}>
             <View style={styles.patientName}>
               <Text>{token.patient_name}</Text>
-              <Text>{hindiName || ''}</Text>
+              {/* <Text>{hindiName || ''}</Text> */}
             </View>
             <View style={styles.tokenNumber}>
               <Text>{formatTokenTime(token.created_date)}</Text>
@@ -108,10 +107,9 @@ export const TokenCard = React.memo(
                 thumbColor={paidStatus ? '#27AE60' : '#d63031'}
                 style={styles.smallSwitch}
               />
-              {paidStatus ? <BadgeIndianRupee color={'#27AE60'}/> : <BadgeX  color={'#d63031'}/>}
               <Text style={styles.paymentStatus &&  paidStatus ? styles.paidStatusTextColor : styles.notPaidStatusTextColor}>
-                Paid
-              </Text>
+                {paidStatus ?  'Paid' :  'UnPaid' }
+               </Text>
             </View>
 
             {/* Status Dropdown */}
