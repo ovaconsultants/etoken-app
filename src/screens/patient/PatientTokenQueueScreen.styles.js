@@ -131,13 +131,19 @@ export const createStyles = isLandscape =>
       alignItems: 'center',
       fontSize: 18,
       fontWeight: 'bold',
+   
+   
     },
     tokenNumberText: {
       marginLeft: 12,
       fontSize: 18,
       fontWeight: 'bold',
-      paddingRight: 5,
+      paddingRight: 10,
       paddingLeft: 10,
+      borderRadius: '40%',
+      borderWidth: 2,
+      borderColor: 'green',
+      backgroundColor: 'rgb(100, 163, 184)',
     },
     tokenDetails: {
       flexDirection: 'row',
