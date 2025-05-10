@@ -2,14 +2,14 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
 import { setAuthToken } from '../utils/tokenManager';
-import { API_URL } from '../config/apiUrl';
 import ErrorMessage from '../components/errorMessage/ErrorMessage';
+import { API_URL } from '../constants/globalConstants';
 
-const apiURL = API_URL || 'https://etoken-api-dev.vercel.app/';
+
 
 // Create axios instance
 const httpClient = axios.create({
-  baseURL: apiURL,
+  baseURL: API_URL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',

@@ -1,9 +1,5 @@
-import {API_URL} from '../config/apiUrl';
+import {API_URL} from '../constants/globalConstants';
 
-/**
- * Specialized service for uploading profile images
- * Handles all the FormData preparation and headers automatically
- */
 export const uploadProfileImage = async (
   imageData,
   userId,
