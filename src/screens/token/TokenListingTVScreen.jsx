@@ -154,15 +154,15 @@ useLayoutEffect(() => {
 export default withQueryClientProvider(TokenListingTVScreen);
 
 const ReloadButton = ({handleReloadPress, isRefreshReloading}) => (
-  <View style={{marginRight: 12}}>
+  <View style={styles.reloadButton}>
     <TouchableOpacity
       onPress={handleReloadPress}
       disabled={isRefreshReloading}
-      style={{padding: 6}}>
+      >
       {isRefreshReloading ? (
         <ActivityIndicator size="small" color="#007BFF" />
       ) : (
-        <RotateCcw color="#007BFF" />
+        <RotateCcw  size={22} color="#000" />
       )}
     </TouchableOpacity>
   </View>

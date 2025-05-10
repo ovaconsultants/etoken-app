@@ -32,10 +32,9 @@ export const styles = StyleSheet.create({
     padding: 15,
     fontSize: 16,
   },
-  errorBox: {
-    height: 25, // Fixed height for error message
-    marginTop: 4,
-  },
+errorInput : {
+  color : 'red' ,
+},
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'center',

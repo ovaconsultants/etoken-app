@@ -55,8 +55,6 @@ export const usePatientTokenManager = (clinic_id, doctor_id) => {
       });
 
       await queryClient.invalidateQueries(['tokens', doctor_id, clinic_id]);
-      showToast('Update successful');
-
       if (updates.status === 'Completed') {
         selectedTokenRef.current = null;
       }

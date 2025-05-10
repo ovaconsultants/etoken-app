@@ -10,13 +10,14 @@ import ImagePicker from '../../components/imagePicker/ImagePicker';
 import {UploadDoctorProfileImageRequest} from '../../services/profileImageService';
 import {showToast} from '../../components/toastMessage/ToastMessage';
 import createStyles from './CaptureProfilePhotoScreen.styles';
+import {globalStyles} from '../../styles/globalStyles';
 import RNFS from 'react-native-fs';
 import { useOrientation } from '../../hooks/useOrientation';
 
 const CaptureProfilePhotoScreen = ({navigation, route}) => {
   const { isLandscape, dimensions } = useOrientation(); 
   const styles = createStyles(isLandscape, dimensions);
-  const { doctor_id } = route.params;
+  const { doctor_id , fromSignUpRoute } = route.params;
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -73,7 +74,7 @@ const CaptureProfilePhotoScreen = ({navigation, route}) => {
           name: 'DoctorClinicNavigator',
           params: {
             screen: 'DoctorAddClinic',
-            params: {doctor_id: doctor_id},
+            params: {doctor_id: doctor_id , fromSignUpRoute: fromSignUpRoute},
           },
         });
       }, 2000);
@@ -103,7 +104,7 @@ const CaptureProfilePhotoScreen = ({navigation, route}) => {
             <TouchableOpacity
               style={[
                 styles.uploadButton,
-                !selectedImage && styles.buttonDisabled,
+                !selectedImage && globalStyles.disabledButton,
               ]}
               onPress={handleImageUpload}
               disabled={!selectedImage}>
