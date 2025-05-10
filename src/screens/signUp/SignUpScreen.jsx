@@ -89,7 +89,7 @@ const SignUpScreen = ({navigation}) => {
         () =>
           navigation.navigate('DoctorClinicNavigator', {
             screen: 'AddProfilePicture',
-            params: {doctor_id: data.doctor_id},
+            params: {doctor_id: data.doctor_id , fromSignUpRoute : true},
           }),
         2000,
       );

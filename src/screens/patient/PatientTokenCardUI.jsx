@@ -24,7 +24,7 @@ export const TokenCard = React.memo(
   }) => {
     const [hindiName, setHindiName] = useState('');
     const [paidStatus, setPaidStatus] = useState(token.fee_status === 'Paid');
-    const [status, setStatus] = useState(token.status);
+    const [status, setStatus] = useState();
 
     const memoizedTranslate = useCallback(
       name => {
@@ -52,7 +52,7 @@ export const TokenCard = React.memo(
 
     const handlePaymentToggle = async () => {
       const newStatus = !paidStatus;
-      setPaidStatus(newStatus); // Update local state immediately
+      setPaidStatus(newStatus);
 
       try {
         const updateTokenDataObj = {

@@ -7,124 +7,139 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {Formik} from 'formik';
-import {AddDoctorClinicScheduleRequest} from '../../services/doctorService';
-import styles from './DoctorClinicScheduleScreen.styles';
-import TimePicker from '../../components/timePicker/TimePicker';
 import {Dropdown} from 'react-native-element-dropdown';
+import {useSetAtom, useAtomValue} from 'jotai';
+import TimePicker from '../../components/timePicker/TimePicker';
+import {AddDoctorClinicScheduleRequest} from '../../services/doctorService';
 import {userTokenAtom} from '../../atoms/authAtoms/authAtom';
-import {
-  doctorClinicDetailsAtom,
-} from '../../atoms/doctorAtoms/doctorAtom';
-import {useAtomValue, useSetAtom} from 'jotai';
+import {doctorClinicDetailsAtom} from '../../atoms/doctorAtoms/doctorAtom';
 import {WEEK_DAYS} from '../../constants/formComponentsData/weekDaysDropdownData';
 import {TransformTimeForPostgres} from '../../utils/formatTimeForPostgres';
-import { ScheduleValidationSchema } from '../../utils/ClinicValidationSchema';
-import { showToast, ToastMessage} from '../../components/toastMessage/ToastMessage';
+import {ScheduleValidationSchema} from '../../utils/ClinicValidationSchema';
+import {
+  showToast,
+  ToastMessage,
+} from '../../components/toastMessage/ToastMessage';
+import styles from './DoctorClinicScheduleScreen.styles';
 
-const getUniqueClinics = clinics => {
-  const uniqueClinics = [];
-  const seen = new Set();
+const getUniqueClinics = (clinics = []) =>
+  [...new Set(clinics.map(c => `${c.clinic_name}_${c.clinic_address}`))]
+    .map(key =>
+      clinics.find(c => `${c.clinic_name}_${c.clinic_address}` === key),
+    )
+    .map(c => ({
+      label: `${c.clinic_name} - ${c.clinic_address}`,
+      value: c.clinic_id,
+    }));
 
-  clinics.forEach(clinic => {
-    const key = `${clinic.clinic_name}_${clinic.clinic_address}`;
-    if (!seen.has(key)) {
-      seen.add(key);
-      uniqueClinics.push({
-        label: `${clinic.clinic_name} - ${clinic.clinic_address}`,
-        value: clinic.clinic_id,
-      });
-    }
-  });
-  return uniqueClinics;
-};
+const Field = ({
+  field,
+  values,
+  setFieldValue,
+  data,
+  placeholder,
+  fieldStates,
+  setFieldStates,
+  handleFieldBlur,
+  Component,
+  ...props
+}) => (
+  <View style={styles.inputContainer}>
+    <Text style={styles.label}>
+      {field.replace(/([A-Z])/g, ' $1')} <Text style={styles.required}>*</Text>
+    </Text>
+    <Component
+      {...props}
+      style={[
+        styles.dropdown,
+        fieldStates[field]?.touched &&
+          fieldStates[field]?.error &&
+          styles.errorInput,
+      ]}
+      data={data}
+      value={values[field]}
+      onChange={item => {
+        setFieldValue(field, item?.value ?? item);
+        fieldStates[field]?.error &&
+          setFieldStates(prev => ({
+            ...prev,
+            [field]: {...prev[field], error: false},
+          }));
+      }}
+      onBlur={() => handleFieldBlur(field, values[field])}
+    />
+  </View>
+);
 
-const DoctorClinicScheduleScreen = ({navigation , route}) => {
-  const {doctor_id }  = route?.params;
-  const setIsAuthenticated = useSetAtom(userTokenAtom);
-  const clinic_Data = useAtomValue(doctorClinicDetailsAtom);
-  const uniqueClinics = getUniqueClinics(clinic_Data || []);
+const DoctorClinicScheduleScreen = ({navigation, route}) => {
+  const {doctor_id} = route?.params || {};
   const [openPicker, setOpenPicker] = useState(null);
-  const [fieldErrors, setFieldErrors] = useState({
-    clinicId: false,
-    dayOfWeek: false,
-    startTime: false,
-    endTime: false
-  });
-  const [touchedFields, setTouchedFields] = useState({
-    clinicId: false,
-    dayOfWeek: false,
-    startTime: false,
-    endTime: false
-  });
+  const [fieldStates, setFieldStates] = useState(
+    Object.fromEntries(
+      ['clinicId', 'dayOfWeek', 'startTime', 'endTime'].map(f => [
+        f,
+        {touched: false, error: false},
+      ]),
+    ),
+  );
+  const uniqueClinics = getUniqueClinics(useAtomValue(doctorClinicDetailsAtom));
+  const setIsAuthenticated = useSetAtom(userTokenAtom);
 
-  const handleFieldBlur = (fieldName, value) => {
-    setTouchedFields(prev => ({...prev, [fieldName]: true}));
+  const handleFieldBlur = (field, value) => {
+    setFieldStates(prev => ({
+      ...prev,
+      [field]: {...prev[field], touched: true},
+    }));
     try {
-      ScheduleValidationSchema.validateSyncAt(fieldName, {[fieldName]: value});
-      setFieldErrors(prev => ({...prev, [fieldName]: false}));
+      ScheduleValidationSchema.validateSyncAt(field, {[field]: value});
+      setFieldStates(prev => ({
+        ...prev,
+        [field]: {...prev[field], error: false},
+      }));
     } catch {
-      setFieldErrors(prev => ({...prev, [fieldName]: true}));
+      setFieldStates(prev => ({
+        ...prev,
+        [field]: {...prev[field], error: true},
+      }));
     }
   };
 
   const handleSubmit = async (values, {setSubmitting, resetForm}) => {
+    showToast('Submitting...', 'info');
     try {
-      const payload = {
-        doctor_id: doctor_id,
+      const response = await AddDoctorClinicScheduleRequest({
+        doctor_id,
+        created_by: 'admin',
         clinic_id: values.clinicId,
         day_of_week: values.dayOfWeek,
         start_time: TransformTimeForPostgres(values.startTime),
         end_time: TransformTimeForPostgres(values.endTime),
-        created_by: 'admin',
-      };
-  
-      const response = await AddDoctorClinicScheduleRequest(payload);
-  
-      if (response.success) {
-        showToast('Schedule successfully created', 'success', {
+      });
+
+      if (response) {
+        showToast('Schedule created!', 'success', {
           duration: 3000,
-          onHide: () => {
-            showToast(
-              'Would you like to add another schedule?',
-              'info',
-              {
-                duration: 4000,
-                action: {
-                  text: 'Return to Dashboard',
-                  onPress: () => {
-                    setIsAuthenticated(null);
-                    navigation.navigate('AppNavigator');
-                  }
-                }
-              }
-            );
-          }
+  
         });
-        
+        showToast('Add another?', 'info', {
+          duration: 4000,
+          action: {
+            text: 'Home',
+            onPress: () => navigation.navigate('AppNavigator'),
+          },
+        }),
         resetForm();
-        setFieldErrors({
-          clinicId: false,
-          dayOfWeek: false,
-          startTime: false,
-          endTime: false
-        });
-        setTouchedFields({
-          clinicId: false,
-          dayOfWeek: false,
-          startTime: false,
-          endTime: false
-        });
-      } else {
-        showToast(
-          response.error || 'Unable to create schedule. Please verify your details and try again.', 
-          'error'
+        setFieldStates(
+          Object.fromEntries(
+            Object.keys(fieldStates).map(f => [
+              f,
+              {touched: false, error: false},
+            ]),
+          ),
         );
-      }
+      } else showToast(response.error || 'Failed to create schedule', 'error');
     } catch (err) {
-      showToast(
-        'An error occurred while processing your request. Please check your connection and try again.', 
-        'error'
-      );
+      showToast('Error processing request', 'error');
     } finally {
       setSubmitting(false);
     }
@@ -149,107 +164,41 @@ const DoctorClinicScheduleScreen = ({navigation , route}) => {
           isSubmitting,
         }) => (
           <ScrollView contentContainerStyle={styles.container}>
-            {/* Clinic Dropdown */}
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>
-                Select Clinic
-                <Text> *</Text>
-              </Text>
-              <Dropdown
-                style={[
-                  styles.dropdown,
-                  touchedFields.clinicId && fieldErrors.clinicId && styles.errorInput
-                ]}
-                data={uniqueClinics}
-                labelField="label"
-                valueField="value"
-                placeholder="Choose a clinic"
-                value={values.clinicId}
-                onChange={item => {
-                  setFieldValue('clinicId', item.value);
-                  if (fieldErrors.clinicId) {
-                    setFieldErrors(prev => ({...prev, clinicId: false}));
-                  }
+            {['clinicId', 'dayOfWeek'].map(field => (
+              <Field
+                key={field}
+                {...{
+                  field,
+                  values,
+                  setFieldValue,
+                  fieldStates,
+                  setFieldStates,
+                  handleFieldBlur,
+                  data: field === 'clinicId' ? uniqueClinics : WEEK_DAYS,
+                  placeholder:
+                    field === 'clinicId' ? 'Choose clinic' : 'Select day',
+                  Component: Dropdown,
+                  labelField: 'label',
+                  valueField: 'value',
                 }}
-                onBlur={() => handleFieldBlur('clinicId', values.clinicId)}
               />
-            </View>
-
-            {/* Day of Week Dropdown */}
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>
-                Day of Week
-                <Text style={{color: 'red'}}> *</Text>
-              </Text>
-              <Dropdown
-                style={[
-                  styles.dropdown,
-                  touchedFields.dayOfWeek && fieldErrors.dayOfWeek && styles.errorInput
-                ]}
-                data={WEEK_DAYS}
-                labelField="label"
-                valueField="value"
-                placeholder="Select a Day"
-                value={values.dayOfWeek}
-                onChange={item => {
-                  setFieldValue('dayOfWeek', item.value);
-                  if (fieldErrors.dayOfWeek) {
-                    setFieldErrors(prev => ({...prev, dayOfWeek: false}));
-                  }
+            ))}
+            {['startTime', 'endTime'].map(field => (
+              <Field
+                key={field}
+                {...{
+                  field,
+                  values,
+                  setFieldValue,
+                  fieldStates,
+                  handleFieldBlur,
+                  Component: TimePicker,
+                  onFocus: () => setOpenPicker(field),
+                  isFocus: openPicker === field,
+                  onBlur: () => setOpenPicker(null),
                 }}
-                onBlur={() => handleFieldBlur('dayOfWeek', values.dayOfWeek)}
               />
-            </View>
-
-            {/* Start Time Picker */}
-            <View style={styles.inputContainer}>
-              <Text style={styles.labels}>
-                Start Time
-                <Text> *</Text>
-              </Text>
-              <TimePicker
-                value={values.startTime}
-                onChange={time => {
-                  setFieldValue('startTime', time);
-                  if (fieldErrors.startTime) {
-                    setFieldErrors(prev => ({...prev, startTime: false}));
-                  }
-                }}
-                onFocus={() => setOpenPicker('startTime')}
-                onBlur={() => {
-                  setOpenPicker(null);
-                  handleFieldBlur('startTime', values.startTime);
-                }}
-                isFocus={openPicker === 'startTime'}
-                style={touchedFields.startTime && fieldErrors.startTime ? styles.errorInput : null}
-              />
-            </View>
-
-            {/* End Time Picker */}
-            <View style={styles.inputContainer}>
-              <Text style={styles.labels}>
-                End Time
-                <Text> *</Text>
-              </Text>
-              <TimePicker
-                value={values.endTime}
-                onChange={time => {
-                  setFieldValue('endTime', time);
-                  if (fieldErrors.endTime) {
-                    setFieldErrors(prev => ({...prev, endTime: false}));
-                  }
-                }}
-                onFocus={() => setOpenPicker('endTime')}
-                onBlur={() => {
-                  setOpenPicker(null);
-                  handleFieldBlur('endTime', values.endTime);
-                }}
-                isFocus={openPicker === 'endTime' && openPicker !== 'startTime'}
-                style={touchedFields.endTime && fieldErrors.endTime ? styles.errorInput : null}
-              />
-            </View>
-
-            {/* Submit Button */}
+            ))}
             <View style={styles.buttonContainer}>
               {isSubmitting ? (
                 <ActivityIndicator size="large" color="#007AFF" />
@@ -262,6 +211,7 @@ const DoctorClinicScheduleScreen = ({navigation , route}) => {
           </ScrollView>
         )}
       </Formik>
+      <ToastMessage />
     </>
   );
 };
