@@ -1,13 +1,10 @@
 import {StyleSheet} from 'react-native';
-import {Dimensions} from 'react-native';
 
-const {width} = Dimensions.get('window');
-const marginWidth = width * 0.04;
 export const styles = StyleSheet.create({
   fullScreenContainer: {
     flex: 1,
     backgroundColor: '#fff',
-    margin: marginWidth,
+    margin: 20,
   },
 
   /** HEADER SECTION **/
@@ -15,8 +12,13 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 15,
     paddingHorizontal: 10,
+  },
+    headerRightContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 12,
+    marginTop: 4,
   },
 
   /** DOCTOR PROFILE SECTION **/
@@ -97,13 +99,14 @@ export const styles = StyleSheet.create({
     marginRight: 10,
   },
   reloadButton: {
-    padding: 8,
+    marginTop: 4,
     marginLeft: 12,
     backgroundColor: '#f5f5f5',
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
   },
+
 
   /** TOKEN TABLE **/
   tableContainer: {

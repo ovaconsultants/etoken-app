@@ -2,17 +2,20 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
-  FlatList,
+  Animated,
 } from 'react-native';
 import { styles } from './TokenListingTVScreen.styles';
 import { TranslateNameToHindi } from '../../services/langTranslationService';
 
-const SCROLL_DURATION = 100;
+const SCROLL_SPEED = 0.2; // pixels per interval
 
 export const TokenTable = ({ tokens }) => {
+  console.log('tokens', tokens);
   const [processedTokens, setProcessedTokens] = useState([]);
-  // const scrollY = useRef(new Animated.Value(0)).current;
-  const listRef = useRef(null);
+  const flatListRef = useRef(null);
+  const contentHeight = useRef(0);
+  const listHeight = useRef(0);
+  const scrollDirection = useRef(1); // 1 for down, -1 for up
 
   useEffect(() => {
     const processTokens = async () => {
@@ -36,23 +39,53 @@ export const TokenTable = ({ tokens }) => {
   }, [tokens]);
 
   const data = processedTokens.length ? processedTokens : tokens;
-  const infiniteData = [...data, ...data]; // for loop illusion
-
-  // Auto-scroll logic
+ console.log('data', data);
+  // Auto-scroll logic with Animated
   useEffect(() => {
-    let offset = 0;
-    const interval = setInterval(() => {
-      offset += 1;
-      if (listRef.current) {
-        listRef.current.scrollToOffset({ offset, animated: false });
+    if (data.length === 0) return;
+
+    let currentOffset = 0;
+    let animationFrameId;
+
+    const animateScroll = () => {
+      // Calculate if we need to reverse direction
+      if (currentOffset >= contentHeight.current - listHeight.current) {
+        scrollDirection.current = -1; // Reverse to scroll up
+      } else if (currentOffset <= 0) {
+        scrollDirection.current = 1; // Reverse to scroll down
       }
-      // Reset offset when halfway scrolled
-      if (offset > data.length * 90) {
-        offset = 0;
+
+      // Update current offset
+      currentOffset += scrollDirection.current * SCROLL_SPEED;
+      
+      // Apply the scroll
+      if (flatListRef.current) {
+        flatListRef.current.scrollToOffset({
+          offset: currentOffset,
+          animated: false
+        });
       }
-    }, SCROLL_DURATION);
-    return () => clearInterval(interval);
+
+      // Continue animation
+      animationFrameId = requestAnimationFrame(animateScroll);
+    };
+
+    // Start animation
+    animationFrameId = requestAnimationFrame(animateScroll);
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+    };
   }, [data]);
+
+  // Measure content dimensions
+  const handleContentSizeChange = (w, h) => {
+    contentHeight.current = h;
+  };
+
+  const handleLayout = (event) => {
+    listHeight.current = event.nativeEvent.layout.height;
+  };
 
   const renderItem = ({ item }) => (
     <View style={[styles.tableRow, getRowStyle(item.status)]}>
@@ -92,20 +125,22 @@ export const TokenTable = ({ tokens }) => {
         <Text style={styles.tableHeaderText}>Token</Text>
       </View>
 
-      {/* FlatList with scrollToOffset looping */}
-      <FlatList
-        ref={listRef}
-        data={infiniteData}
+      {/* Animated FlatList */}
+      <Animated.FlatList
+        ref={flatListRef}
+        data={data}
         keyExtractor={(item, index) => `${item.token_id}-${index}`}
         renderItem={renderItem}
-        scrollEnabled={false}
+        scrollEnabled={true}
         showsVerticalScrollIndicator={false}
+        onContentSizeChange={handleContentSizeChange}
+        onLayout={handleLayout}
       />
     </View>
   );
 };
 
-// Reuse your style helpers
+// Style helpers remain the same
 const getRowStyle = status => {
   switch (status?.toLowerCase()) {
     case 'in progress':
