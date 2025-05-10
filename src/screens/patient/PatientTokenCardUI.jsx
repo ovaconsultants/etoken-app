@@ -89,7 +89,9 @@ export const TokenCard = React.memo(
             </View>
             <View style={styles.tokenNumber}>
               <Text>{formatTokenTime(token.created_date)}</Text>
-              <Text style={styles.tokenNumberText}>{token.token_no}</Text>
+              <View style={styles.tokenNumberText}>
+              <Text>{token.token_no}</Text>
+              </View>
             </View>
           </View>
 

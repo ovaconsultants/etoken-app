@@ -140,7 +140,7 @@ export const createStyles = isLandscape =>
       fontWeight: 'bold',
       paddingRight: 10,
       paddingLeft: 10,
-      borderRadius: '40%',
+      borderRadius: 12,
       borderWidth: 2,
       borderColor: 'green',
       backgroundColor: 'rgb(100, 163, 184)',
