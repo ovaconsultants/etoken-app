@@ -27,12 +27,9 @@ export const uploadProfileImage = async (
       body: formData,
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Image upload failed');
-    }
-
-    return await response.json();
+ 
+     console.log('Response:', response);
+    return await response;
   } catch (error) {
     console.error(`Profile image upload error (${userType} ${userId}):`, error);
     throw error;

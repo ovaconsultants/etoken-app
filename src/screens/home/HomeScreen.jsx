@@ -85,7 +85,7 @@ const HomeScreen = ({navigation}) => {
     isNextButtonDisabled,
   ]);
   console.log('HomeScreen rendered with these cards :', cards);
-  if (cards[0].id === null) {
+  if (cards.length === 0 || cards[0].id === null) {
     return (
       <SafeAreaView style={styles.container} key={refreshKey}>
         <View style={styles.emptyContainer}>

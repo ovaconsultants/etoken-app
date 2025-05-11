@@ -9,7 +9,7 @@ import { TranslateNameToHindi } from '../../services/langTranslationService';
 
 const SCROLL_SPEED = 0.2; // pixels per interval
 
-export const TokenTable = ({ tokens }) => {
+const TokenTable = ({ tokens }) => {
   console.log('tokens', tokens);
   const [processedTokens, setProcessedTokens] = useState([]);
   const flatListRef = useRef(null);
@@ -182,3 +182,7 @@ const getStatusDot = status => {
       return null;
   }
 };
+
+
+
+export default TokenTable;

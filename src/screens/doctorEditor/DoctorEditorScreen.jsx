@@ -1,34 +1,35 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
   ScrollView,
   TouchableOpacity,
   TextInput,
-  Alert,
   Pressable,
 } from 'react-native';
-import {useAtomValue} from 'jotai';
-import {doctorInfoAtom} from '../../atoms/doctorAtoms/doctorAtom';
+
 import {UpdateDoctorProfileDetailsRequest} from '../../services/doctorService';
+import {FetchDoctorWithIdRequest} from '../../services/doctorService';
+
 import * as yup from 'yup';
 import {Formik} from 'formik';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { FetchDoctorWithIdRequest } from '../../services/doctorService';
-import { useSetAtom } from 'jotai';
-import { doctorClinicDetailsAtom } from '../../atoms/doctorAtoms/doctorAtom';
 import {useTheme} from '@react-navigation/native';
-import { useOrientation } from '../../hooks/useOrientation';
-import { createStyles } from './DoctorEditorScreen.styles';
+
+import {useOrientation} from '../../hooks/useOrientation';
+import {createStyles} from './DoctorEditorScreen.styles';
+import {showToast} from '../../components/toastMessage/ToastMessage';
+import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
 
 
 // Validation Schema
 const doctorProfileSchema = yup.object().shape({
-  doctorName: yup.string().required('Full name is required'),
+  firstName: yup.string().required('First name is required'),
+  lastName: yup.string().required('Last name is required'),
   mobileNumber: yup.string().matches(/^[0-9]{10}$/, 'Must be 10 digits'),
   phoneNumber: yup.string(),
   gender: yup.string().oneOf(['Male', 'Female', 'Other'], 'Invalid gender'),
-  dateOfBirth: yup.date().max(new Date(), 'Date cannot be in future'),
+  dateOfBirth: yup.date().max(new Date(), 'Date cannot be  future'),
   qualification: yup.string(),
   experienceYears: yup
     .number()
@@ -39,67 +40,98 @@ const doctorProfileSchema = yup.object().shape({
   address: yup.string(),
   registrationNumber: yup.string(),
   specialization: yup.string(),
+  email: yup.string().email('Invalid email format'),
 });
 
-const DoctorEditorScreen = ({navigation}) => {
+const DoctorEditorScreen = ({navigation, route}) => {
   const {isLandscape} = useOrientation();
   const styles = createStyles(isLandscape);
-  const setDoctorClinicDetails = useSetAtom(doctorClinicDetailsAtom);
- 
-  const doctorInfo = useAtomValue(doctorInfoAtom);
-  console.log('Doctor Info:', doctorInfo);
   const {colors} = useTheme();
+
+  const doctor_id = route.params?.doctor_id;
+
+  const [doctorInfo, setDoctorInfo] = useState(null);
   const [activeSection, setActiveSection] = useState('basic');
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const initialValues = {
-    doctorName: doctorInfo.doctor_name || '',
-    mobileNumber: doctorInfo.mobile_number || '',
-    phoneNumber: doctorInfo.phone_number || '',
-    gender: doctorInfo.gender || '',
-    dateOfBirth: doctorInfo.date_of_birth
-      ? new Date(doctorInfo.date_of_birth)
-      : null,
-    qualification: doctorInfo.qualification || '',
-    experienceYears: doctorInfo.experience_years || '',
-    consultationFee: doctorInfo.consultation_fee || '',
-    biography: doctorInfo.biography || '',
-    address: doctorInfo.address || '',
-    registrationNumber: doctorInfo.registration_number || '',
-    specialization: doctorInfo.specialization_name || '',
-    profilePictureUrl: doctorInfo.profile_picture_url || '',
-  };
+  useEffect(() => {
+    const fetchDoctorDetails = async () => {
+      try {
+        const fetchedDoctorDetailsFromApi = await FetchDoctorWithIdRequest(
+          doctor_id,
+        );
+        console.log('Fetched doctor details:', fetchedDoctorDetailsFromApi);
+        setDoctorInfo(fetchedDoctorDetailsFromApi);
+      } catch (error) {
+        console.error('Fetch error:', error);
+        showToast('Failed to fetch doctor details', {type: 'error'});
+      }
+    };
+    fetchDoctorDetails();
+  }, [doctor_id]);
 
   const handleSubmit = async (values, {setSubmitting}) => {
     try {
-      const formattedValues = {
-        ...values,
-        doctor_id: doctorInfo.doctor_id,
-        date_of_birth: values.dateOfBirth
-          ? values.dateOfBirth.toISOString().split('T')[0]
-          : null,
-        modified_by: doctorInfo.doctor_id.toString(),
+      // Prepare the request data
+      const requestData = {
+        doctor_id,
+        first_name: values.firstName,
+        last_name: values.lastName,
+        mobile_number: values.mobileNumber,
+        phone_number: values.phoneNumber || null,
+        email: values.email,
+        gender: values.gender,
+        date_of_birth: values.dateOfBirth?.toISOString().split('T')[0] || null,
+        qualification: values.qualification || null,
+        experience_years: Number(values.experienceYears) || 0,
+        consultation_fee: Number(values.consultationFee) || 0,
+        biography: values.biography || null,
+        address: values.address || null,
+        registration_number: values.registrationNumber || null,
+        specialization: values.specialization || null,
+        modified_by: 'admin',
       };
 
-      const response = await UpdateDoctorProfileDetailsRequest(formattedValues);
-      const fetchedDoctorDetailsFromApi = await FetchDoctorWithIdRequest(doctorInfo.doctor_id);
-      setDoctorClinicDetails(fetchedDoctorDetailsFromApi);
-      console.log('Update response:', response);
-      Alert.alert('Success', 'Profile updated successfully');
+      // Log the data being sent
+      console.log('Submitting data:', requestData);
+      showToast('Profile updated successfully', {type: 'success'});
+       await UpdateDoctorProfileDetailsRequest(requestData);
     } catch (error) {
       console.error('Update error:', error);
-      Alert.alert('Error', 'Failed to update profile');
+      showToast(error.message || 'Failed to update profile', {type: 'error'});
     } finally {
       setSubmitting(false);
     }
   };
 
+  if (!doctorInfo) {
+    return <LoadingErrorHandler isLoading={true} />;
+  }
+
   return (
     <Formik
-      initialValues={initialValues}
+      initialValues={{
+        firstName: doctorInfo.first_name || '',
+        lastName: doctorInfo.last_name || '',
+        mobileNumber: doctorInfo.mobile_number || '',
+        phoneNumber: doctorInfo.phone_number || '',
+        gender: doctorInfo.gender || '',
+        dateOfBirth: doctorInfo.date_of_birth
+          ? new Date(doctorInfo.date_of_birth)
+          : null,
+        qualification: doctorInfo.qualification || '',
+        experienceYears: doctorInfo.experience_years?.toString() || '',
+        consultationFee: doctorInfo.consultation_fee?.toString() || '',
+        biography: doctorInfo.biography || '',
+        address: doctorInfo.address || '',
+        registrationNumber: doctorInfo.registration_number || '',
+        specialization: doctorInfo.specialization || '',
+        email: doctorInfo.email || '',
+        profilePictureUrl: doctorInfo.profile_picture_url || '',
+      }}
       validationSchema={doctorProfileSchema}
       onSubmit={handleSubmit}
-      >
+      enableReinitialize>
       {({
         handleChange,
         handleBlur,
@@ -191,7 +223,7 @@ const DoctorEditorScreen = ({navigation}) => {
                   setShowDatePicker={setShowDatePicker}
                   navigation={navigation}
                   styles={styles}
-                  doctor_id={doctorInfo.doctor_id}
+                  doctor_id={doctorInfo?.doctor_id}
                 />
               )}
 
@@ -261,7 +293,7 @@ const BasicInfoSection = ({
   setShowDatePicker,
   navigation,
   styles,
-  doctor_id
+  doctor_id,
 }) => (
   <>
     <View style={styles.sectionHeader}>
@@ -285,13 +317,33 @@ const BasicInfoSection = ({
             borderColor: colors.border,
           },
         ]}
-        value={values.doctorName}
-        onChangeText={handleChange('doctorName')}
-        placeholder="Doctor Name"
-        onBlur={handleBlur('doctorName')}
+        value={values.firstName}
+        onChangeText={handleChange('firstName')}
+        placeholder="First Name"
+        onBlur={handleBlur('firstName')}
       />
-      {touched.doctorName && errors.doctorName && (
-        <Text style={styles.errorText}>{errors.doctorName}</Text>
+      {touched.firstName && errors.firstName && (
+        <Text style={styles.errorText}>{errors.firstName}</Text>
+      )}
+    </View>
+
+    <View style={styles.inputGroup}>
+      <TextInput
+        style={[
+          styles.input,
+          {
+            backgroundColor: colors.card,
+            color: colors.text,
+            borderColor: colors.border,
+          },
+        ]}
+        value={values.lastName}
+        onChangeText={handleChange('lastName')}
+        placeholder="Last Name"
+        onBlur={handleBlur('lastName')}
+      />
+      {touched.lastName && errors.lastName && (
+        <Text style={styles.errorText}>{errors.lastName}</Text>
       )}
     </View>
 
@@ -355,7 +407,7 @@ const ProfessionalInfoSection = ({
   touched,
   handleChange,
   handleBlur,
-  styles
+  styles,
 }) => (
   <>
     <View style={styles.inputGroup}>
@@ -402,7 +454,7 @@ const ProfessionalInfoSection = ({
             borderColor: colors.border,
           },
         ]}
-        value={values.experienceYears.toString()}
+        value={values.experienceYears}
         onChangeText={handleChange('experienceYears')}
         onBlur={handleBlur('experienceYears')}
         keyboardType="numeric"
@@ -423,7 +475,7 @@ const ProfessionalInfoSection = ({
             borderColor: colors.border,
           },
         ]}
-        value={values.consultationFee?.toString()}
+        value={values.consultationFee}
         onChangeText={handleChange('consultationFee')}
         onBlur={handleBlur('consultationFee')}
         keyboardType="numeric"
@@ -482,7 +534,7 @@ const ContactInfoSection = ({
   touched,
   handleChange,
   handleBlur,
-  styles
+  styles,
 }) => (
   <>
     <View style={styles.inputGroup}>
@@ -527,6 +579,27 @@ const ContactInfoSection = ({
     <View style={styles.inputGroup}>
       <TextInput
         style={[
+          styles.input,
+          {
+            backgroundColor: colors.card,
+            color: colors.text,
+            borderColor: colors.border,
+          },
+        ]}
+        value={values.email}
+        onChangeText={handleChange('email')}
+        placeholder="Email"
+        onBlur={handleBlur('email')}
+        keyboardType="email-address"
+      />
+      {touched.email && errors.email && (
+        <Text style={styles.errorText}>{errors.email}</Text>
+      )}
+    </View>
+
+    <View style={styles.inputGroup}>
+      <TextInput
+        style={[
           styles.textArea,
           {
             backgroundColor: colors.card,
@@ -545,5 +618,4 @@ const ContactInfoSection = ({
   </>
 );
 
-  
 export default DoctorEditorScreen;

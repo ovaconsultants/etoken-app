@@ -59,6 +59,7 @@ const SignInScreen = ({navigation}) => {
       setAuthToken(data.token);
       setDoctorIdAtom(doctor_id);
       setDoctorInfoAtom(doctorDetails);
+      console.log('Doctor Details : in SignInScreen', doctorDetails);
       setDoctorClinicDetails(data.clinics);
     } catch (error) {
       console.error('Error signing in:', error);
