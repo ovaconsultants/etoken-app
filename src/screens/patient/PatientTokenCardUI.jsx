@@ -105,7 +105,7 @@ export const TokenCard = React.memo(
               <Switch
                 value={paidStatus}
                 onValueChange={handlePaymentToggle}
-                trackColor={{false: 'blue', true: 'grey'}}
+                trackColor={{false: 'grey', true: 'grey'}}
                 thumbColor={paidStatus ? '#27AE60' : '#d63031'}
                 style={styles.smallSwitch}
               />
