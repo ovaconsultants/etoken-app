@@ -1,4 +1,5 @@
 import {API_URL} from '../constants/globalConstants';
+import {fetchData} from './apiService';
 
 export const uploadProfileImage = async (
   imageData,
@@ -6,7 +7,7 @@ export const uploadProfileImage = async (
   userType = 'doctor',
 ) => {
   try {
-     console.log('Uploading profile image:', {
+    console.log('Uploading profile image:', {
       userId,
       userType,
       imageData,
@@ -27,8 +28,7 @@ export const uploadProfileImage = async (
       body: formData,
     });
 
- 
-     console.log('Response:', response);
+    console.log('Response:', response);
     return await response;
   } catch (error) {
     console.error(`Profile image upload error (${userType} ${userId}):`, error);
@@ -51,4 +51,27 @@ export const UploadDoctorProfileImageRequest = (imageData, doctorId) => {
 export const UploadPatientProfileImageRequest = (imageData, patientId) => {
   const userId = patientId;
   return uploadProfileImage(imageData, userId, 'patient');
+};
+
+/**
+ * get profile image by id
+ */
+
+export const GetDoctorProfileImageRequest = async doctorId => {
+  try {
+    const endpoint = '/doctor/getDoctorProfilePicture';
+    const params = {doctor_id: doctorId};
+
+    console.log('Fetching doctor profile image:', {endpoint, params});
+
+    const data = await fetchData(endpoint, params);
+
+    return data.profile_picture_url;
+  } catch (error) {
+    console.error(
+      `Profile image fetch error for doctor_id=${doctorId}:`,
+      error,
+    );
+    throw error;
+  }
 };

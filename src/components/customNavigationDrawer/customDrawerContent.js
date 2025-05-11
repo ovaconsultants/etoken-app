@@ -20,6 +20,9 @@ const CustomDrawerContent = () => {
       onPress: () =>
         navigation.navigate('DoctorClinicNavigator', {
           screen: 'DoctorEditor',
+          params: {
+            doctor_id: doctor_id,
+          },
         }),
     },
     {

@@ -3,7 +3,6 @@ import {
   View,
   TouchableOpacity,
   Text,
-  Alert,
   ActivityIndicator,
 } from 'react-native';
 import ImagePicker from '../../components/imagePicker/ImagePicker';
@@ -43,7 +42,10 @@ const CaptureProfilePhotoScreen = ({navigation, route}) => {
 
   const handleImageUpload = async () => {
     if (!selectedImage) {
-      Alert.alert('Error', 'Please select an image first');
+      showToast('Please select an image first', {
+        type: 'error',
+        duration: 3000,
+      });
       return;
     }
 
@@ -57,10 +59,12 @@ const CaptureProfilePhotoScreen = ({navigation, route}) => {
         preparedImage,
         doctor_id,
       );
-      showToast(result.message, {
-        type: result.success ? 'success' : 'error',
+      if(result.ok){
+      showToast('Image uploaded successfully', {
+        type: 'success',
         duration: 3000,
       });
+    }
     } catch (error) {
       console.error('Upload error:', error);
       showToast(error.message || 'Failed to upload image', {

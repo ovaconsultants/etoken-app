@@ -5,24 +5,26 @@ import { RotateCcw } from 'lucide-react-native';
 
 import { styles } from './TokenListingTVScreen.styles';
 import { usePatientTokens } from '../../hooks/usePatientTokens';
-import { useProfileURI } from '../../hooks/useProfileURI';
+
 import InProgressTokenNotificationScreen from '../notification/InProgressTokenNotificationScreen';
 import DefaultTVScreen from '../television/DefaultTVScreen';
 import TokenTable from './TokenTable';
 import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
 import DrawerLeftNavigationButton from '../../components/drawerNavigation/drawerNavigation';
 import ProfileImageRenderer from '../../components/profileImage/ProfileImage';
+import { showToast } from '../../components/toastMessage/ToastMessage';
+
+
 import withQueryClientProvider from '../../hooks/useQueryClientProvider';
 import { FetchDoctorWithIdRequest } from '../../services/doctorService';
 import { FetchAllClinicForDoctorRequest } from '../../services/clinicService';
-import { showToast } from '../../components/toastMessage/ToastMessage';
 
 
 
 const TokenListingTVScreen = ({ route, navigation }) => {
   // Safely extract params with defaults
   const { doctor_id = null, clinic_id = null } = route.params ?? {};
-  const profileUri = useProfileURI();
+
 
   const [clinicData, setClinicData] = useState([]);
   const [doctorData, setDoctorData] = useState({});
@@ -78,7 +80,7 @@ const TokenListingTVScreen = ({ route, navigation }) => {
 
   // Fetch doctor and clinic details with better error handling
   useEffect(() => {
-    if (!doctor_id || !clinic_id) return;
+    if (!doctor_id || !clinic_id) {return;}
 
     const fetchDetails = async () => {
       setIsFetchingDetails(true);
@@ -89,8 +91,6 @@ const TokenListingTVScreen = ({ route, navigation }) => {
         ]);
         setClinicData(clinicApiData ?? []);
         setDoctorData(doctorApiData ?? {});
-        console.log('Fetched clinic details:', clinicApiData);
-        console.log('Fetched doctor details:', doctorApiData);
       } catch (fetchDataError) {
         console.error('Error fetching data:', fetchDataError);
         showToast('Failed to fetch clinic and doctor details', 'error');
@@ -163,7 +163,6 @@ const TokenListingTVScreen = ({ route, navigation }) => {
       <View style={styles.headerContainer}>
         <DoctorHeader 
           doctorData={doctorData} 
-          profileUri={profileUri} 
         />
       </View>
 
@@ -184,10 +183,13 @@ const TokenListingTVScreen = ({ route, navigation }) => {
 };
 
 // Extracted component for better readability
-const DoctorHeader = ({ doctorData, profileUri }) => (
+const DoctorHeader = ({ doctorData }) => {
+  console.log('doctorData in doctor header', doctorData) ;
+  return (
+    <>
   <View style={styles.doctorSection}>
     <View style={styles.profileCircle}>
-      <ProfileImageRenderer imageUrl={profileUri ?? ''} />
+      <ProfileImageRenderer doctor_id  = {doctorData?.doctor_id ?? ''} />
     </View>
 
     <View style={styles.doctorNameContainer}>
@@ -224,7 +226,9 @@ const DoctorHeader = ({ doctorData, profileUri }) => (
       </View>
     </View>
   </View>
-);
+  </>
+  )}
+
 
 const ReloadButton = ({ handleReloadPress, isRefreshReloading }) => (
   <View style={styles.reloadButton}>

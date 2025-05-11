@@ -10,8 +10,8 @@ export const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     padding: isTablet ? 32 : 20,
     gap: 24,
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   profileImageWrapper: {
