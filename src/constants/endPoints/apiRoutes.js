@@ -15,6 +15,7 @@ export const API_ENDPOINTS = {
     ADD_DOCTOR_CLINIC_SCHEDULE:'/doctor/schedule',
     FETCH_ALL_CLINICS_OF_A_DOCTOR:'/doctor/fetchClinicsByDoctorId',
     ADD_DOCTOR_PROFILE_PICTURE:'/doctor/uploadDoctorProfilePicture',
+    GET_DOCTOR_PROFILE_IMAGE:'/doctor/getDoctorProfilePicture',
 },
   ACCOUNT: {
     GET_REGISTER_ACCOUNTS: '/registration/accounts',

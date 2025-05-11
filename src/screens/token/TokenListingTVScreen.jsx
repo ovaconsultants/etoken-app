@@ -1,10 +1,10 @@
-import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
+import React, {useCallback, useEffect, useLayoutEffect, useState} from 'react';
+import {View, Text, ActivityIndicator, TouchableOpacity} from 'react-native';
 import Orientation from 'react-native-orientation-locker';
-import { RotateCcw } from 'lucide-react-native';
+import {RotateCcw} from 'lucide-react-native';
 
-import { styles } from './TokenListingTVScreen.styles';
-import { usePatientTokens } from '../../hooks/usePatientTokens';
+import {styles} from './TokenListingTVScreen.styles';
+import {usePatientTokens} from '../../hooks/usePatientTokens';
 
 import InProgressTokenNotificationScreen from '../notification/InProgressTokenNotificationScreen';
 import DefaultTVScreen from '../television/DefaultTVScreen';
@@ -12,19 +12,15 @@ import TokenTable from './TokenTable';
 import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
 import DrawerLeftNavigationButton from '../../components/drawerNavigation/drawerNavigation';
 import ProfileImageRenderer from '../../components/profileImage/ProfileImage';
-import { showToast } from '../../components/toastMessage/ToastMessage';
-
+import {showToast} from '../../components/toastMessage/ToastMessage';
 
 import withQueryClientProvider from '../../hooks/useQueryClientProvider';
-import { FetchDoctorWithIdRequest } from '../../services/doctorService';
-import { FetchAllClinicForDoctorRequest } from '../../services/clinicService';
+import {FetchDoctorWithIdRequest} from '../../services/doctorService';
+import {FetchAllClinicForDoctorRequest} from '../../services/clinicService';
 
-
-
-const TokenListingTVScreen = ({ route, navigation }) => {
+const TokenListingTVScreen = ({route, navigation}) => {
   // Safely extract params with defaults
-  const { doctor_id = null, clinic_id = null } = route.params ?? {};
-
+  const {doctor_id = null, clinic_id = null} = route.params ?? {};
 
   const [clinicData, setClinicData] = useState([]);
   const [doctorData, setDoctorData] = useState({});
@@ -41,9 +37,9 @@ const TokenListingTVScreen = ({ route, navigation }) => {
   } = usePatientTokens(doctor_id, clinic_id);
 
   // Memoized derived data
-  const currentClinicData = React.useMemo(() => 
-    clinicData.find(clinic => clinic.clinic_id === clinic_id) || {},
-    [clinicData, clinic_id]
+  const currentClinicData = React.useMemo(
+    () => clinicData.find(clinic => clinic.clinic_id === clinic_id) || {},
+    [clinicData, clinic_id],
   );
 
   // Handle reload with better error handling
@@ -78,29 +74,25 @@ const TokenListingTVScreen = ({ route, navigation }) => {
     });
   }, [navigation, isRefreshReloading, handleReloadPress]);
 
-  // Fetch doctor and clinic details with better error handling
   useEffect(() => {
-    if (!doctor_id || !clinic_id) {return;}
+    const loadData = async () => {
+      if (!doctor_id || !clinic_id) return;
 
-    const fetchDetails = async () => {
-      setIsFetchingDetails(true);
-      try {
-        const [clinicApiData, doctorApiData] = await Promise.all([
-          FetchAllClinicForDoctorRequest(clinic_id).catch(() => []),
-          FetchDoctorWithIdRequest(doctor_id).catch(() => {}),
-        ]);
-        setClinicData(clinicApiData ?? []);
-        setDoctorData(doctorApiData ?? {});
-      } catch (fetchDataError) {
-        console.error('Error fetching data:', fetchDataError);
-        showToast('Failed to fetch clinic and doctor details', 'error');
-      } finally {
-        setIsFetchingDetails(false);
-      }
+      const [clinicDataApi, doctorDataApi] = await Promise.all([
+        FetchAllClinicForDoctorRequest(clinic_id),
+        FetchDoctorWithIdRequest(doctor_id),
+      ]);
+
+      setClinicData(clinicDataApi ?? []);
+      setDoctorData(doctorDataApi ?? {});
     };
 
-    fetchDetails();
-  }, [doctor_id, clinic_id]);
+    // Run on mount and when focused
+    const unsubscribe = navigation.addListener('focus', loadData);
+    loadData(); // Initial load
+
+    return unsubscribe;
+  }, [doctor_id, clinic_id, navigation]);
 
   // Handle orientation and in-progress patient
   useEffect(() => {
@@ -115,8 +107,10 @@ const TokenListingTVScreen = ({ route, navigation }) => {
     handleOrientation();
 
     // Find in-progress patient safely
-    const inProgress = Array.isArray(tokens) 
-      ? tokens.find(token => token?.status === 'In Progress' || token?.recall === true)
+    const inProgress = Array.isArray(tokens)
+      ? tokens.find(
+          token => token?.status === 'In Progress' || token?.recall === true,
+        )
       : null;
     setInProgressPatient(inProgress || null);
 
@@ -151,19 +145,14 @@ const TokenListingTVScreen = ({ route, navigation }) => {
   // Empty state
   if (!Array.isArray(tokens) || tokens.length === 0) {
     return (
-      <DefaultTVScreen
-        doctorInfo={doctorData}
-        clinicInfo={currentClinicData}
-      />
+      <DefaultTVScreen doctorInfo={doctorData} clinicInfo={currentClinicData} />
     );
   }
 
   return (
     <View style={styles.fullScreenContainer} testID="token-listing-screen">
       <View style={styles.headerContainer}>
-        <DoctorHeader 
-          doctorData={doctorData} 
-        />
+        <DoctorHeader doctorData={doctorData} />
       </View>
 
       <TokenTable tokens={tokens} />
@@ -183,61 +172,61 @@ const TokenListingTVScreen = ({ route, navigation }) => {
 };
 
 // Extracted component for better readability
-const DoctorHeader = ({ doctorData }) => {
-  console.log('doctorData in doctor header', doctorData) ;
+const DoctorHeader = ({doctorData}) => {
+  console.log('doctorData in doctor header', doctorData);
   return (
     <>
-  <View style={styles.doctorSection}>
-    <View style={styles.profileCircle}>
-      <ProfileImageRenderer doctor_id  = {doctorData?.doctor_id ?? ''} />
-    </View>
+      <View style={styles.doctorSection}>
+        <View style={styles.profileCircle}>
+          <ProfileImageRenderer doctor_id={doctorData?.doctor_id ?? ''} />
+        </View>
 
-    <View style={styles.doctorNameContainer}>
-      <View style={styles.leftColumn}>
-        <Text style={styles.doctorName}>
-          Dr. { doctorData?.first_name + ' ' + doctorData?.last_name ?? 'N/A'}
-        </Text>
-        <Text style={styles.qualificationText}>
-          {doctorData?.qualification ?? 'N/A'}
-        </Text>
+        <View style={styles.doctorNameContainer}>
+          <View style={styles.leftColumn}>
+            <Text style={styles.doctorName}>
+              Dr.{' '}
+              {doctorData?.first_name + ' ' + doctorData?.last_name ?? 'N/A'}
+            </Text>
+            <Text style={styles.qualificationText}>
+              {doctorData?.qualification ?? 'N/A'}
+            </Text>
+          </View>
+
+          <View style={styles.rightColumn}>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Specialization: </Text>
+              <Text style={styles.infoText}>
+                {doctorData?.specialization ?? 'N/A'}
+              </Text>
+            </View>
+
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Experience: </Text>
+              <Text style={styles.infoText}>
+                {doctorData?.experience_years ?? 0} years
+              </Text>
+            </View>
+
+            <View style={[styles.infoRow, styles.phoneRow]}>
+              <Text style={styles.infoLabel}>Ph: </Text>
+              <Text style={styles.infoText}>
+                {doctorData?.phone_number ?? 'N/A'}
+              </Text>
+            </View>
+          </View>
+        </View>
       </View>
+    </>
+  );
+};
 
-      <View style={styles.rightColumn}>
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Specialization: </Text>
-          <Text style={styles.infoText}>
-            {doctorData?.specialization ?? 'N/A'}
-          </Text>
-        </View>
-
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Experience: </Text>
-          <Text style={styles.infoText}>
-            {doctorData?.experience_years ?? 0} years
-          </Text>
-        </View>
-
-        <View style={[styles.infoRow, styles.phoneRow]}>
-          <Text style={styles.infoLabel}>Ph: </Text>
-          <Text style={styles.infoText}>
-            {doctorData?.phone_number ?? 'N/A'}
-          </Text>
-        </View>
-      </View>
-    </View>
-  </View>
-  </>
-  )}
-
-
-const ReloadButton = ({ handleReloadPress, isRefreshReloading }) => (
+const ReloadButton = ({handleReloadPress, isRefreshReloading}) => (
   <View style={styles.reloadButton}>
     <TouchableOpacity
       onPress={handleReloadPress}
       disabled={isRefreshReloading}
       accessibilityLabel="Reload token list"
-      testID="reload-button"
-    >
+      testID="reload-button">
       {isRefreshReloading ? (
         <ActivityIndicator size="small" color="#007BFF" />
       ) : (
