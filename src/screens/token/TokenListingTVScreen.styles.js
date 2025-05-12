@@ -4,7 +4,7 @@ export const styles = StyleSheet.create({
   fullScreenContainer: {
     flex: 1,
     backgroundColor: '#fff',
-    margin: 20,
+    margin: 30,
   },
 
   /** HEADER SECTION **/
@@ -43,11 +43,6 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: 16,
     borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
     margin: 8,
   },
   leftColumn: {
@@ -176,7 +171,7 @@ export const styles = StyleSheet.create({
     marginTop: 2,
   },
   notificationInProgress: {
-    width: 200,
+    width:  300,
     position: 'absolute',
     bottom: 0,
     right: 0,

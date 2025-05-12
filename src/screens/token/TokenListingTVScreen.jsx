@@ -26,7 +26,6 @@ const TokenListingTVScreen = ({route, navigation}) => {
   const [doctorData, setDoctorData] = useState({});
   const [inProgressPatient, setInProgressPatient] = useState(null);
   const [isRefreshReloading, setIsRefreshReloading] = useState(false);
-  const [isFetchingDetails, setIsFetchingDetails] = useState(false);
 
   const {
     data: tokens = [],
@@ -37,10 +36,7 @@ const TokenListingTVScreen = ({route, navigation}) => {
   } = usePatientTokens(doctor_id, clinic_id);
 
   // Memoized derived data
-  const currentClinicData = React.useMemo(
-    () => clinicData.find(clinic => clinic.clinic_id === clinic_id) || {},
-    [clinicData, clinic_id],
-  );
+  const currentClinicData = React.useMemo(() => clinicData.find(clinic => clinic.clinic_id === clinic_id) || {},[clinicData, clinic_id],);
 
   // Handle reload with better error handling
   const handleReloadPress = useCallback(async () => {
@@ -76,7 +72,7 @@ const TokenListingTVScreen = ({route, navigation}) => {
 
   useEffect(() => {
     const loadData = async () => {
-      if (!doctor_id || !clinic_id) return;
+      if (!doctor_id || !clinic_id) {return;}
 
       const [clinicDataApi, doctorDataApi] = await Promise.all([
         FetchAllClinicForDoctorRequest(clinic_id),
@@ -89,7 +85,7 @@ const TokenListingTVScreen = ({route, navigation}) => {
 
     // Run on mount and when focused
     const unsubscribe = navigation.addListener('focus', loadData);
-    loadData(); // Initial load
+    loadData();
 
     return unsubscribe;
   }, [doctor_id, clinic_id, navigation]);
@@ -131,10 +127,10 @@ const TokenListingTVScreen = ({route, navigation}) => {
   }, [isError]);
 
   // Loading state
-  if (isLoading || isRefreshReloading || isFetchingDetails || isError) {
+  if (isLoading || isRefreshReloading  || isError) {
     return (
       <LoadingErrorHandler
-        isLoading={isLoading || isRefreshReloading || isFetchingDetails}
+        isLoading={isLoading || isRefreshReloading}
         isError={isError}
         error={error}
         isLandscape
@@ -173,7 +169,6 @@ const TokenListingTVScreen = ({route, navigation}) => {
 
 // Extracted component for better readability
 const DoctorHeader = ({doctorData}) => {
-  console.log('doctorData in doctor header', doctorData);
   return (
     <>
       <View style={styles.doctorSection}>
