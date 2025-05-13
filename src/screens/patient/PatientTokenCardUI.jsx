@@ -41,7 +41,6 @@ export const TokenCard = React.memo(
     }, [token.patient_name, hindiName, memoizedTranslate]);
 
     const handleStatusChange = async item => {
-      setStatus(item.value);
       const updateTokenDataObj = {
         ...token,
         status: item.value,

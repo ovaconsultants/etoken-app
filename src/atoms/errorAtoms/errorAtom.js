@@ -1,13 +1,32 @@
+// atoms/errorAtom.js
 import { atom } from 'jotai';
 
-export const errorAtom = atom('No error');
+// Base atom
+export const errorAtom = atom({
+  hasError: false,
+  message: '',
+  code: '',
+});
 
-// Function to set error
-export const setError = (set, error) => {
-  set(errorAtom, error);
-};
+// Derived write-only atoms for setting and resetting
+export const setErrorAtom = atom(
+  null, // no read value
+  (get, set, error) => {
+    set(errorAtom, {
+      hasError: true,
+      message: error.message || 'An unexpected error occurred',
+      code: error.code || 'UNKNOWN_ERROR',
+    });
+  }
+);
 
-// Function to reset error
-export const resetError = (set) => {
-  set(errorAtom, null);
-};
+export const resetErrorAtom = atom(
+  null, // no read value
+  (get, set) => {
+    set(errorAtom, {
+      hasError: false,
+      message: '',
+      code: '',
+    });
+  }
+);

@@ -6,10 +6,10 @@ import {showToast} from '../components/toastMessage/ToastMessage';
 
 export const usePatientTokenManager = (clinic_id, doctor_id) => {
   const queryClient = useQueryClient();
-  const [isMutating, setIsMutating] = useState(false);
   const selectedTokenRef = useRef(null);
-  const [isLoading, setIsLoading] = useState(false);
 
+  const [isMutating, setIsMutating] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const {
     data: patientTokens = [],
     refetch: refetchTokens,
@@ -21,22 +21,27 @@ export const usePatientTokenManager = (clinic_id, doctor_id) => {
   });
 
   // Auto-select first token and calculate stats
-  const {stats, hasTokenInProgress} = useMemo(() => {
-    if (patientTokens.length > 0 && !selectedTokenRef.current) {
-      selectedTokenRef.current = patientTokens[0].token_id;
-    }
+const { stats, hasTokenInProgress  , inProgressToken} = useMemo(() => {
+  const inProgressToken = ( patientTokens.find(t => t.status === 'In Progress'));
+  const hasTokenInProgressBool = Boolean(inProgressToken);
+  if (inProgressToken) {
+    selectedTokenRef.current = inProgressToken.token_id;
+  } 
+  else if (patientTokens.length > 0 && !selectedTokenRef.current) {
+    selectedTokenRef.current = patientTokens[0].token_id;
+  }
 
-    const inProgress = patientTokens.filter(t => t.status === 'In Progress');
-    return {
-      hasTokenInProgress: inProgress.length > 0,
-      stats: {
-        total: patientTokens.length,
-        attended: inProgress.length,
-        inQueue: patientTokens.filter(t => t.status === 'Waiting').length,
-        onHold: patientTokens.filter(t => t.status === 'On Hold').length,
-      },
-    };
-  }, [patientTokens]);
+  return {
+    inProgressToken : inProgressToken,
+    hasTokenInProgress : hasTokenInProgressBool,
+    stats: {
+      total: patientTokens.length,
+      attended: hasTokenInProgress ? 1 : 0,
+      inQueue: patientTokens.filter(t => t.status === 'Waiting').length,
+      onHold: patientTokens.filter(t => t.status === 'On Hold').length,
+    },
+  };
+}, [patientTokens]);
 
   const handleSelectToken = tokenId => {
     selectedTokenRef.current = tokenId;
@@ -67,7 +72,7 @@ export const usePatientTokenManager = (clinic_id, doctor_id) => {
   };
 
   const handleNext = () => updateToken({status: 'In Progress'});
-  const handleDone = () => updateToken({status: 'Completed'});
+  const handleDone = () =>  { selectedTokenRef.current === inProgressToken.token_id ?  updateToken({status: 'Completed'}) : updateToken({status: 'In Progress'});}
 
   const handleRecall = async () => {
     if (!selectedTokenRef.current) {return;}
@@ -115,6 +120,7 @@ export const usePatientTokenManager = (clinic_id, doctor_id) => {
     isLoading,
     error,
     ...stats,
+    inProgressToken,
     hasTokenInProgress,
   };
 };

@@ -6,7 +6,7 @@ export const usePatientTokens = (doctor_id, clinic_id, onSuccess, pause = false)
     queryKey: ['tokens', doctor_id, clinic_id],
     queryFn: () => FetchTokensRequest(doctor_id, clinic_id),
     staleTime: 20 * 60 * 1000,
-    refetchInterval: pause ? false : 3 * 1000,
+    refetchInterval: pause ? false : 5 * 1000,
     enabled: !!doctor_id && !!clinic_id && !pause,
     select: (data) => data.tokens,
     onSuccess: (tokens) => {
