@@ -19,6 +19,12 @@ export const createStyles =  (isLandscape ) => StyleSheet.create({
     fontSize: 16, 
     color: '#333',
   },
+    tile: {
+    backgroundColor: '#f9f9f7',
+    borderRadius: 10,
+    paddingVertical: 16,
+    elevation: 3,
+  },
   searchIcon: {
     width: 20,
     height: 20,
@@ -44,11 +50,11 @@ export const createStyles =  (isLandscape ) => StyleSheet.create({
     borderRadius: 8,
     zIndex: 99,
     marginTop: '1%',
-    borderWidth: 1,
+    borderWidth: 4,
     borderColor: '#ecf0f1',
   },
   dropdownItem: {
-    paddingVertical: isLandscape ?  5  : '3%',
+    paddingVertical: isLandscape ?  5  : '2%',
     paddingHorizontal: '4%',
   },
   itemContent: {
@@ -56,22 +62,8 @@ export const createStyles =  (isLandscape ) => StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  patientName: {
-    color: '#2c3e50',
-    fontSize: (15),
-    fontWeight: '500',
-    flex: 1,
-  },
-  patientPhone: {
-    color: '#7f8c8d',
-    fontSize: (13),
-    marginLeft: '3%',
-  },
-  separator: {
-    height: 1,
-    backgroundColor: '#ecf0f1',
-    marginTop: '1%',
-  },
+
+
   loadingContainer: {
     padding: '1%',
     alignItems: 'center',
@@ -86,5 +78,18 @@ export const createStyles =  (isLandscape ) => StyleSheet.create({
     fontSize: (14),
     fontWeight: '500',
     fontStyle: 'Bold',
+  },
+    row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  label: {
+    fontSize: 16,
+    flex: 1,
+  },
+  bold: {
+    fontWeight: 'bold',
   },
 });

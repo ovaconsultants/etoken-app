@@ -1,10 +1,10 @@
 import { fetchData,postData,putData} from './apiService';
 import { API_ENDPOINTS } from '../constants/endPoints/apiRoutes';
 
-export const FetchPatientsRequest = async() => {
+export const FetchPatientsRequest = async(doctor_id) => {
     try {
-        const route = API_ENDPOINTS.PATIENT.FETCH_ALL_PATIENTS;
-        const data = await fetchData(route);
+        const route = API_ENDPOINTS.PATIENT.FETCH_ALL_PATIENTS_BY_DOCTOR_ID;
+        const data = await fetchData(route , { doctor_id });
         return data.patients;
       } catch (error) {
         console.error('Failed to get tokens:', error);

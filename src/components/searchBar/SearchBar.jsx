@@ -5,14 +5,20 @@ import {
   TouchableOpacity,
   Text,
   Keyboard,
-  Platform
+  Platform,
 } from 'react-native';
 import SearchBar from 'react-native-dynamic-search-bar';
 import {calculateSearchRelevance} from '../../utils/globalUtil';
 import {useOrientation} from '../../hooks/useOrientation';
 import {createStyles} from './SearchBar.styles';
 
-const CustomSearchBar = ({data, onSelectItem, dropdownVisible, setDropdownVisible}) => {
+const CustomSearchBar = ({
+  data,
+  onSelectItem,
+  dropdownVisible,
+  setDropdownVisible,
+  placeholder
+}) => {
   const {isLandscape} = useOrientation();
   const styles = createStyles(isLandscape);
 
@@ -39,7 +45,9 @@ const CustomSearchBar = ({data, onSelectItem, dropdownVisible, setDropdownVisibl
 
   // Filter data based on search term
   const filteredData = React.useMemo(() => {
-    if (!searchTerm) {return data || [];}
+    if (!searchTerm) {
+      return data || [];
+    }
 
     return [...(data || [])]
       .map(item => {
@@ -84,7 +92,7 @@ const CustomSearchBar = ({data, onSelectItem, dropdownVisible, setDropdownVisibl
         iconColor="#3498db"
         cancelIconColor="#e74c3c"
         backgroundColor="#ffffff"
-        placeholder="Search by Patient, Mobile, or Email"
+        placeholder={placeholder}
         placeholderTextColor="#95a5a6"
         onChangeText={handleSearchChange}
         onClearPress={handleClearPress}
@@ -97,7 +105,7 @@ const CustomSearchBar = ({data, onSelectItem, dropdownVisible, setDropdownVisibl
       />
 
       {dropdownVisible && (
-        <View style={[styles.dropdownContainer, {maxHeight: 300}]}>
+        <View style={[styles.dropdownContainer, {maxHeight: 500}]}>
           <FlatList
             data={filteredData}
             keyExtractor={item => item.patient_id.toString()}
@@ -106,11 +114,26 @@ const CustomSearchBar = ({data, onSelectItem, dropdownVisible, setDropdownVisibl
               <TouchableOpacity
                 style={styles.dropdownItem}
                 onPress={() => handleItemSelect(item)}>
-                <View style={styles.itemContent}>
-                  <Text style={styles.patientName}>{item.patient_name}</Text>
-                  <Text style={styles.patientPhone}>{item.mobile_number}</Text>
+                <View style={styles.tile}>
+                  <View style={styles.row}>
+                    <Text style={styles.label}>
+                      <Text style={styles.bold}>Name:</Text> {item.patient_name}
+                    </Text>
+                    <Text style={styles.label}>
+                      <Text style={styles.bold}>Age:</Text> {item.age || 'N/A'}
+                    </Text>
+                  </View>
+                  <View style={styles.row}>
+                    <Text style={styles.label}>
+                      <Text style={styles.bold}>Mobile:</Text>{' '}
+                      {item.mobile_number}
+                    </Text>
+                    <Text style={styles.label}>
+                      <Text style={styles.bold}>Area:</Text>{' '}
+                      {item.area || 'N/A'}
+                    </Text>
+                  </View>
                 </View>
-                <View style={styles.separator} />
               </TouchableOpacity>
             )}
             ListEmptyComponent={

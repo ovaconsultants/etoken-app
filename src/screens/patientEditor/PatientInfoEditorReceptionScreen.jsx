@@ -20,6 +20,7 @@ const validationSchema = yup.object().shape({
   patient: yup.object().shape({
     fname: yup.string().required('First name is required'),
     lname: yup.string().required('Last name is required'),
+    age: yup.number().typeError('Must be a number').min(0, 'Cannot be negative'),
     mobile_number: yup
       .string()
       .required('Mobile number is required')
@@ -39,7 +40,7 @@ const validationSchema = yup.object().shape({
 
 export const PatientInfoEditorScreen = ({route, navigation}) => {
   const {patientInfo} = route.params;
-
+console.log('patientInfo in PatientInfoEditorScreen:' , patientInfo);
   useEffect(() => {
     navigation.setOptions({
       title: `Edit Token No ${patientInfo.token_no} `,
@@ -52,6 +53,7 @@ export const PatientInfoEditorScreen = ({route, navigation}) => {
       patient_id: patientInfo.patient_id,
       fname: patientInfo.patient_name.split(' ')[0] || '',
       lname: patientInfo.patient_name.split(' ').slice(1).join(' ') || '',
+      age : patientInfo.age,
       mobile_number: patientInfo.mobile_number,
       email: patientInfo.email || '',
       modified_by: 'receptionist',
@@ -158,7 +160,23 @@ export const PatientInfoEditorScreen = ({route, navigation}) => {
                 <Text style={styles.errorText}>{errors.patient.lname}</Text>
               )}
             </View>
-
+               <View style={styles.inputContainer}>
+              <Text style={styles.label}>Age:</Text>
+              <TextInput
+                style={styles.input}
+                value={values.patient.age}
+                onChangeText={handleChange('patient.age')}
+                onBlur={handleBlur('patient.age')}
+                placeholder="Age "
+                keyboardType="phone-pad"
+              />
+              {touched.patient?.age &&
+                errors.patient?.age && (
+                  <Text style={styles.errorText}>
+                    {errors.patient.age}
+                  </Text>
+                )}
+            </View>
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Mobile Number:</Text>
               <TextInput

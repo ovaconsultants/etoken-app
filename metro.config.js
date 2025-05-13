@@ -9,19 +9,8 @@ const { wrapWithReanimatedMetroConfig } = require('react-native-reanimated/metro
  */
 const defaultConfig = getDefaultConfig(__dirname);
 
-// Add react-native-svg-transformer configuration
-const svgTransformerConfig = {
-  transformer: {
-    babelTransformerPath: require.resolve('react-native-svg-transformer'),
-  },
-  resolver: {
-    assetExts: defaultConfig.resolver.assetExts.filter(ext => ext !== 'svg'), // Exclude SVG from asset extensions
-    sourceExts: [...defaultConfig.resolver.sourceExts, 'svg'], // Add SVG to source extensions
-  },
-};
+// If no custom transformer/resolver needed, no merge required
+const customConfig = defaultConfig;
 
-// Merge all configurations
-const customConfig = mergeConfig(defaultConfig, svgTransformerConfig);
-
-// Wrap with Reanimated config (if needed)
+// Wrap with Reanimated config (if used)
 module.exports = wrapWithReanimatedMetroConfig(customConfig);

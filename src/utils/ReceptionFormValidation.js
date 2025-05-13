@@ -13,6 +13,11 @@ export const ReceptionFormValidationSchema = Yup.object().shape({
     .matches(/^[0-9]{10}$/, 'Mobile number must be exactly 10 digits')
     .max(10, 'Mobile number cannot exceed 10 digits')
     .required('Mobile number is required'),
+  age : Yup.number()
+    .typeError('Age must be a number')
+    .integer('Age must be an integer')
+    .min(0, 'Age cannot be negative')
+    .required('Age is required'),  
   area: Yup.string()
     .trim()
     .min(2, 'Locality/Area must be at least 2 characters')

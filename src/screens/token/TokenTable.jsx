@@ -1,21 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react';
-import {
-  View,
-  Text,
-  Animated,
-} from 'react-native';
-import { styles } from './TokenListingTVScreen.styles';
-import { TranslateNameToHindi } from '../../services/langTranslationService';
+import React, {useEffect, useRef, useState} from 'react';
+import {View, Text, Animated} from 'react-native';
+import {styles} from './TokenListingTVScreen.styles';
+import {TranslateNameToHindi} from '../../services/langTranslationService';
 
-const SCROLL_SPEED = 0.2; // pixels per interval
+const SCROLL_SPEED = 0.2;
 
-const TokenTable = ({ tokens }) => {
-  console.log('tokens', tokens);
+const TokenTable = ({tokens}) => {
   const [processedTokens, setProcessedTokens] = useState([]);
   const flatListRef = useRef(null);
   const contentHeight = useRef(0);
   const listHeight = useRef(0);
-  const scrollDirection = useRef(1); // 1 for down, -1 for up
+  const scrollDirection = useRef(1);
 
   useEffect(() => {
     const processTokens = async () => {
@@ -24,7 +19,7 @@ const TokenTable = ({ tokens }) => {
           if (!token.hindi_name && token.patient_name) {
             try {
               const hindiName = await TranslateNameToHindi(token.patient_name);
-              return { ...token, hindi_name: hindiName };
+              return {...token, hindi_name: hindiName};
             } catch {
               return token;
             }
@@ -39,10 +34,10 @@ const TokenTable = ({ tokens }) => {
   }, [tokens]);
 
   const data = processedTokens.length ? processedTokens : tokens;
- console.log('data', data);
+  console.log('data', data);
   // Auto-scroll logic with Animated
   useEffect(() => {
-    if (data.length === 0) return;
+    if (data.length === 0) {return;}
 
     let currentOffset = 0;
     let animationFrameId;
@@ -50,19 +45,19 @@ const TokenTable = ({ tokens }) => {
     const animateScroll = () => {
       // Calculate if we need to reverse direction
       if (currentOffset >= contentHeight.current - listHeight.current) {
-        scrollDirection.current = -1; // Reverse to scroll up
+        scrollDirection.current = -1;
       } else if (currentOffset <= 0) {
-        scrollDirection.current = 1; // Reverse to scroll down
+        scrollDirection.current = 1;
       }
 
       // Update current offset
       currentOffset += scrollDirection.current * SCROLL_SPEED;
-      
+
       // Apply the scroll
       if (flatListRef.current) {
         flatListRef.current.scrollToOffset({
           offset: currentOffset,
-          animated: false
+          animated: false,
         });
       }
 
@@ -83,23 +78,18 @@ const TokenTable = ({ tokens }) => {
     contentHeight.current = h;
   };
 
-  const handleLayout = (event) => {
+  const handleLayout = event => {
     listHeight.current = event.nativeEvent.layout.height;
   };
 
-  const renderItem = ({ item }) => (
+  const renderItem = ({item}) => (
     <View style={[styles.tableRow, getRowStyle(item.status)]}>
       <View style={[styles.tableCell]}>
         <Text>{item.patient_name}</Text>
-        {item.hindi_name && (
-          <Text style={styles.hindi}>{item.hindi_name}</Text>
-        )}
+        {item.hindi_name && <Text style={styles.hindi}>{item.hindi_name}</Text>}
       </View>
       <Text style={styles.tableCell}>
-        {item.mobile_number?.replace(
-          /(\d{3})(\d{3})(\d{4})/,
-          'xxx-xxx-$3',
-        )}
+        {item.mobile_number?.replace(/(\d{3})(\d{3})(\d{4})/, 'xxx-xxx-$3')}
       </Text>
       <Text style={styles.tableCell}>{item.fee_status || 'Not Paid'}</Text>
       <Text style={styles.tableCell}>
@@ -150,7 +140,7 @@ const getRowStyle = status => {
         borderLeftColor: '#2e7d32',
       };
     case 'waiting':
-      return { backgroundColor: '#fffbf2' };
+      return {backgroundColor: '#fffbf2'};
     case 'on hold':
       return {
         backgroundColor: '#fff5f5',
@@ -158,9 +148,9 @@ const getRowStyle = status => {
         borderLeftColor: '#d32f2f',
       };
     case 'cancelled':
-      return { backgroundColor: '#f3f4f6' };
+      return {backgroundColor: '#f3f4f6'};
     case 'completed':
-      return { backgroundColor: '#e8f5e9' };
+      return {backgroundColor: '#e8f5e9'};
     default:
       return {};
   }
@@ -182,7 +172,5 @@ const getStatusDot = status => {
       return null;
   }
 };
-
-
 
 export default TokenTable;

@@ -14,12 +14,11 @@ export const createStyles = (isLandscape) =>  StyleSheet.create({
     gap: isLandscape ? '5%' : '4%',
   },
   searchBarContainer: {
-    marginVertical: isLandscape ? 0 : 15,
-
+    marginVertical: isLandscape ? 0 : 15, 
   },
   formContainer: {
-    flexDirection : 'column',
     flex: 1,
+    flexDirection : 'column',
     justifyContent: 'flex-start',
   },
 
@@ -44,21 +43,12 @@ export const createStyles = (isLandscape) =>  StyleSheet.create({
     marginTop: 5,
   },
   buttonContainer: {
-    flex: isLandscape ? 0.6 : 0.4,
-    flexDirection: isLandscape ? 'row' : 'column',
-    gap :  isLandscape ? '2%' :   '10%',
+    flex: 0.6 ,
     justifyContent: 'center',
     marginTop : isLandscape ? 0 : 5,
 
   },
-  clearButton: {
-    backgroundColor: '#f0f0f0',
-    paddingHorizontal: 15,
-  justifyContent: 'center',
-  alignItems: 'center',
-    borderRadius: 8,
-    flex: 1,
-  },
+
   submitButton: {
     backgroundColor: '#007AFF',
     paddingHorizontal: 15,
@@ -70,15 +60,11 @@ export const createStyles = (isLandscape) =>  StyleSheet.create({
   disabledButton: {
     backgroundColor: 'rgba(0, 122, 255, 0.6)',
   },
-  clearButtonText: {
-    color: '#333',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
+
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 24,
   },
   footerContainer: {
     flex: isLandscape ? 0.2 : 0.1,

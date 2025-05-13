@@ -12,24 +12,21 @@ import {Formik} from 'formik';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
 import {useNavigation} from '@react-navigation/native';
 import {useAtom} from 'jotai';
-import {Users, Home} from 'lucide-react-native';
+import {Users, Home, Eraser} from 'lucide-react-native';
+
 import {patientsAtom} from '../../atoms/patientAtoms/patientAtom';
 import {ReceptionFormValidationSchema} from '../../utils/ReceptionFormValidation';
-import {
-  FetchPatientsRequest,
-  InsertPatientRequest,
-} from '../../services/patientService';
+import {FetchPatientsRequest, InsertPatientRequest} from '../../services/patientService';
 import {GenerateTokenRequest} from '../../services/tokenService';
 import withQueryClientProvider from '../../hooks/useQueryClientProvider';
 import SearchBar from '../../components/searchBar/SearchBar';
 import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
 import FooterNavigation from '../../components/tabNavigationFooter/TabNavigationFooter';
-import {
-  showToast,
-  ToastMessage,
-} from '../../components/toastMessage/ToastMessage';
+import {showToast} from '../../components/toastMessage/ToastMessage';
+import {globalStyles} from '../../styles/globalStyles';
 import {useOrientation} from '../../hooks/useOrientation';
 import {createStyles} from './ReceptionScreen.styles';
+
 const formFields = [
   {
     name: 'patient_name',
@@ -44,6 +41,11 @@ const formFields = [
     maxLength: 10,
   },
   {
+    name: 'age',
+    placeholder: 'Age',
+    keyboardType: 'phone-pad',
+  },
+  {
     name: 'area',
     placeholder: 'Locality/Area',
     keyboardType: 'default',
@@ -55,22 +57,23 @@ const formFields = [
   },
 ];
 
-
 export const ReceptionScreen = ({route}) => {
-  const { doctor_id = null, clinic_id = null } = route.params ?? {};
-  const {isLandscape , dimensions} = useOrientation();
-  const styles = useMemo(() => createStyles(isLandscape ,dimensions), [dimensions, isLandscape]);
+  const {doctor_id = null, clinic_id = null} = route.params ?? {};
+  const {isLandscape, dimensions} = useOrientation();
+  const styles = useMemo(
+    () => createStyles(isLandscape, dimensions),
+    [dimensions, isLandscape],
+  );
   const navigation = useNavigation();
   const queryClient = useQueryClient();
   const [patients, setPatients] = useAtom(patientsAtom);
   const formikRef = useRef();
-  const [submitAttempted, setSubmitAttempted] = useState(false);
   const [searchDropdownVisible, setSearchDropdownVisible] = useState(false);
 
   const {isLoading, isError, error} = useQuery({
     queryKey: ['fetchingPatients'],
     queryFn: async () => {
-      const data = await FetchPatientsRequest();
+      const data = await FetchPatientsRequest(doctor_id);
       setPatients(data);
       return data;
     },
@@ -80,7 +83,6 @@ export const ReceptionScreen = ({route}) => {
 
   const handleSubmit = async (values, {resetForm}) => {
     try {
-      setSubmitAttempted(true);
       const patientIdToUse =
         values?.patient_id ||
         (await InsertPatientRequest({
@@ -98,9 +100,8 @@ export const ReceptionScreen = ({route}) => {
       if (!patientIdToUse) {
         throw new Error('Failed to insert patient or generate token');
       }
-     setSearchDropdownVisible(false);
+      setSearchDropdownVisible(false);
       resetForm();
-      setSubmitAttempted(false);
       queryClient.invalidateQueries(['fetchingPatients']);
       showToast('Token generated successfully', 'success');
       const token_no = await GenerateTokenRequest({
@@ -119,11 +120,22 @@ export const ReceptionScreen = ({route}) => {
     }
   };
 
+  const handleClear = () => {
+    formikRef.current?.resetForm();
+    formFields.forEach(field => {
+      formikRef.current?.setFieldTouched(field.name, false);
+    });
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
-        <TouchableWithoutFeedback onPress={() => { setSearchDropdownVisible(false); Keyboard.dismiss(); }}>
+      <TouchableWithoutFeedback
+        onPress={() => {
+          setSearchDropdownVisible(false);
+          Keyboard.dismiss();
+        }}>
         <View style={styles.container}>
-          <LoadingErrorHandler {...{isLoading, isError, error ,isLandscape}} />
+          <LoadingErrorHandler {...{isLoading, isError, error, isLandscape}} />
 
           {!isLoading && !isError && (
             <View style={styles.contentContainer}>
@@ -134,9 +146,7 @@ export const ReceptionScreen = ({route}) => {
                     formikRef.current?.setValues({
                       patient_id: patient.patient_id,
                       ...Object.fromEntries(
-                        ['patient_name', 'mobile_number', 'area', 'email'].map(
-                          key => [key, patient[key]],
-                        ),
+                        formFields.map(field => [field.name, patient[field.name]?.toString() ?? '']),
                       ),
                     })
                   }
@@ -153,94 +163,55 @@ export const ReceptionScreen = ({route}) => {
                 )}
                 validationSchema={ReceptionFormValidationSchema}
                 onSubmit={handleSubmit}
-                enableReinitialize>
+                enableReinitialize
+                validateOnBlur
+                validateOnChange
+              >
                 {({
                   handleChange,
                   handleBlur,
-                  handleSubmit: formikHandleSubmit,
+                  handleSubmit,
                   values,
                   errors,
                   touched,
-                  resetForm,
                   isValid,
-                  setFieldTouched,
-                }) => {
-                  const isFormIncomplete = formFields.some(field => {
-                    if (field.name === 'email') {
-                      return !!errors[field.name];
-                    }
-                    return !values[field.name]?.trim() || errors[field.name];
-                  });
-
-                  const shouldShowError = fieldName => {
-                    return (
-                      (submitAttempted || touched[fieldName]) &&
-                      errors[fieldName]
-                    );
-                  };
-
-                  return (
-                    <View style={styles.formContainer}>
-                      <View style={styles.inputsWrapper}>
-                        {formFields.map(field => (
-                          <View key={field.name} style={styles.inputContainer}>
-                            <TextInput
-                              style={[
-                                styles.input,
-                                shouldShowError(field.name) &&
-                                  styles.inputError,
-                              ]}
-                              placeholder={field.placeholder}
-                              placeholderTextColor="#888"
-                              onChangeText={text => {
-                                handleChange(field.name)(text);
-                                setFieldTouched(field.name, true, false);
-                              }}
-                              onBlur={() =>
-                                setFieldTouched(field.name, true, false)
-                              }
-                              value={values[field.name]}
-                              keyboardType={field.keyboardType}
-                              autoCapitalize={field.autoCapitalize || 'none'}
-                              maxLength={field.maxLength}
-                            />
-                          </View>
-                        ))}
-                      </View>
-
-                      <View style={styles.buttonContainer}>
-                        <TouchableOpacity
-                          style={[
-                            styles.submitButton,
-                            isFormIncomplete && styles.disabledButton,
-                          ]}
-                          onPress={() => {
-                            if (!isFormIncomplete) {
-                              formikHandleSubmit();
-                            } else {
-                              formFields.forEach(field => {
-                                setFieldTouched(field.name, true, false);
-                              });
-                            }
-                          }}
-                          disabled={isFormIncomplete}>
-                          <Text style={styles.buttonText}>GO</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          style={styles.clearButton}
-                          onPress={() => {
-                            resetForm();
-                            formFields.forEach(field => {
-                              setFieldTouched(field.name, false);
-                            });
-                            setSubmitAttempted(false);
-                          }}>
-                          <Text style={styles.clearButtonText}>Clear</Text>
-                        </TouchableOpacity>
-                      </View>
+                }) => (
+                  <View style={styles.formContainer}>
+                    <View style={styles.inputsWrapper}>
+                      {formFields.map(field => (
+                        <View key={field.name} style={styles.inputContainer}>
+                          <TextInput
+                            style={[
+                              styles.input,
+                              touched[field.name] && errors[field.name] && styles.inputError,
+                            ]}
+                            placeholder={field.placeholder}
+                            placeholderTextColor="#888"
+                            onChangeText={handleChange(field.name)}
+                            onBlur={handleBlur(field.name)}
+                            value={values[field.name]}
+                            keyboardType={field.keyboardType}
+                            autoCapitalize={field.autoCapitalize || 'none'}
+                            maxLength={field.maxLength}
+                          />
+                        </View>
+                      ))}
                     </View>
-                  );
-                }}
+
+                    <View style={styles.buttonContainer}>
+                      <TouchableOpacity
+                        style={[
+                          styles.submitButton,
+                          !isValid && globalStyles.disabledButton,
+                        ]}
+                        onPress={handleSubmit}
+                        disabled={!isValid}
+                      >
+                        <Text style={styles.buttonText}>GO</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                )}
               </Formik>
             </View>
           )}
@@ -249,6 +220,7 @@ export const ReceptionScreen = ({route}) => {
             <FooterNavigation
               navigation={navigation}
               currentRoute="Reception"
+              handleRefresh={handleClear}
               routes={[
                 {
                   id: 'home',
@@ -263,12 +235,17 @@ export const ReceptionScreen = ({route}) => {
                   screen: 'TokenListing',
                   params: {doctor_id, clinic_id},
                 },
+                {
+                  id: 'clear',
+                  icon: Eraser,
+                  label: 'Clear',
+                  action: 'refresh',
+                },
               ]}
             />
           </View>
         </View>
       </TouchableWithoutFeedback>
-      <ToastMessage />
     </SafeAreaView>
   );
 };

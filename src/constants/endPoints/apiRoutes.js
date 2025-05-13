@@ -24,7 +24,7 @@ export const API_ENDPOINTS = {
   },
   PATIENT: {
     INSERT_PATIENT: '/patient/insertPatient',
-    FETCH_ALL_PATIENTS: '/patient/fetchAllPatients',
+    FETCH_ALL_PATIENTS_BY_DOCTOR_ID: '/patient/fetchAllPatientsByDoctorId',
     UPDATE_PATIENT: '/patient/updatePatient',
   },
   TOKEN : {
