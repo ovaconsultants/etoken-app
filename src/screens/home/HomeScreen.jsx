@@ -1,55 +1,87 @@
 import React, {useState, useCallback, useMemo, useEffect} from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {SafeAreaView, View, Text, TouchableOpacity} from 'react-native';
 import {createStyles} from './HomeScreen.styles';
 import {globalStyles} from '../../styles/globalStyles';
 import {useAtomValue} from 'jotai';
-import CardGrid from '../../components/cardGrid/CardGrid';
 import {
-  doctorClinicDetailsAtom,
   doctorIdAtom,
 } from '../../atoms/doctorAtoms/doctorAtom';
+
 import {useOrientation} from '../../hooks/useOrientation';
 import {Tv, Users, Plus} from 'lucide-react-native';
 import {homeRefreshKeyAtom} from '../../atoms/refreshAtoms/homePageRefreshAtom';
 
+import { FetchAllClinicForDoctorRequest } from '../../services/clinicService';
+
+import CardGrid from '../../components/cardGrid/CardGrid';
+
 const HomeScreen = ({navigation}) => {
-  const refreshKey = useAtomValue(homeRefreshKeyAtom);
+
   const {isLandscape, dimensions} = useOrientation();
   const styles = useMemo(() => createStyles(isLandscape, dimensions),[dimensions, isLandscape]);
 
+
+  const refreshKey = useAtomValue(homeRefreshKeyAtom);
+  const doctorId = useAtomValue(doctorIdAtom);
+
   const [selectedScreen, setSelectedScreen] = useState(null);
   const [selectedClinicId, setSelectedClinicId] = useState(null);
-  const doctorId = useAtomValue(doctorIdAtom);
-  const rawClinicData = useAtomValue(doctorClinicDetailsAtom);
+  const [clinicData, setClinicData] = useState([]);
 
-  const cards = useMemo(() => {
-    if (!Array.isArray(rawClinicData)) {
-      return [];
-    }
-    return rawClinicData.map(clinic => ({
-      id: clinic.clinic_id,
-      title: clinic.clinic_name,
-      description: `${clinic.clinic_address || 'Not specified'}, ${
-        clinic.clinic_city || ''
-      }`,
-      state: clinic.clinic_state,
-    }));
-  }, [rawClinicData]);
 
-  useEffect(() => {
+
+
+
+useFocusEffect(
+  useCallback(() => {
+    const fetchClinics = async () => {
+      try {
+        const fetchedClinics = await FetchAllClinicForDoctorRequest(doctorId);
+        setClinicData(fetchedClinics);
+        console.log('Fetched clinics:', fetchedClinics);
+        setSelectedClinicId(fetchedClinics[0]?.clinic_id || null);
+      } catch (error) {
+        console.error('Failed to fetch clinics:', error);
+        setClinicData([]);
+        setSelectedClinicId(null);
+      }
+    };
+
+    fetchClinics();
+
     setSelectedScreen(null);
-    setSelectedClinicId(cards[0]?.id || null);
     navigation.setOptions({
       headerBackTitle: '',
       headerLeft: () => null,
     });
-  }, [navigation, refreshKey, cards]);
 
-  const handleCardPress = useCallback(clinicId => {
-    setSelectedClinicId(prevClinicId =>
-      prevClinicId === clinicId ? null : clinicId,
-    );
-  }, []);
+    return () => {
+          setSelectedClinicId(null);
+          setSelectedScreen(null);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [doctorId, navigation, refreshKey]),
+);
+
+ console.log('clinicData:', clinicData);
+  const cards = useMemo(() => {
+    if (!Array.isArray(clinicData)) {
+      return [];
+    }
+    return clinicData.map(clinic => ({
+      id: clinic.clinic_id,
+      title: clinic.clinic_name,
+      description: `${clinic.address || 'Not specified'}, ${
+        clinic.city || ''
+      }`,
+      state: clinic.state || 'Not specified',
+    }));
+  }, [clinicData]);
+
+ const handleCardPress = useCallback(clinicId => {
+  setSelectedClinicId(prev => (prev === clinicId ? null : clinicId));
+}, []);
 
   const handleAddClinicPress = useCallback(() => {
     navigation.navigate('DoctorClinicNavigator', {
@@ -64,7 +96,7 @@ const HomeScreen = ({navigation}) => {
     () => !(selectedScreen && selectedClinicId),
     [selectedScreen, selectedClinicId],
   );
-
+const isEmptyClinicList = useMemo(() => !Array.isArray(clinicData) || clinicData.length === 0, [clinicData]);
   const handleNextButtonPress = useCallback(() => {
     if (isNextButtonDisabled) {
       return;
@@ -75,30 +107,22 @@ const HomeScreen = ({navigation}) => {
       {
         doctor_id: doctorId,
         clinic_id: selectedClinicId,
+        selectedClinic: clinicData.find(clinic => clinic.clinic_id === selectedClinicId),
       },
     );
-  }, [
-    selectedScreen,
-    selectedClinicId,
-    navigation,
-    doctorId,
-    isNextButtonDisabled,
-  ]);
-  console.log('HomeScreen rendered with these cards :', cards);
-  if (cards.length === 0 || cards[0].id === null) {
-    return (
-      <SafeAreaView style={styles.container} key={refreshKey}>
-        <View style={styles.emptyContainer}>
-          <TouchableOpacity
-            style={styles.addClinicButton}
-            onPress={handleAddClinicPress}>
-            <Plus size={24} color="#007AFF" />
-            <Text style={styles.addClinicText}>Add Clinic</Text>
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
-    );
-  }
+  }, [isNextButtonDisabled, navigation, selectedScreen, doctorId, selectedClinicId, clinicData]);
+if (isEmptyClinicList) {
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.emptyContainer}>
+        <TouchableOpacity onPress={handleAddClinicPress} style={styles.addClinicButton}>
+          <Plus size={24} color={styles.selectedIconColor.color}/>
+          <Text style={styles.addClinicText}>Add Clinic</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
+  );
+}
 
   return (
     <SafeAreaView style={styles.container}>
@@ -113,7 +137,7 @@ const HomeScreen = ({navigation}) => {
             <View style={styles.optionContent}>
               <Tv
                 size={32}
-                color={selectedScreen === '1' ? '#007AFF' : '#333'}
+                color={selectedScreen === '1' ? styles.selectedIconColor.color : styles.unselectedIconColor.color}
               />
               <Text
                 style={[
@@ -134,7 +158,7 @@ const HomeScreen = ({navigation}) => {
             <View style={styles.optionContent}>
               <Users
                 size={32}
-                color={selectedScreen === '2' ? '#007AFF' : '#333'}
+                color={selectedScreen === '2' ? styles.selectedIconColor.color : styles.unselectedIconColor.color}
               />
               <Text
                 style={[

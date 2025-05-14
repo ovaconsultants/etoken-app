@@ -57,6 +57,12 @@ export const createStyles = (isLandscape , dimensions) => {
     alignItems: 'center',
     alignSelf: 'center',
   },
+   selectedIconColor: {
+      color: '#007AFF',
+    },
+    unselectedIconColor: {
+      color: '#333',
+    },
   optionText: {
     fontSize: fontscale(16),
     fontWeight: '500',

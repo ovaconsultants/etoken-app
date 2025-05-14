@@ -16,13 +16,16 @@ import {showToast} from '../../components/toastMessage/ToastMessage';
 
 import withQueryClientProvider from '../../hooks/useQueryClientProvider';
 import {FetchDoctorWithIdRequest} from '../../services/doctorService';
-import {FetchAllClinicForDoctorRequest} from '../../services/clinicService';
 
 const TokenListingTVScreen = ({route, navigation}) => {
   // Safely extract params with defaults
-  const {doctor_id = null, clinic_id = null} = route.params ?? {};
+  const {
+    doctor_id = null,
+    clinic_id = null,
+    selectedClinic: clinicData = [],
+  } = route.params ?? {};
 
-  const [clinicData, setClinicData] = useState([]);
+  // const [clinicData, setClinicData] = useState([]);
   const [doctorData, setDoctorData] = useState({});
   const [inProgressPatient, setInProgressPatient] = useState(null);
   const [isRefreshReloading, setIsRefreshReloading] = useState(false);
@@ -36,25 +39,20 @@ const TokenListingTVScreen = ({route, navigation}) => {
     refetch: refetchTokens,
   } = usePatientTokens(doctor_id, clinic_id, refreshKey);
 
-  // Memoized derived data
-  const currentClinicData = React.useMemo(
-    () => clinicData.find(clinic => clinic.clinic_id === clinic_id) || {},
-    [clinicData, clinic_id],
-  );
-
   const loadData = useCallback(async () => {
     try {
       setIsRefreshReloading(true);
 
-      if (!doctor_id || !clinic_id) {return;}
+      if (!doctor_id) {
+        return;
+      }
 
-      const [clinicDataApi, doctorDataApi] = await Promise.all([
-        FetchAllClinicForDoctorRequest(clinic_id),
+      const [doctorDataApi] = await Promise.all([
         FetchDoctorWithIdRequest(doctor_id),
-        refetchTokens(), // Explicitly refetch tokens
+        refetchTokens(),
       ]);
 
-      setClinicData(clinicDataApi ?? []);
+      // setClinicData(clinicDataApi ?? []);
       setDoctorData(doctorDataApi ?? {});
     } catch (err) {
       console.error('Refresh error:', err);
@@ -62,7 +60,7 @@ const TokenListingTVScreen = ({route, navigation}) => {
     } finally {
       setIsRefreshReloading(false);
     }
-  }, [doctor_id, clinic_id, refetchTokens]);
+  }, [doctor_id, refetchTokens]);
 
   // Modified refresh handler
   const handleReloadPress = useCallback(() => {
@@ -90,7 +88,7 @@ const TokenListingTVScreen = ({route, navigation}) => {
 
   // Handle orientation and in-progress patient
   useEffect(() => {
-    loadData()
+    loadData();
     const handleOrientation = () => {
       try {
         Orientation.lockToLandscape();
@@ -139,9 +137,7 @@ const TokenListingTVScreen = ({route, navigation}) => {
 
   // Empty state
   if (!Array.isArray(tokens) || tokens.length === 0) {
-    return (
-      <DefaultTVScreen doctorInfo={doctorData} clinicInfo={currentClinicData} />
-    );
+    return <DefaultTVScreen doctorInfo={doctorData} clinicInfo={clinicData} />;
   }
 
   return (

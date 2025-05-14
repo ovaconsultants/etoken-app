@@ -36,7 +36,6 @@ const HomeNavigator = () => {
         headerTitleAlign: 'center',
         headerRight: () => <HeaderRightProfile />,
         headerBackTitle: 'Back',
-        headerBackTitleVisible: Platform.OS === 'ios',
         gestureEnabled: true,
         headerStyle: {
           backgroundColor: 'rgb(240, 240, 246)',

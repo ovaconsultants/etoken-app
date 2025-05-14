@@ -78,7 +78,7 @@ export const ReceptionScreen = ({route}) => {
       return data;
     },
     refetchInterval: 10 * 1000,
-    staleTime: 10 * 1000,
+    staleTime: 11 * 1000,
   });
 
   const handleSubmit = async (values, {resetForm}) => {

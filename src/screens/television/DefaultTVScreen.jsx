@@ -32,7 +32,7 @@ const ContactItem = ({ icon, text }) => (
 
 export const DefaultTVScreen = ({ doctorInfo = {}, clinicInfo = {} }) => {
   const [profileImageUri, setProfileImageUri] = useState('');
-
+  console.log('doctorInfo', doctorInfo);
   // Fetch profile image
   useEffect(() => {
     const fetchProfileImage = async () => {
@@ -50,7 +50,7 @@ export const DefaultTVScreen = ({ doctorInfo = {}, clinicInfo = {} }) => {
   }, [doctorInfo?.doctor_id]);
 
   // Construct full address
-  const fullAddress = [clinicInfo.clinic_address, clinicInfo.clinic_city, clinicInfo.clinic_state, clinicInfo.clinic_zipcode]
+  const fullAddress = [clinicInfo.address, clinicInfo.city, clinicInfo.state, clinicInfo.zip_code]
     .filter(Boolean)
     .join(', ');
 
@@ -70,7 +70,7 @@ export const DefaultTVScreen = ({ doctorInfo = {}, clinicInfo = {} }) => {
 
       {/* Doctor Info */}
       <View style={styles.infoContainer}>
-        <Text style={styles.doctorName}>Dr. {doctorInfo?.doctor_name || 'Name Unavailable'}</Text>
+        <Text style={styles.doctorName}>Dr. {doctorInfo?.first_name + ' ' + doctorInfo?.last_name || 'Name Unavailable'}</Text>
         <Text style={styles.doctorTitle}>{doctorInfo?.qualification || ''}</Text>
 
         {/* Experience Section */}
