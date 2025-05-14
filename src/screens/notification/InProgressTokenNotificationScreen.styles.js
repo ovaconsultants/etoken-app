@@ -31,7 +31,7 @@ export const styles = StyleSheet.create({
     zIndex: 2,
   },
   tokenNumber: {
-    fontSize: scaleFont(14),
+    fontSize: scaleFont(16),
     fontWeight: 'bold',
     color: '#2b1b0e',
   },

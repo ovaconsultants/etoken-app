@@ -1,17 +1,20 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {View, Text, Animated} from 'react-native';
+import {View, Text, ScrollView} from 'react-native';
 import {styles} from './TokenListingTVScreen.styles';
 import {TranslateNameToHindi} from '../../services/langTranslationService';
 
-const SCROLL_SPEED = 0.2;
+const SCROLL_DURATION = 30000; // 30 seconds for full scroll
+const PAUSE_DURATION = 2000; // 2 second pause at bottom
 
 const TokenTable = ({tokens}) => {
+  const scrollViewRef = useRef(null);
   const [processedTokens, setProcessedTokens] = useState([]);
-  const flatListRef = useRef(null);
-  const contentHeight = useRef(0);
-  const listHeight = useRef(0);
-  const scrollDirection = useRef(1);
+  const [contentHeight, setContentHeight] = useState(0);
+  const [containerHeight, setContainerHeight] = useState(0);
+  const timeout = useRef(null);
+  const isMounted = useRef(false);
 
+  // Process tokens data
   useEffect(() => {
     const processTokens = async () => {
       const updatedTokens = await Promise.all(
@@ -31,62 +34,97 @@ const TokenTable = ({tokens}) => {
     };
 
     processTokens();
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
   }, [tokens]);
 
   const data = processedTokens.length ? processedTokens : tokens;
-  console.log('data', data);
-  // Auto-scroll logic with Animated
+
+  // Auto-scroll logic with improved measurement handling
   useEffect(() => {
-    if (data.length === 0) {return;}
+    if (
+      !isMounted.current ||
+      !data.length ||
+      contentHeight <= 0 ||
+      containerHeight <= 0
+    ) {
+      return;
+    }
 
-    let currentOffset = 0;
-    let animationFrameId;
+    const scrollDistance = contentHeight - containerHeight;
 
-    const animateScroll = () => {
-      // Calculate if we need to reverse direction
-      if (currentOffset >= contentHeight.current - listHeight.current) {
-        scrollDirection.current = -1;
-      } else if (currentOffset <= 0) {
-        scrollDirection.current = 1;
+    if (scrollDistance <= 0) {
+      console.log(
+        'Not enough content to scroll. Content height:',
+        contentHeight,
+        'Container height:',
+        containerHeight,
+      );
+      return;
+    }
+
+    console.log('Starting animation with scroll distance:', scrollDistance);
+
+    let start = null;
+    const duration = SCROLL_DURATION;
+    let animationFrame = null;
+
+    const step = timestamp => {
+      if (!start) start = timestamp;
+      const progress = timestamp - start;
+      const percentage = Math.min(progress / duration, 1);
+      const y = scrollDistance * percentage;
+
+      if (scrollViewRef.current) {
+        scrollViewRef.current.scrollTo({x: 0, y, animated: false});
       }
 
-      // Update current offset
-      currentOffset += scrollDirection.current * SCROLL_SPEED;
-
-      // Apply the scroll
-      if (flatListRef.current) {
-        flatListRef.current.scrollToOffset({
-          offset: currentOffset,
-          animated: false,
-        });
+      if (progress < duration && isMounted.current) {
+        animationFrame = requestAnimationFrame(step);
+      } else if (isMounted.current) {
+        // Pause at bottom before restarting
+        timeout.current = setTimeout(() => {
+          if (isMounted.current) {
+            start = null;
+            scrollViewRef.current.scrollTo({x: 0, y: 0, animated: false});
+            animationFrame = requestAnimationFrame(step);
+          }
+        }, PAUSE_DURATION);
       }
-
-      // Continue animation
-      animationFrameId = requestAnimationFrame(animateScroll);
     };
 
-    // Start animation
-    animationFrameId = requestAnimationFrame(animateScroll);
+    animationFrame = requestAnimationFrame(step);
 
     return () => {
-      cancelAnimationFrame(animationFrameId);
+      if (animationFrame) {cancelAnimationFrame(animationFrame);}
+      if (timeout.current) {clearTimeout(timeout.current);}
     };
-  }, [data]);
+  }, [data, contentHeight, containerHeight]);
 
-  // Measure content dimensions
+  // Improved measurement handling
   const handleContentSizeChange = (w, h) => {
-    contentHeight.current = h;
+    if (h !== contentHeight) {
+      console.log('Content height updated:', h);
+      setContentHeight(h);
+    }
   };
 
-  const handleLayout = event => {
-    listHeight.current = event.nativeEvent.layout.height;
+  const handleLayout = e => {
+    const height = e.nativeEvent.layout.height;
+    if (height !== containerHeight) {
+      console.log('Container height updated:', height);
+      setContainerHeight(height);
+    }
   };
 
-  const renderItem = ({item}) => (
-    <View style={[styles.tableRow, getRowStyle(item.status)]}>
-      <View style={[styles.tableCell]}>
+  const renderItem = (item, index) => (
+    <View
+      key={`${item.token_id}-${index}`}
+      style={[styles.tableRow, getRowStyle(item.status)]}>
+      <View style={styles.tableCell}>
         <Text>{item.patient_name}</Text>
-        {item.hindi_name && <Text style={styles.hindi}>{item.hindi_name}</Text>}
       </View>
       <Text style={styles.tableCell}>
         {item.mobile_number?.replace(/(\d{3})(\d{3})(\d{4})/, 'xxx-xxx-$3')}
@@ -104,10 +142,10 @@ const TokenTable = ({tokens}) => {
   );
 
   return (
-    <View style={styles.tableContainer}>
-      {/* Header */}
+    <View style={[styles.tableContainer, {flex: 1}]}>
+      {/* Fixed Header */}
       <View style={styles.tableHeader}>
-        <Text style={[styles.tableHeaderText]}>Patient</Text>
+        <Text style={styles.tableHeaderText}>Patient</Text>
         <Text style={styles.tableHeaderText}>Phone</Text>
         <Text style={styles.tableHeaderText}>Payment</Text>
         <Text style={styles.tableHeaderText}>Emergency</Text>
@@ -115,22 +153,24 @@ const TokenTable = ({tokens}) => {
         <Text style={styles.tableHeaderText}>Token</Text>
       </View>
 
-      {/* Animated FlatList */}
-      <Animated.FlatList
-        ref={flatListRef}
-        data={data}
-        keyExtractor={(item, index) => `${item.token_id}-${index}`}
-        renderItem={renderItem}
-        scrollEnabled={true}
+      {/* Scrollable Content */}
+      <ScrollView
+        ref={scrollViewRef}
+        scrollEnabled={false}
         showsVerticalScrollIndicator={false}
         onContentSizeChange={handleContentSizeChange}
         onLayout={handleLayout}
-      />
+        bounces={false}
+        style={{flex: 1}}>
+        {data.map(renderItem)}
+        {/* Add extra space to ensure proper scrolling */}
+        <View style={{height: 50}} />
+      </ScrollView>
     </View>
   );
 };
 
-// Style helpers remain the same
+// Style helpers
 const getRowStyle = status => {
   switch (status?.toLowerCase()) {
     case 'in progress':

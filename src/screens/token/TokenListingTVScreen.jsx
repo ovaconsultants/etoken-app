@@ -26,32 +26,50 @@ const TokenListingTVScreen = ({route, navigation}) => {
   const [doctorData, setDoctorData] = useState({});
   const [inProgressPatient, setInProgressPatient] = useState(null);
   const [isRefreshReloading, setIsRefreshReloading] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const {
     data: tokens = [],
     isLoading,
     isError,
     error,
-    refetch,
-  } = usePatientTokens(doctor_id, clinic_id);
+    refetch: refetchTokens,
+  } = usePatientTokens(doctor_id, clinic_id, refreshKey);
 
   // Memoized derived data
-  const currentClinicData = React.useMemo(() => clinicData.find(clinic => clinic.clinic_id === clinic_id) || {},[clinicData, clinic_id],);
+  const currentClinicData = React.useMemo(
+    () => clinicData.find(clinic => clinic.clinic_id === clinic_id) || {},
+    [clinicData, clinic_id],
+  );
 
-  // Handle reload with better error handling
-  const handleReloadPress = useCallback(async () => {
+  const loadData = useCallback(async () => {
     try {
       setIsRefreshReloading(true);
-      await refetch();
-      showToast('Tokens refreshed successfully');
+
+      if (!doctor_id || !clinic_id) {return;}
+
+      const [clinicDataApi, doctorDataApi] = await Promise.all([
+        FetchAllClinicForDoctorRequest(clinic_id),
+        FetchDoctorWithIdRequest(doctor_id),
+        refetchTokens(), // Explicitly refetch tokens
+      ]);
+
+      setClinicData(clinicDataApi ?? []);
+      setDoctorData(doctorDataApi ?? {});
     } catch (err) {
       console.error('Refresh error:', err);
-      showToast('Failed to refresh tokens', 'error');
+      showToast('Refresh failed', 'error');
     } finally {
       setIsRefreshReloading(false);
     }
-  }, [refetch]);
+  }, [doctor_id, clinic_id, refetchTokens]);
 
+  // Modified refresh handler
+  const handleReloadPress = useCallback(() => {
+    setRefreshKey(prev => prev + 1);
+    loadData(); // Explicitly call loadData
+    showToast('Refreshing ...');
+  }, [loadData]);
   // Set up header buttons
   useLayoutEffect(() => {
     // eslint-disable-next-line react/no-unstable-nested-components
@@ -70,28 +88,9 @@ const TokenListingTVScreen = ({route, navigation}) => {
     });
   }, [navigation, isRefreshReloading, handleReloadPress]);
 
-  useEffect(() => {
-    const loadData = async () => {
-      if (!doctor_id || !clinic_id) {return;}
-
-      const [clinicDataApi, doctorDataApi] = await Promise.all([
-        FetchAllClinicForDoctorRequest(clinic_id),
-        FetchDoctorWithIdRequest(doctor_id),
-      ]);
-
-      setClinicData(clinicDataApi ?? []);
-      setDoctorData(doctorDataApi ?? {});
-    };
-
-    // Run on mount and when focused
-    const unsubscribe = navigation.addListener('focus', loadData);
-    loadData();
-
-    return unsubscribe;
-  }, [doctor_id, clinic_id, navigation]);
-
   // Handle orientation and in-progress patient
   useEffect(() => {
+    loadData()
     const handleOrientation = () => {
       try {
         Orientation.lockToLandscape();
@@ -117,7 +116,7 @@ const TokenListingTVScreen = ({route, navigation}) => {
         console.warn('Orientation reset error:', err);
       }
     };
-  }, [tokens]);
+  }, [loadData, tokens]);
 
   // Show error toast when there's an error
   useEffect(() => {
@@ -127,7 +126,7 @@ const TokenListingTVScreen = ({route, navigation}) => {
   }, [isError]);
 
   // Loading state
-  if (isLoading || isRefreshReloading  || isError) {
+  if (isLoading || isRefreshReloading || isError) {
     return (
       <LoadingErrorHandler
         isLoading={isLoading || isRefreshReloading}
@@ -147,7 +146,7 @@ const TokenListingTVScreen = ({route, navigation}) => {
 
   return (
     <View style={styles.fullScreenContainer} testID="token-listing-screen">
-      <View style={styles.headerContainer}>
+      <View style={styles.headerContainer} key={refreshKey}>
         <DoctorHeader doctorData={doctorData} />
       </View>
 

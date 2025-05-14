@@ -7,13 +7,12 @@ import TokenListingTVScreen from '../screens/token/TokenListingTVScreen';
 import DefaultTVScreen from '../screens/television/DefaultTVScreen';
 import ReceptionScreen from '../screens/reception/ReceptionScreen';
 import TokenSuccessScreen from '../screens/tokenDisplay/TokenSuccessScreen';
-import PatientTokenQueueScreen from '../screens/patient/PatientTokenQueueScreen';
+import PatientTokenManagementScreen from '../screens/patient/PatientTokenManagementScreen';
 import {PatientInfoEditorScreen} from '../screens/patientEditor/PatientInfoEditorReceptionScreen';
 import DefaultReceptionScreen from '../screens/noTokenReceptionState/DefaultReceptionScreen';
-import { incrementHomeRefreshKey } from '../atoms/refreshAtoms/homePageRefreshAtom';
+import {incrementHomeRefreshKey} from '../atoms/refreshAtoms/homePageRefreshAtom';
 import {useSetAtom} from 'jotai';
 import {Home} from 'lucide-react-native';
-
 
 const Stack = createNativeStackNavigator();
 
@@ -47,7 +46,7 @@ const HomeNavigator = () => {
         name="Home"
         component={HomeScreen}
         options={() => ({
-          headerTitle: () => <HeaderHomeIcon onPress={handleRefresh}/>,
+          headerTitle: () => <HeaderHomeIcon onPress={handleRefresh} />,
         })}
       />
 
@@ -76,7 +75,7 @@ const HomeNavigator = () => {
 
       <Stack.Screen
         name="TokenListing"
-        component={PatientTokenQueueScreen}
+        component={PatientTokenManagementScreen}
         options={{
           title: 'Token Queue',
         }}
