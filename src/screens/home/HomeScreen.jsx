@@ -15,6 +15,7 @@ import {homeRefreshKeyAtom} from '../../atoms/refreshAtoms/homePageRefreshAtom';
 import { FetchAllClinicForDoctorRequest } from '../../services/clinicService';
 
 import CardGrid from '../../components/cardGrid/CardGrid';
+import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
 
 const HomeScreen = ({navigation}) => {
 
@@ -28,6 +29,7 @@ const HomeScreen = ({navigation}) => {
   const [selectedScreen, setSelectedScreen] = useState(null);
   const [selectedClinicId, setSelectedClinicId] = useState(null);
   const [clinicData, setClinicData] = useState([]);
+  const [refreshing , setRefreshing] = useState(true);
 
 
 
@@ -39,6 +41,7 @@ useFocusEffect(
       try {
         const fetchedClinics = await FetchAllClinicForDoctorRequest(doctorId);
         setClinicData(fetchedClinics);
+        setRefreshing(false);
         console.log('Fetched clinics:', fetchedClinics);
         setSelectedClinicId(fetchedClinics[0]?.clinic_id || null);
       } catch (error) {
@@ -47,9 +50,7 @@ useFocusEffect(
         setSelectedClinicId(null);
       }
     };
-
-    fetchClinics();
-
+    if(doctorId) {  fetchClinics();  }
     setSelectedScreen(null);
     navigation.setOptions({
       headerBackTitle: '',
@@ -111,7 +112,15 @@ const isEmptyClinicList = useMemo(() => !Array.isArray(clinicData) || clinicData
       },
     );
   }, [isNextButtonDisabled, navigation, selectedScreen, doctorId, selectedClinicId, clinicData]);
-if (isEmptyClinicList) {
+
+  if(refreshing) {
+  return (
+    <SafeAreaView style={styles.container}>
+      <LoadingErrorHandler isLoading={refreshing} />
+    </SafeAreaView>
+  );
+}
+if ( !refreshing && isEmptyClinicList) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.emptyContainer}>
