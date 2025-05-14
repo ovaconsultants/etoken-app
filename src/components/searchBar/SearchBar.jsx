@@ -11,6 +11,19 @@ import SearchBar from 'react-native-dynamic-search-bar';
 import {calculateSearchRelevance} from '../../utils/globalUtil';
 import {useOrientation} from '../../hooks/useOrientation';
 import {createStyles} from './SearchBar.styles';
+import Fuse from 'fuse.js';
+
+const searchName = (query, list) => {
+  const options = {
+    keys: ['patient_name'],   // Use 'patient_name' as it matches your data
+    threshold: 0.4,
+    includeScore: true,
+  };
+
+  const fuse = new Fuse(list, options);
+  const results = fuse.search(query);
+  return results.map(result => result.item);
+};
 
 const CustomSearchBar = ({
   data,
@@ -44,22 +57,10 @@ const CustomSearchBar = ({
   }, []);
 
   // Filter data based on search term
-  const filteredData = React.useMemo(() => {
-    if (!searchTerm) {
-      return data || [];
-    }
-
-    return [...(data || [])]
-      .map(item => {
-        const searchWords = searchTerm.toLowerCase().trim().split(/\s+/);
-        return {
-          ...item,
-          matchScore: calculateSearchRelevance(item, searchWords),
-        };
-      })
-      .filter(item => item.matchScore > 0)
-      .sort((a, b) => b.matchScore - a.matchScore);
-  }, [data, searchTerm]);
+const filteredData = React.useMemo(() => {
+  if (!searchTerm) {return data || [];}
+  return searchName(searchTerm, data || []);
+}, [searchTerm, data]);
 
   // Handlers
   const handleSearchChange = text => {
