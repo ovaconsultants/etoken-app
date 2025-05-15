@@ -4,15 +4,16 @@ import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {User, Calendar, PlusCircle, LogOut} from 'lucide-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {doctorIdAtom , doctorInfoAtom } from '../../atoms/doctorAtoms/doctorAtom';
+import {doctorIdAtom, doctorInfoAtom} from '../../atoms/doctorAtoms/doctorAtom';
 import {useAtomValue} from 'jotai';
 import {userTokenAtom} from '../../atoms/authAtoms/authAtom';
 import {useSetAtom} from 'jotai';
 import AppVersion from '../appVersionNumber/AppVersionNumber';
+import {handleSignOut} from '../../utils/resetAppStateOnLogout';
 const CustomDrawerContent = () => {
   const navigation = useNavigation();
   const doctor_id = useAtomValue(doctorIdAtom);
-  const { doctor_name } = useAtomValue(doctorInfoAtom);
+  const {doctor_name} = useAtomValue(doctorInfoAtom);
   const setUserTokenAtom = useSetAtom(userTokenAtom);
   const menuItems = [
     {
@@ -50,15 +51,6 @@ const CustomDrawerContent = () => {
     },
   ];
 
-  const handleSignOut = async () => {
-    setUserTokenAtom(null);
-    await AsyncStorage.clear();
-    navigation.reset({
-      index: 0,
-      routes: [{name: 'AppNavigator'}],
-    });
-  };
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -85,7 +77,7 @@ const CustomDrawerContent = () => {
         <Text style={styles.signOutLabel}>Sign Out</Text>
       </TouchableOpacity>
       <View style={styles.appVersion}>
-      <AppVersion />
+        <AppVersion />
       </View>
     </View>
   );
@@ -96,7 +88,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 40,
     backgroundColor: '#FFF',
-    margin : 10 ,
+    margin: 10,
   },
   header: {
     marginTop: 36,
