@@ -9,7 +9,7 @@ const CardGrid = ({data, onPress, isSelectedCard, isLandscape}) => {
       {data.map(item => (
         <View 
           key={item.id.toString()} 
-          style={[styles.cardWrapper, isLandscape && styles.landscapeCardWrapper]}
+          style={[styles.cardWrapper, isLandscape && styles.landscapeCardWrapper ,{ flexGrow: 1 }]}
         >
           <Card
             title={item.title || 'No Title'}

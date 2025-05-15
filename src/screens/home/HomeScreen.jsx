@@ -65,7 +65,6 @@ useFocusEffect(
   }, [doctorId, navigation, refreshKey]),
 );
 
- console.log('clinicData:', clinicData);
   const cards = useMemo(() => {
     if (!Array.isArray(clinicData)) {
       return [];
