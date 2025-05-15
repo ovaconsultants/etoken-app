@@ -23,10 +23,10 @@ export const calculateSearchRelevance = (item, searchWords) => {
 
   searchWords.forEach(word => {
     if (fullText.includes(word)) {
-      score += word.length * 2; // strong match
+      score += word.length * 2;
     } else {
       const levDistance = distance(word, name);
-      const fuzzyScore = Math.max(0, 10 - levDistance); // closer = better
+      const fuzzyScore = Math.max(0, 10 - levDistance);
       score += fuzzyScore;
     }
   });

@@ -8,7 +8,6 @@ import {
   Platform,
 } from 'react-native';
 import SearchBar from 'react-native-dynamic-search-bar';
-import {calculateSearchRelevance} from '../../utils/globalUtil';
 import {useOrientation} from '../../hooks/useOrientation';
 import {createStyles} from './SearchBar.styles';
 import Fuse from 'fuse.js';

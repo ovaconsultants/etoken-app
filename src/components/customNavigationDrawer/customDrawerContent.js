@@ -8,6 +8,7 @@ import {doctorIdAtom , doctorInfoAtom } from '../../atoms/doctorAtoms/doctorAtom
 import {useAtomValue} from 'jotai';
 import {userTokenAtom} from '../../atoms/authAtoms/authAtom';
 import {useSetAtom} from 'jotai';
+import AppVersion from '../appVersionNumber/AppVersionNumber';
 const CustomDrawerContent = () => {
   const navigation = useNavigation();
   const doctor_id = useAtomValue(doctorIdAtom);
@@ -83,6 +84,9 @@ const CustomDrawerContent = () => {
         </View>
         <Text style={styles.signOutLabel}>Sign Out</Text>
       </TouchableOpacity>
+      <View style={styles.appVersion}>
+      <AppVersion />
+      </View>
     </View>
   );
 };
@@ -140,6 +144,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#E53E3E',
     fontWeight: '500',
+  },
+  appVersion: {
+    marginTop: 24,
+    marginBottom: 16,
+    paddingHorizontal: 24,
+    backgroundColor: '#F8F9FC',
+    borderRadius: 8,
+    alignItems: 'center',
   },
 });
 
