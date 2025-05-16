@@ -12,7 +12,7 @@ import {Formik} from 'formik';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
 import {useNavigation} from '@react-navigation/native';
 import {useAtom} from 'jotai';
-import {Users, Home, Eraser} from 'lucide-react-native';
+import {Users, Home, Eraser ,ListRestart} from 'lucide-react-native';
 
 import {patientsAtom} from '../../atoms/patientAtoms/patientAtom';
 import {ReceptionFormValidationSchema} from '../../utils/ReceptionFormValidation';
@@ -59,16 +59,19 @@ const formFields = [
 
 export const ReceptionScreen = ({route}) => {
   const {doctor_id = null, clinic_id = null} = route.params ?? {};
+
   const {isLandscape, dimensions} = useOrientation();
-  const styles = useMemo(
-    () => createStyles(isLandscape, dimensions),
-    [dimensions, isLandscape],
-  );
+  const styles = useMemo(() => createStyles(isLandscape, dimensions),[dimensions, isLandscape],);
+
+
   const navigation = useNavigation();
   const queryClient = useQueryClient();
-  const [patients, setPatients] = useAtom(patientsAtom);
   const formikRef = useRef();
+
+
+  const [patients, setPatients] = useAtom(patientsAtom);
   const [searchDropdownVisible, setSearchDropdownVisible] = useState(false);
+  const [isLoadingPatients, setIsLoadingPatients] = useState(false);
 
   const {isLoading, isError, error} = useQuery({
     queryKey: ['fetchingPatients'],
@@ -126,6 +129,23 @@ export const ReceptionScreen = ({route}) => {
       formikRef.current?.setFieldTouched(field.name, false);
     });
   };
+  const handleRefresh =  async () => {
+    setIsLoadingPatients(true);
+    queryClient.invalidateQueries(['fetchingPatients']);
+    await queryClient.refetchQueries(['fetchingPatients']);
+    formikRef.current?.resetForm();
+    setIsLoadingPatients(false);
+  };
+
+  if(isLoading || isLoadingPatients){
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.container}>
+          <LoadingErrorHandler isLoading={isLoadingPatients || isLoading} isLandscape={isLandscape} isError={isError} error={error} />
+        </View>
+      </SafeAreaView>
+    )
+  }
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -220,7 +240,8 @@ export const ReceptionScreen = ({route}) => {
             <FooterNavigation
               navigation={navigation}
               currentRoute="Reception"
-              handleRefresh={handleClear}
+              handleRefresh={handleRefresh}
+              handleClear={handleClear}
               routes={[
                 {
                   id: 'home',
@@ -239,6 +260,12 @@ export const ReceptionScreen = ({route}) => {
                   id: 'clear',
                   icon: Eraser,
                   label: 'Clear',
+                  action: 'clear',
+                },
+           {
+                  id: 'refresh',
+                  icon: ListRestart,
+                  label: 'refresh',
                   action: 'refresh',
                 },
               ]}

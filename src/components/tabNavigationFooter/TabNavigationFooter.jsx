@@ -14,13 +14,17 @@ const FooterButton = React.memo(({icon: Icon, label, onPress,}) => {
 });
 
 export const FooterNavigation = React.memo(
-  ({navigation, routes, currentRoute, showLabels = true , handleRefresh}) => {
+  ({navigation, routes, currentRoute, showLabels = true , handleRefresh , handleClear}) => {
     const combinedRoutes = routes ;
 
     const handlePress = item => {
       if (item.action === 'refresh') {
          handleRefresh();
-      } else if (item.screen) {
+      }
+      else if ( item.action === 'clear') {
+           handleClear();
+      }
+      else if (item.screen) {
         navigation.navigate(item.screen, item.params || {});
       }
     };
