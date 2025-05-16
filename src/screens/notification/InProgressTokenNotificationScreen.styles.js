@@ -31,7 +31,7 @@ export const styles = StyleSheet.create({
     zIndex: 2,
   },
   tokenNumber: {
-    fontSize: scaleFont(16),
+    fontSize: scaleFont(18),
     fontWeight: 'bold',
     color: '#2b1b0e',
   },
@@ -48,7 +48,7 @@ export const styles = StyleSheet.create({
   },
   patientName: {
     paddingVertical : 20,
-    fontSize: scaleFont(14),
+    fontSize: scaleFont(16),
     fontWeight: 'bold',
     color: '#2b1b0e',
     textAlign: 'center',

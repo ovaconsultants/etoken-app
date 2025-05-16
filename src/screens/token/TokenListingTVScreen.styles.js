@@ -4,7 +4,8 @@ export const styles = StyleSheet.create({
   fullScreenContainer: {
     flex: 1,
     backgroundColor: '#fff',
-    margin: 30,
+    margin: 10,
+    padding : 20 ,
   },
 
   /** HEADER SECTION **/

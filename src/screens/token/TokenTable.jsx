@@ -164,7 +164,7 @@ const TokenTable = ({tokens}) => {
         style={{flex: 1}}>
         {data.map(renderItem)}
         {/* Add extra space to ensure proper scrolling */}
-        <View style={{height: 50}} />
+        <View style={{height: 20}} />
       </ScrollView>
     </View>
   );

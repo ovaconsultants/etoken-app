@@ -8,6 +8,7 @@ import {
   Pressable,
 } from 'react-native';
 
+
 import {UpdateDoctorProfileDetailsRequest} from '../../services/doctorService';
 import {FetchDoctorWithIdRequest} from '../../services/doctorService';
 
@@ -18,6 +19,7 @@ import {useTheme} from '@react-navigation/native';
 
 import {useOrientation} from '../../hooks/useOrientation';
 import {createStyles} from './DoctorEditorScreen.styles';
+
 import {showToast} from '../../components/toastMessage/ToastMessage';
 import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
 
@@ -60,7 +62,6 @@ const DoctorEditorScreen = ({navigation, route}) => {
         const fetchedDoctorDetailsFromApi = await FetchDoctorWithIdRequest(
           doctor_id,
         );
-        console.log('Fetched doctor details:', fetchedDoctorDetailsFromApi);
         setDoctorInfo(fetchedDoctorDetailsFromApi);
       } catch (error) {
         console.error('Fetch error:', error);
@@ -303,7 +304,7 @@ const BasicInfoSection = ({
             doctor_id: doctor_id,
           })
         }>
-        <Text style={styles.sectionHeaderText}>change profile picture</Text>
+        <Text style={styles.sectionHeaderText}>profile picture</Text>
       </Pressable>
     </View>
 
@@ -350,7 +351,7 @@ const BasicInfoSection = ({
     <View style={styles.inputGroup}>
       <Text style={[styles.label, {color: colors.text}]}>Gender</Text>
       <View style={styles.radioGroup}>
-        {['Male', 'Female', 'Other'].map(gender => (
+        {['Male', 'Female'].map(gender => (
           <TouchableOpacity
             key={gender}
             style={[

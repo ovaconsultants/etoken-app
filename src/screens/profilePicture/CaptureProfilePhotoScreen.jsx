@@ -4,22 +4,74 @@ import {
   TouchableOpacity,
   Text,
   ActivityIndicator,
+  Image,
 } from 'react-native';
-import ImagePicker from '../../components/imagePicker/ImagePicker';
+import ImagePicker from 'react-native-image-crop-picker';
 import {UploadDoctorProfileImageRequest} from '../../services/profileImageService';
 import {showToast} from '../../components/toastMessage/ToastMessage';
 import createStyles from './CaptureProfilePhotoScreen.styles';
 import {globalStyles} from '../../styles/globalStyles';
 import RNFS from 'react-native-fs';
-import { useOrientation } from '../../hooks/useOrientation';
+import {useOrientation} from '../../hooks/useOrientation';
 
 const CaptureProfilePhotoScreen = ({navigation, route}) => {
-  const { isLandscape, dimensions } = useOrientation(); 
+  const {isLandscape, dimensions} = useOrientation();
   const styles = createStyles(isLandscape, dimensions);
-  const { doctor_id , fromSignUpRoute } = route.params;
+  const {doctor_id, fromSignUpRoute} = route.params;
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [croppedImage, setCroppedImage] = useState(null);
+
+  const selectAndCropImage = async () => {
+    try {
+      const image = await ImagePicker.openPicker({
+        width: 300,
+        height: 300,
+        cropping: true,
+        cropperCircleOverlay: true, // for circular cropping
+        compressImageQuality: 0.8,
+        mediaType: 'photo',
+      });
+
+      setSelectedImage({
+        uri: image.path,
+        type: image.mime,
+        width: image.width,
+        height: image.height,
+      });
+      setCroppedImage(image.path);
+    } catch (error) {
+      if (error.code !== 'E_PICKER_CANCELLED') {
+        showToast('Error selecting image', {type: 'error'});
+      }
+    }
+  };
+
+  const openCameraForImage = async () => {
+    try {
+      const image = await ImagePicker.openCamera({
+        width: 300,
+        height: 300,
+        cropping: true,
+        cropperCircleOverlay: true,
+        compressImageQuality: 0.8,
+        mediaType: 'photo',
+      });
+
+      setSelectedImage({
+        uri: image.path,
+        type: image.mime,
+        width: image.width,
+        height: image.height,
+      });
+      setCroppedImage(image.path);
+    } catch (error) {
+      if (error.code !== 'E_PICKER_CANCELLED') {
+        showToast('Error capturing image', {type: 'error'});
+      }
+    }
+  };
 
   const prepareImageForUpload = async image => {
     if (!image.uri) {
@@ -53,18 +105,17 @@ const CaptureProfilePhotoScreen = ({navigation, route}) => {
 
     try {
       const preparedImage = await prepareImageForUpload(selectedImage);
-      console.log('Prepared image:', preparedImage);
-
       const result = await UploadDoctorProfileImageRequest(
         preparedImage,
         doctor_id,
       );
-      if(result.ok){
-      showToast('Image uploaded successfully', {
-        type: 'success',
-        duration: 3000,
-      });
-    }
+
+      if (result.ok) {
+        showToast('Image uploaded successfully', {
+          type: 'success',
+          duration: 3000,
+        });
+      }
     } catch (error) {
       console.error('Upload error:', error);
       showToast(error.message || 'Failed to upload image', {
@@ -78,7 +129,7 @@ const CaptureProfilePhotoScreen = ({navigation, route}) => {
           name: 'DoctorClinicNavigator',
           params: {
             screen: 'DoctorAddClinic',
-            params: {doctor_id: doctor_id , fromSignUpRoute: fromSignUpRoute},
+            params: {doctor_id: doctor_id, fromSignUpRoute: fromSignUpRoute},
           },
         });
       }, 2000);
@@ -89,15 +140,32 @@ const CaptureProfilePhotoScreen = ({navigation, route}) => {
     <View style={styles.container}>
       <View style={styles.contentContainer}>
         <View style={styles.imagePickerContainer}>
-          <ImagePicker
-            onImageSelected={image => {
-              setSelectedImage({
-                uri: image.uri,
-                type: image.type || 'image/jpeg',
-              });
-            }}
-            initialImage={selectedImage?.uri}
-          />
+          {croppedImage ? (
+            <Image
+              source={{uri: croppedImage}}
+              style={styles.croppedImage}
+              resizeMode="cover"
+            />
+          ) : (
+            <View style={styles.placeholderContainer}>
+              <Text style={styles.placeholderText}>No image selected</Text>
+            </View>
+          )}
+
+          <View style={styles.buttonGroup}>
+            <TouchableOpacity
+              style={styles.selectButton}
+              onPress={selectAndCropImage}>
+              <Text style={styles.buttonText}>Choose from Gallery</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.cameraButton}
+              onPress={openCameraForImage}>
+              <Text style={styles.buttonText}>Take Photo</Text>
+            </TouchableOpacity>
+          </View>
+
           {isUploading ? (
             <ActivityIndicator
               size="large"
@@ -116,6 +184,7 @@ const CaptureProfilePhotoScreen = ({navigation, route}) => {
             </TouchableOpacity>
           )}
         </View>
+
         <View style={styles.navigationButtonsContainer}>
           <TouchableOpacity
             style={[styles.navButton, styles.skipButton]}

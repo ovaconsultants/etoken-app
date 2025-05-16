@@ -116,12 +116,6 @@ const TokenListingTVScreen = ({route, navigation}) => {
     };
   }, [loadData, tokens]);
 
-  // Show error toast when there's an error
-  useEffect(() => {
-    if (isError) {
-      showToast('Error loading tokens', 'error');
-    }
-  }, [isError]);
 
   // Loading state
   if (isLoading || isRefreshReloading || isError) {
@@ -145,9 +139,7 @@ const TokenListingTVScreen = ({route, navigation}) => {
       <View style={styles.headerContainer} key={refreshKey}>
         <DoctorHeader doctorData={doctorData} />
       </View>
-
       <TokenTable tokens={tokens} />
-
       <View style={styles.notificationInProgress}>
         {inProgressPatient && (
           <InProgressTokenNotificationScreen

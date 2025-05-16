@@ -211,13 +211,13 @@ const DoctorAddClinicScreen = ({navigation, route}) => {
       {
         id: 'home',
         icon: Home,
-        screen: 'AppNavigator', // This will take you to the root
+        screen: 'AppNavigator',
         params: {
-          screen: 'DrawerNavigator', // Then to the drawer
+          screen: 'DrawerNavigator',
           params: {
-            screen: 'HomeNavigator', // Then to the home navigator
+            screen: 'HomeNavigator',
             params: {
-              screen: 'Home', // Finally to the Home screen
+              screen: 'Home',
             }
           }
         },

@@ -38,7 +38,10 @@ export const createStyles = (isLandscape) => {
     sectionHeaderText: {
       fontSize: 18,
       fontWeight: 'bold',
+      color: '#007AFF',
+
     },
+
     inputGroup: {
       marginBottom: 20,
     },
@@ -68,7 +71,8 @@ export const createStyles = (isLandscape) => {
     },
     radioGroup: {
       flexDirection: 'row',
-      justifyContent: 'space-between',
+      justifyContent: 'flex-start',
+      gap: 20,
       marginTop: 5,
     },
     radioButton: {

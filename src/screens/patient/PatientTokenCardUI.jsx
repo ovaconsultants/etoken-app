@@ -83,7 +83,7 @@ export const TokenCard = React.memo(
           <View style={styles.tokenHeader}>
             <View style={styles.patientName}>
               <Text>{token.patient_name}</Text>
-              <Text> ({token.age}) </Text>
+              <Text> {token.age && `(${token.age})`} </Text>
               {/* <Text>{hindiName || ''}</Text> */}
             </View>
             <View style={styles.tokenNumber}>
