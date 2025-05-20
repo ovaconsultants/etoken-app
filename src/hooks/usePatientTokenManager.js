@@ -22,7 +22,7 @@ export const usePatientTokenManager = (clinic_id, doctor_id) => {
 
   // Auto-select first token and calculate stats
 const { stats, hasTokenInProgress  , inProgressToken} = useMemo(() => {
-  const inProgressToken = ( patientTokens.find(t => t.status === 'In Progress'));
+  const inProgressToken = (patientTokens.find(t => t.status === 'In Progress'));
   const hasTokenInProgressBool = Boolean(inProgressToken);
   if (inProgressToken) {
     selectedTokenRef.current = inProgressToken.token_id;
@@ -36,7 +36,7 @@ const { stats, hasTokenInProgress  , inProgressToken} = useMemo(() => {
     hasTokenInProgress : hasTokenInProgressBool,
     stats: {
       total: patientTokens.length,
-      attended: hasTokenInProgress ? 1 : 0,
+      attended: patientTokens.filter(t => t.status === 'Completed').length,
       inQueue: patientTokens.filter(t => t.status === 'Waiting').length,
       onHold: patientTokens.filter(t => t.status === 'On Hold').length,
     },

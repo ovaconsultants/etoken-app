@@ -14,7 +14,7 @@ const useSpeechNotification = (inProgressPatient) => {
   const englishMessage = `${inProgressPatient.patient_name} Token Number: ${inProgressPatient.token_no}, The doctor has called you; please proceed for your consultation.`;
 
   // Translate the full English message to Hindi
-  const translatedMessageInRegional = useTranslation(englishMessage, 'English', 'Hindi');
+  const translatedMessageInRegional = useTranslation(englishMessage, 'English', 'Hindi') ||  englishMessage ;
 
   // Return translated data as an object
   const translatedData = {
@@ -30,14 +30,16 @@ const useSpeechNotification = (inProgressPatient) => {
     Tts.speak(englishMessage, {
       language: 'en-IN',
       iosVoiceId: 'com.apple.ttsbundle.Lekha-compact',
+      rate : 0.6 ,
     });
 
     // Listen for TTS finish event to chain Hindi
     const finishListener = Tts.addEventListener('tts-finish', () => {
       if (!isHindiSpoken.current && translatedMessageInRegional) {
         Tts.speak(translatedMessageInRegional, {
-          language: 'hi-IN',
+          language: 'en-IN',
           iosVoiceId: 'com.apple.ttsbundle.Lekha-compact',
+          rate : 0.6 ,
         });
         isHindiSpoken.current = true;
       }

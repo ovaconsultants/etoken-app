@@ -7,11 +7,17 @@ export const createStyles = (isLandscape , dimensions) => {
     }
     return fontsize * (dimensions.width / 300);
   }
+  const marginscale = (margin) => {
+    if (isLandscape) {
+      return margin * (dimensions.width / 640);
+    }
+    return margin * (dimensions.width / 300);
+  }
 
   return  StyleSheet.create({
   container: {
     flex: 1,
-    margin : 10,
+    margin :  marginscale(10),
     backgroundColor :' rgb(251, 251, 251)',
     gap : 5 ,
   },

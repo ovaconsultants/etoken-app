@@ -23,6 +23,7 @@ export const createStyles =  (isLandscape ) => StyleSheet.create({
     backgroundColor: '#f9f9f7',
     borderRadius: 10,
     paddingVertical: 16,
+    paddingHorizontal: 16,
     elevation: 3,
   },
   searchIcon: {
@@ -52,15 +53,16 @@ export const createStyles =  (isLandscape ) => StyleSheet.create({
     marginTop: '1%',
     borderWidth: 4,
     borderColor: '#ecf0f1',
+    maxHeight: 500,
   },
   dropdownItem: {
     paddingVertical: isLandscape ?  5  : '2%',
-    paddingHorizontal: '4%',
   },
   itemContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingHorizontal : '4%',
   },
 
 

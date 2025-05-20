@@ -3,18 +3,14 @@ import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {User, Calendar, PlusCircle, LogOut} from 'lucide-react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {doctorIdAtom, doctorInfoAtom} from '../../atoms/doctorAtoms/doctorAtom';
 import {useAtomValue} from 'jotai';
-import {userTokenAtom} from '../../atoms/authAtoms/authAtom';
-import {useSetAtom} from 'jotai';
 import AppVersion from '../appVersionNumber/AppVersionNumber';
 import {handleSignOut} from '../../utils/resetAppStateOnLogout';
 const CustomDrawerContent = () => {
   const navigation = useNavigation();
   const doctor_id = useAtomValue(doctorIdAtom);
   const {doctor_name} = useAtomValue(doctorInfoAtom);
-  const setUserTokenAtom = useSetAtom(userTokenAtom);
   const menuItems = [
     {
       label: 'Profile',
@@ -138,12 +134,12 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   appVersion: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
     marginTop: 24,
     marginBottom: 16,
     paddingHorizontal: 24,
-    backgroundColor: '#F8F9FC',
-    borderRadius: 8,
-    alignItems: 'center',
   },
 });
 

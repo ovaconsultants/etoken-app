@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useState, useMemo} from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ActivityIndicator,
+  Pressable,
 } from 'react-native';
 import {
   Phone,
@@ -23,12 +24,14 @@ import DefaultReceptionScreen from '../noTokenReceptionState/DefaultReceptionScr
 import {TranslateNameToHindi} from '../../services/langTranslationService';
 import FooterNavigation from '../../components/tabNavigationFooter/TabNavigationFooter';
 import {TokenCard} from './PatientTokenCardUI';
-import { createStyles } from './PatientTokenManagementScreen.styles';
+import {createStyles} from './PatientTokenManagementScreen.styles';
 
 const PatientTokenManagementScreen = ({navigation, route}) => {
   const {isLandscape} = useOrientation();
   const styles = createStyles(isLandscape);
   const {clinic_id, doctor_id} = route.params;
+
+  const [activeFilter, setActiveFilter] = useState('all');
 
   const {
     patientTokens,
@@ -50,6 +53,23 @@ const PatientTokenManagementScreen = ({navigation, route}) => {
     onHold,
   } = usePatientTokenManager(clinic_id, doctor_id);
 
+  const filteredTokens = useMemo(() => {
+    switch (activeFilter) {
+      case 'attended':
+        return patientTokens.filter(t => t.status === 'Completed');
+      case 'inQueue':
+        return patientTokens.filter(t => t.status === 'Waiting');
+      case 'onHold':
+        return patientTokens.filter(t => t.status === 'On Hold');
+      case 'all':
+        return patientTokens.filter(t => ['Waiting', 'In Progress', 'On Hold'].includes(t.status));  
+      default:
+        return patientTokens;
+    }
+  }, [patientTokens, activeFilter]);
+  const handleBadgePress = useCallback(filterType => {
+    setActiveFilter(filterType);
+  }, []);
   const handleRowPress = useCallback(
     tokenId => {
       handleSelectToken(tokenId);
@@ -85,21 +105,33 @@ const PatientTokenManagementScreen = ({navigation, route}) => {
         <View style={styles.headerContainer}>
           <View style={styles.headerBadges}>
             <View style={styles.badge}>
-              <Text style={styles.badgeText}>Total: {total}</Text>
+              <Pressable onPress={() => handleBadgePress('all')}>
+                <Text style={styles.badgeText}>Total: {total}</Text>{' '}
+              </Pressable>
             </View>
             <View style={[styles.badge, styles.greenBadge]}>
-              <Text style={styles.badgeText}>Attended: {attended}</Text>
+              <Pressable onPress={() => handleBadgePress('attended')}>
+                {' '}
+                <Text style={styles.badgeText}>Attended: {attended}</Text>
+              </Pressable>
             </View>
             <View style={[styles.badge, styles.yellowBadge]}>
-              <Text style={styles.badgeText}>In Queue: {inQueue}</Text>
+              <Pressable onPress={() => handleBadgePress('inQueue')}>
+                {' '}
+                <Text style={styles.badgeText}>In Queue: {inQueue}</Text>
+              </Pressable>
             </View>
             <View style={styles.dropdownContainer}>
               <TouchableOpacity style={[styles.badge, styles.redBadge]}>
-                <Text style={styles.badgeText}>On Hold: {onHold}</Text>
+                <Pressable onPress={() => handleBadgePress('onHold')}>
+                  {' '}
+                  <Text style={styles.badgeText}>On Hold: {onHold}</Text>
+                </Pressable>
               </TouchableOpacity>
             </View>
           </View>
         </View>
+        { activeFilter === 'all' &&
         <View style={styles.actionButtonsContainer}>
           <TouchableOpacity
             style={styles.primaryButton}
@@ -117,9 +149,10 @@ const PatientTokenManagementScreen = ({navigation, route}) => {
             <Text style={styles.secondaryButtonText}>Recall</Text>
           </TouchableOpacity>
         </View>
+}
 
         <ScrollView style={styles.tokenListContainer}>
-          {patientTokens.map(token => (
+          {filteredTokens.map(token => (
             <TokenCard
               key={token.token_id}
               token={token}

@@ -70,7 +70,6 @@ const createStyles = (isLandscape, dimensions) => {
       fontSize: scaleFont(15),
       fontWeight: '600',
       textAlign: 'center',
-      textDecorationLine: 'underline',
     },
     loadingIndicator: {
       marginVertical: 15,
@@ -98,7 +97,7 @@ placeholderText: {
 },
 buttonGroup: {
   flexDirection: 'row',
-  justifyContent: 'space-around',
+  justifyContent: 'space-between',
   width: '100%',
   marginBottom: 20,
 },
@@ -106,13 +105,13 @@ selectButton: {
   backgroundColor: '#4CAF50',
   padding: 12,
   borderRadius: 8,
-  minWidth: '45%',
+  minWidth: '40%',
 },
 cameraButton: {
   backgroundColor: '#2196F3',
   padding: 12,
   borderRadius: 8,
-  minWidth: '45%',
+  minWidth: '40%',
 },
 buttonText: {
   color: 'white',

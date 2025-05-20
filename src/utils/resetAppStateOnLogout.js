@@ -9,8 +9,7 @@ import {patientsAtom} from '../atoms/patientAtoms/patientAtom';
 import { getDefaultStore } from 'jotai'; // Changed import
 
 function resetAllAtoms() {
-  const store = getDefaultStore(); 
-  console.log('store', store);// Get the default store instance
+  const store = getDefaultStore();
   const atomsToReset = [
     doctorIdAtom,
     doctorInfoAtom,

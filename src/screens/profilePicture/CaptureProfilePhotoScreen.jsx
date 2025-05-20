@@ -5,6 +5,7 @@ import {
   Text,
   ActivityIndicator,
   Image,
+  Platform,
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import {UploadDoctorProfileImageRequest} from '../../services/profileImageService';
@@ -50,6 +51,10 @@ const CaptureProfilePhotoScreen = ({navigation, route}) => {
 
   const openCameraForImage = async () => {
     try {
+         if (Platform.OS === 'ios' && !Platform.isPad && !Platform.isTVOS && Platform.isTesting) {
+      showToast('Camera not available in simulator', {type: 'error'});
+      return;
+    }
       const image = await ImagePicker.openCamera({
         width: 300,
         height: 300,
@@ -67,8 +72,14 @@ const CaptureProfilePhotoScreen = ({navigation, route}) => {
       });
       setCroppedImage(image.path);
     } catch (error) {
+      console.log('Error capturing image:', error);
       if (error.code !== 'E_PICKER_CANCELLED') {
-        showToast('Error capturing image', {type: 'error'});
+          showToast(
+        error.message === 'Cannot run camera on simulator' 
+          ? 'Camera not available in simulator' 
+          : 'Error capturing image', 
+        {type: 'error'}
+      );
       }
     }
   };

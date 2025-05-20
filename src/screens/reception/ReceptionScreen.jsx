@@ -12,11 +12,14 @@ import {Formik} from 'formik';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
 import {useNavigation} from '@react-navigation/native';
 import {useAtom} from 'jotai';
-import {Users, Home, Eraser ,ListRestart} from 'lucide-react-native';
+import {Users, Home, Eraser, RefreshCcw} from 'lucide-react-native';
 
 import {patientsAtom} from '../../atoms/patientAtoms/patientAtom';
 import {ReceptionFormValidationSchema} from '../../utils/ReceptionFormValidation';
-import {FetchPatientsRequest, InsertPatientRequest} from '../../services/patientService';
+import {
+  FetchPatientsRequest,
+  InsertPatientRequest,
+} from '../../services/patientService';
 import {GenerateTokenRequest} from '../../services/tokenService';
 import withQueryClientProvider from '../../hooks/useQueryClientProvider';
 import SearchBar from '../../components/searchBar/SearchBar';
@@ -43,7 +46,7 @@ const formFields = [
   {
     name: 'age',
     placeholder: 'Age',
-    keyboardType: 'phone-pad',
+    keyboardType: 'default',
   },
   {
     name: 'area',
@@ -59,15 +62,17 @@ const formFields = [
 
 export const ReceptionScreen = ({route}) => {
   const {doctor_id = null, clinic_id = null} = route.params ?? {};
+  console.log('doctor_id:', doctor_id);
 
   const {isLandscape, dimensions} = useOrientation();
-  const styles = useMemo(() => createStyles(isLandscape, dimensions),[dimensions, isLandscape],);
-
+  const styles = useMemo(
+    () => createStyles(isLandscape, dimensions),
+    [dimensions, isLandscape],
+  );
 
   const navigation = useNavigation();
   const queryClient = useQueryClient();
   const formikRef = useRef();
-
 
   const [patients, setPatients] = useAtom(patientsAtom);
   const [searchDropdownVisible, setSearchDropdownVisible] = useState(false);
@@ -85,6 +90,8 @@ export const ReceptionScreen = ({route}) => {
   });
 
   const handleSubmit = async (values, {resetForm}) => {
+    console.log('doctor_id: in handle submit', doctor_id);
+    console.log('values:', values);
     try {
       const patientIdToUse =
         values?.patient_id ||
@@ -129,7 +136,7 @@ export const ReceptionScreen = ({route}) => {
       formikRef.current?.setFieldTouched(field.name, false);
     });
   };
-  const handleRefresh =  async () => {
+  const handleRefresh = async () => {
     setIsLoadingPatients(true);
     queryClient.invalidateQueries(['fetchingPatients']);
     await queryClient.refetchQueries(['fetchingPatients']);
@@ -137,14 +144,19 @@ export const ReceptionScreen = ({route}) => {
     setIsLoadingPatients(false);
   };
 
-  if(isLoading || isLoadingPatients){
+  if (isLoading || isLoadingPatients) {
     return (
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.container}>
-          <LoadingErrorHandler isLoading={isLoadingPatients || isLoading} isLandscape={isLandscape} isError={isError} error={error} />
+          <LoadingErrorHandler
+            isLoading={isLoadingPatients || isLoading}
+            isLandscape={isLandscape}
+            isError={isError}
+            error={error}
+          />
         </View>
       </SafeAreaView>
-    )
+    );
   }
 
   return (
@@ -166,7 +178,10 @@ export const ReceptionScreen = ({route}) => {
                     formikRef.current?.setValues({
                       patient_id: patient.patient_id,
                       ...Object.fromEntries(
-                        formFields.map(field => [field.name, patient[field.name]?.toString() ?? '']),
+                        formFields.map(field => [
+                          field.name,
+                          patient[field.name]?.toString() ?? '',
+                        ]),
                       ),
                     })
                   }
@@ -179,14 +194,13 @@ export const ReceptionScreen = ({route}) => {
               <Formik
                 innerRef={formikRef}
                 initialValues={Object.fromEntries(
-                  formFields.map(f => [f.name, '']),
+                  formFields.map(f => [f.name, f.name === 'age' ? null : '']),
                 )}
                 validationSchema={ReceptionFormValidationSchema}
                 onSubmit={handleSubmit}
                 enableReinitialize
                 validateOnBlur
-                validateOnChange
-              >
+                validateOnChange>
                 {({
                   handleChange,
                   handleBlur,
@@ -203,7 +217,9 @@ export const ReceptionScreen = ({route}) => {
                           <TextInput
                             style={[
                               styles.input,
-                              touched[field.name] && errors[field.name] && styles.inputError,
+                              touched[field.name] &&
+                                errors[field.name] &&
+                                styles.inputError,
                             ]}
                             placeholder={field.placeholder}
                             placeholderTextColor="#888"
@@ -225,8 +241,7 @@ export const ReceptionScreen = ({route}) => {
                           !isValid && globalStyles.disabledButton,
                         ]}
                         onPress={handleSubmit}
-                        disabled={!isValid}
-                      >
+                        disabled={!isValid}>
                         <Text style={styles.buttonText}>GO</Text>
                       </TouchableOpacity>
                     </View>
@@ -250,11 +265,10 @@ export const ReceptionScreen = ({route}) => {
                   label: 'Home',
                 },
                 {
-                  id: 'tokens',
-                  icon: Users,
-                  label: 'Tokens',
-                  screen: 'TokenListing',
-                  params: {doctor_id, clinic_id},
+                  id: 'refresh',
+                  icon: RefreshCcw,
+                  label: 'refresh',
+                  action: 'refresh',
                 },
                 {
                   id: 'clear',
@@ -262,11 +276,12 @@ export const ReceptionScreen = ({route}) => {
                   label: 'Clear',
                   action: 'clear',
                 },
-           {
-                  id: 'refresh',
-                  icon: ListRestart,
-                  label: 'refresh',
-                  action: 'refresh',
+                {
+                  id: 'tokens',
+                  icon: Users,
+                  label: 'Tokens',
+                  screen: 'TokenListing',
+                  params: {doctor_id, clinic_id},
                 },
               ]}
             />

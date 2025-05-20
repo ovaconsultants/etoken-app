@@ -83,7 +83,7 @@ const filteredData = React.useMemo(() => {
 
   const handleClearPress = () => {
     setSearchTerm('');
-    setDropdownVisible(true); // Keep dropdown open after clear
+    setDropdownVisible(true);
   };
 
   return (
@@ -105,7 +105,7 @@ const filteredData = React.useMemo(() => {
       />
 
       {dropdownVisible && (
-        <View style={[styles.dropdownContainer, {maxHeight: 500}]}>
+        <View style={[styles.dropdownContainer]}>
           <FlatList
             data={filteredData}
             keyExtractor={item => item.patient_id.toString()}

@@ -172,7 +172,7 @@ export const styles = StyleSheet.create({
     marginTop: 2,
   },
   notificationInProgress: {
-    width:  300,
+    width:  400,
     position: 'absolute',
     bottom: 0,
     right: 0,

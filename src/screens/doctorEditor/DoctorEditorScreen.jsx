@@ -304,7 +304,7 @@ const BasicInfoSection = ({
             doctor_id: doctor_id,
           })
         }>
-        <Text style={styles.sectionHeaderText}>profile picture</Text>
+        <Text style={styles.sectionHeaderText}>Profile picture</Text>
       </Pressable>
     </View>
 
