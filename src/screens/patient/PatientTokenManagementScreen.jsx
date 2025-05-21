@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ActivityIndicator,
-  Pressable,
 } from 'react-native';
 import {
   Phone,
@@ -105,28 +104,25 @@ const PatientTokenManagementScreen = ({navigation, route}) => {
         <View style={styles.headerContainer}>
           <View style={styles.headerBadges}>
             <View style={styles.badge}>
-              <Pressable onPress={() => handleBadgePress('all')}>
-                <Text style={styles.badgeText}>Total: {total}</Text>{' '}
-              </Pressable>
+              <TouchableOpacity onPress={() => handleBadgePress('all')}>
+                <Text style={styles.badgeText}>Total: {total}</Text>
+              </TouchableOpacity>
             </View>
             <View style={[styles.badge, styles.greenBadge]}>
-              <Pressable onPress={() => handleBadgePress('attended')}>
-                {' '}
+              <TouchableOpacity onPress={() => handleBadgePress('attended')}>
                 <Text style={styles.badgeText}>Attended: {attended}</Text>
-              </Pressable>
+              </TouchableOpacity>
             </View>
             <View style={[styles.badge, styles.yellowBadge]}>
-              <Pressable onPress={() => handleBadgePress('inQueue')}>
-                {' '}
+              <TouchableOpacity onPress={() => handleBadgePress('inQueue')}>
                 <Text style={styles.badgeText}>In Queue: {inQueue}</Text>
-              </Pressable>
+              </TouchableOpacity>
             </View>
             <View style={styles.dropdownContainer}>
               <TouchableOpacity style={[styles.badge, styles.redBadge]}>
-                <Pressable onPress={() => handleBadgePress('onHold')}>
-                  {' '}
+                <TouchableOpacity onPress={() => handleBadgePress('onHold')}>
                   <Text style={styles.badgeText}>On Hold: {onHold}</Text>
-                </Pressable>
+                </TouchableOpacity>
               </TouchableOpacity>
             </View>
           </View>

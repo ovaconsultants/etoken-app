@@ -176,7 +176,7 @@ export const createStyles = isLandscape =>
       justifyContent: 'center',
     },
     dropdownContainer: {
-       maxHeight: 250  , borderRadius: 10 , justifyContent: 'center' , alignItems: 'center'
+       maxHeight: 190  , borderRadius: 10 , justifyContent: 'center' , alignItems: 'center'
     },
     itemContainer: {
       height: 45  , borderRadius: 10 , justifyContent: 'center' 
