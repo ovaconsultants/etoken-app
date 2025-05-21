@@ -131,7 +131,7 @@ const PatientTokenManagementScreen = ({navigation, route}) => {
             </View>
           </View>
         </View>
-        { activeFilter === 'all' &&
+        { activeFilter !== 'attended' &&
         <View style={styles.actionButtonsContainer}>
           <TouchableOpacity
             style={styles.primaryButton}
