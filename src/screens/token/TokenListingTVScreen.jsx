@@ -5,6 +5,8 @@ import {RotateCcw} from 'lucide-react-native';
 
 import {styles} from './TokenListingTVScreen.styles';
 import {usePatientTokens} from '../../hooks/usePatientTokens';
+import withQueryClientProvider from '../../hooks/useQueryClientProvider';
+import {FetchDoctorWithIdRequest} from '../../services/doctorService';
 
 import InProgressTokenNotificationScreen from '../notification/InProgressTokenNotificationScreen';
 import DefaultTVScreen from '../television/DefaultTVScreen';
@@ -12,20 +14,16 @@ import TokenTable from './TokenTable';
 import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
 import DrawerLeftNavigationButton from '../../components/drawerNavigation/drawerNavigation';
 import ProfileImageRenderer from '../../components/profileImage/ProfileImage';
+import AdWithRotation from '../../components/advertisement/AdRotation';
 import {showToast} from '../../components/toastMessage/ToastMessage';
 
-import withQueryClientProvider from '../../hooks/useQueryClientProvider';
-import {FetchDoctorWithIdRequest} from '../../services/doctorService';
-
 const TokenListingTVScreen = ({route, navigation}) => {
-  // Safely extract params with defaults
   const {
     doctor_id = null,
     clinic_id = null,
     selectedClinic: clinicData = [],
   } = route.params ?? {};
 
-  // const [clinicData, setClinicData] = useState([]);
   const [doctorData, setDoctorData] = useState({});
   const [inProgressPatient, setInProgressPatient] = useState(null);
   const [isRefreshReloading, setIsRefreshReloading] = useState(false);
@@ -37,22 +35,19 @@ const TokenListingTVScreen = ({route, navigation}) => {
     isError,
     error,
     refetch: refetchTokens,
-  } = usePatientTokens(doctor_id, clinic_id, refreshKey);
+  } = usePatientTokens(doctor_id, clinic_id);
 
   const loadData = useCallback(async () => {
     try {
       setIsRefreshReloading(true);
-
       if (!doctor_id) {
         return;
       }
-
       const [doctorDataApi] = await Promise.all([
         FetchDoctorWithIdRequest(doctor_id),
         refetchTokens(),
       ]);
 
-      // setClinicData(clinicDataApi ?? []);
       setDoctorData(doctorDataApi ?? {});
     } catch (err) {
       console.error('Refresh error:', err);
@@ -65,10 +60,9 @@ const TokenListingTVScreen = ({route, navigation}) => {
   // Modified refresh handler
   const handleReloadPress = useCallback(() => {
     setRefreshKey(prev => prev + 1);
-    loadData(); // Explicitly call loadData
+    loadData();
     showToast('Refreshing ...');
   }, [loadData]);
-  // Set up header buttons
   useLayoutEffect(() => {
     // eslint-disable-next-line react/no-unstable-nested-components
     const HeaderRightButtons = () => (
@@ -96,7 +90,6 @@ const TokenListingTVScreen = ({route, navigation}) => {
         console.warn('Orientation error:', err);
       }
     };
-
     handleOrientation();
 
     // Find in-progress patient safely
@@ -115,7 +108,6 @@ const TokenListingTVScreen = ({route, navigation}) => {
       }
     };
   }, [loadData, tokens]);
-
 
   // Loading state
   if (isLoading || isRefreshReloading || isError) {
@@ -150,6 +142,11 @@ const TokenListingTVScreen = ({route, navigation}) => {
           />
         )}
       </View>
+      <AdWithRotation
+        doctor_id={doctor_id}
+        clinic_id={clinic_id}
+        hasInProgressPatient={inProgressPatient !== null}
+      />
     </View>
   );
 };

@@ -23,11 +23,9 @@ const InProgressTokenNotificationScreen = ({
     if (inProgressPatient.status) {
       speakMessages();
     }
-
     return () => {};
-  }, [inProgressPatient.status , speakMessages]);
+  });
 
-  // If no token is available, show a message
   if (!inProgressPatient) {
     return (
       <View style={styles.container}>

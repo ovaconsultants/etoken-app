@@ -1,20 +1,25 @@
 // useSpeechNotification.js
-import { useRef, useCallback } from 'react';
+import {useRef, useCallback} from 'react';
 import Tts from 'react-native-tts';
-import { useTranslation } from './useLangTranslation';
+import {useTranslation} from './useLangTranslation';
 
-const useSpeechNotification = (inProgressPatient) => {
+const useSpeechNotification = inProgressPatient => {
   const isHindiSpoken = useRef(false);
 
   // Translate token number and patient name
   const translatedTokenNo = inProgressPatient.token_no;
-  const translatedPatientName = useTranslation(`${inProgressPatient.patient_name}`, 'English', 'Hindi');
+  const translatedPatientName = useTranslation(
+    `${inProgressPatient.patient_name}`,
+    'English',
+    'Hindi',
+  );
 
   // Build English message
   const englishMessage = `${inProgressPatient.patient_name} Token Number: ${inProgressPatient.token_no}, The doctor has called you; please proceed for your consultation.`;
 
   // Translate the full English message to Hindi
-  const translatedMessageInRegional = useTranslation(englishMessage, 'English', 'Hindi') ||  englishMessage ;
+  const translatedMessageInRegional =
+    useTranslation(englishMessage, 'English', 'Hindi') || englishMessage;
 
   // Return translated data as an object
   const translatedData = {
@@ -30,7 +35,7 @@ const useSpeechNotification = (inProgressPatient) => {
     Tts.speak(englishMessage, {
       language: 'en-IN',
       iosVoiceId: 'com.apple.ttsbundle.Lekha-compact',
-      rate : 0.6 ,
+      rate: 0.3,
     });
 
     // Listen for TTS finish event to chain Hindi
@@ -39,7 +44,7 @@ const useSpeechNotification = (inProgressPatient) => {
         Tts.speak(translatedMessageInRegional, {
           language: 'en-IN',
           iosVoiceId: 'com.apple.ttsbundle.Lekha-compact',
-          rate : 0.6 ,
+          rate: 0.3,
         });
         isHindiSpoken.current = true;
       }
@@ -50,9 +55,7 @@ const useSpeechNotification = (inProgressPatient) => {
     };
   }, [englishMessage, translatedMessageInRegional]);
 
-
-
-  return { speakMessages, translatedData };
+  return {speakMessages, translatedData};
 };
 
 export default useSpeechNotification;

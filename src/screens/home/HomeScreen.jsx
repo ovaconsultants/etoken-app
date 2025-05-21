@@ -107,7 +107,9 @@ const isEmptyClinicList = useMemo(() => !Array.isArray(clinicData) || clinicData
       {
         doctor_id: doctorId,
         clinic_id: selectedClinicId,
-        selectedClinic: clinicData.find(clinic => clinic.clinic_id === selectedClinicId),
+        ...(selectedScreen === '1'
+          ? { selectedClinic: clinicData.find(clinic => clinic.clinic_id === selectedClinicId) }
+          : {}),
       },
     );
   }, [isNextButtonDisabled, navigation, selectedScreen, doctorId, selectedClinicId, clinicData]);
