@@ -1,27 +1,26 @@
-import React, {useState, useCallback, useMemo, useEffect} from 'react';
-import { useFocusEffect } from '@react-navigation/native';
+import React, {useState, useCallback, useMemo} from 'react';
+import {useFocusEffect} from '@react-navigation/native';
 import {SafeAreaView, View, Text, TouchableOpacity} from 'react-native';
 import {createStyles} from './HomeScreen.styles';
 import {globalStyles} from '../../styles/globalStyles';
 import {useAtomValue} from 'jotai';
-import {
-  doctorIdAtom,
-} from '../../atoms/doctorAtoms/doctorAtom';
+import {doctorIdAtom} from '../../atoms/doctorAtoms/doctorAtom';
 
 import {useOrientation} from '../../hooks/useOrientation';
 import {Tv, Users, Plus} from 'lucide-react-native';
 import {homeRefreshKeyAtom} from '../../atoms/refreshAtoms/homePageRefreshAtom';
 
-import { FetchAllClinicForDoctorRequest } from '../../services/clinicService';
+import {FetchAllClinicForDoctorRequest} from '../../services/clinicService';
 
 import CardGrid from '../../components/cardGrid/CardGrid';
 import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
 
 const HomeScreen = ({navigation}) => {
-
   const {isLandscape, dimensions} = useOrientation();
-  const styles = useMemo(() => createStyles(isLandscape, dimensions),[dimensions, isLandscape]);
-
+  const styles = useMemo(
+    () => createStyles(isLandscape, dimensions),
+    [dimensions, isLandscape],
+  );
 
   const refreshKey = useAtomValue(homeRefreshKeyAtom);
   const doctorId = useAtomValue(doctorIdAtom);
@@ -29,41 +28,39 @@ const HomeScreen = ({navigation}) => {
   const [selectedScreen, setSelectedScreen] = useState(null);
   const [selectedClinicId, setSelectedClinicId] = useState(null);
   const [clinicData, setClinicData] = useState([]);
-  const [refreshing , setRefreshing] = useState(true);
+  const [refreshing, setRefreshing] = useState(true);
 
-
-
-
-
-useFocusEffect(
-  useCallback(() => {
-    const fetchClinics = async () => {
-      try {
-        const fetchedClinics = await FetchAllClinicForDoctorRequest(doctorId);
-        setClinicData(fetchedClinics);
-        setRefreshing(false);
-        console.log('Fetched clinics:', fetchedClinics);
-        setSelectedClinicId(fetchedClinics[0]?.clinic_id || null);
-      } catch (error) {
-        console.error('Failed to fetch clinics:', error);
-        setClinicData([]);
-        setSelectedClinicId(null);
-      }
-    };
-    if(doctorId) {  fetchClinics();  }
-    setSelectedScreen(null);
-    navigation.setOptions({
-      headerBackTitle: '',
-      headerLeft: () => null,
-    });
-
-    return () => {
+  useFocusEffect(
+    useCallback(() => {
+      const fetchClinics = async () => {
+        try {
+          const fetchedClinics = await FetchAllClinicForDoctorRequest(doctorId);
+          setClinicData(fetchedClinics);
+          setRefreshing(false);
+          console.log('Fetched clinics:', fetchedClinics);
+          setSelectedClinicId(fetchedClinics[0]?.clinic_id || null);
+        } catch (error) {
+          console.error('Failed to fetch clinics:', error);
+          setClinicData([]);
           setSelectedClinicId(null);
-          setSelectedScreen(null);
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [doctorId, navigation, refreshKey]),
-);
+        }
+      };
+      if (doctorId) {
+        fetchClinics();
+      }
+      setSelectedScreen(null);
+      navigation.setOptions({
+        headerBackTitle: '',
+        headerLeft: () => null,
+      });
+
+      return () => {
+        setSelectedClinicId(null);
+        setSelectedScreen(null);
+      };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [doctorId, navigation, refreshKey]),
+  );
 
   const cards = useMemo(() => {
     if (!Array.isArray(clinicData)) {
@@ -72,16 +69,12 @@ useFocusEffect(
     return clinicData.map(clinic => ({
       id: clinic.clinic_id,
       title: clinic.clinic_name,
-      description: `${clinic.address || 'Not specified'}, ${
-        clinic.city || ''
-      }`,
+      description: `${clinic.address || 'Not specified'}, ${clinic.city || ''}`,
       state: clinic.state || 'Not specified',
     }));
   }, [clinicData]);
 
- const handleCardPress = useCallback(clinicId => {
-  setSelectedClinicId(prev => (prev === clinicId ? null : clinicId));
-}, []);
+  const handleCardPress = useCallback(clinicId => { setSelectedClinicId(prev => (prev === clinicId ? null : clinicId));}, []);
 
   const handleAddClinicPress = useCallback(() => {
     navigation.navigate('DoctorClinicNavigator', {
@@ -96,7 +89,10 @@ useFocusEffect(
     () => !(selectedScreen && selectedClinicId),
     [selectedScreen, selectedClinicId],
   );
-const isEmptyClinicList = useMemo(() => !Array.isArray(clinicData) || clinicData.length === 0, [clinicData]);
+  const isEmptyClinicList = useMemo(
+    () => !Array.isArray(clinicData) || clinicData.length === 0,
+    [clinicData],
+  );
   const handleNextButtonPress = useCallback(() => {
     if (isNextButtonDisabled) {
       return;
@@ -108,31 +104,44 @@ const isEmptyClinicList = useMemo(() => !Array.isArray(clinicData) || clinicData
         doctor_id: doctorId,
         clinic_id: selectedClinicId,
         ...(selectedScreen === '1'
-          ? { selectedClinic: clinicData.find(clinic => clinic.clinic_id === selectedClinicId) }
+          ? {
+              selectedClinic: clinicData.find(
+                clinic => clinic.clinic_id === selectedClinicId,
+              ),
+            }
           : {}),
       },
     );
-  }, [isNextButtonDisabled, navigation, selectedScreen, doctorId, selectedClinicId, clinicData]);
+  }, [
+    isNextButtonDisabled,
+    navigation,
+    selectedScreen,
+    doctorId,
+    selectedClinicId,
+    clinicData,
+  ]);
 
-  if(refreshing) {
-  return (
-    <SafeAreaView style={styles.container}>
-      <LoadingErrorHandler isLoading={refreshing} />
-    </SafeAreaView>
-  );
-}
-if ( !refreshing && isEmptyClinicList) {
-  return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.emptyContainer}>
-        <TouchableOpacity onPress={handleAddClinicPress} style={styles.addClinicButton}>
-          <Plus size={24} color={styles.selectedIconColor.color}/>
-          <Text style={styles.addClinicText}>Add Clinic</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
-  );
-}
+  if (refreshing) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <LoadingErrorHandler isLoading={refreshing} />
+      </SafeAreaView>
+    );
+  }
+  if (!refreshing && isEmptyClinicList) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.emptyContainer}>
+          <TouchableOpacity
+            onPress={handleAddClinicPress}
+            style={styles.addClinicButton}>
+            <Plus size={24} color={styles.selectedIconColor.color} />
+            <Text style={styles.addClinicText}>Add Clinic</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -147,7 +156,11 @@ if ( !refreshing && isEmptyClinicList) {
             <View style={styles.optionContent}>
               <Tv
                 size={32}
-                color={selectedScreen === '1' ? styles.selectedIconColor.color : styles.unselectedIconColor.color}
+                color={
+                  selectedScreen === '1'
+                    ? styles.selectedIconColor.color
+                    : styles.unselectedIconColor.color
+                }
               />
               <Text
                 style={[
@@ -168,7 +181,11 @@ if ( !refreshing && isEmptyClinicList) {
             <View style={styles.optionContent}>
               <Users
                 size={32}
-                color={selectedScreen === '2' ? styles.selectedIconColor.color : styles.unselectedIconColor.color}
+                color={
+                  selectedScreen === '2'
+                    ? styles.selectedIconColor.color
+                    : styles.unselectedIconColor.color
+                }
               />
               <Text
                 style={[
@@ -191,7 +208,10 @@ if ( !refreshing && isEmptyClinicList) {
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          style={[styles.button, isNextButtonDisabled && globalStyles.disabledButton]}
+          style={[
+            styles.button,
+            isNextButtonDisabled && globalStyles.disabledButton,
+          ]}
           onPress={handleNextButtonPress}
           disabled={isNextButtonDisabled}
           activeOpacity={0.8}>

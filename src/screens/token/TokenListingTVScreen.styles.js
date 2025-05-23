@@ -25,7 +25,8 @@ export const styles = StyleSheet.create({
   /** DOCTOR PROFILE SECTION **/
   doctorSection: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
     flex: 0.8,
   },
   profileCircle: {
@@ -36,15 +37,13 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
-    marginVertical: 8,
     overflow: 'hidden',
   },
 
   doctorNameContainer: {
     flexDirection: 'row',
-    paddingVertical: 16,
     borderRadius: 8,
-    margin: 8,
+    marginHorizontal: 8,
   },
   leftColumn: {
     flex: 0.3,

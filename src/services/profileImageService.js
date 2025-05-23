@@ -48,7 +48,8 @@ export const UploadDoctorProfileImageRequest = (imageData, doctorId) => {
 /**
  * Specific patient profile image upload
  */
-export const UploadPatientProfileImageRequest = (imageData, patientId) => {
+// 'doctor_id/patient_id' = 'patient_id' (string)
+export const UploadPatientProfileImageRequest = (imageData, patientId) => { 
   const userId = patientId;
   return uploadProfileImage(imageData, userId, 'patient');
 };

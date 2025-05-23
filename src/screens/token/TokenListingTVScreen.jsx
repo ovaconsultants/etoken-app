@@ -26,7 +26,7 @@ const TokenListingTVScreen = ({route, navigation}) => {
 
   const [doctorData, setDoctorData] = useState({});
   const [inProgressPatient, setInProgressPatient] = useState(null);
-  const [isRefreshReloading, setIsRefreshReloading] = useState(false);
+  const [isRefreshReloading, _ ] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
   const {
@@ -39,7 +39,6 @@ const TokenListingTVScreen = ({route, navigation}) => {
 
   const loadData = useCallback(async () => {
     try {
-      setIsRefreshReloading(true);
       if (!doctor_id) {
         return;
       }
@@ -53,7 +52,6 @@ const TokenListingTVScreen = ({route, navigation}) => {
       console.error('Refresh error:', err);
       showToast('Refresh failed', 'error');
     } finally {
-      setIsRefreshReloading(false);
     }
   }, [doctor_id, refetchTokens]);
 

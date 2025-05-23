@@ -94,7 +94,7 @@ const PatientTokenManagementScreen = ({navigation, route}) => {
     );
   }
 
-  if (patientTokens.length === 0) {
+  if (patientTokens.length === 0 || (activeFilter === 'attended' && attended === 0) || (activeFilter === 'onHold' && onHold === 0)) {
     return <DefaultReceptionScreen navigation={navigation} />;
   }
 

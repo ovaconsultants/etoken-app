@@ -3,8 +3,8 @@ import {View, Text, ScrollView} from 'react-native';
 import {styles} from './TokenListingTVScreen.styles';
 import {TranslateNameToHindi} from '../../services/langTranslationService';
 
-const SCROLL_DURATION = 30000; // 30 seconds for full scroll
-const PAUSE_DURATION = 2000; // 2 second pause at bottom
+const SCROLL_DURATION = 3000;
+const PAUSE_DURATION = 2000;
 
 const TokenTable = ({tokens}) => {
   const scrollViewRef = useRef(null);
@@ -68,11 +68,11 @@ const TokenTable = ({tokens}) => {
     console.log('Starting animation with scroll distance:', scrollDistance);
 
     let start = null;
-    const duration = SCROLL_DURATION;
+    const duration = SCROLL_DURATION * data.length;
     let animationFrame = null;
 
     const step = timestamp => {
-      if (!start) start = timestamp;
+      if (!start) {start = timestamp;}
       const progress = timestamp - start;
       const percentage = Math.min(progress / duration, 1);
       const y = scrollDistance * percentage;

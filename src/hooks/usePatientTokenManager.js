@@ -48,6 +48,7 @@ const { stats, hasTokenInProgress  , inProgressToken} = useMemo(() => {
   };
 
   const updateToken = async updates => {
+    console.log('Updating token:', selectedTokenRef.current, updates);
     if (!selectedTokenRef.current) {
       return;
     }
@@ -55,7 +56,7 @@ const { stats, hasTokenInProgress  , inProgressToken} = useMemo(() => {
     setIsMutating(true);
     try {
       await UpdateTokenRequest({
-        token_id: selectedTokenRef.current,
+        token_id: selectedTokenRef.current || updates.token_id,
         ...updates,
       });
 

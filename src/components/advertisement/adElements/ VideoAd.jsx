@@ -1,16 +1,15 @@
 // VideoAd.js
-import React from 'react';
-import { View, ActivityIndicator, Text, StyleSheet } from 'react-native';
+import React, {useState} from 'react';
+import {View, ActivityIndicator, Text, StyleSheet} from 'react-native';
 import Video from 'react-native-video';
 
-const VideoAd = ({ source, style, onEnd }) => {
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [hasError, setHasError] = React.useState(false);
-  console.trace();
+const VideoAd = ({source, style, onEnd}) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
   return (
     <View style={[styles.container, style]}>
       <Video
-        source={{ uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4'}} 
+        source={{uri: source}}
         style={styles.media}
         resizeMode="cover"
         repeat={false}

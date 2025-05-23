@@ -24,7 +24,7 @@ export const TokenCard = React.memo(
   }) => {
     const [hindiName, setHindiName] = useState('');
     const [paidStatus, setPaidStatus] = useState(token.fee_status === 'Paid');
-    const [status, setStatus] = useState();
+    const [status, _ ] = useState();
     const memoizedTranslate = useCallback(
       name => {
         return translateNameToHindi(name) || null;

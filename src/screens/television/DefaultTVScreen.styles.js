@@ -7,7 +7,6 @@ const isLandscape = width > height;
 export const styles = StyleSheet.create({
   container: {
     flexDirection: isLandscape ? 'row' : 'column',
-    backgroundColor: '#ffffff',
     padding: isTablet ? 32 : 20,
     gap: 24,
     alignItems: 'center',
@@ -16,7 +15,7 @@ export const styles = StyleSheet.create({
 
   profileImageWrapper: {
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     flex: isLandscape ? 0.4 : null,
   },
 

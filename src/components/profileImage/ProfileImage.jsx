@@ -40,9 +40,9 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   profileImageContainer: {
-    width: '70',
+    width: '80',
     height: '100%',
-    borderRadius: 20,
+    borderRadius: 10,
     backgroundColor: '#fff',
     borderColor: 'rgb(93, 101, 208)',
     borderWidth: 1,
@@ -52,40 +52,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.3)',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-end',
-    paddingTop: 60,
-    paddingRight: 20,
-  },
-  dropdown: {
-    width: 160,
-    backgroundColor: '#FFF',
-    borderRadius: 8,
-    paddingVertical: 8,
-    elevation: 5,
-  },
-  option: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-  },
-  optionText: {
-    fontSize: 14,
-    color: '#333',
-    marginLeft: 12,
-  },
-  signOutText: {
-    color: '#D32F2F',
-  },
-  divider: {
-    height: 1,
-    backgroundColor: '#EEE',
-    marginVertical: 4,
-  },
+
 });
 
 export default ProfileImageRenderer ;

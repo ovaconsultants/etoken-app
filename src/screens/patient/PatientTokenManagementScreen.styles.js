@@ -109,8 +109,8 @@ export const createStyles = isLandscape =>
     onHoldCard: {backgroundColor: '#fff5f5', borderColor: '#d32f2f'},
     completedCard: {backgroundColor: '#e8f5e9', borderColor: '#388e3c'},
     cancelledCard: {backgroundColor: '#fce4ec', borderColor: '#d32f2f'},
-    waitingCard: {backgroundColor: '#e3f2fd', borderColor: '#1976d2'},
-    selectedCard: {opacity: 0.9, backgroundColor: '#f1f1f1'},
+    waitingCard: {backgroundColor: ' #f1f1f1', borderColor: '#1976d2'},
+    selectedCard: {opacity: 0.9, backgroundColor: '#e3f2fd'},
 
     // Token Content
     tokenHeader: {

@@ -1,54 +1,53 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import AdRenderer from './AdRenderer';
-import { prepareAdMedia } from '../../utils/AdMediaMapper/prepareAdMedia';
-import { FetchActiveAdvertisement } from '../../services/advertisementService';
+import {prepareAdMedia} from '../../utils/AdMediaMapper/prepareAdMedia';
+import {FetchActiveAdvertisement} from '../../services/advertisementService';
 
-const AdWithRotation = ({ doctor_id, clinic_id }) => {
+const AdWithRotation = ({doctor_id, clinic_id, hasInProgressPatient}) => {
   const [currentAdIndex, setCurrentAdIndex] = useState(0);
-  const [addMedia, setAddMedia] = useState([]);
+  const [ads, setAds] = useState([]);
+  const showAds = !hasInProgressPatient && ads.length > 0;
 
   const moveToNextAd = useCallback(() => {
-    if (addMedia.length > 0) {
-      setCurrentAdIndex((prevIndex) => (prevIndex + 1) % addMedia.length);
-    }
-  }, [addMedia.length]);
+    setCurrentAdIndex(prev => (prev + 1) % ads.length);
+  }, [ads.length]);
 
-  const handleVideoEnd = () => {
-    if (addMedia.length > 0 && addMedia[currentAdIndex]?.type === 'video') {
+  const handleVideoEnd = useCallback(() => {
+    if (ads[currentAdIndex]?.type === 'video') {
       moveToNextAd();
     }
-  };
+  }, [currentAdIndex, ads, moveToNextAd]);
 
   useEffect(() => {
-    const fetchMedia = async () => {
+    const fetchAds = async () => {
       try {
-        const fetchedAddMedia = await FetchActiveAdvertisement({ doctor_id, clinic_id });
-        const transformedMedia = prepareAdMedia(fetchedAddMedia);
-        setAddMedia(transformedMedia);
+        const fetchedAds = await FetchActiveAdvertisement({
+          doctor_id,
+          clinic_id,
+        });
+        setAds(prepareAdMedia(fetchedAds));
         setCurrentAdIndex(0);
       } catch (error) {
-        console.error('Error fetching advertisement media:', error);
+        console.error('Error fetching ads:', error);
       }
     };
-
-    fetchMedia();
+    fetchAds();
   }, [clinic_id, doctor_id]);
 
   useEffect(() => {
-    if (addMedia.length > 0 && addMedia[currentAdIndex]?.type === 'image') {
-      const interval = setInterval(() => {
-        moveToNextAd();
-      }, 5000);
-
-      return () => clearInterval(interval);
+    if (!showAds || ads[currentAdIndex]?.type !== 'image') {
+      return;
     }
-  }, [addMedia, currentAdIndex, moveToNextAd]);
 
-  if (addMedia.length === 0) {
+    const interval = setInterval(moveToNextAd, 5000);
+    return () => clearInterval(interval);
+  }, [showAds, currentAdIndex, ads, moveToNextAd]);
+
+  if (!showAds) {
     return null;
   }
 
-  return <AdRenderer media={addMedia[currentAdIndex]} onEnd={handleVideoEnd} />;
+  return <AdRenderer media={ads[currentAdIndex]} onEnd={handleVideoEnd} />;
 };
 
 export default AdWithRotation;
