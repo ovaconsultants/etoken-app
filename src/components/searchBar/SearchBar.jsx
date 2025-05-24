@@ -14,7 +14,8 @@ import Fuse from 'fuse.js';
 
 const searchName = (query, list) => {
   const options = {
-    keys: ['patient_name'],   // Use 'patient_name' as it matches your data
+    keys: ['patient_name' ,'patient_id', 'mobile_number', 'area'],
+    includeMatches: true,
     threshold: 0.4,
     includeScore: true,
   };
