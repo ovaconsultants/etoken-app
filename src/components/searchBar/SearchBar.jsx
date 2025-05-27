@@ -6,15 +6,18 @@ import {
   Text,
   Keyboard,
   Platform,
+  Image,
+  ActivityIndicator,
 } from 'react-native';
 import SearchBar from 'react-native-dynamic-search-bar';
 import {useOrientation} from '../../hooks/useOrientation';
 import {createStyles} from './SearchBar.styles';
+import {prefetchPatientImages} from '../../services/patientImagesCacheServices';
 import Fuse from 'fuse.js';
 
 const searchName = (query, list) => {
   const options = {
-    keys: ['patient_name' ,'patient_id', 'mobile_number', 'area'],
+    keys: ['patient_name', 'patient_id', 'mobile_number', 'area'],
     includeMatches: true,
     threshold: 0.4,
     includeScore: true,
@@ -30,15 +33,37 @@ const CustomSearchBar = ({
   onSelectItem,
   dropdownVisible,
   setDropdownVisible,
-  placeholder
+  placeholder,
+  doctorId,
 }) => {
   const {isLandscape} = useOrientation();
   const styles = createStyles(isLandscape);
-
+  console.log('CustomSearchBar data:', data);
   // State management
   const [searchTerm, setSearchTerm] = useState('');
   const [, setKeyboardHeight] = useState(0);
+  const [imageUrls, setImageUrls] = useState({});
+  const [loadingImages, setLoadingImages] = useState(false);
 
+  // Fetch all images when dropdown becomes visible
+  useEffect(() => {
+    const fetchImages = async () => {
+      if (!dropdownVisible || !doctorId || !filteredData.length) return;
+
+      setLoadingImages(true);
+      try {
+        const patientIds = filteredData.map(item => item.patient_id);
+        const urls = await prefetchPatientImages(doctorId, patientIds);
+        setImageUrls(urls);
+      } catch (error) {
+        console.error('Error fetching images:', error);
+      } finally {
+        setLoadingImages(false);
+      }
+    };
+
+    fetchImages();
+  }, [dropdownVisible, filteredData, doctorId]);
   // Keyboard listeners
   useEffect(() => {
     const showListener = Keyboard.addListener(
@@ -57,10 +82,12 @@ const CustomSearchBar = ({
   }, []);
 
   // Filter data based on search term
-const filteredData = React.useMemo(() => {
-  if (!searchTerm) {return data || [];}
-  return searchName(searchTerm, data || []);
-}, [searchTerm, data]);
+  const filteredData = React.useMemo(() => {
+    if (!searchTerm) {
+      return data || [];
+    }
+    return searchName(searchTerm, data || []);
+  }, [searchTerm, data]);
 
   // Handlers
   const handleSearchChange = text => {
@@ -111,32 +138,40 @@ const filteredData = React.useMemo(() => {
             data={filteredData}
             keyExtractor={item => item.patient_id.toString()}
             keyboardShouldPersistTaps="always"
-            renderItem={({item}) => (
-              <TouchableOpacity
-                style={styles.dropdownItem}
-                onPress={() => handleItemSelect(item)}>
-                <View style={styles.tile}>
-                  <View style={styles.row}>
-                    <Text style={styles.label}>
-                      <Text style={styles.bold}>Name:</Text> {item.patient_name}
-                    </Text>
-                    <Text style={styles.label}>
-                      <Text style={styles.bold}>Age:</Text> {item.age || 'N/A'}
-                    </Text>
+            renderItem={({item}) => {
+              console.log('Rendering with image Urls :', imageUrls);
+
+              const imageUrl = imageUrls[item.patient_id];
+              if (item.patient_id === 33) {
+                const url = imageUrls[item.patient_id];
+                console.log('Image URL for patient_id 33:', url);
+              }
+              return (
+                <TouchableOpacity
+                  style={styles.dropdownItem}
+                  onPress={() => handleItemSelect(item)}>
+                  <View style={styles.tile}>
+                    <View style={styles.row}>
+                      {/* Image/Initials Container */}
+                      <View style={styles.imageContainer}>
+                       <Image
+                            source={{uri: imageUrl}}
+                            style={styles.image}
+                          />
+                      </View>
+                      <Text style={styles.label}>
+                        {item.patient_name || 'N/A'}
+                      </Text>
+                      <Text style={styles.label}>{item.age || 'N/A'}</Text>
+                    </View>
+                    <View style={styles.row}>
+                      <Text style={styles.label}>{item.mobile_number}</Text>
+                      <Text style={styles.label}>{item.area || 'N/A'}</Text>
+                    </View>
                   </View>
-                  <View style={styles.row}>
-                    <Text style={styles.label}>
-                      <Text style={styles.bold}>Mobile:</Text>{' '}
-                      {item.mobile_number}
-                    </Text>
-                    <Text style={styles.label}>
-                      <Text style={styles.bold}>Area:</Text>{' '}
-                      {item.area || 'N/A'}
-                    </Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
-            )}
+                </TouchableOpacity>
+              );
+            }}
             ListEmptyComponent={
               <View style={styles.noResultsContainer}>
                 <Text style={styles.noResultsText}>

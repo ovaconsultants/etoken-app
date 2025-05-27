@@ -1,4 +1,4 @@
-import React, {useRef, useState, useMemo} from 'react';
+import React, {useRef, useState, useMemo, useEffect} from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   SafeAreaView,
+  Image,
 } from 'react-native';
 import {Formik} from 'formik';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
@@ -21,10 +22,17 @@ import {
   InsertPatientRequest,
 } from '../../services/patientService';
 import {GenerateTokenRequest} from '../../services/tokenService';
+import {
+  UploadPatientProfileImageRequest,
+  GetPatientProfileImageRequest,
+} from '../../services/profileImageService';
+
 import withQueryClientProvider from '../../hooks/useQueryClientProvider';
 import SearchBar from '../../components/searchBar/SearchBar';
 import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
 import FooterNavigation from '../../components/tabNavigationFooter/TabNavigationFooter';
+import CapturePatientProfilePhotoScreen from '../profilePicture/patient/CapturePatientProfilePhotoScreen';
+
 import {showToast} from '../../components/toastMessage/ToastMessage';
 import {globalStyles} from '../../styles/globalStyles';
 import {useOrientation} from '../../hooks/useOrientation';
@@ -62,8 +70,6 @@ const formFields = [
 
 export const ReceptionScreen = ({route}) => {
   const {doctor_id = null, clinic_id = null} = route.params ?? {};
-  console.log('doctor_id:', doctor_id);
-
   const {isLandscape, dimensions} = useOrientation();
   const styles = useMemo(
     () => createStyles(isLandscape, dimensions),
@@ -77,6 +83,7 @@ export const ReceptionScreen = ({route}) => {
   const [patients, setPatients] = useAtom(patientsAtom);
   const [searchDropdownVisible, setSearchDropdownVisible] = useState(false);
   const [isLoadingPatients, setIsLoadingPatients] = useState(false);
+  const [profileImage, setProfileImage] = useState(null);
 
   const {isLoading, isError, error} = useQuery({
     queryKey: ['fetchingPatients'],
@@ -89,9 +96,10 @@ export const ReceptionScreen = ({route}) => {
     staleTime: 11 * 1000,
   });
 
+  useEffect(() => {
+    setProfileImage(null);
+  }, [doctor_id, clinic_id]);
   const handleSubmit = async (values, {resetForm}) => {
-    console.log('doctor_id: in handle submit', doctor_id);
-    console.log('values:', values);
     try {
       const patientIdToUse =
         values?.patient_id ||
@@ -110,6 +118,7 @@ export const ReceptionScreen = ({route}) => {
       if (!patientIdToUse) {
         throw new Error('Failed to insert patient or generate token');
       }
+
       setSearchDropdownVisible(false);
       resetForm();
       queryClient.invalidateQueries(['fetchingPatients']);
@@ -120,6 +129,24 @@ export const ReceptionScreen = ({route}) => {
         clinic_id,
         created_by: 'receptionist',
       });
+
+      try {
+        console.log('Uploading patient profile image:', profileImage);
+        const response = await UploadPatientProfileImageRequest(
+          profileImage,
+          doctor_id,
+          patientIdToUse,
+        );
+        const fetchImage = await GetPatientProfileImageRequest(
+          doctor_id,
+          patientIdToUse,
+        );
+        console.log('Fetched profile image URL:', fetchImage);
+        console.log('Profile image uploaded successfully:', response);
+      } catch (uploadError) {
+        console.warn('Profile image upload failed:', uploadError);
+      }
+
       navigation.navigate('TokenSuccess', {
         tokenNumber: token_no,
         patientName: values.patient_name,
@@ -188,9 +215,34 @@ export const ReceptionScreen = ({route}) => {
                   dropdownVisible={searchDropdownVisible}
                   setDropdownVisible={setSearchDropdownVisible}
                   placeholder="Search by Patient Name, Mobile, or Email"
+                  doctorId={doctor_id}
                 />
               </View>
-
+              {/* Simplified Image Capture Section */}
+              <View style={styles.profileUploadLink}>
+                {profileImage ? (
+                  <View style={styles.imagePreviewContainer}>
+                    <Image
+                      source={{uri: profileImage.uri || profileImage}}
+                      style={styles.profileImagePreview}
+                    />
+                    <TouchableOpacity
+                      style={styles.changePhotoButton}
+                      onPress={() => setProfileImage(null)}>
+                      <Text style={styles.changePhotoText}>Change Photo</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <CapturePatientProfilePhotoScreen
+                    onImageSelected={imageData => {
+                      setProfileImage(imageData);
+                    }}
+                    onCancel={() => {
+                      setProfileImage(null);
+                    }}
+                  />
+                )}
+              </View>
               <Formik
                 innerRef={formikRef}
                 initialValues={Object.fromEntries(

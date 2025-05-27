@@ -56,12 +56,6 @@ const TokenTable = ({tokens}) => {
     const scrollDistance = contentHeight - containerHeight;
 
     if (scrollDistance <= 0) {
-      console.log(
-        'Not enough content to scroll. Content height:',
-        contentHeight,
-        'Container height:',
-        containerHeight,
-      );
       return;
     }
 
@@ -106,7 +100,6 @@ const TokenTable = ({tokens}) => {
   // Improved measurement handling
   const handleContentSizeChange = (w, h) => {
     if (h !== contentHeight) {
-      console.log('Content height updated:', h);
       setContentHeight(h);
     }
   };
@@ -114,7 +107,6 @@ const TokenTable = ({tokens}) => {
   const handleLayout = e => {
     const height = e.nativeEvent.layout.height;
     if (height !== containerHeight) {
-      console.log('Container height updated:', height);
       setContainerHeight(height);
     }
   };

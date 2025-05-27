@@ -1,8 +1,8 @@
 import React from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import SignInScreen from '../screens/signIn/SignInScreen';
 import SignUpScreen from '../screens/signUp/SignUpScreen';
-import CaptureProfilePhotoScreen from '../screens/profilePicture/CaptureProfilePhotoScreen';
+import CaptureDoctorProfilePhotoScreen from '../screens/profilePicture/doctor/CaptureDoctorProfilePhotoScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -12,12 +12,12 @@ const AuthNavigator = () => {
       <Stack.Screen
         name="SignIn"
         component={SignInScreen}
-        options={{ headerShown: false }}
+        options={{headerShown: false}}
       />
-       <Stack.Screen
+      <Stack.Screen
         name="SignUp"
         component={SignUpScreen}
-        options={{ title: 'Sign Up' }}
+        options={{title: 'Sign Up'}}
       />
     </Stack.Navigator>
   );

@@ -37,7 +37,6 @@ const HomeScreen = ({navigation}) => {
           const fetchedClinics = await FetchAllClinicForDoctorRequest(doctorId);
           setClinicData(fetchedClinics);
           setRefreshing(false);
-          console.log('Fetched clinics:', fetchedClinics);
           setSelectedClinicId(fetchedClinics[0]?.clinic_id || null);
         } catch (error) {
           console.error('Failed to fetch clinics:', error);

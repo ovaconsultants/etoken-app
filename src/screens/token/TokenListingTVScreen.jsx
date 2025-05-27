@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useLayoutEffect, useState} from 'react';
+import React, {useCallback, useEffect, useLayoutEffect, useState, useMemo} from 'react';
 import {View, Text, ActivityIndicator, TouchableOpacity} from 'react-native';
 import Orientation from 'react-native-orientation-locker';
 import {RotateCcw} from 'lucide-react-native';
@@ -37,6 +37,10 @@ const TokenListingTVScreen = ({route, navigation}) => {
     refetch: refetchTokens,
   } = usePatientTokens(doctor_id, clinic_id);
 
+ 
+  const filteredTokens = useMemo(() => {
+    return tokens?.filter(token => ['In Progress', 'Waiting'].includes(token?.status)) ?? [];
+  }, [tokens]);
   const loadData = useCallback(async () => {
     try {
       if (!doctor_id) {
@@ -129,7 +133,7 @@ const TokenListingTVScreen = ({route, navigation}) => {
       <View style={styles.headerContainer} key={refreshKey}>
         <DoctorHeader doctorData={doctorData} />
       </View>
-      <TokenTable tokens={tokens} />
+      <TokenTable tokens={filteredTokens} />
       <View style={styles.notificationInProgress}>
         {inProgressPatient && (
           <InProgressTokenNotificationScreen

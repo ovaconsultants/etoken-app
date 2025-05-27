@@ -1,4 +1,5 @@
 import {API_URL} from '../constants/globalConstants';
+import {API_ENDPOINTS} from '../constants/endPoints/apiRoutes';
 import {fetchData} from './apiService';
 
 export const uploadProfileImage = async (
@@ -7,29 +8,32 @@ export const uploadProfileImage = async (
   userType = 'doctor',
 ) => {
   try {
-    console.log('Uploading profile image:', {
-      userId,
-      userType,
-      imageData,
-    });
+    // Create FormData object
     const formData = new FormData();
-    formData.append(`${userType}_id`, userId.toString());
-    formData.append('profile_picture', {
+    
+    // Match backend field names exactly
+    formData.append('userId', userId.toString()); // Changed from `${userType}_id` to 'userId'
+    formData.append('image', {  // Changed from 'profile_picture' to 'image'
       uri: imageData.uri,
       type: imageData.type || 'image/jpeg',
-      name: `profile_doctor_${userId}.jpg`,
+      name: `profile_${userType}_${userId}.jpg`,
     });
 
-    // Determine endpoint based on user type
-    const endpoint = `${API_URL}${userType}/uploadDoctorProfilePicture`;
-    console.log('Endpoint:', endpoint);
+    const endpoint = `${API_URL}${API_ENDPOINTS.DOCTOR.UPLOAD_IMAGE}`;
+    
     const response = await fetch(endpoint, {
       method: 'POST',
       body: formData,
+      // Don't set Content-Type header - let React Native handle it
     });
 
-    console.log('Response:', response);
-    return await response;
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Image upload failed');
+    }
+
+    return await response.json();
+
   } catch (error) {
     console.error(`Profile image upload error (${userType} ${userId}):`, error);
     throw error;
@@ -37,40 +41,51 @@ export const uploadProfileImage = async (
 };
 
 /**
- * Specific doctor profile image upload
+ * Doctor-specific profile image upload
  */
 export const UploadDoctorProfileImageRequest = (imageData, doctorId) => {
-  console.log('Doctor ID:', doctorId);
-  const userId = doctorId;
-  return uploadProfileImage(imageData, userId, 'doctor');
+  return uploadProfileImage(imageData, doctorId, 'doctor');
 };
 
 /**
- * Specific patient profile image upload
+ * Patient-specific profile image upload
  */
-// 'doctor_id/patient_id' = 'patient_id' (string)
-export const UploadPatientProfileImageRequest = (imageData, patientId) => { 
-  const userId = patientId;
+export const UploadPatientProfileImageRequest = (imageData, doctorId, patientId) => {
+  const userId = `${doctorId}/${patientId}`;
   return uploadProfileImage(imageData, userId, 'patient');
 };
 
 /**
- * get profile image by id
+ * Get doctor profile image by ID
  */
-
 export const GetDoctorProfileImageRequest = async doctorId => {
   try {
-    const endpoint = '/doctor/getDoctorProfilePicture';
-    const params = {doctor_id: doctorId};
-
-    console.log('Fetching doctor profile image:', {endpoint, params});
-
+    const endpoint = API_ENDPOINTS.DOCTOR.GET_IMAGE;
+    const params = {userId: doctorId};
     const data = await fetchData(endpoint, params);
+    return data.imageUrl || null;
+  } catch (error) {
+    console.error(`Profile image fetch error for doctor_id=${doctorId}:`, error);
+    throw error;
+  }
+};
 
-    return data.profile_picture_url;
+/**
+ * Get patient profile image by doctorId/patientId
+ */
+export const GetPatientProfileImageRequest = async (doctorId, patientId) => {
+  console.log();
+  try {
+    const endpoint = API_ENDPOINTS.DOCTOR.GET_IMAGE;
+    console.log(`Fetching patient profile image for doctor_id=${doctorId}, patient_id=${patientId}`);
+    const params = {userId: `${doctorId}/${patientId}`};
+    console.log(`Using endpoint: ${endpoint} with params:`, params);
+    const data = await fetchData(endpoint, params);
+    console.log('Received data for in GetPatientProfileImageRequest:', data);
+    return data.imageUrl || null;
   } catch (error) {
     console.error(
-      `Profile image fetch error for doctor_id=${doctorId}:`,
+      `Profile image fetch error for doctor_id=${doctorId}, patient_id=${patientId}:`,
       error,
     );
     throw error;

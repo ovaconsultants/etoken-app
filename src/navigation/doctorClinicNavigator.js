@@ -3,7 +3,7 @@ import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import DoctorAddClinicScreen from '../screens/clinic/DoctorAddClinicScreen';
 import DoctorClinicScheduleScreen from '../screens/schedule/DoctorClinicScheduleScreen';
-import CaptureProfilePhotoScreen from '../screens/profilePicture/CaptureProfilePhotoScreen';
+import CaptureDoctorProfilePhotoScreen from '../screens/profilePicture/doctor/CaptureDoctorProfilePhotoScreen';
 import DoctorEditorScreen from '../screens/doctorEditor/DoctorEditorScreen';
 import {HeaderBackButton} from '@react-navigation/elements';
 
@@ -27,7 +27,7 @@ const DoctorClinicNavigator = () => {
       })}>
       <Stack.Screen
         name="AddProfilePicture"
-        component={CaptureProfilePhotoScreen}
+        component={CaptureDoctorProfilePhotoScreen}
         options={{title: 'Profile Picture'}}
       />
       <Stack.Screen

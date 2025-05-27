@@ -26,6 +26,21 @@ export const createStyles =  (isLandscape ) => StyleSheet.create({
     paddingHorizontal: 16,
     elevation: 3,
   },
+  imageContainer : {
+    width: isLandscape ?  50 :  60, 
+    height: isLandscape ?  50 :  60, 
+    borderRadius: isLandscape ?  25 :  30, 
+    overflow: 'hidden',
+    marginRight: '4%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  image: {
+    width: isLandscape ?  50 :  60, 
+    height: isLandscape ?  50 :  60, 
+    borderRadius: isLandscape ?  25 :  30, 
+    resizeMode: 'cover',
+  },
   searchIcon: {
     width: 20,
     height: 20,

@@ -94,9 +94,6 @@ const PatientTokenManagementScreen = ({navigation, route}) => {
     );
   }
 
-  if (patientTokens.length === 0 || (activeFilter === 'attended' && attended === 0) || (activeFilter === 'onHold' && onHold === 0)) {
-    return <DefaultReceptionScreen navigation={navigation} />;
-  }
 
   return (
     <View style={styles.fullScreenContainer}>
@@ -147,20 +144,25 @@ const PatientTokenManagementScreen = ({navigation, route}) => {
         </View>
 }
 
-        <ScrollView style={styles.tokenListContainer}>
-          {filteredTokens.map(token => (
-            <TokenCard
-              key={token.token_id}
-              token={token}
-              isSelected={selectedTokenId === token.token_id}
-              translateNameToHindi={TranslateNameToHindi}
-              onPress={() => handleRowPress(token.token_id)}
-              onLongPress={() => handleLongPress(token)}
-              styles={styles}
-              updateToken={updateToken}
-            />
-          ))}
-        </ScrollView>
+        {patientTokens.length !== 0 && !(activeFilter === 'attended' && attended === 0) && !(activeFilter === 'onHold' && onHold === 0) && (
+          <ScrollView style={styles.tokenListContainer}>
+            {filteredTokens.map(token => (
+              <TokenCard
+                key={token.token_id}
+                token={token}
+                isSelected={selectedTokenId === token.token_id}
+                translateNameToHindi={TranslateNameToHindi}
+                onPress={() => handleRowPress(token.token_id)}
+                onLongPress={() => handleLongPress(token)}
+                styles={styles}
+                updateToken={updateToken}
+              />
+            ))}
+          </ScrollView>
+        )}
+        {patientTokens.length === 0 || (activeFilter === 'attended' && attended === 0) || (activeFilter === 'onHold' && onHold === 0) && (
+          <DefaultReceptionScreen navigation={navigation} />
+        )}
 
         <FooterNavigation
           navigation={navigation}

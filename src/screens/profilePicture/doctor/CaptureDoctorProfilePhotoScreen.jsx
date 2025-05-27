@@ -8,14 +8,14 @@ import {
   Platform,
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
-import {UploadDoctorProfileImageRequest} from '../../services/profileImageService';
-import {showToast} from '../../components/toastMessage/ToastMessage';
-import createStyles from './CaptureProfilePhotoScreen.styles';
-import {globalStyles} from '../../styles/globalStyles';
+import {UploadDoctorProfileImageRequest} from '../../../services/profileImageService';
+import {showToast} from '../../../components/toastMessage/ToastMessage';
+import createStyles from './CaptureDoctorProfilePhotoScreen.styles';
+import {globalStyles} from '../../../styles/globalStyles';
 import RNFS from 'react-native-fs';
-import {useOrientation} from '../../hooks/useOrientation';
+import {useOrientation} from '../../../hooks/useOrientation';
 
-const CaptureProfilePhotoScreen = ({navigation, route}) => {
+const CaptureDoctorProfilePhotoScreen = ({navigation, route}) => {
   const {isLandscape, dimensions} = useOrientation();
   const styles = createStyles(isLandscape, dimensions);
   const {doctor_id, fromSignUpRoute} = route.params;
@@ -30,7 +30,7 @@ const CaptureProfilePhotoScreen = ({navigation, route}) => {
         width: 300,
         height: 300,
         cropping: true,
-        cropperCircleOverlay: true, // for circular cropping
+        cropperCircleOverlay: true,
         compressImageQuality: 0.8,
         mediaType: 'photo',
       });
@@ -51,10 +51,15 @@ const CaptureProfilePhotoScreen = ({navigation, route}) => {
 
   const openCameraForImage = async () => {
     try {
-         if (Platform.OS === 'ios' && !Platform.isPad && !Platform.isTVOS && Platform.isTesting) {
-      showToast('Camera not available in simulator', {type: 'error'});
-      return;
-    }
+      if (
+        Platform.OS === 'ios' &&
+        !Platform.isPad &&
+        !Platform.isTVOS &&
+        Platform.isTesting
+      ) {
+        showToast('Camera not available in simulator', {type: 'error'});
+        return;
+      }
       const image = await ImagePicker.openCamera({
         width: 300,
         height: 300,
@@ -74,12 +79,12 @@ const CaptureProfilePhotoScreen = ({navigation, route}) => {
     } catch (error) {
       console.log('Error capturing image:', error);
       if (error.code !== 'E_PICKER_CANCELLED') {
-          showToast(
-        error.message === 'Cannot run camera on simulator' 
-          ? 'Camera not available in simulator' 
-          : 'Error capturing image', 
-        {type: 'error'}
-      );
+        showToast(
+          error.message === 'Cannot run camera on simulator'
+            ? 'Camera not available in simulator'
+            : 'Error capturing image',
+          {type: 'error'},
+        );
       }
     }
   };
@@ -218,4 +223,4 @@ const CaptureProfilePhotoScreen = ({navigation, route}) => {
   );
 };
 
-export default CaptureProfilePhotoScreen;
+export default CaptureDoctorProfilePhotoScreen;

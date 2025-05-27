@@ -1,6 +1,5 @@
 import { StyleSheet, View, Text, } from 'react-native';
-import { Tv, Users ,Home } from 'lucide-react-native';
-import FooterNavigation from '../../components/tabNavigationFooter/TabNavigationFooter';
+import { Tv, Users  } from 'lucide-react-native';
 import React from 'react';
 
 
@@ -20,18 +19,6 @@ const DefaultReceptionScreen = ({ navigation }) => {
                     When patients check in, their tokens will appear here
                 </Text>
             </View>
-            <FooterNavigation
-              navigation={navigation}
-              currentRoute="Reception"
-              routes={[
-                {
-                  id: 'home',
-                  icon: Home,
-                  screen: 'Home',
-                  label: 'Home',
-                },
-              ]}
-            />
         </View>
     );
 };
@@ -60,7 +47,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 24,
-        marginTop: -40, // Adjust to balance visual centering
+        marginTop: -40,
     },
     iconContainer: {
         flexDirection: 'row',
