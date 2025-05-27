@@ -151,22 +151,21 @@ const CustomSearchBar = ({
                   style={styles.dropdownItem}
                   onPress={() => handleItemSelect(item)}>
                   <View style={styles.tile}>
-                    <View style={styles.row}>
-                      {/* Image/Initials Container */}
-                      <View style={styles.imageContainer}>
-                       <Image
-                            source={{uri: imageUrl}}
-                            style={styles.image}
-                          />
-                      </View>
-                      <Text style={styles.label}>
-                        {item.patient_name || 'N/A'}
-                      </Text>
-                      <Text style={styles.label}>{item.age || 'N/A'}</Text>
+                    {/* Image/Initials Container */}
+                    <View style={styles.imagePortion}>
+                      <Image source={{uri: imageUrl}} style={styles.image} />
                     </View>
-                    <View style={styles.row}>
-                      <Text style={styles.label}>{item.mobile_number}</Text>
-                      <Text style={styles.label}>{item.area || 'N/A'}</Text>
+                    <View style={styles.detailsPortion}>
+                      <View style={styles.row}>
+                        <Text style={styles.label}>
+                          {item.patient_name || 'N/A'}
+                        </Text>
+                        <Text style={styles.label}>{item.age || 'N/A'}</Text>
+                      </View>
+                      <View style={styles.row}>
+                        <Text style={styles.label}>{item.mobile_number}</Text>
+                        <Text style={styles.label}>{item.area || 'N/A'}</Text>
+                      </View>
                     </View>
                   </View>
                 </TouchableOpacity>
