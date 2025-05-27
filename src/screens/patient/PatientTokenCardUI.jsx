@@ -1,8 +1,10 @@
-import {Switch, View, TouchableOpacity, Text} from 'react-native';
-import {Dropdown} from 'react-native-element-dropdown';
+import {Switch, View, TouchableOpacity, Text, Image} from 'react-native';
 import React, {useState, useCallback, useEffect} from 'react';
-import {formatTokenTime, maskPhoneNumber} from '../../utils/globalUtil';
 
+import {GetPatientImage} from '../../services/patientImagesCacheServices';
+
+import {formatTokenTime, maskPhoneNumber} from '../../utils/globalUtil';
+import {Dropdown} from 'react-native-element-dropdown';
 
 const statusOptions = [
   {label: 'Waiting', value: 'Waiting'},
@@ -21,10 +23,12 @@ export const TokenCard = React.memo(
     translateNameToHindi,
     updateToken,
     styles,
+    doctorId,
   }) => {
     const [hindiName, setHindiName] = useState('');
     const [paidStatus, setPaidStatus] = useState(token.fee_status === 'Paid');
-    const [status, _ ] = useState();
+    const [status, _] = useState();
+    const [imageUrl, setImageUrl] = useState(null);
     const memoizedTranslate = useCallback(
       name => {
         return translateNameToHindi(name) || null;
@@ -33,12 +37,33 @@ export const TokenCard = React.memo(
     );
 
     useEffect(() => {
+      const fetchPatientImage = async () => {
+        if (token.patient_id) {
+          const patientImageUrl = await GetPatientImage(
+            doctorId,
+            token.patient_id,
+          );
+          if (patientImageUrl) {
+            console.log('fetched patiet ursl for particular management token card screen ', patientImageUrl);
+            setImageUrl(patientImageUrl);
+          } else {
+            setImageUrl(null);
+          }
+        }
+      };
       if (token.patient_name && !hindiName) {
         memoizedTranslate(token.patient_name)
           .then(setHindiName)
           .catch(() => setHindiName(''));
       }
-    }, [token.patient_name, hindiName, memoizedTranslate]);
+      fetchPatientImage();
+    }, [
+      token.patient_name,
+      hindiName,
+      memoizedTranslate,
+      token.patient_id,
+      doctorId,
+    ]);
 
     const handleStatusChange = async item => {
       const updateTokenDataObj = {
@@ -82,6 +107,9 @@ export const TokenCard = React.memo(
           delayLongPress={500}>
           <View style={styles.tokenHeader}>
             <View style={styles.patientName}>
+              {imageUrl ? (
+                <Image source={{uri: imageUrl}} style={styles.profileImage} />
+              ) : null}
               <Text>{token.patient_name}</Text>
               <Text> {token.age && `(${token.age})`} </Text>
               {/* <Text>{hindiName || ''}</Text> */}
@@ -89,7 +117,7 @@ export const TokenCard = React.memo(
             <View style={styles.tokenNumber}>
               <Text>{formatTokenTime(token.created_date)}</Text>
               <View style={styles.tokenNumberText}>
-              <Text>{token.token_no}</Text>
+                <Text>{token.token_no}</Text>
               </View>
             </View>
           </View>
@@ -108,9 +136,14 @@ export const TokenCard = React.memo(
                 thumbColor={paidStatus ? '#27AE60' : '#d63031'}
                 style={styles.smallSwitch}
               />
-              <Text style={styles.paymentStatus &&  paidStatus ? styles.paidStatusTextColor : styles.notPaidStatusTextColor}>
-                {paidStatus ?  'Paid' :  'UnPaid' }
-               </Text>
+              <Text
+                style={
+                  styles.paymentStatus && paidStatus
+                    ? styles.paidStatusTextColor
+                    : styles.notPaidStatusTextColor
+                }>
+                {paidStatus ? 'Paid' : 'UnPaid'}
+              </Text>
             </View>
 
             {/* Status Dropdown */}

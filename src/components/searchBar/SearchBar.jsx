@@ -12,7 +12,7 @@ import {
 import SearchBar from 'react-native-dynamic-search-bar';
 import {useOrientation} from '../../hooks/useOrientation';
 import {createStyles} from './SearchBar.styles';
-import {prefetchPatientImages} from '../../services/patientImagesCacheServices';
+import {PrefetchPatientImages} from '../../services/patientImagesCacheServices';
 import Fuse from 'fuse.js';
 
 const searchName = (query, list) => {
@@ -48,12 +48,14 @@ const CustomSearchBar = ({
   // Fetch all images when dropdown becomes visible
   useEffect(() => {
     const fetchImages = async () => {
-      if (!dropdownVisible || !doctorId || !filteredData.length) return;
+      if (!dropdownVisible || !doctorId || !filteredData.length) {
+        return;
+      }
 
       setLoadingImages(true);
       try {
         const patientIds = filteredData.map(item => item.patient_id);
-        const urls = await prefetchPatientImages(doctorId, patientIds);
+        const urls = await PrefetchPatientImages(doctorId, patientIds);
         setImageUrls(urls);
       } catch (error) {
         console.error('Error fetching images:', error);

@@ -1,24 +1,31 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {View, Text, ScrollView} from 'react-native';
+import {View, Text, ScrollView, Image} from 'react-native';
 import {styles} from './TokenListingTVScreen.styles';
 import {TranslateNameToHindi} from '../../services/langTranslationService';
+import {PrefetchPatientImages} from '../../services/patientImagesCacheServices';
 
 const SCROLL_DURATION = 3000;
 const PAUSE_DURATION = 2000;
 
-const TokenTable = ({tokens}) => {
+const TokenTable = ({tokens ,doctorId}) => {
   const scrollViewRef = useRef(null);
   const [processedTokens, setProcessedTokens] = useState([]);
   const [contentHeight, setContentHeight] = useState(0);
   const [containerHeight, setContainerHeight] = useState(0);
+  const [imageUrls, setImageUrls] = useState({});
   const timeout = useRef(null);
   const isMounted = useRef(false);
 
   // Process tokens data
   useEffect(() => {
-    const processTokens = async () => {
-      const updatedTokens = await Promise.all(
-        tokens.map(async token => {
+       const fetchPatientImages = async () => {
+       const patientIds = tokens.map(token => token.patient_id);
+       const patientImageUrls  =  await PrefetchPatientImages(doctorId , patientIds);
+       console.log(`Fetched patient images for doctor_id=${doctorId}: patient image urls in fetch patient images`, patientImageUrls);
+       await setImageUrls(patientImageUrls);
+       }
+       const processTokens = async () => {
+      const updatedTokens = await Promise.all( tokens.map(async token => {
           if (!token.hindi_name && token.patient_name) {
             try {
               const hindiName = await TranslateNameToHindi(token.patient_name);
@@ -32,13 +39,13 @@ const TokenTable = ({tokens}) => {
       );
       setProcessedTokens(updatedTokens);
     };
-
+   fetchPatientImages();
     processTokens();
     isMounted.current = true;
     return () => {
       isMounted.current = false;
     };
-  }, [tokens]);
+  }, [doctorId, tokens]);
 
   const data = processedTokens.length ? processedTokens : tokens;
 
@@ -52,21 +59,19 @@ const TokenTable = ({tokens}) => {
     ) {
       return;
     }
-
     const scrollDistance = contentHeight - containerHeight;
-
     if (scrollDistance <= 0) {
       return;
     }
-
-    console.log('Starting animation with scroll distance:', scrollDistance);
 
     let start = null;
     const duration = SCROLL_DURATION * data.length;
     let animationFrame = null;
 
     const step = timestamp => {
-      if (!start) {start = timestamp;}
+      if (!start) {
+        start = timestamp;
+      }
       const progress = timestamp - start;
       const percentage = Math.min(progress / duration, 1);
       const y = scrollDistance * percentage;
@@ -92,8 +97,12 @@ const TokenTable = ({tokens}) => {
     animationFrame = requestAnimationFrame(step);
 
     return () => {
-      if (animationFrame) {cancelAnimationFrame(animationFrame);}
-      if (timeout.current) {clearTimeout(timeout.current);}
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
+      }
+      if (timeout.current) {
+        clearTimeout(timeout.current);
+      }
     };
   }, [data, contentHeight, containerHeight]);
 
@@ -112,12 +121,17 @@ const TokenTable = ({tokens}) => {
   };
 
   const renderItem = (item, index) => (
+    console.log(`Rendering item ${index + 1}: with resulting array with urls`, item , imageUrls),
     <View
       key={`${item.token_id}-${index}`}
       style={[styles.tableRow, getRowStyle(item.status)]}>
-      <View style={styles.tableCell}>
-        <Text>{item.patient_name}</Text>
-      </View>
+       <View style={styles.tableCell}>
+         <Image 
+          source={{uri:imageUrls[item.patient_id]}}
+          style={styles.profileImage}
+        />
+         <Text>{item.patient_name}</Text>
+      </View> 
       <Text style={styles.tableCell}>
         {item.mobile_number?.replace(/(\d{3})(\d{3})(\d{4})/, 'xxx-xxx-$3')}
       </Text>

@@ -50,7 +50,7 @@ export const createStyles = isLandscape =>
       flexDirection: 'row',
       justifyContent: 'space-evenly',
       alignItems: 'center',
-      gap: 16,
+      gap: 10,
     },
 
     screenTitle: {
@@ -149,6 +149,12 @@ export const createStyles = isLandscape =>
       alignItems: 'center',
     },
     detailText: {color: '#666', fontSize: 14},
+    profileImage: {
+      width: 30,
+      height: 30,
+      borderRadius: 100,
+      marginRight: 2,
+    },
 
     // Status Indicators
     statusContainer: {

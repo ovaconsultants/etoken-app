@@ -141,6 +141,14 @@ export const styles = StyleSheet.create({
     textAlign: 'flex-start',
   },
 
+  profileImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 10,
+    backgroundColor: '#f0f0f0',
+    alignItems: 'center',
+  },
   statusCell: {
     flexDirection: 'row',
     alignItems: 'center',

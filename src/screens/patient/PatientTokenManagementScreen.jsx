@@ -156,6 +156,7 @@ const PatientTokenManagementScreen = ({navigation, route}) => {
                 onLongPress={() => handleLongPress(token)}
                 styles={styles}
                 updateToken={updateToken}
+                doctorId = {doctor_id}
               />
             ))}
           </ScrollView>

@@ -133,7 +133,7 @@ const TokenListingTVScreen = ({route, navigation}) => {
       <View style={styles.headerContainer} key={refreshKey}>
         <DoctorHeader doctorData={doctorData} />
       </View>
-      <TokenTable tokens={filteredTokens} />
+      <TokenTable tokens={filteredTokens} doctorId={doctor_id}/>
       <View style={styles.notificationInProgress}>
         {inProgressPatient && (
           <InProgressTokenNotificationScreen

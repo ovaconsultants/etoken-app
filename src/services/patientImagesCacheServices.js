@@ -4,9 +4,11 @@ import {GetPatientProfileImageRequest} from './profileImageService';
 const imageCache = new Map();
 const pendingRequests = new Map();
 
-export const getPatientImage = async (doctorId, patientId) => {
+export const GetPatientImage = async (doctorId, patientId) => {
   if (!doctorId || !patientId) {
-    throw new Error('Both doctorId and patientId are required to fetch the image.');
+    throw new Error(
+      'Both doctorId and patientId are required to fetch the image.',
+    );
   }
   const cacheKey = `${doctorId}_${patientId}`;
 
@@ -35,13 +37,13 @@ export const getPatientImage = async (doctorId, patientId) => {
   return requestPromise;
 };
 
-export const prefetchPatientImages = async (doctorId, patientIds) => {
+export const PrefetchPatientImages = async (doctorId, patientIds) => {
   const results = {};
 
   await Promise.all(
     patientIds.map(async patientId => {
       try {
-        const url = await getPatientImage(doctorId, patientId);
+        const url = await GetPatientImage(doctorId, patientId);
         results[patientId] = url;
       } catch (error) {
         results[patientId] = null;
