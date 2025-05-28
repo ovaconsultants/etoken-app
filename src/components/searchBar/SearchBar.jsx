@@ -8,13 +8,13 @@ import {
   Platform,
   Image,
   ActivityIndicator,
+  Modal
 } from 'react-native';
 import SearchBar from 'react-native-dynamic-search-bar';
 import {useOrientation} from '../../hooks/useOrientation';
 import {createStyles} from './SearchBar.styles';
 import {PrefetchPatientImages} from '../../services/patientImagesCacheServices';
 
-import {getInitials} from '../../utils/getInitials';
 import Fuse from 'fuse.js';
 
 const searchName = (query, list) => {
@@ -47,6 +47,7 @@ const CustomSearchBar = ({
   const [, setKeyboardHeight] = useState(0);
   const [imageUrls, setImageUrls] = useState({});
   const [loadingImages, setLoadingImages] = useState(false);
+  const [showImage, setShowImage] = useState(false);
 
   // Fetch all images when dropdown becomes visible
   useEffect(() => {
@@ -160,22 +161,40 @@ const CustomSearchBar = ({
                           <ActivityIndicator size="small" color="#3498db" />
                         </View>
                       ) : (
-                        <Image
-                          source={
-                            imageUrl
-                              ? {uri: imageUrl}
-                              : require('../../../assets/patient.png')
-                          }
-                          style={styles.image}
-                          onError={e => {
-                            console.log(
-                              'Image failed to load:',
-                              e.nativeEvent.error,
-                            );
-                          }}
-                        />
+                        <TouchableOpacity
+                          onPress={() => imageUrl && setShowImage(true)}>
+                          <Image
+                            source={
+                              imageUrl
+                                ? {uri: imageUrl}
+                                : require('../../../assets/patient.png')
+                            }
+                            style={styles.image}
+                          />
+                        </TouchableOpacity>
                       )}
                     </View>
+                    {showImage && (
+  <Modal transparent visible animationType="fade">
+    <TouchableOpacity
+      style={{
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.9)',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+      onPress={() => setShowImage(false)}
+      activeOpacity={1}
+    >
+      <Image
+        source={{ uri: imageUrl }}
+        style={{ width: '90%', height: '70%' }}
+        resizeMode="contain"
+      />
+    </TouchableOpacity>
+  </Modal>
+)}
+
                     <View style={styles.detailsPortion}>
                       <View style={styles.row}>
                         <Text style={styles.label}>
