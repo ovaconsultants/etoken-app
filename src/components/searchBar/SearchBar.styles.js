@@ -32,6 +32,14 @@ export const createStyles = isLandscape =>
       justifyContent: 'center',
       alignItems: 'center',
     },
+
+    enlargeShowImage: {
+      flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.9)',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    modalImage: {width: '90%', height: '70%'},
     detailsPortion: {
       flex: 0.7,
       justifyContent: 'center',

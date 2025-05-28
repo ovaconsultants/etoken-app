@@ -8,7 +8,7 @@ import {
   Platform,
   Image,
   ActivityIndicator,
-  Modal
+  Modal,
 } from 'react-native';
 import SearchBar from 'react-native-dynamic-search-bar';
 import {useOrientation} from '../../hooks/useOrientation';
@@ -47,7 +47,7 @@ const CustomSearchBar = ({
   const [, setKeyboardHeight] = useState(0);
   const [imageUrls, setImageUrls] = useState({});
   const [loadingImages, setLoadingImages] = useState(false);
-  const [showImage, setShowImage] = useState(false);
+  const [enlargedImageUrl, setEnlargedImageUrl] = useState(null);
 
   // Fetch all images when dropdown becomes visible
   useEffect(() => {
@@ -162,7 +162,9 @@ const CustomSearchBar = ({
                         </View>
                       ) : (
                         <TouchableOpacity
-                          onPress={() => imageUrl && setShowImage(true)}>
+                          onPress={() =>
+                            imageUrl && setEnlargedImageUrl(imageUrl)
+                          }>
                           <Image
                             source={
                               imageUrl
@@ -174,26 +176,20 @@ const CustomSearchBar = ({
                         </TouchableOpacity>
                       )}
                     </View>
-                    {showImage && (
-  <Modal transparent visible animationType="fade">
-    <TouchableOpacity
-      style={{
-        flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.9)',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-      onPress={() => setShowImage(false)}
-      activeOpacity={1}
-    >
-      <Image
-        source={{ uri: imageUrl }}
-        style={{ width: '90%', height: '70%' }}
-        resizeMode="contain"
-      />
-    </TouchableOpacity>
-  </Modal>
-)}
+                    {enlargedImageUrl && (
+                      <Modal transparent visible animationType="fade">
+                        <TouchableOpacity
+                          style={styles.enlargeShowImage}
+                          onPress={() => setEnlargedImageUrl(null)}
+                          activeOpacity={1}>
+                          <Image
+                            source={{uri: enlargedImageUrl}}
+                            style={styles.modalImage}
+                            resizeMode="contain"
+                          />
+                        </TouchableOpacity>
+                      </Modal>
+                    )}
 
                     <View style={styles.detailsPortion}>
                       <View style={styles.row}>
