@@ -97,6 +97,7 @@ export const createStyles = isLandscape =>
     changePhotoButton: {
       marginTop: 10,
       padding: 8,
+      backgroundColor: '#f0f0f0',
     },
     changePhotoText: {
       color: '#3498db',
