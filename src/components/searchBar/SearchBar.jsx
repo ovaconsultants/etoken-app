@@ -14,7 +14,7 @@ import {useOrientation} from '../../hooks/useOrientation';
 import {createStyles} from './SearchBar.styles';
 import {PrefetchPatientImages} from '../../services/patientImagesCacheServices';
 
-import { getInitials } from '../../utils/getInitials';
+import {getInitials} from '../../utils/getInitials';
 import Fuse from 'fuse.js';
 
 const searchName = (query, list) => {
@@ -159,9 +159,13 @@ const CustomSearchBar = ({
                         <View style={styles.spinnerContainer}>
                           <ActivityIndicator size="small" color="#3498db" />
                         </View>
-                      ) : imageUrl ? (
+                      ) : (
                         <Image
-                          source={{uri: imageUrl}}
+                          source={
+                            imageUrl
+                              ? {uri: imageUrl}
+                              : require('../../../assets/patient.png')
+                          }
                           style={styles.image}
                           onError={e => {
                             console.log(
@@ -170,12 +174,6 @@ const CustomSearchBar = ({
                             );
                           }}
                         />
-                      ) : (
-                        <Text style={styles.label}>
-                          {item.patient_name
-                            ? getInitials(item.patient_name)
-                            : 'N/A'}
-                        </Text>
                       )}
                     </View>
                     <View style={styles.detailsPortion}>
