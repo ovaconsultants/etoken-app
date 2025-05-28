@@ -13,6 +13,8 @@ import SearchBar from 'react-native-dynamic-search-bar';
 import {useOrientation} from '../../hooks/useOrientation';
 import {createStyles} from './SearchBar.styles';
 import {PrefetchPatientImages} from '../../services/patientImagesCacheServices';
+
+import { getInitials } from '../../utils/getInitials';
 import Fuse from 'fuse.js';
 
 const searchName = (query, list) => {
@@ -146,11 +148,35 @@ const CustomSearchBar = ({
               return (
                 <TouchableOpacity
                   style={styles.dropdownItem}
-                  onPress={() =>  {onSelectImageUrl(imageUrl); handleItemSelect(item)}}>
+                  onPress={() => {
+                    onSelectImageUrl(imageUrl);
+                    handleItemSelect(item);
+                  }}>
                   <View style={styles.tile}>
                     {/* Image/Initials Container */}
                     <View style={styles.imagePortion}>
-                      <Image source={{uri: imageUrl}} style={styles.image} />
+                      {loadingImages ? (
+                        <View style={styles.spinnerContainer}>
+                          <ActivityIndicator size="small" color="#3498db" />
+                        </View>
+                      ) : imageUrl ? (
+                        <Image
+                          source={{uri: imageUrl}}
+                          style={styles.image}
+                          onError={e => {
+                            console.log(
+                              'Image failed to load:',
+                              e.nativeEvent.error,
+                            );
+                          }}
+                        />
+                      ) : (
+                        <Text style={styles.label}>
+                          {item.patient_name
+                            ? getInitials(item.patient_name)
+                            : 'N/A'}
+                        </Text>
+                      )}
                     </View>
                     <View style={styles.detailsPortion}>
                       <View style={styles.row}>

@@ -104,6 +104,8 @@ export const createStyles = isLandscape =>
       marginBottom: 6,
     },
     label: {
+      justifyContent: 'center',
+      alignItems: 'center',
       fontSize: 16,
       flex: 1,
     },
