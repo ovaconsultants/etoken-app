@@ -130,21 +130,22 @@ export const ReceptionScreen = ({route}) => {
         created_by: 'receptionist',
       });
 
-      try {
-        console.log('Uploading patient profile image:', profileImage);
-        const response = await UploadPatientProfileImageRequest(
-          profileImage,
-          doctor_id,
-          patientIdToUse,
-        );
-        const fetchImage = await GetPatientProfileImageRequest(
-          doctor_id,
-          patientIdToUse,
-        );
-        console.log('Fetched profile image URL:', fetchImage);
-        console.log('Profile image uploaded successfully:', response);
-      } catch (uploadError) {
-        console.warn('Profile image upload failed:', uploadError);
+      if (profileImage) {
+        try {
+          const response = await UploadPatientProfileImageRequest(
+            profileImage,
+            doctor_id,
+            patientIdToUse,
+          );
+          const fetchImage = await GetPatientProfileImageRequest(
+            doctor_id,
+            patientIdToUse,
+          );
+          console.log('Fetched profile image URL:', fetchImage);
+          console.log('Profile image uploaded successfully:', response);
+        } catch (uploadError) {
+          console.warn('Profile image upload failed:', uploadError);
+        }
       }
 
       navigation.navigate('TokenSuccess', {
@@ -212,6 +213,9 @@ export const ReceptionScreen = ({route}) => {
                       ),
                     })
                   }
+                  onSelectImageUrl={imageUrl => {
+                    setProfileImage(imageUrl);
+                  }}
                   dropdownVisible={searchDropdownVisible}
                   setDropdownVisible={setSearchDropdownVisible}
                   placeholder="Search by Patient Name, Mobile, or Email"
@@ -236,9 +240,6 @@ export const ReceptionScreen = ({route}) => {
                   <CapturePatientProfilePhotoScreen
                     onImageSelected={imageData => {
                       setProfileImage(imageData);
-                    }}
-                    onCancel={() => {
-                      setProfileImage(null);
                     }}
                   />
                 )}

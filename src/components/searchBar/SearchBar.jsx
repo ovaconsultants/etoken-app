@@ -31,6 +31,7 @@ const searchName = (query, list) => {
 const CustomSearchBar = ({
   data,
   onSelectItem,
+  onSelectImageUrl,
   dropdownVisible,
   setDropdownVisible,
   placeholder,
@@ -141,17 +142,11 @@ const CustomSearchBar = ({
             keyExtractor={item => item.patient_id.toString()}
             keyboardShouldPersistTaps="always"
             renderItem={({item}) => {
-              console.log('Rendering with image Urls :', imageUrls);
-
               const imageUrl = imageUrls[item.patient_id];
-              if (item.patient_id === 33) {
-                const url = imageUrls[item.patient_id];
-                console.log('Image URL for patient_id 33:', url);
-              }
               return (
                 <TouchableOpacity
                   style={styles.dropdownItem}
-                  onPress={() => handleItemSelect(item)}>
+                  onPress={() =>  {onSelectImageUrl(imageUrl); handleItemSelect(item)}}>
                   <View style={styles.tile}>
                     {/* Image/Initials Container */}
                     <View style={styles.imagePortion}>

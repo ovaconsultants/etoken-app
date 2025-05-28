@@ -59,7 +59,6 @@ export const createStyles = isLandscape =>
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      marginBottom: 20,
       paddingHorizontal: 10,
     },
 
@@ -87,12 +86,13 @@ export const createStyles = isLandscape =>
     },
 
     imagePreviewContainer: {
+      flexDirection: 'row',
       alignItems: 'center',
     },
     profileImagePreview: {
       width: 50,
       height: 50,
-      borderRadius: 75,
+      borderRadius: 30,
     },
     changePhotoButton: {
       marginTop: 10,

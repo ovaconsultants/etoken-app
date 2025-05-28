@@ -1,50 +1,19 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   TouchableOpacity,
-  Text,
   Image,
   Platform,
   StyleSheet,
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
-import {showToast} from '../../../components/toastMessage/ToastMessage';
-import {useOrientation} from '../../../hooks/useOrientation';
+import { showToast } from '../../../components/toastMessage/ToastMessage';
+import { Camera } from 'lucide-react-native';
 
-const CapturePatientProfilePhotoScreen = ({onImageSelected, onCancel}) => {
-  const {isLandscape, dimensions} = useOrientation();
-  const styles = createStyles(isLandscape, dimensions);
-
+const CapturePatientProfilePhotoScreen = ({ onImageSelected }) => {
   const [selectedImage, setSelectedImage] = useState(null);
 
-  const selectAndCropImage = async () => {
-    try {
-      const image = await ImagePicker.openPicker({
-        width: 300,
-        height: 300,
-        cropping: true,
-        cropperCircleOverlay: true,
-        compressImageQuality: 0.8,
-        mediaType: 'photo',
-      });
-
-      const imageData = {
-        uri: image.path,
-        type: image.mime,
-        width: image.width,
-        height: image.height,
-      };
-
-      setSelectedImage(imageData);
-      onImageSelected(imageData); // Immediately send back to parent
-    } catch (error) {
-      if (error.code !== 'E_PICKER_CANCELLED') {
-        showToast('Error selecting image', {type: 'error'});
-      }
-    }
-  };
-
-  const openCameraForImage = async () => {
+  const openCameraAndCrop = async () => {
     try {
       if (
         Platform.OS === 'ios' &&
@@ -52,12 +21,11 @@ const CapturePatientProfilePhotoScreen = ({onImageSelected, onCancel}) => {
         !Platform.isTVOS &&
         Platform.isTesting
       ) {
-        showToast('Camera not available in simulator', {type: 'error'});
+        showToast('Camera not available in simulator', { type: 'error' });
         return;
       }
+
       const image = await ImagePicker.openCamera({
-        width: 300,
-        height: 300,
         cropping: true,
         cropperCircleOverlay: true,
         compressImageQuality: 0.8,
@@ -72,123 +40,95 @@ const CapturePatientProfilePhotoScreen = ({onImageSelected, onCancel}) => {
       };
 
       setSelectedImage(imageData);
-      onImageSelected(imageData); // Immediately send back to parent
+      onImageSelected(imageData);
     } catch (error) {
       if (error.code !== 'E_PICKER_CANCELLED') {
         showToast(
           error.message === 'Cannot run camera on simulator'
             ? 'Camera not available in simulator'
             : 'Error capturing image',
-          {type: 'error'},
+          { type: 'error' }
         );
       }
     }
   };
 
+  const resetPhoto = () => {
+    setSelectedImage(null);
+  };
+
   return (
     <View style={styles.container}>
-      <View style={styles.contentContainer}>
-        {selectedImage ? (
-          <View style={styles.previewContainer}>
-            <Image
-              source={{uri: selectedImage.uri}}
-              style={styles.previewImage}
-              resizeMode="cover"
-            />
-            <View style={styles.confirmationButtons}>
-              <TouchableOpacity
-                style={styles.confirmButton}
-                onPress={() => onImageSelected(selectedImage)}>
-                <Text style={styles.buttonText}>Confirm</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.retakeButton}
-                onPress={() => setSelectedImage(null)}>
-                <Text style={styles.buttonText}>Retake</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        ) : (
-          <View style={styles.buttonGroup}>
-            <TouchableOpacity
-              style={styles.selectButton}
-              onPress={selectAndCropImage}>
-              <Text style={styles.buttonText}>Choose from Gallery</Text>
+      {!selectedImage ? (
+        <View style={styles.cameraButtonContainer}>
+          <TouchableOpacity style={styles.cameraButton} onPress={openCameraAndCrop}>
+            <Camera color="white" size={30} />
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <View style={styles.previewContainer}>
+          <Image
+            source={{ uri: selectedImage.uri }}
+            style={styles.previewImage}
+            resizeMode="cover"
+          />
+          <View style={styles.buttonRow}>
+            <TouchableOpacity style={styles.confirmButton} onPress={() => onImageSelected(selectedImage)}>
+              <Camera color="white" size={20} />
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.cameraButton}
-              onPress={openCameraForImage}>
-              <Text style={styles.buttonText}>Take Photo</Text>
+            <TouchableOpacity style={styles.retakeButton} onPress={resetPhoto}>
+              <Camera color="white" size={20} />
             </TouchableOpacity>
           </View>
-        )}
-      </View>
+        </View>
+      )}
     </View>
   );
 };
 
-const createStyles = (isLandscape, dimensions) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    contentContainer: {
-      width: '100%',
-      padding: 20,
-    },
-    previewContainer: {
-      alignItems: 'center',
-    },
-    previewImage: {
-      width: 200,
-      height: 200,
-      borderRadius: 100,
-      marginBottom: 20,
-    },
-    buttonGroup: {
-      width: '100%',
-    },
-    selectButton: {
-      backgroundColor: '#3498db',
-      padding: 15,
-      borderRadius: 8,
-      marginBottom: 10,
-      alignItems: 'center',
-    },
-    cameraButton: {
-      backgroundColor: '#2ecc71',
-      padding: 15,
-      borderRadius: 8,
-      marginBottom: 10,
-      alignItems: 'center',
-    },
-    cancelButton: {
-      backgroundColor: '#e74c3c',
-      padding: 15,
-      borderRadius: 8,
-      alignItems: 'center',
-    },
-    confirmButton: {
-      backgroundColor: '#2ecc71',
-      padding: 15,
-      borderRadius: 8,
-      marginRight: 10,
-    },
-    retakeButton: {
-      backgroundColor: '#e74c3c',
-      padding: 15,
-      borderRadius: 8,
-    },
-    confirmationButtons: {
-      flexDirection: 'row',
-      justifyContent: 'center',
-    },
-    buttonText: {
-      color: 'white',
-      fontWeight: 'bold',
-    },
-  });
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f7f8fa',
+  },
+  cameraButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  cameraButton: {
+    backgroundColor: '#3498db',
+    padding: 20,
+    borderRadius: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 3,
+  },
+  previewContainer: {
+    alignItems: 'center',
+  },
+  previewImage: {
+    width: 250,
+    height: 250,
+    borderRadius: 125,
+    marginBottom: 20,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 20,
+  },
+  confirmButton: {
+    backgroundColor: '#2ecc71',
+    padding: 15,
+    borderRadius: 50,
+  },
+  retakeButton: {
+    backgroundColor: '#e74c3c',
+    padding: 15,
+    borderRadius: 50,
+  },
+});
 
 export default CapturePatientProfilePhotoScreen;
