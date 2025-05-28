@@ -61,7 +61,9 @@ const PatientTokenManagementScreen = ({navigation, route}) => {
       case 'onHold':
         return patientTokens.filter(t => t.status === 'On Hold');
       case 'all':
-        return patientTokens.filter(t => ['Waiting', 'In Progress', 'On Hold'].includes(t.status));  
+        return patientTokens.filter(t =>
+          ['Waiting', 'In Progress', 'On Hold'].includes(t.status),
+        );
       default:
         return patientTokens;
     }
@@ -94,7 +96,6 @@ const PatientTokenManagementScreen = ({navigation, route}) => {
     );
   }
 
-
   return (
     <View style={styles.fullScreenContainer}>
       <SafeAreaView style={styles.fullScreenContainer}>
@@ -124,27 +125,27 @@ const PatientTokenManagementScreen = ({navigation, route}) => {
             </View>
           </View>
         </View>
-        { activeFilter !== 'attended' &&
-        <View style={styles.actionButtonsContainer}>
-          <TouchableOpacity
-            style={styles.primaryButton}
-            onPress={hasTokenInProgress ? handleDone : handleNext}>
-            <Phone size={16} color="white" />
-            <Text style={styles.buttonText}>
-              {hasTokenInProgress ? 'Done' : 'Call Next'}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.secondaryButton}
-            onPress={handleRecall}
-            disabled={!hasTokenInProgress}>
-            <Nfc size={16} color="#333" />
-            <Text style={styles.secondaryButtonText}>Recall</Text>
-          </TouchableOpacity>
-        </View>
-}
+        {activeFilter !== 'attended' && (
+          <View style={styles.actionButtonsContainer}>
+            <TouchableOpacity
+              style={styles.primaryButton}
+              onPress={hasTokenInProgress ? handleDone : handleNext}>
+              <Phone size={16} color="white" />
+              <Text style={styles.buttonText}>
+                {hasTokenInProgress ? 'Done' : 'Call Next'}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.secondaryButton}
+              onPress={handleRecall}
+              disabled={!hasTokenInProgress}>
+              <Nfc size={16} color="#333" />
+              <Text style={styles.secondaryButtonText}>Recall</Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
-        {patientTokens.length !== 0 && !(activeFilter === 'attended' && attended === 0) && !(activeFilter === 'onHold' && onHold === 0) && (
+        {filteredTokens.length !== 0 ? (
           <ScrollView style={styles.tokenListContainer}>
             {filteredTokens.map(token => (
               <TokenCard
@@ -156,42 +157,45 @@ const PatientTokenManagementScreen = ({navigation, route}) => {
                 onLongPress={() => handleLongPress(token)}
                 styles={styles}
                 updateToken={updateToken}
-                doctorId = {doctor_id}
+                doctorId={doctor_id}
               />
             ))}
           </ScrollView>
-        )}
-        {patientTokens.length === 0 || (activeFilter === 'attended' && attended === 0) || (activeFilter === 'onHold' && onHold === 0) && (
-          <DefaultReceptionScreen navigation={navigation} />
+        ) : (
+          <DefaultReceptionScreen
+            visibleCause={activeFilter}
+          />
         )}
 
-        <FooterNavigation
-          navigation={navigation}
-          currentRoute="PatientTokenQueue"
-          handleRefresh={handleRefresh}
-          routes={[
-            {
-              id: 'new',
-              icon: UserPlus,
-              label: 'New',
-              screen: 'Reception',
-              params: route.params,
-            },
-            {id: 'home', icon: Home, label: 'Home', screen: 'Home'},
-            {
-              id: 'report',
-              icon: FileText,
-              label: 'Report',
-              screen: 'ReportsScreen',
-            },
-            {
-              id: 'refresh',
-              icon: RefreshCw,
-              label: 'Refresh',
-              action: 'refresh',
-            },
-          ]}
-        />
+        <View style={styles.footerContainer}>
+          <FooterNavigation
+            navigation={navigation}
+            currentRoute="PatientTokenQueue"
+            handleRefresh={handleRefresh}
+            routes={[
+              {
+                id: 'new',
+                icon: UserPlus,
+                label: 'New',
+                screen: 'Reception',
+                params: route.params,
+              },
+              {id: 'home', icon: Home, label: 'Home', screen: 'Home'},
+              {
+                id: 'report',
+                icon: FileText,
+                label: 'Report',
+                screen: 'ReportsScreen',
+              },
+              {
+                id: 'refresh',
+                icon: RefreshCw,
+                label: 'Refresh',
+                action: 'refresh',
+              },
+            ]}
+          />
+        </View>
       </SafeAreaView>
       {isMutating && (
         <View style={styles.overlay}>

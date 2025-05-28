@@ -20,9 +20,7 @@ export const styles = StyleSheet.create({
       borderRadius: 8,
       gap : '2%',
     },
-    // activeFooterButton: {
-    //   backgroundColor: '#007bff',
-    // },
+
     footerButtonText: {
       fontSize: 12,
       marginTop: 4,
