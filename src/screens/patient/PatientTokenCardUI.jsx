@@ -3,6 +3,8 @@ import React, {useState, useCallback, useEffect} from 'react';
 
 import {GetPatientImage} from '../../services/patientImagesCacheServices';
 
+import EnlargeableImage from '../../components/enlargeableImage/EnlargeableImage';
+
 import {formatTokenTime, maskPhoneNumber} from '../../utils/globalUtil';
 import {Dropdown} from 'react-native-element-dropdown';
 
@@ -108,7 +110,10 @@ export const TokenCard = React.memo(
           <View style={styles.tokenHeader}>
             <View style={styles.patientName}>
               {imageUrl ? (
-                <Image source={{uri: imageUrl}} style={styles.profileImage} />
+                <EnlargeableImage
+                  imageUrl={imageUrl}
+                  imageStyle={styles.profileImage}
+                />
               ) : null}
               <Text>{token.patient_name}</Text>
               <Text> {token.age && `(${token.age})`} </Text>

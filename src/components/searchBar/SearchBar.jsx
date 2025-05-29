@@ -11,6 +11,9 @@ import {
   Modal,
 } from 'react-native';
 import SearchBar from 'react-native-dynamic-search-bar';
+
+import EnlargeableImage from '../enlargeableImage/EnlargeableImage';
+
 import {useOrientation} from '../../hooks/useOrientation';
 import {createStyles} from './SearchBar.styles';
 import {PrefetchPatientImages} from '../../services/patientImagesCacheServices';
@@ -156,40 +159,11 @@ const CustomSearchBar = ({
                   <View style={styles.tile}>
                     {/* Image/Initials Container */}
                     <View style={styles.imagePortion}>
-                      {loadingImages ? (
-                        <View style={styles.spinnerContainer}>
-                          <ActivityIndicator size="small" color="#3498db" />
-                        </View>
-                      ) : (
-                        <TouchableOpacity
-                          onPress={() =>
-                            imageUrl && setEnlargedImageUrl(imageUrl)
-                          }>
-                          <Image
-                            source={
-                              imageUrl
-                                ? {uri: imageUrl}
-                                : require('../../../assets/patient.png')
-                            }
-                            style={styles.image}
-                          />
-                        </TouchableOpacity>
-                      )}
+                      <EnlargeableImage
+                        imageUrl={imageUrl}
+                        imageStyle={styles.image} 
+                      />
                     </View>
-                    {enlargedImageUrl && (
-                      <Modal transparent visible animationType="fade">
-                        <TouchableOpacity
-                          style={styles.enlargeShowImage}
-                          onPress={() => setEnlargedImageUrl(null)}
-                          activeOpacity={1}>
-                          <Image
-                            source={{uri: enlargedImageUrl}}
-                            style={styles.modalImage}
-                            resizeMode="contain"
-                          />
-                        </TouchableOpacity>
-                      </Modal>
-                    )}
 
                     <View style={styles.detailsPortion}>
                       <View style={styles.row}>

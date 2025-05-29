@@ -1,6 +1,9 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {View, Text, ScrollView, Image} from 'react-native';
 import {styles} from './TokenListingTVScreen.styles';
+
+import EnlargeableImage from '../../components/enlargeableImage/EnlargeableImage';
+
 import {TranslateNameToHindi} from '../../services/langTranslationService';
 import {PrefetchPatientImages} from '../../services/patientImagesCacheServices';
 
@@ -139,9 +142,9 @@ const TokenTable = ({tokens, doctorId}) => {
         style={[styles.tableRow, getRowStyle(item.status)]}>
         <View style={styles.tableCell}>
           <View style={styles.profileImageAndNameContainer}>
-            <Image
-              source={{uri: imageUrls[item.patient_id]}}
-              style={styles.profileImage}
+            <EnlargeableImage
+              imageUrl={imageUrls[item.patient_id]}
+              imageStyle={styles.profileImage}
             />
             <Text style={styles.patientName}>{item.patient_name}</Text>
           </View>
