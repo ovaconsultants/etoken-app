@@ -7,7 +7,7 @@ import {PrefetchPatientImages} from '../../services/patientImagesCacheServices';
 const SCROLL_DURATION = 3000;
 const PAUSE_DURATION = 2000;
 
-const TokenTable = ({tokens ,doctorId}) => {
+const TokenTable = ({tokens, doctorId}) => {
   const scrollViewRef = useRef(null);
   const [processedTokens, setProcessedTokens] = useState([]);
   const [contentHeight, setContentHeight] = useState(0);
@@ -18,14 +18,21 @@ const TokenTable = ({tokens ,doctorId}) => {
 
   // Process tokens data
   useEffect(() => {
-       const fetchPatientImages = async () => {
-       const patientIds = tokens.map(token => token.patient_id);
-       const patientImageUrls  =  await PrefetchPatientImages(doctorId , patientIds);
-       console.log(`Fetched patient images for doctor_id=${doctorId}: patient image urls in fetch patient images`, patientImageUrls);
-       await setImageUrls(patientImageUrls);
-       }
-       const processTokens = async () => {
-      const updatedTokens = await Promise.all( tokens.map(async token => {
+    const fetchPatientImages = async () => {
+      const patientIds = tokens.map(token => token.patient_id);
+      const patientImageUrls = await PrefetchPatientImages(
+        doctorId,
+        patientIds,
+      );
+      console.log(
+        `Fetched patient images for doctor_id=${doctorId}: patient image urls in fetch patient images`,
+        patientImageUrls,
+      );
+      await setImageUrls(patientImageUrls);
+    };
+    const processTokens = async () => {
+      const updatedTokens = await Promise.all(
+        tokens.map(async token => {
           if (!token.hindi_name && token.patient_name) {
             try {
               const hindiName = await TranslateNameToHindi(token.patient_name);
@@ -39,7 +46,7 @@ const TokenTable = ({tokens ,doctorId}) => {
       );
       setProcessedTokens(updatedTokens);
     };
-   fetchPatientImages();
+    fetchPatientImages();
     processTokens();
     isMounted.current = true;
     return () => {
@@ -121,30 +128,38 @@ const TokenTable = ({tokens ,doctorId}) => {
   };
 
   const renderItem = (item, index) => (
-    console.log(`Rendering item ${index + 1}: with resulting array with urls`, item , imageUrls),
-    <View
-      key={`${item.token_id}-${index}`}
-      style={[styles.tableRow, getRowStyle(item.status)]}>
-       <View style={styles.tableCell}>
-         <Image 
-          source={{uri:imageUrls[item.patient_id]}}
-          style={styles.profileImage}
-        />
-         <Text>{item.patient_name}</Text>
-      </View> 
-      <Text style={styles.tableCell}>
-        {item.mobile_number?.replace(/(\d{3})(\d{3})(\d{4})/, 'xxx-xxx-$3')}
-      </Text>
-      <Text style={styles.tableCell}>{item.fee_status || 'Not Paid'}</Text>
-      <Text style={styles.tableCell}>
-        {item.emegency === 'Y' ? 'Yes' : 'No'}
-      </Text>
-      <View style={[styles.tableCell, styles.statusCell]}>
-        {getStatusDot(item.status)}
-        <Text>{item.status}</Text>
+    console.log(
+      `Rendering item ${index + 1}: with resulting array with urls`,
+      item,
+      imageUrls,
+    ),
+    (
+      <View
+        key={`${item.token_id}-${index}`}
+        style={[styles.tableRow, getRowStyle(item.status)]}>
+        <View style={styles.tableCell}>
+          <View style={styles.profileImageAndNameContainer}>
+            <Image
+              source={{uri: imageUrls[item.patient_id]}}
+              style={styles.profileImage}
+            />
+            <Text style={styles.patientName}>{item.patient_name}</Text>
+          </View>
+        </View>
+        <Text style={styles.tableCell}>
+          {item.mobile_number?.replace(/(\d{3})(\d{3})(\d{4})/, 'xxx-xxx-$3')}
+        </Text>
+        <Text style={styles.tableCell}>{item.fee_status || 'Not Paid'}</Text>
+        <Text style={styles.tableCell}>
+          {item.emegency === 'Y' ? 'Yes' : 'No'}
+        </Text>
+        <View style={[styles.tableCell, styles.statusCell]}>
+          {getStatusDot(item.status)}
+          <Text>{item.status}</Text>
+        </View>
+        <Text style={styles.tableCell}>{item.token_no}</Text>
       </View>
-      <Text style={styles.tableCell}>{item.token_no}</Text>
-    </View>
+    )
   );
 
   return (

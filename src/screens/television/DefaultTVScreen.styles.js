@@ -20,7 +20,6 @@ export const creatStyles = (isLandscape, dimension) => {
       width: '100%',
       height: '100%',
       borderRadius: 20,
-      resizeMode: 'cover',
     },
 
     infoContainer: {

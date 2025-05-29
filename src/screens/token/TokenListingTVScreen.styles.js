@@ -141,6 +141,16 @@ export const styles = StyleSheet.create({
     textAlign: 'flex-start',
   },
 
+  profileImageAndNameContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  patientName : {
+    flex: 1,
+    flexWrap: 'wrap',
+    flexDirection : 'column',
+  },
   profileImage: {
     width: 40,
     height: 40,
