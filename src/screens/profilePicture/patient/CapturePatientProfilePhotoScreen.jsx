@@ -3,7 +3,6 @@ import {
   View,
   TouchableOpacity,
   Image,
-  Platform,
   StyleSheet,
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -15,16 +14,6 @@ const CapturePatientProfilePhotoScreen = ({ onImageSelected }) => {
 
   const openCameraAndCrop = async () => {
     try {
-      if (
-        Platform.OS === 'ios' &&
-        !Platform.isPad &&
-        !Platform.isTVOS &&
-        Platform.isTesting
-      ) {
-        showToast('Camera not available in simulator', { type: 'error' });
-        return;
-      }
-
       const image = await ImagePicker.openCamera({
         cropping: true,
         cropperCircleOverlay: true,
@@ -42,11 +31,9 @@ const CapturePatientProfilePhotoScreen = ({ onImageSelected }) => {
       setSelectedImage(imageData);
       onImageSelected(imageData);
     } catch (error) {
+      console.error('Error capturing image:', error);
       if (error.code !== 'E_PICKER_CANCELLED') {
-        showToast(
-          error.message === 'Cannot run camera on simulator'
-            ? 'Camera not available in simulator'
-            : 'Error capturing image',
+        showToast(error.message === 'Cannot run camera on simulator' ? 'Camera not available in simulator' : 'Error capturing image',
           { type: 'error' }
         );
       }
