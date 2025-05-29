@@ -124,7 +124,7 @@ const TokenListingTVScreen = ({route, navigation}) => {
   }
 
   // Empty state
-  if (!Array.isArray(tokens) || tokens.length === 0) {
+  if (!Array.isArray(filteredTokens) || filteredTokens.length === 0) {
     return <DefaultTVScreen doctorInfo={doctorData} clinicInfo={clinicData} />;
   }
 

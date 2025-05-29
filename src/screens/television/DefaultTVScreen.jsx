@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, ScrollView} from 'react-native';
+
+import {GetDoctorProfileImageRequest} from '../../services/profileImageService';
 import FastImage from 'react-native-fast-image';
 
-import { styles } from './DefaultTVScreen.styles';
-import { GetDoctorProfileImageRequest } from '../../services/profileImageService';
+import {useOrientation} from '../../hooks/useOrientation';
 
-
+import {creatStyles} from './DefaultTVScreen.styles';
 // Helper to render bullet points conditionally
-const BulletPoint = ({ children }) => (
+const BulletPoint = ({children, styles}) => (
   <View style={styles.bulletPoint}>
     <View style={styles.bulletDot} />
     <Text style={styles.bulletText}>{children}</Text>
@@ -15,7 +16,7 @@ const BulletPoint = ({ children }) => (
 );
 
 // Section wrapper with title
-const InfoSection = ({ title, children }) => (
+const InfoSection = ({title, children, styles}) => (
   <View style={styles.section}>
     <Text style={styles.sectionTitle}>{title}</Text>
     {children}
@@ -23,22 +24,26 @@ const InfoSection = ({ title, children }) => (
 );
 
 // Contact item row
-const ContactItem = ({ icon, text }) => (
+const ContactItem = ({icon, text, styles}) => (
   <View style={styles.contactItem}>
     <Text style={styles.contactIcon}>{icon}</Text>
     <Text style={styles.contactText}>{text || 'Not available'}</Text>
   </View>
 );
 
-export const DefaultTVScreen = ({ doctorInfo = {}, clinicInfo = {} }) => {
+export const DefaultTVScreen = ({doctorInfo = {}, clinicInfo = {}}) => {
+  const { isLandscape, dimensions} = useOrientation();
+  const styles = creatStyles(isLandscape, dimensions);
+
   const [profileImageUri, setProfileImageUri] = useState('');
-  console.log('doctorInfo', doctorInfo);
-  // Fetch profile image
+
   useEffect(() => {
     const fetchProfileImage = async () => {
       try {
         const uri = await GetDoctorProfileImageRequest(doctorInfo?.doctor_id);
-        if (uri) {setProfileImageUri(uri);}
+        if (uri) {
+          setProfileImageUri(uri);
+        }
       } catch (error) {
         console.warn('Failed to load profile image:', error);
       }
@@ -50,12 +55,19 @@ export const DefaultTVScreen = ({ doctorInfo = {}, clinicInfo = {} }) => {
   }, [doctorInfo?.doctor_id]);
 
   // Construct full address
-  const fullAddress = [clinicInfo.address, clinicInfo.city, clinicInfo.state, clinicInfo.zip_code]
+  const fullAddress = [
+    clinicInfo.address,
+    clinicInfo.city,
+    clinicInfo.state,
+    clinicInfo.zip_code,
+  ]
     .filter(Boolean)
     .join(', ');
 
   return (
-    <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      showsVerticalScrollIndicator={false}>
       {/* Profile Image */}
       <View style={styles.profileImageWrapper}>
         <FastImage
@@ -70,22 +82,38 @@ export const DefaultTVScreen = ({ doctorInfo = {}, clinicInfo = {} }) => {
 
       {/* Doctor Info */}
       <View style={styles.infoContainer}>
-        <Text style={styles.doctorName}>Dr. {doctorInfo?.first_name + ' ' + doctorInfo?.last_name || 'Name Unavailable'}</Text>
-        <Text style={styles.doctorTitle}>{doctorInfo?.qualification || ''}</Text>
+        <Text style={styles.doctorName}>
+          Dr.{' '}
+          {doctorInfo?.first_name + ' ' + doctorInfo?.last_name ||
+            'Name Unavailable'}
+        </Text>
+        <Text style={styles.doctorTitle}>
+          {doctorInfo?.qualification || ''}
+        </Text>
 
         {/* Experience Section */}
         {(doctorInfo?.experience_years || doctorInfo?.specialization) && (
-          <InfoSection title="EXPERIENCE">
-            {doctorInfo.experience_years && <BulletPoint>{doctorInfo.experience_years} years experience</BulletPoint>}
-            {doctorInfo.specialization && <BulletPoint>{doctorInfo.specialization}</BulletPoint>}
+          <InfoSection title="EXPERIENCE" styles={styles}>
+            {doctorInfo.experience_years && (
+              <BulletPoint styles={styles}>
+                {doctorInfo.experience_years} years experience
+              </BulletPoint>
+            )}
+            {doctorInfo.specialization && (
+              <BulletPoint styles={styles}>{doctorInfo.specialization}</BulletPoint>
+            )}
           </InfoSection>
         )}
 
         {/* Contact Section */}
-        <InfoSection title="CONTACT">
-          <ContactItem icon="📞" text={doctorInfo.phone_number} />
-          <ContactItem icon="✉️" text={doctorInfo.email} />
-          <ContactItem icon="📍" text={fullAddress} />
+        <InfoSection title="CONTACT" styles={styles}>
+          <ContactItem
+            icon="📞"
+            text={doctorInfo.phone_number}
+            styles={styles}
+          />
+          <ContactItem icon="✉️" text={doctorInfo.email} styles={styles} />
+          <ContactItem icon="📍" text={fullAddress} styles={styles} />
         </InfoSection>
       </View>
     </ScrollView>
