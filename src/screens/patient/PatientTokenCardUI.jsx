@@ -133,14 +133,10 @@ export const TokenCard = React.memo(
             </Text>
 
             {/* Payment Switch */}
-            <View style={styles.paymentSwitchContainer}>
-              <Switch
-                value={paidStatus}
-                onValueChange={handlePaymentToggle}
-                trackColor={{false: 'grey', true: 'grey'}}
-                thumbColor={paidStatus ? '#27AE60' : '#d63031'}
-                style={styles.smallSwitch}
-              />
+            <TouchableOpacity
+              style={styles.paymentSwitchContainer}
+              onPress={handlePaymentToggle}>
+                <Text  style={styles.paymentText}>fee : </Text>
               <Text
                 style={
                   styles.paymentStatus && paidStatus
@@ -149,7 +145,7 @@ export const TokenCard = React.memo(
                 }>
                 {paidStatus ? 'Paid' : 'UnPaid'}
               </Text>
-            </View>
+            </TouchableOpacity>
 
             {/* Status Dropdown */}
             <View style={styles.statusDropdownContainer}>
