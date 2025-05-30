@@ -99,7 +99,7 @@ export const ReceptionScreen = ({route}) => {
   useEffect(() => {
     setProfileImage(null);
   }, [doctor_id, clinic_id]);
-  const handleSubmit = async (values, {resetForm}) => {
+  const handleSubmit = async (values) => {
     try {
       const patientIdToUse =
         values?.patient_id ||
@@ -120,7 +120,19 @@ export const ReceptionScreen = ({route}) => {
       }
 
       setSearchDropdownVisible(false);
-      resetForm();
+           if (profileImage) {
+        try {
+          await UploadPatientProfileImageRequest(
+            profileImage,
+            doctor_id,
+            patientIdToUse,
+          );
+          await GetPatientProfileImageRequest(doctor_id, patientIdToUse);
+        } catch (uploadError) {
+          console.warn('Profile image upload failed:', uploadError);
+        }
+      }
+      handleClear();
       queryClient.invalidateQueries(['fetchingPatients']);
       showToast('Token generated successfully', 'success');
       const token_no = await GenerateTokenRequest({
@@ -129,25 +141,6 @@ export const ReceptionScreen = ({route}) => {
         clinic_id,
         created_by: 'receptionist',
       });
-
-      if (profileImage) {
-        try {
-          const response = await UploadPatientProfileImageRequest(
-            profileImage,
-            doctor_id,
-            patientIdToUse,
-          );
-          const fetchImage = await GetPatientProfileImageRequest(
-            doctor_id,
-            patientIdToUse,
-          );
-          console.log('Fetched profile image URL:', fetchImage);
-          console.log('Profile image uploaded successfully:', response);
-        } catch (uploadError) {
-          console.warn('Profile image upload failed:', uploadError);
-        }
-      }
-
       navigation.navigate('TokenSuccess', {
         tokenNumber: token_no,
         patientName: values.patient_name,
@@ -163,6 +156,8 @@ export const ReceptionScreen = ({route}) => {
     formFields.forEach(field => {
       formikRef.current?.setFieldTouched(field.name, false);
     });
+    console.log('value of profile image before clearing:', profileImage);
+    setProfileImage(null);
   };
   const handleRefresh = async () => {
     setIsLoadingPatients(true);
