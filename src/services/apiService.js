@@ -155,7 +155,7 @@ export const postData = async (endpoint, data = {}, headers = {}) => {
 export const putData = async (endpoint, data = {}, headers = {}) => {
   try {
     const response = await httpClient.put(endpoint, data, {
-      headers, // Custom headers
+      headers,
     });
     return response.data;
   } catch (error) {
@@ -182,8 +182,8 @@ export const putData = async (endpoint, data = {}, headers = {}) => {
 export const deleteData = async (endpoint, params = {}, headers = {}) => {
   try {
     const response = await httpClient.delete(endpoint, {
-      params, // Query parameters
-      headers, // Custom headers
+      params,
+      headers,
     });
     return response.data;
   } catch (error) {

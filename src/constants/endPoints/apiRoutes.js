@@ -1,3 +1,4 @@
+import { Delete } from "lucide-react-native";
 
 // Organizing API Endpoints
 export const API_ENDPOINTS = {
@@ -16,6 +17,7 @@ export const API_ENDPOINTS = {
     FETCH_ALL_CLINICS_OF_A_DOCTOR:'/doctor/fetchClinicsByDoctorId',
     UPLOAD_IMAGE:'/doctor/uploadImage',
     GET_IMAGE:'/doctor/fetchImage',
+    DELETE_ACCOUNT : '/doctor/doctorAccountToggle',
 },
   ACCOUNT: {
     GET_REGISTER_ACCOUNTS: '/registration/accounts',

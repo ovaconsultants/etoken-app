@@ -2,11 +2,13 @@
 import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import {User, Calendar, PlusCircle, LogOut} from 'lucide-react-native';
+import {User, Calendar, PlusCircle, LogOut, Trash2} from 'lucide-react-native';
 import {doctorIdAtom, doctorInfoAtom} from '../../atoms/doctorAtoms/doctorAtom';
 import {useAtomValue} from 'jotai';
 import AppVersion from '../appVersionNumber/AppVersionNumber';
 import {handleSignOut} from '../../utils/resetAppStateOnLogout';
+import { handleDeleteAccount } from '../../utils/resetAppStateOnLogout';
+
 const CustomDrawerContent = () => {
   const navigation = useNavigation();
   const doctor_id = useAtomValue(doctorIdAtom);
@@ -44,6 +46,11 @@ const CustomDrawerContent = () => {
             doctor_id: doctor_id,
           },
         }),
+    },
+    {
+      label: 'Delete Account',
+      icon: <Trash2 size={20} color="#4A5568" />,
+      onPress: () => handleDeleteAccount(doctor_id),
     },
   ];
 
