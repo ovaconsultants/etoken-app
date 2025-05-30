@@ -25,7 +25,7 @@ const HomeScreen = ({navigation}) => {
   const refreshKey = useAtomValue(homeRefreshKeyAtom);
   const doctorId = useAtomValue(doctorIdAtom);
 
-  const [selectedScreen, setSelectedScreen] = useState(null);
+  const [selectedScreen, setSelectedScreen] = useState(0);
   const [selectedClinicId, setSelectedClinicId] = useState(null);
   const [clinicData, setClinicData] = useState([]);
   const [refreshing, setRefreshing] = useState(true);
@@ -47,12 +47,11 @@ const HomeScreen = ({navigation}) => {
       if (doctorId) {
         fetchClinics();
       }
-      setSelectedScreen(null);
       navigation.setOptions({
         headerBackTitle: '',
         headerLeft: () => null,
       });
-
+      setSelectedScreen('2');
       return () => {
         setSelectedClinicId(null);
         setSelectedScreen(null);
