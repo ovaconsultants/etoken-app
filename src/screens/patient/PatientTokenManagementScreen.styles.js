@@ -129,19 +129,18 @@ export const createStyles = isLandscape =>
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      fontSize: 18,
-      fontWeight: 'bold',
+
     },
     tokenNumberText: {
+
       marginLeft: 12,
-      fontSize: 18,
-      fontWeight: 'bold',
+      fontWeight: '1000',
       paddingRight: 10,
       paddingLeft: 10,
-      borderRadius: 12,
-      borderWidth: 2,
+      borderRadius: 5,
+      borderWidth: 0.2,
       borderColor: 'green',
-      backgroundColor: 'rgb(231, 255, 236)',
+      backgroundColor: 'rgb(253, 255, 254)',
     },
     tokenDetails: {
       flexDirection: 'row',
@@ -178,11 +177,11 @@ export const createStyles = isLandscape =>
     statusDropdownContainer: {width: 130, alignItems: 'flex-start'},
     dropdown: {
       width: '100%',
-      height: 50,
+      maxHeight : 50 ,
       justifyContent: 'center',
     },
     dropdownContainer: {
-       maxHeight: 190  , borderRadius: 10 , justifyContent: 'center' , alignItems: 'center'
+       maxHeight: 150  , borderRadius: 10 , justifyContent: 'center' , alignItems: 'center'
     },
     itemContainer: {
       height: 45  , borderRadius: 10 , justifyContent: 'center' 

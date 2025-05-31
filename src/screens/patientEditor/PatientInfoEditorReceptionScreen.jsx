@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect , useState} from 'react';
 import {
   View,
   Text,
@@ -15,11 +15,13 @@ import {UpdatePatientRequest} from '../../services/patientService';
 import {UpdateTokenRequest} from '../../services/tokenService';
 import {SaveAll, CircleX} from 'lucide-react-native';
 
+import ConfirmationModal from '../../components/confirmationModal/ConfirmationModal';
+
 // Validation schema
 const validationSchema = yup.object().shape({
   patient: yup.object().shape({
     fname: yup.string().required('First name is required'),
-    lname: yup.string().required('Last name is required'),
+    lname: yup.string(),
     age: yup.number().typeError('Must be a number').min(0, 'Cannot be negative'),
     mobile_number: yup
       .string()
@@ -39,7 +41,14 @@ const validationSchema = yup.object().shape({
 });
 
 export const PatientInfoEditorScreen = ({route, navigation}) => {
-  const {patientInfo} = route.params;
+const {patientInfo} = route.params;
+  const [showModal, setShowModal] = useState(false);
+  const [modalConfig, setModalConfig] = useState({
+    onConfirm: () => {},
+    messageParts: [],
+    title: '',
+    actionType: 'neutral',
+  });
 console.log('patientInfo in PatientInfoEditorScreen:' , patientInfo);
   useEffect(() => {
     navigation.setOptions({
@@ -213,18 +222,27 @@ console.log('patientInfo in PatientInfoEditorScreen:' , patientInfo);
           </View>
 
           {/* Medical Information Section */}
-          <View style={styles.section}>
+      <View style={styles.section}>
             <View style={styles.inputContainer}>
               <Text style={styles.label}>On Hold Status:</Text>
-              <View
-                style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
+              <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
                 <Switch
                   value={values.token.status === 'On Hold'}
                   onValueChange={isOnHold => {
-                    setFieldValue(
-                      'token.status',
-                      isOnHold ? 'On Hold' : 'Waiting',
-                    );
+                    const newStatus = isOnHold ? 'On Hold' : 'Waiting';
+                    setModalConfig({
+                      title: 'Change Status',
+                      messageParts: [
+                        {text: 'Are you sure you want to change status to '},
+                        {text: newStatus, highlight: true},
+                        {text: '?'},
+                      ],
+                      actionType: 'positive',
+                      onConfirm: () => {
+                        setFieldValue('token.status', newStatus);
+                      },
+                    });
+                    setShowModal(true);
                   }}
                   trackColor={{false: '#767577', true: '#81b0ff'}}
                   thumbColor={
@@ -232,23 +250,38 @@ console.log('patientInfo in PatientInfoEditorScreen:' , patientInfo);
                   }
                 />
                 <Text style={{fontWeight: 'bold'}}>
-                  {values.token.status === 'On Hold'
-                    ? 'ON HOLD'
-                    : 'ACTIVE (Waiting)'}
+                  {values.token.status === 'On Hold' ? 'Yes' : 'No'}
                 </Text>
               </View>
             </View>
 
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Emergency:</Text>
-
-              <Switch
-                value={values.token.emergency}
-                onValueChange={value => setFieldValue('token.emergency', value)}
-                trackColor={{false: '#767577', true: '#81b0ff'}}
-                thumbColor={values.token.emergency ? '#007BFF' : '#f4f3f4'}
-              />
-              <Text style={{}}>{values.token.emergency ? 'Yes' : 'No'}</Text>
+              <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
+                <Switch
+                  value={values.token.emergency}
+                  onValueChange={value => {
+                    setModalConfig({
+                      title: 'Change Emergency Status',
+                      messageParts: [
+                        {text: 'Are you sure you want to set emergency to '},
+                        {text: value ? 'Yes' : 'No', highlight: true},
+                        {text: '?'},
+                      ],
+                      actionType: value ? 'negative' : 'neutral',
+                      onConfirm: () => {
+                        setFieldValue('token.emergency', value);
+                      },
+                    });
+                    setShowModal(true);
+                  }}
+                  trackColor={{false: '#767577', true: '#81b0ff'}}
+                  thumbColor={values.token.emergency ? '#007BFF' : '#f4f3f4'}
+                />
+                <Text style={{fontWeight: 'bold'}}>
+                  {values.token.emergency ? 'Yes' : 'No'}
+                </Text>
+              </View>
             </View>
           </View>
 
@@ -259,34 +292,20 @@ console.log('patientInfo in PatientInfoEditorScreen:' , patientInfo);
               <Switch
                 value={values.token.fee_status === 'Paid'}
                 onValueChange={value => {
-                  Alert.alert(
-                    'Change Payment Status',
-                    `Are you sure you want to change payment status to ${
-                      value ? 'Paid' : 'Not Paid'
-                    }?`,
-                    [
-                      {
-                        text: 'Cancel',
-                        style: 'cancel',
-                        onPress: () => {
-                          // Revert the switch visually if cancelled
-                          setFieldValue(
-                            'token.fee_status',
-                            values.token.fee_status,
-                          );
-                        },
-                      },
-                      {
-                        text: 'Confirm',
-                        onPress: () => {
-                          setFieldValue(
-                            'token.fee_status',
-                            value ? 'Paid' : 'Not Paid',
-                          );
-                        },
-                      },
+                  const newStatus = value ? 'Paid' : 'Not Paid';
+                  setModalConfig({
+                    title: 'Change Payment Status',
+                    messageParts: [
+                      {text: 'Are you sure you want to change payment status to '},
+                      {text: newStatus, highlight: true},
+                      {text: '?'},
                     ],
-                  );
+                    actionType: 'positive',
+                    onConfirm: () => {
+                      setFieldValue('token.fee_status', newStatus);
+                    },
+                  });
+                  setShowModal(true);
                 }}
                 trackColor={{false: '#767577', true: '#81b0ff'}}
                 thumbColor={
@@ -296,9 +315,6 @@ console.log('patientInfo in PatientInfoEditorScreen:' , patientInfo);
               <Text style={styles.toggleText}>
                 {values.token.fee_status === 'Paid' ? 'Paid' : 'Not Paid'}
               </Text>
-              {touched.token?.fee_status && errors.token?.fee_status && (
-                <Text style={styles.errorText}>{errors.token.fee_status}</Text>
-              )}
             </View>
           </View>
 
@@ -322,6 +338,19 @@ console.log('patientInfo in PatientInfoEditorScreen:' , patientInfo);
               <Text style={styles.buttonText}>Cancel</Text>
             </TouchableOpacity>
           </View>
+
+          <ConfirmationModal
+            visible={showModal}
+            title={modalConfig.title}
+            messageParts={modalConfig.messageParts}
+            actionType={modalConfig.actionType}
+            confirmText="CONFIRM"
+            onConfirm={() => {
+              modalConfig.onConfirm();
+              setShowModal(false);
+            }}
+            onCancel={() => setShowModal(false)}
+          />
         </ScrollView>
       )}
     </Formik>

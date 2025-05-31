@@ -8,49 +8,67 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useTheme } from 'react-native-paper';
-import { Check } from 'lucide-react-native';
 
-export const ConfirmationModal = ({
+const ConfirmationModal = ({
   visible,
   title = 'Confirm Action',
-  message,
-  statusText,
+  messageParts = [], // Array of message parts with formatting info
+  actionType = 'neutral', // 'positive', 'negative', or 'neutral'
   confirmText = 'CONFIRM',
   cancelText = 'CANCEL',
   onConfirm,
   onCancel,
-  confirmButtonColor = '#4CAF50',
-  cancelButtonColor = '#9E9E9E',
   isLoading = false,
-  showStatus = false,
-  paymentStatus,
 }) => {
   const theme = useTheme();
-  const styles = createStyles(theme);
+  const styles = createStyles(theme, actionType);
 
-  // Determine button configuration based on payment status
-  const getButtonConfig = () => {
-    if (paymentStatus === 'Not Paid') {
-      return {
-        confirmText: 'YES',
-        cancelText: 'CANCEL',
-        confirmColor: '#4CAF50',
-      };
-    } else if (paymentStatus === 'paid') {
-      return {
-        confirmText: 'YES',
-        cancelText: 'NO',
-        confirmColor: '#FF5252' ,
-      };
+  // Determine colors based on action type
+  const getColors = () => {
+    switch (actionType) {
+      case 'positive':
+        return {
+          confirmColor: '#4CAF50', // Green
+          highlightColor: '#2E7D32', // Dark green
+          titleColor: '#2E7D32',
+        };
+      case 'negative':
+        return {
+          confirmColor: '#D32F2F', // Red
+          highlightColor: '#D32F2F',
+          titleColor: '#D32F2F',
+        };
+      default: // neutral
+        return {
+          confirmColor: '#2196F3', // Blue
+          highlightColor: '#0D47A1', // Dark blue
+          titleColor: theme.colors.text,
+        };
     }
-    return {
-      confirmText,
-      cancelText,
-      confirmColor: confirmButtonColor,
-    };
   };
 
-  const buttonConfig = getButtonConfig();
+  const colors = getColors();
+
+  const renderMessage = () => {
+    return (
+      <Text style={styles.messageText}>
+        {messageParts.map((part, index) => {
+          if (part.highlight) {
+            return (
+              <Text key={index} style={[styles.highlightText, { color: colors.highlightColor }]}>
+                {part.text}
+              </Text>
+            );
+          }
+          return (
+            <Text key={index} style={styles.normalText}>
+              {part.text}
+            </Text>
+          );
+        })}
+      </Text>
+    );
+  };
 
   return (
     <Modal
@@ -60,30 +78,17 @@ export const ConfirmationModal = ({
       onRequestClose={onCancel}>
       <View style={styles.modalOverlay}>
         <View style={styles.modalContainer}>
-          {paymentStatus === 'Not Paid' && (
-            <View style={styles.statusIcon}>
-              <Check size={60} color="#4CAF50" />
-            </View>
-          )}
+          <Text style={[styles.modalTitle, { color: colors.titleColor }]}>
+            {title}
+          </Text>
 
-          <Text style={styles.modalTitle}>{title}</Text>
-
-          {message && <Text style={styles.messageText}>{message}</Text>}
-
-          {showStatus && statusText && (
-            <Text style={[
-              styles.statusText,
-              paymentStatus === 'paid' && styles.paidStatusText
-            ]}>
-              Current Status: {statusText}
-            </Text>
-          )}
+          {messageParts.length > 0 && renderMessage()}
 
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={[
                 styles.button,
-                { backgroundColor: buttonConfig.confirmColor },
+                { backgroundColor: colors.confirmColor },
                 isLoading && styles.disabledButton,
               ]}
               onPress={onConfirm}
@@ -91,19 +96,19 @@ export const ConfirmationModal = ({
               {isLoading ? (
                 <ActivityIndicator color="white" />
               ) : (
-                <Text style={styles.buttonText}>{buttonConfig.confirmText}</Text>
+                <Text style={styles.buttonText}>{confirmText}</Text>
               )}
             </TouchableOpacity>
 
             <TouchableOpacity
               style={[
                 styles.button,
-                { backgroundColor: cancelButtonColor },
+                { backgroundColor: '#9E9E9E' },
                 isLoading && styles.disabledButton,
               ]}
               onPress={onCancel}
               disabled={isLoading}>
-              <Text style={styles.buttonText}>{buttonConfig.cancelText}</Text>
+              <Text style={styles.buttonText}>{cancelText}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -112,63 +117,57 @@ export const ConfirmationModal = ({
   );
 };
 
-const createStyles = theme =>
+const createStyles = (theme, actionType) =>
   StyleSheet.create({
     modalOverlay: {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      backgroundColor: 'rgba(0, 0, 0, 0.7)',
     },
     modalContainer: {
-      width: '80%',
+      width: '85%',
       backgroundColor: theme.colors.background,
-      borderRadius: 12,
+      borderRadius: 16,
       padding: 24,
       alignItems: 'center',
       shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.25,
-      shadowRadius: 4,
-      elevation: 5,
-    },
-    statusIcon: {
-      marginBottom: 16,
-      alignItems: 'center',
-      justifyContent: 'center',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.3,
+      shadowRadius: 8,
+      elevation: 10,
     },
     modalTitle: {
-      fontSize: 20,
+      fontSize: 22,
       fontWeight: 'bold',
-      marginBottom: 8,
-      color: theme.colors.text,
+      marginBottom: 16,
       textAlign: 'center',
     },
     messageText: {
-      fontSize: 16,
-      marginBottom: 16,
-      color: theme.colors.text,
-      textAlign: 'center',
-    },
-    statusText: {
-      fontSize: 16,
+      fontSize: 18,
       marginBottom: 24,
-      color: theme.colors.secondaryText,
+      lineHeight: 26,
       textAlign: 'center',
     },
-    paidStatusText: {
-      color: '#4CAF50',
+    normalText: {
+      color: theme.colors.text,
+    },
+    highlightText: {
       fontWeight: 'bold',
     },
     buttonContainer: {
       width: '100%',
-      gap: 12,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginTop: 8,
     },
     button: {
-      padding: 15,
+      flex: 1,
+      padding: 14,
       borderRadius: 8,
       alignItems: 'center',
       justifyContent: 'center',
+      marginHorizontal: 6,
     },
     disabledButton: {
       opacity: 0.6,

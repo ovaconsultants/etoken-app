@@ -58,8 +58,6 @@ const PatientTokenManagementScreen = ({navigation, route}) => {
         return patientTokens.filter(t => t.status === 'Completed');
       case 'inQueue':
         return patientTokens.filter(t => t.status === 'Waiting');
-      case 'onHold':
-        return patientTokens.filter(t => t.status === 'On Hold');
       case 'all':
         return patientTokens.filter(t =>
           ['Waiting', 'In Progress', 'On Hold'].includes(t.status),
@@ -114,13 +112,6 @@ const PatientTokenManagementScreen = ({navigation, route}) => {
             <View style={[styles.badge, styles.yellowBadge]}>
               <TouchableOpacity onPress={() => handleBadgePress('inQueue')}>
                 <Text style={styles.badgeText}>In Queue: {inQueue}</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.dropdownContainer}>
-              <TouchableOpacity style={[styles.badge, styles.redBadge]}>
-                <TouchableOpacity onPress={() => handleBadgePress('onHold')}>
-                  <Text style={styles.badgeText}>On Hold: {onHold}</Text>
-                </TouchableOpacity>
               </TouchableOpacity>
             </View>
           </View>

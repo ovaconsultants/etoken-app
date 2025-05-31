@@ -1,4 +1,4 @@
-import {Switch, View, TouchableOpacity, Text, Image} from 'react-native';
+import { View, TouchableOpacity, Text} from 'react-native';
 import React, {useState, useCallback, useEffect} from 'react';
 
 import {GetPatientImage} from '../../services/patientImagesCacheServices';
@@ -13,7 +13,7 @@ const statusOptions = [
   {label: 'In Progress', value: 'In Progress'},
   {label: 'Completed', value: 'Completed'},
   {label: 'Cancelled', value: 'Cancelled'},
-  {label: 'On Hold', value: 'On Hold'},
+
 ];
 
 export const TokenCard = React.memo(
@@ -28,15 +28,10 @@ export const TokenCard = React.memo(
     doctorId,
   }) => {
     const [hindiName, setHindiName] = useState('');
-    const [paidStatus, setPaidStatus] = useState(token.fee_status === 'Paid');
     const [status, _] = useState();
     const [imageUrl, setImageUrl] = useState(null);
-    const memoizedTranslate = useCallback(
-      name => {
-        return translateNameToHindi(name) || null;
-      },
-      [translateNameToHindi],
-    );
+    const memoizedTranslate = useCallback(name => {return translateNameToHindi(name) || null; },[translateNameToHindi]);
+    console.log('fee status : ' , token.fee_status);
 
     useEffect(() => {
       const fetchPatientImage = async () => {
@@ -46,7 +41,6 @@ export const TokenCard = React.memo(
             token.patient_id,
           );
           if (patientImageUrl) {
-            console.log('fetched patiet ursl for particular management token card screen ', patientImageUrl);
             setImageUrl(patientImageUrl);
           } else {
             setImageUrl(null);
@@ -75,30 +69,12 @@ export const TokenCard = React.memo(
       await updateToken(updateTokenDataObj);
     };
 
-    const handlePaymentToggle = async () => {
-      const newStatus = !paidStatus;
-      setPaidStatus(newStatus);
-
-      try {
-        const updateTokenDataObj = {
-          ...token,
-          fee_status: newStatus ? 'Paid' : 'Not Paid',
-        };
-        await updateToken(updateTokenDataObj);
-      } catch (error) {
-        // If API call fails, revert the state
-        setPaidStatus(!newStatus);
-        console.error('Failed to update payment status:', error);
-      }
-    };
-
     return (
       <>
         <TouchableOpacity
           style={[
             styles.tokenCard,
             token.status === 'In Progress' && styles.inProgressCard,
-            token.status === 'On Hold' && styles.onHoldCard,
             token.status === 'Waiting' && styles.waitingCard,
             token.status === 'Completed' && styles.completedCard,
             token.status === 'Cancelled' && styles.cancelledCard,
@@ -133,19 +109,19 @@ export const TokenCard = React.memo(
             </Text>
 
             {/* Payment Switch */}
-            <TouchableOpacity
+            <View
               style={styles.paymentSwitchContainer}
-              onPress={handlePaymentToggle}>
-                <Text  style={styles.paymentText}>fee : </Text>
+           >
+                <Text  style={styles.paymentText}>Fee : </Text>
               <Text
                 style={
-                  styles.paymentStatus && paidStatus
+                  styles.paymentStatus && token.fee_status === 'Paid'
                     ? styles.paidStatusTextColor
                     : styles.notPaidStatusTextColor
                 }>
-                {paidStatus ? 'Paid' : 'UnPaid'}
+                {token.fee_status === 'Paid' ? 'Paid' : 'UnPaid'}
               </Text>
-            </TouchableOpacity>
+            </View>
 
             {/* Status Dropdown */}
             <View style={styles.statusDropdownContainer}>
