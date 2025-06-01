@@ -1,7 +1,7 @@
 // InProgressTokenNotificationScreen.js
 import React, {useEffect} from 'react';
 import {View, Text} from 'react-native';
-import { useTheme} from 'react-native-paper';
+import {useTheme} from 'react-native-paper';
 import {styles} from './InProgressTokenNotificationScreen.styles';
 import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
 import useSpeechNotification from '../../hooks/useSpeechNotification';
@@ -16,7 +16,7 @@ const InProgressTokenNotificationScreen = ({
 
   // Use the custom hook for speech functionality
   const {speakMessages, translatedData} =
-  useSpeechNotification(inProgressPatient);
+    useSpeechNotification(inProgressPatient);
 
   // Trigger speech when inProgressPatient changes
   useEffect(() => {
@@ -24,7 +24,7 @@ const InProgressTokenNotificationScreen = ({
       speakMessages();
     }
     return () => {};
-  });
+  }, [inProgressPatient.status, speakMessages]);
 
   if (!inProgressPatient) {
     return (
@@ -38,30 +38,31 @@ const InProgressTokenNotificationScreen = ({
 
   return (
     <View style={styles.container}>
-    <LoadingErrorHandler
-      isLoading={isLoading}
-      isError={isError}
-      error={error}
-      isLandscape={true}
-    />
+      <LoadingErrorHandler
+        isLoading={isLoading}
+        isError={isError}
+        error={error}
+        isLandscape={true}
+      />
 
-    {/* Notification Card */}
-    <View style={styles.cardWrapper}>
-  <View style={styles.badgeCircle}>
-    <Text style={styles.tokenNumber}>{inProgressPatient.token_no}</Text>
-  </View>
+      {/* Notification Card */}
+      <View style={styles.cardWrapper}>
+        <View style={styles.badgeCircle}>
+          <Text style={styles.tokenNumber}>{inProgressPatient.token_no}</Text>
+        </View>
 
-  <View style={styles.nameCard}>
-    <Text style={styles.patientName}>{inProgressPatient.patient_name}</Text>
-    {translatedData?.translatedPatientName && (
-      <Text style={styles.patientName}>
-        {translatedData.translatedPatientName}
-      </Text>
-    )}
-  </View>
-</View>
-
-  </View>
+        <View style={styles.nameCard}>
+          <Text style={styles.patientName}>
+            {inProgressPatient.patient_name}
+          </Text>
+          {translatedData?.translatedPatientName && (
+            <Text style={styles.patientName}>
+              {translatedData.translatedPatientName}
+            </Text>
+          )}
+        </View>
+      </View>
+    </View>
   );
 };
 
