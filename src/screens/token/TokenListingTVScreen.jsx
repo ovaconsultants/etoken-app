@@ -1,12 +1,12 @@
-import React, {useCallback, useEffect, useLayoutEffect, useState, useMemo} from 'react';
-import {View, Text, ActivityIndicator, TouchableOpacity} from 'react-native';
+import React, { useCallback, useEffect, useLayoutEffect, useState, useMemo } from 'react';
+import { View, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
 import Orientation from 'react-native-orientation-locker';
-import {RotateCcw} from 'lucide-react-native';
+import { RotateCcw } from 'lucide-react-native';
 
-import {styles} from './TokenListingTVScreen.styles';
-import {usePatientTokens} from '../../hooks/usePatientTokens';
+import { styles } from './TokenListingTVScreen.styles';
+import { usePatientTokens } from '../../hooks/usePatientTokens';
 import withQueryClientProvider from '../../hooks/useQueryClientProvider';
-import {FetchDoctorWithIdRequest} from '../../services/doctorService';
+import { FetchDoctorWithIdRequest } from '../../services/doctorService';
 
 import InProgressTokenNotificationScreen from '../notification/InProgressTokenNotificationScreen';
 import DefaultTVScreen from '../television/DefaultTVScreen';
@@ -15,9 +15,9 @@ import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErr
 import DrawerLeftNavigationButton from '../../components/drawerNavigation/drawerNavigation';
 import ProfileImageRenderer from '../../components/profileImage/ProfileImage';
 import AdWithRotation from '../../components/advertisement/AdRotation';
-import {showToast} from '../../components/toastMessage/ToastMessage';
+import { showToast } from '../../components/toastMessage/ToastMessage';
 
-const TokenListingTVScreen = ({route, navigation}) => {
+const TokenListingTVScreen = ({ route, navigation }) => {
   const {
     doctor_id = null,
     clinic_id = null,
@@ -26,7 +26,7 @@ const TokenListingTVScreen = ({route, navigation}) => {
 
   const [doctorData, setDoctorData] = useState({});
   const [inProgressPatient, setInProgressPatient] = useState(null);
-  const [isRefreshReloading, _ ] = useState(false);
+  const [isRefreshReloading, _] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
   const {
@@ -37,7 +37,7 @@ const TokenListingTVScreen = ({route, navigation}) => {
     refetch: refetchTokens,
   } = usePatientTokens(doctor_id, clinic_id);
 
- 
+
   const filteredTokens = useMemo(() => {
     return tokens?.filter(token => ['In Progress', 'Waiting'].includes(token?.status)) ?? [];
   }, [tokens]);
@@ -69,10 +69,10 @@ const TokenListingTVScreen = ({route, navigation}) => {
     // eslint-disable-next-line react/no-unstable-nested-components
     const HeaderRightButtons = () => (
       <View style={styles.headerRightContainer}>
-        <ReloadButton
+        {/* <ReloadButton
           handleReloadPress={handleReloadPress}
           isRefreshReloading={isRefreshReloading}
-        />
+        /> */}
         <DrawerLeftNavigationButton navigation={navigation} />
       </View>
     );
@@ -97,8 +97,8 @@ const TokenListingTVScreen = ({route, navigation}) => {
     // Find in-progress patient safely
     const inProgress = Array.isArray(tokens)
       ? tokens.find(
-          token => token?.status === 'In Progress' || token?.recall === true,
-        )
+        token => token?.status === 'In Progress' || token?.recall === true,
+      )
       : null;
     setInProgressPatient(inProgress || null);
 
@@ -129,11 +129,15 @@ const TokenListingTVScreen = ({route, navigation}) => {
   }
 
   return (
-    <View style={styles.fullScreenContainer} testID="token-listing-screen">
-      <View style={styles.headerContainer} key={refreshKey}>
-        <DoctorHeader doctorData={doctorData} />
+    <View style={styles.fullScreenContainer} testID="token-listing-screen" key={refreshKey} >
+      <View style={styles.headerContainer} >
+        <DoctorHeader doctorData={doctorData} /><View>
+          <TouchableOpacity onPress={() => setRefreshKey(prev => prev + 1)}>
+            <RotateCcw size={22} color="#000" />
+          </TouchableOpacity>
+        </View>
       </View>
-      <TokenTable tokens={filteredTokens} doctorId={doctor_id}/>
+      <TokenTable tokens={filteredTokens} doctorId={doctor_id}  />
       <View style={styles.notificationInProgress}>
         {inProgressPatient && (
           <InProgressTokenNotificationScreen
@@ -149,12 +153,12 @@ const TokenListingTVScreen = ({route, navigation}) => {
         clinic_id={clinic_id}
         hasInProgressPatient={inProgressPatient !== null}
       />
-    </View>
+    </View >
   );
 };
 
 // Extracted component for better readability
-const DoctorHeader = ({doctorData}) => {
+const DoctorHeader = ({ doctorData }) => {
   return (
     <>
       <View style={styles.doctorSection}>
@@ -201,20 +205,20 @@ const DoctorHeader = ({doctorData}) => {
   );
 };
 
-const ReloadButton = ({handleReloadPress, isRefreshReloading}) => (
-  <View style={styles.reloadButton}>
-    <TouchableOpacity
-      onPress={handleReloadPress}
-      disabled={isRefreshReloading}
-      accessibilityLabel="Reload token list"
-      testID="reload-button">
-      {isRefreshReloading ? (
-        <ActivityIndicator size="small" color="#007BFF" />
-      ) : (
-        <RotateCcw size={22} color="#000" />
-      )}
-    </TouchableOpacity>
-  </View>
-);
+// const ReloadButton = ({ handleReloadPress, isRefreshReloading }) => (
+//   <View style={styles.reloadButton}>
+//     <TouchableOpacity
+//       onPress={handleReloadPress}
+//       disabled={isRefreshReloading}
+//       accessibilityLabel="Reload token list"
+//       testID="reload-button">
+//       {isRefreshReloading ? (
+//         <ActivityIndicator size="small" color="#007BFF" />
+//       ) : (
+//         <RotateCcw size={22} color="#000" />
+//       )}
+//     </TouchableOpacity>
+//   </View>
+// );
 
 export default withQueryClientProvider(TokenListingTVScreen);
