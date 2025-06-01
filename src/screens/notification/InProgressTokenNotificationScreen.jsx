@@ -4,7 +4,7 @@ import {View, Text} from 'react-native';
 import {useTheme} from 'react-native-paper';
 import {styles} from './InProgressTokenNotificationScreen.styles';
 import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
-import useSpeechNotification from '../../hooks/useSpeechNotification';
+import { speakNotification } from '../../utils/tokenManager';
 
 const InProgressTokenNotificationScreen = ({
   inProgressPatient,
@@ -13,18 +13,13 @@ const InProgressTokenNotificationScreen = ({
   error,
 }) => {
   const theme = useTheme();
-
-  // Use the custom hook for speech functionality
-  const {speakMessages, translatedData} =
-    useSpeechNotification(inProgressPatient);
-
   // Trigger speech when inProgressPatient changes
   useEffect(() => {
-    if (inProgressPatient.status) {
-      speakMessages();
+    if (inProgressPatient.status ==="In Progress") {
+      speakNotification(inProgressPatient?.patient_name, inProgressPatient?.token_no);
     }
     return () => {};
-  },[inProgressPatient.status]);
+  },[inProgressPatient]);
 
   if (!inProgressPatient) {
     return (
@@ -55,11 +50,6 @@ const InProgressTokenNotificationScreen = ({
           <Text style={styles.patientName}>
             {inProgressPatient.patient_name}
           </Text>
-          {translatedData?.translatedPatientName && (
-            <Text style={styles.patientName}>
-              {translatedData.translatedPatientName}
-            </Text>
-          )}
         </View>
       </View>
     </View>

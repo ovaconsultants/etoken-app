@@ -17,7 +17,7 @@ export const usePatientTokenManager = (clinic_id, doctor_id) => {
     error,
     isError,
   } = usePatientTokens(doctor_id, clinic_id, {
-    refetchInterval: isMutating ? false : 3000,
+    refetchInterval: isMutating ? false : 2000,
   });
 
   // Auto-select first token and calculate stats
