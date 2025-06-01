@@ -1,61 +1,46 @@
-// useSpeechNotification.js
 import {useRef, useCallback} from 'react';
 import Tts from 'react-native-tts';
-import {useTranslation} from './useLangTranslation';
 
-const useSpeechNotification = inProgressPatient => {
-  const isHindiSpoken = useRef(false);
+const useSpeechNotification = (inProgressPatient) => {
+  const step = useRef(0);
 
-  // Translate token number and patient name
-  const translatedTokenNo = inProgressPatient.token_no;
-  const translatedPatientName = useTranslation(
-    `${inProgressPatient.patient_name}`,
-    'English',
-    'Hindi',
-  );
-
-  // Build English message
   const englishMessage = `${inProgressPatient.patient_name} Token Number: ${inProgressPatient.token_no}, The doctor has called you; please proceed for your consultation.`;
+  const hindiMessage = `${inProgressPatient.patient_name} Token Number: ${inProgressPatient.token_no}, डॉक्टर ने आपको बुलाया है, कृपया डॉक्टर के पास परामर्श के लिए जाएं।`;
 
-  // Translate the full English message to Hindi
-  const translatedMessageInRegional =
-    useTranslation(englishMessage, 'English', 'Hindi') || englishMessage;
-
-  // Return translated data as an object
-  const translatedData = {
-    translatedTokenNo,
-    translatedPatientName,
-  };
-
-  // Speak English and Hindi
   const speakMessages = useCallback(() => {
-    isHindiSpoken.current = false;
+    step.current = 0;
 
-    // Speak English
-    Tts.speak(englishMessage, {
-      language: 'en-IN',
-      iosVoiceId: 'com.apple.ttsbundle.Lekha-compact',
-      rate: 0.3,
-    });
-
-    // Listen for TTS finish event to chain Hindi
-    const finishListener = Tts.addEventListener('tts-finish', () => {
-      if (!isHindiSpoken.current && translatedMessageInRegional) {
-        Tts.speak(translatedMessageInRegional, {
+    const speakNext = () => {
+      if (step.current === 0) {
+        Tts.speak(englishMessage, {
           language: 'en-IN',
           iosVoiceId: 'com.apple.ttsbundle.Lekha-compact',
-          rate: 0.3,
+          rate: 0.4,
         });
-        isHindiSpoken.current = true;
+        step.current++;
+      } else if (step.current === 1) {
+        Tts.speak(hindiMessage, {
+          language: 'hi-IN',
+          iosVoiceId: 'com.apple.ttsbundle.Ananya-compact',
+          rate: 0.5,
+        });
+        step.current++;
       }
+    };
+
+    const finishListener = Tts.addEventListener('tts-finish', () => {
+      speakNext();
     });
+
+    // Start the sequence
+    speakNext();
 
     return () => {
       finishListener.remove();
     };
-  }, [englishMessage, translatedMessageInRegional]);
+  }, [englishMessage, hindiMessage]);
 
-  return {speakMessages, translatedData};
+  return {speakMessages};
 };
 
 export default useSpeechNotification;

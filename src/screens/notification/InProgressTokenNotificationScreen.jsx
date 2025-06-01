@@ -24,7 +24,7 @@ const InProgressTokenNotificationScreen = ({
       speakMessages();
     }
     return () => {};
-  });
+  },[inProgressPatient.status]);
 
   if (!inProgressPatient) {
     return (
