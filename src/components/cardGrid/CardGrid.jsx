@@ -1,16 +1,23 @@
 import React from 'react';
-import {View,StyleSheet, ScrollView} from 'react-native';
+import {View, StyleSheet, ScrollView} from 'react-native';
 import Card from '../card/Cards';
 
 const CardGrid = ({data, onPress, isSelectedCard, isLandscape}) => {
-
   return (
-    <ScrollView contentContainerStyle={[styles.container, isLandscape && styles.landscapeContainer]}>
+    <ScrollView
+      contentContainerStyle={[
+        styles.container,
+        isLandscape && styles.landscapeContainer,
+      ]}
+      style={styles.scrollView}>
       {data.map(item => (
-        <View 
-          key={item.id.toString()} 
-          style={[styles.cardWrapper, isLandscape && styles.landscapeCardWrapper ,{ flexGrow: 1 }]}
-        >
+        <View
+          key={item.id.toString()}
+          style={[
+            styles.cardWrapper,
+            isLandscape && styles.landscapeCardWrapper,
+            {flexGrow: 1},
+          ]}>
           <Card
             title={item.title || 'No Title'}
             description={item.description || 'No Description'}
@@ -21,14 +28,18 @@ const CardGrid = ({data, onPress, isSelectedCard, isLandscape}) => {
           />
         </View>
       ))}
-     </ScrollView>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+  },
   container: {
     flex: 1,
-    padding : 4 ,
+    padding: 4,
+    minHeight: 1,
   },
   landscapeContainer: {
     flexDirection: 'row',
@@ -42,7 +53,6 @@ const styles = StyleSheet.create({
   landscapeCardWrapper: {
     width: '49.1%',
   },
-
 });
 
 export default CardGrid;

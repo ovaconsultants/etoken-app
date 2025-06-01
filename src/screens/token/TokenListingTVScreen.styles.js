@@ -1,4 +1,6 @@
-import {StyleSheet} from 'react-native';
+import {StyleSheet , Dimensions} from 'react-native';
+const {width: screenWidth} = Dimensions.get('window');
+const isTV = screenWidth > 600; 
 
 export const styles = StyleSheet.create({
   fullScreenContainer: {
@@ -189,7 +191,7 @@ export const styles = StyleSheet.create({
     marginTop: 2,
   },
   notificationInProgress: {
-    width:  600,
+    width:   isTV ? 700 : 600,
     position: 'absolute',
     bottom: 0,
     right: 0,
