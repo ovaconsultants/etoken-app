@@ -1,12 +1,13 @@
 import { View, TouchableOpacity, Text} from 'react-native';
 import React, {useState, useCallback, useEffect} from 'react';
+import {Dropdown} from 'react-native-element-dropdown';
+
 
 import {GetPatientImage} from '../../services/patientImagesCacheServices';
 
 import EnlargeableImage from '../../components/enlargeableImage/EnlargeableImage';
 
 import {formatTokenTime, maskPhoneNumber} from '../../utils/globalUtil';
-import {Dropdown} from 'react-native-element-dropdown';
 
 const statusOptions = [
   {label: 'Waiting', value: 'Waiting'},
