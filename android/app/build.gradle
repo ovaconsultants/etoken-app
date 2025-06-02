@@ -83,8 +83,8 @@ android {
         applicationId "com.ova2tokensystem.ai"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 14
-        versionName "10.0.14"
+        versionCode 15
+        versionName "10.0.15"
     }
     signingConfigs {
         debug {
