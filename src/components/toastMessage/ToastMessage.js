@@ -1,25 +1,25 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import Toast from 'react-native-toast-message';
 
 const styles = StyleSheet.create({
   toastContainer: {
-    height: 70,
-    width: '100%',
+    minHeight: 70, // Changed from height to minHeight to allow expansion
+    width: '90%', // Reduced from 100% to allow some margin
     backgroundColor: '#E4EFE7',
     padding: 16,
     borderRadius: 12,
     flexDirection: 'row',
-    overflow: 'scroll',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 5,
     borderLeftWidth: 6,
     borderTopLeftRadius: 12,
     borderBottomLeftRadius: 12,
-    zIndex : 10,
+    zIndex: 10,
+    alignSelf: 'center', // Center the toast
   },
   content: {
     flex: 1,
@@ -31,6 +31,8 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#333',
     lineHeight: 20,
+    flexWrap: 'wrap', // Add wrapping
+    flexShrink: 1, // Allow text to shrink and wrap
   },
   closeButton: {
     paddingLeft: 10,
@@ -45,52 +47,65 @@ const styles = StyleSheet.create({
 });
 
 const toastConfig = {
-  success: ({ text1, text2, props }) => (
-    <View style={[styles.toastContainer, { borderLeftColor: '#4CAF50' }]}>
+  success: ({text1, text2, props}) => (
+    <View style={[styles.toastContainer, {borderLeftColor: '#4CAF50'}]}>
       <View style={styles.content}>
         <Text style={styles.text}>{text1}</Text>
-        {text2 && <Text style={[styles.text, { fontSize: 12, color: '#666' }]}>{text2}</Text>}
+        {text2 && (
+          <Text style={[styles.text, {fontSize: 12, color: '#666'}]}>
+            {text2}
+          </Text>
+        )}
       </View>
-      <TouchableOpacity 
-        style={styles.closeButton} 
+      <TouchableOpacity
+        style={styles.closeButton}
         onPress={() => Toast.hide()}
-        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-      >
+        hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
         <Text style={styles.closeText}>×</Text>
       </TouchableOpacity>
     </View>
   ),
-  
-  error: ({ text1, text2, props }) => (
-    <View style={[styles.toastContainer, { 
-      borderLeftColor: '#F44336',
-      backgroundColor: '#FFFFFF'
-    }]}>
+
+  error: ({text1, text2, props}) => (
+    <View
+      style={[
+        styles.toastContainer,
+        {
+          borderLeftColor: '#F44336',
+          backgroundColor: '#FFFFFF',
+        },
+      ]}>
       <View style={styles.content}>
-        <Text style={[styles.text, { color: '#D32F2F' }]}>{text1}</Text>
-        {text2 && <Text style={[styles.text, { fontSize: 12, color: '#666' }]}>{text2}</Text>}
+        <Text style={[styles.text, {color: '#D32F2F'}]}>{text1}</Text>
+        {text2 && (
+          <Text style={[styles.text, {fontSize: 12, color: '#666'}]}>
+            {text2}
+          </Text>
+        )}
       </View>
-      <TouchableOpacity 
-        style={styles.closeButton} 
+      <TouchableOpacity
+        style={styles.closeButton}
         onPress={() => Toast.hide()}
-        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-      >
-        <Text style={[styles.closeText, { color: '#D32F2F' }]}>×</Text>
+        hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
+        <Text style={[styles.closeText, {color: '#D32F2F'}]}>×</Text>
       </TouchableOpacity>
     </View>
   ),
-  
-  info: ({ text1, text2, props }) => (
-    <View style={[styles.toastContainer, { borderLeftColor: '#2196F3' }]}>
+
+  info: ({text1, text2, props}) => (
+    <View style={[styles.toastContainer, {borderLeftColor: '#2196F3'}]}>
       <View style={styles.content}>
         <Text style={styles.text}>{text1}</Text>
-        {text2 && <Text style={[styles.text, { fontSize: 12, color: '#666' }]}>{text2}</Text>}
+        {text2 && (
+          <Text style={[styles.text, {fontSize: 12, color: '#666'}]}>
+            {text2}
+          </Text>
+        )}
       </View>
-      <TouchableOpacity 
-        style={styles.closeButton} 
+      <TouchableOpacity
+        style={styles.closeButton}
         onPress={() => Toast.hide()}
-        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-      >
+        hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
         <Text style={styles.closeText}>×</Text>
       </TouchableOpacity>
     </View>

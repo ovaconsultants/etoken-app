@@ -43,6 +43,7 @@ const SignInScreen = ({navigation}) => {
 
     try {
       const data = await SignInRequest(email, password);
+      console.log('SignIn Data:', data);
       if (!data.success) {
         throw new Error(data.message || 'Sign-in failed');
       }
@@ -62,8 +63,7 @@ const SignInScreen = ({navigation}) => {
       console.log('Doctor Details : in SignInScreen', doctorDetails);
       setDoctorClinicDetails(data.clinics);
     } catch (error) {
-      console.error('Error signing in:', error);
-      showToast(error.message || 'Login failed. Please try again.', {
+        showToast(error.message || 'Login failed. Please try again.', {
         type: 'error',
         duration: 3000,
       });
