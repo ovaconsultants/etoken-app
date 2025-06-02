@@ -1,7 +1,6 @@
-import { View, TouchableOpacity, Text} from 'react-native';
+import {View, TouchableOpacity, Text} from 'react-native';
 import React, {useState, useCallback, useEffect} from 'react';
 import {Dropdown} from 'react-native-element-dropdown';
-
 
 import {GetPatientImage} from '../../services/patientImagesCacheServices';
 
@@ -14,7 +13,6 @@ const statusOptions = [
   {label: 'In Progress', value: 'In Progress'},
   {label: 'Completed', value: 'Completed'},
   {label: 'Cancelled', value: 'Cancelled'},
-
 ];
 
 export const TokenCard = React.memo(
@@ -31,8 +29,13 @@ export const TokenCard = React.memo(
     const [hindiName, setHindiName] = useState('');
     const [status, _] = useState();
     const [imageUrl, setImageUrl] = useState(null);
-    const memoizedTranslate = useCallback(name => {return translateNameToHindi(name) || null; },[translateNameToHindi]);
-    console.log('fee status : ' , token.fee_status);
+    const memoizedTranslate = useCallback(
+      name => {
+        return translateNameToHindi(name) || null;
+      },
+      [translateNameToHindi],
+    );
+    console.log('fee status : ', token.fee_status);
 
     useEffect(() => {
       const fetchPatientImage = async () => {
@@ -84,78 +87,81 @@ export const TokenCard = React.memo(
           onPress={onPress}
           onLongPress={onLongPress}
           delayLongPress={500}>
-          <View style={styles.tokenHeader}>
-            <View style={styles.patientName}>
+          <View style={styles.tokenCardContent}>
+            <View style={styles.profileImageContainer}>
+              {/* Profile Image */}
               {imageUrl ? (
                 <EnlargeableImage
                   imageUrl={imageUrl}
                   imageStyle={styles.profileImage}
                 />
               ) : null}
-              <Text>{token.patient_name}</Text>
-              <Text> {token.age && `(${token.age})`} </Text>
-              {/* <Text>{hindiName || ''}</Text> */}
             </View>
-            <View style={styles.tokenNumber}>
-              <Text>{formatTokenTime(token.created_date)}</Text>
-              <View style={styles.tokenNumberText}>
-                <Text>{token.token_no}</Text>
-              </View>
-            </View>
-          </View>
-
-          <View style={styles.tokenDetails}>
-            <Text style={styles.detailText}>
-              {maskPhoneNumber(token.mobile_number)}
-            </Text>
-
-            {/* Payment Switch */}
-            <View
-              style={styles.paymentSwitchContainer}
-           >
-                <Text  style={styles.paymentText}>Fee : </Text>
-              <Text
-                style={
-                  styles.paymentStatus && token.fee_status === 'Paid'
-                    ? styles.paidStatusTextColor
-                    : styles.notPaidStatusTextColor
-                }>
-                {token.fee_status === 'Paid' ? 'Paid' : 'UnPaid'}
-              </Text>
-            </View>
-
-            {/* Status Dropdown */}
-            <View style={styles.statusDropdownContainer}>
-              <Dropdown
-                style={styles.dropdown}
-                containerStyle={styles.dropdownContainer}
-                itemContainerStyle={styles.itemContainer}
-                placeholder={token.status}
-                placeholderStyle={styles.placeholderText}
-                selectedTextStyle={styles.selectedStatusText}
-                data={statusOptions.filter(item => item.value !== token.status)}
-                labelField="label"
-                valueField="value"
-                value={status}
-                onChange={handleStatusChange}
-                renderItem={item => (
-                  <View style={styles.dropdownItem}>
-                    <View
-                      style={[
-                        styles.smallStatusDot,
-                        item.value === 'In Progress' && styles.greenDot,
-                        item.value === 'On Hold' && styles.orangeDot,
-                        item.value === 'Waiting' && styles.yellowDot,
-                        item.value === 'Completed' && styles.blueDot,
-                        item.value === 'Cancelled' && styles.redDot,
-                      ]}
-                    />
-                    <Text style={styles.smallDropdownItemText}>
-                      {item.label}
-                    </Text>
+            <View style={styles.tokenDataContent}>
+              {/* Patient Name and Token Number */}
+              <View style={styles.tokenHeader}>
+                <View style={styles.patientName}>
+                  <Text>{token.patient_name}</Text>
+                  <Text> {token.age && `(${token.age})`} </Text>
+                </View>
+                <View style={styles.tokenNumber}>
+                  <Text>{formatTokenTime(token.created_date)}</Text>
+                  <View style={styles.tokenNumberText}>
+                    <Text>{token.token_no}</Text>
                   </View>
-                )}
-              />
+                </View>
+              </View>
+              <View style={styles.tokenDetails}>
+                <View style={styles.feePhoneStatusContainer}>
+                  <Text style={styles.phoneNumber}>
+                    {maskPhoneNumber(token.mobile_number)}
+                  </Text>
+                  <Text
+                    style={
+                      token.fee_status === 'Paid'
+                        ? styles.paidStatusTextColor
+                        : styles.notPaidStatusTextColor
+                    }>
+                    Fee : {token.fee_status === 'Paid' ? 'Paid' : 'UnPaid'}
+                  </Text>
+                  <View style={styles.statusDropdownContainer}>
+                    <Dropdown
+                      style={styles.dropdown}
+                      containerStyle={styles.dropdownContainer}
+                      itemContainerStyle={styles.itemContainer}
+                      placeholder={token.status}
+                      placeholderStyle={styles.placeholderText}
+                      selectedTextStyle={styles.selectedStatusText}
+                      data={statusOptions.filter(
+                        item => item.value !== token.status,
+                      )}
+                      labelField="label"
+                      valueField="value"
+                      value={status}
+                      onChange={handleStatusChange}
+                      renderItem={item => (
+                        <View style={styles.dropdownItem}>
+                          <View
+                            style={[
+                              styles.smallStatusDot,
+                              item.value === 'In Progress' && styles.greenDot,
+                              item.value === 'On Hold' && styles.orangeDot,
+                              item.value === 'Waiting' && styles.yellowDot,
+                              item.value === 'Completed' && styles.blueDot,
+                              item.value === 'Cancelled' && styles.redDot,
+                            ]}
+                          />
+                          <Text style={styles.smallDropdownItemText}>
+                            {item.label}
+                          </Text>
+                        </View>
+                      )}
+                    />
+                  </View>
+                </View>
+
+                {/* Status Dropdown */}
+              </View>
             </View>
           </View>
         </TouchableOpacity>
