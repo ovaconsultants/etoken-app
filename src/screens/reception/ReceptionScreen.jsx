@@ -99,7 +99,7 @@ export const ReceptionScreen = ({route}) => {
   useEffect(() => {
     setProfileImage(null);
   }, [doctor_id, clinic_id]);
-  const handleSubmit = async (values) => {
+  const handleSubmit = async values => {
     try {
       const patientIdToUse =
         values?.patient_id ||
@@ -120,7 +120,8 @@ export const ReceptionScreen = ({route}) => {
       }
 
       setSearchDropdownVisible(false);
-           if (profileImage) {
+      // Only upload if we have a new camera image
+      if (profileImage && typeof profileImage !== 'string') {
         try {
           await UploadPatientProfileImageRequest(
             profileImage,
@@ -209,7 +210,9 @@ export const ReceptionScreen = ({route}) => {
                     })
                   }
                   onSelectImageUrl={imageUrl => {
-                    setProfileImage(imageUrl);
+                    if (!profileImage) {
+                      setProfileImage(imageUrl);
+                    }
                   }}
                   dropdownVisible={searchDropdownVisible}
                   setDropdownVisible={setSearchDropdownVisible}

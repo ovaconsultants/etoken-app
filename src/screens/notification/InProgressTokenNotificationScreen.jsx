@@ -15,7 +15,7 @@ const InProgressTokenNotificationScreen = ({
   const theme = useTheme();
   // Trigger speech when inProgressPatient changes
   useEffect(() => {
-    if (inProgressPatient.status ==="In Progress") {
+    if (inProgressPatient.status === 'In Progress') {
       speakNotification(inProgressPatient?.patient_name, inProgressPatient?.token_no);
     }
     return () => {};

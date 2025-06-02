@@ -6,9 +6,7 @@ import {
   Text,
   Keyboard,
   Platform,
-  Image,
   ActivityIndicator,
-  Modal,
 } from 'react-native';
 import SearchBar from 'react-native-dynamic-search-bar';
 
@@ -50,7 +48,6 @@ const CustomSearchBar = ({
   const [, setKeyboardHeight] = useState(0);
   const [imageUrls, setImageUrls] = useState({});
   const [loadingImages, setLoadingImages] = useState(false);
-  const [enlargedImageUrl, setEnlargedImageUrl] = useState(null);
 
   // Fetch all images when dropdown becomes visible
   useEffect(() => {
@@ -159,10 +156,14 @@ const CustomSearchBar = ({
                   <View style={styles.tile}>
                     {/* Image/Initials Container */}
                     <View style={styles.imagePortion}>
-                      <EnlargeableImage
-                        imageUrl={imageUrl}
-                        imageStyle={styles.image} 
-                      />
+                      {loadingImages ? (
+                        <ActivityIndicator size="small" color="#3498db" />
+                      ) : (
+                        <EnlargeableImage
+                          imageUrl={imageUrl}
+                          imageStyle={styles.image}
+                        />
+                      )}
                     </View>
 
                     <View style={styles.detailsPortion}>
