@@ -110,7 +110,7 @@ const TokenListingTVScreen = ({ route, navigation }) => {
   return (
     <View style={styles.fullScreenContainer} testID="token-listing-screen" key={refreshKey} >
       <View style={styles.headerContainer} >
-        <DoctorHeader doctorData={doctorData} /><View>
+      <DoctorHeader doctorData={doctorData} /><View>
           <TouchableOpacity onPress={() => setRefreshKey(prev => prev + 1)}>
             <RotateCcw size={22} color="#000" />
           </TouchableOpacity>

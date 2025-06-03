@@ -84,14 +84,21 @@ export const TokenCard = React.memo(
           onPress={onPress}
           onLongPress={onLongPress}
           delayLongPress={500}>
-          <View style={styles.tokenHeader}>
-            <View style={styles.patientName}>
-              {imageUrl ? (
+            <View>
+              
+            </View>
+            <View>
+                {imageUrl ? (
                 <EnlargeableImage
                   imageUrl={imageUrl}
                   imageStyle={styles.profileImage}
                 />
               ) : null}
+            </View>
+            <View>
+          <View style={styles.tokenHeader}>
+            <View style={styles.patientName}>
+            
               <Text>{token.patient_name}</Text>
               <Text> {token.age && `(${token.age})`} </Text>
               {/* <Text>{hindiName || ''}</Text> */}
@@ -157,6 +164,7 @@ export const TokenCard = React.memo(
                 )}
               />
             </View>
+          </View>
           </View>
         </TouchableOpacity>
       </>
