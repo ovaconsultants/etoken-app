@@ -12,19 +12,19 @@ export const creatStyles = (isLandscape, dimension) => {
     },
 
     profileImageWrapper: {
-      flex: isLandscape ? 0.4 : null,
+      flex: 0.4,
       justifyContent: 'center',
     },
 
     profileImage: {
-      width: '100%',
-      height: '100%',
-      borderRadius: 20,
+    width: '90%',
+    aspectRatio: 1, 
+    borderRadius: 20,
     },
 
     infoContainer: {
       flex: isLandscape ? 0.6 : null,
-          justifyContent: 'center',
+      justifyContent: 'center',
       flexDirection: 'column',
       width: '100%',
     },

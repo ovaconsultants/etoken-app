@@ -1,13 +1,15 @@
-import {StyleSheet , Dimensions} from 'react-native';
-const {width: screenWidth} = Dimensions.get('window');
-const isTV = screenWidth > 600; 
+import {StyleSheet, Platform} from 'react-native';
+import {moderateScale} from 'react-native-size-matters';
+
+const isTV = Platform.isTV;
 
 export const styles = StyleSheet.create({
+  /** BASE STYLES **/
   fullScreenContainer: {
     flex: 1,
     backgroundColor: '#fff',
-    margin: 10,
-    padding : 20 ,
+    margin: moderateScale(10),
+    padding: moderateScale(20),
   },
 
   /** HEADER SECTION **/
@@ -15,13 +17,13 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 10,
+    paddingHorizontal: moderateScale(10),
   },
-    headerRightContainer: {
+  headerRightContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 12,
-    marginTop: 4,
+    marginRight: moderateScale(12),
+    marginTop: moderateScale(4),
   },
 
   /** DOCTOR PROFILE SECTION **/
@@ -32,40 +34,39 @@ export const styles = StyleSheet.create({
     flex: 0.8,
   },
   profileCircle: {
-    width: 80,
-    height: 80,
-    borderRadius: 10,
+    width: moderateScale(80),
+    height: moderateScale(80),
+    borderRadius: moderateScale(10),
     backgroundColor: '#f0f0f0',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 16,
+    marginRight: moderateScale(16),
     overflow: 'hidden',
   },
-
   doctorNameContainer: {
     flexDirection: 'row',
-    borderRadius: 8,
-    marginHorizontal: 8,
+    borderRadius: moderateScale(8),
+    marginHorizontal: moderateScale(8),
   },
   leftColumn: {
     flex: 0.3,
-    paddingRight: 16,
+    paddingRight: moderateScale(16),
     borderRightWidth: 1,
     borderRightColor: '#eee',
   },
   rightColumn: {
     flex: 1,
-    paddingLeft: 16,
+    paddingLeft: moderateScale(16),
     justifyContent: 'space-between',
   },
   doctorName: {
-    fontSize: 20,
+    fontSize: moderateScale(20),
     fontWeight: 'bold',
     color: '#2a3f54',
-    marginBottom: 4,
+    marginBottom: moderateScale(4),
   },
   qualificationText: {
-    fontSize: 14,
+    fontSize: moderateScale(14),
     color: '#666',
     fontStyle: 'Roboto',
     fontWeight: '800',
@@ -73,19 +74,19 @@ export const styles = StyleSheet.create({
   infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: moderateScale(8),
   },
   phoneRow: {
     marginBottom: 0,
   },
   infoLabel: {
-    fontSize: 16,
+    fontSize: moderateScale(16),
     color: '#666',
-    marginRight: 4,
+    marginRight: moderateScale(4),
     fontWeight: '800',
   },
   infoText: {
-    fontSize: 16,
+    fontSize: moderateScale(16),
     color: '#333',
     fontWeight: '500',
   },
@@ -93,71 +94,67 @@ export const styles = StyleSheet.create({
     flex: 0.1,
     flexDirection: 'row',
     alignSelf: 'center',
-    marginRight: 10,
+    marginRight: moderateScale(10),
   },
   reloadButton: {
-    marginTop: 4,
-    marginLeft: 12,
+    marginTop: moderateScale(4),
+    marginLeft: moderateScale(12),
     backgroundColor: '#f5f5f5',
-    borderRadius: 20,
+    borderRadius: moderateScale(20),
     justifyContent: 'center',
     alignItems: 'center',
   },
 
-
   /** TOKEN TABLE **/
   tableContainer: {
-    marginTop: 10,
-    borderRadius: 8,
+    marginTop: moderateScale(10),
+    borderRadius: moderateScale(8),
     overflow: 'hidden',
   },
-
   tableHeader: {
     flexDirection: 'row',
-    paddingVertical: 10,
-    paddingHorizontal: 12,
+    paddingVertical: moderateScale(10),
+    paddingHorizontal: moderateScale(12),
     backgroundColor: '#f8f8f8',
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
   },
   tableHeaderText: {
     flex: 1,
-    fontSize: 14,
+    fontSize: moderateScale(14),
     fontWeight: 'bold',
     color: '#333',
     textAlign: 'flex-start',
   },
-
   tableRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 12,
+    paddingVertical: moderateScale(12),
+    paddingHorizontal: moderateScale(12),
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
   },
   tableCell: {
     flex: 1,
-    fontSize: 14,
+    fontSize: moderateScale(14),
     color: '#333',
     textAlign: 'flex-start',
   },
-
   profileImageAndNameContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
   },
-  patientName : {
+  patientName: {
     flex: 1,
     flexWrap: 'wrap',
-    flexDirection : 'column',
+    flexDirection: 'column',
   },
   profileImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    marginRight: 10,
+    width: moderateScale(40),
+    height: moderateScale(40),
+    borderRadius: moderateScale(20),
+    marginRight: moderateScale(5),
     backgroundColor: '#f0f0f0',
     alignItems: 'center',
   },
@@ -167,10 +164,10 @@ export const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   dot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    marginRight: 6,
+    width: moderateScale(10),
+    height: moderateScale(10),
+    borderRadius: moderateScale(5),
+    marginRight: moderateScale(6),
   },
   greenDot: {backgroundColor: '#4CAF50'},
   redDot: {backgroundColor: '#F44336'},
@@ -181,22 +178,21 @@ export const styles = StyleSheet.create({
   /** ROW COLORS BASED ON STATUS **/
   inProgressRow: {
     backgroundColor: '#f3faf5',
-    borderLeftWidth: 4,
+    borderLeftWidth: moderateScale(4),
     borderLeftColor: '#2e7d32',
   },
-
   hindi: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     color: '#666',
-    marginTop: 2,
+    marginTop: moderateScale(2),
   },
   notificationInProgress: {
-    width:   isTV ? 700 : 600,
+    width: isTV ? moderateScale(700) : moderateScale(600),
     position: 'absolute',
     bottom: 0,
     right: 0,
     backgroundColor: '#f3faf5',
-    margin: 10,
-    marginRight: 20,
+    margin: moderateScale(10),
+    marginRight: moderateScale(20),
   },
 });

@@ -67,7 +67,7 @@ export const DefaultTVScreen = ({doctorInfo = {}, clinicInfo = {}}) => {
   return (
     <ScrollView
       contentContainerStyle={styles.container}
-      showsVerticalScrollIndicator={false}>
+      showsVerticalScrollIndicator={true}>
       {/* Profile Image */}
       <View style={styles.profileImageWrapper}>
         <FastImage
@@ -76,7 +76,7 @@ export const DefaultTVScreen = ({doctorInfo = {}, clinicInfo = {}}) => {
             priority: FastImage.priority.high,
           }}
           style={styles.profileImage}
-          resizeMode={FastImage.resizeMode.cover}
+          resizeMode={FastImage.resizeMode.contain}
         />
       </View>
 

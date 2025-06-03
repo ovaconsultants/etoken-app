@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {View, Text, ScrollView, Image} from 'react-native';
+import {View, Text, ScrollView} from 'react-native';
 import {styles} from './TokenListingTVScreen.styles';
 
 import EnlargeableImage from '../../components/enlargeableImage/EnlargeableImage';

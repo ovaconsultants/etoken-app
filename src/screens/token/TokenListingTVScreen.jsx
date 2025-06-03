@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useLayoutEffect, useState, useMemo } from 'react';
-import { View, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
+import { View,TouchableOpacity } from 'react-native';
 import Orientation from 'react-native-orientation-locker';
 import { RotateCcw } from 'lucide-react-native';
 
@@ -12,7 +12,6 @@ import InProgressTokenNotificationScreen from '../notification/InProgressTokenNo
 import DefaultTVScreen from '../television/DefaultTVScreen';
 import TokenTable from './TokenTable';
 import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
-import DrawerLeftNavigationButton from '../../components/drawerNavigation/drawerNavigation';
 
 import AdWithRotation from '../../components/advertisement/AdRotation';
 import { showToast } from '../../components/toastMessage/ToastMessage';
