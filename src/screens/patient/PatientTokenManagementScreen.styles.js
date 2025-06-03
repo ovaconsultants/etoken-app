@@ -2,7 +2,7 @@ import {StyleSheet} from 'react-native';
 
 export const createStyles = isLandscape =>
   StyleSheet.create({
-    // Main Containers
+    // Layout Containers
     fullScreenContainer: {
       flex: 1,
       backgroundColor: '#fff',
@@ -11,26 +11,22 @@ export const createStyles = isLandscape =>
       gap: isLandscape ? 12 : 8,
       position: 'relative',
     },
-
-    loadingContainer: {
-      flex: isLandscape ? 1.2 : 1,
-      justifyContent: 'center',
-      alignItems: 'center',
+    headerContainer: {
+      flex: isLandscape ? 0.15 : 0.1,
       paddingHorizontal: 8,
+      borderBottomWidth: 1,
+      borderBottomColor: '#ddd',
     },
-
     actionButtonsContainer: {
       flex: isLandscape ? 0.2 : 0.1,
       flexDirection: 'row',
       paddingHorizontal: 8,
       gap: 12,
     },
-
     tokenListContainer: {
       flex: isLandscape ? 0.7 : 3,
       paddingHorizontal: 8,
     },
-
     footerContainer: {
       flex: isLandscape ? 0.2 : 0.1,
       justifyContent: 'center',
@@ -38,13 +34,7 @@ export const createStyles = isLandscape =>
       paddingHorizontal: 8,
     },
 
-    headerContainer: {
-      flex: isLandscape ? 0.15 : 0.1,
-      paddingHorizontal: 8,
-      borderBottomWidth: 1,
-      borderBottomColor: '#ddd',
-    },
-
+    // Header Components
     headerBadges: {
       flex: 1,
       flexDirection: 'row',
@@ -52,26 +42,17 @@ export const createStyles = isLandscape =>
       alignItems: 'center',
       gap: 10,
     },
-
-    screenTitle: {
-      fontSize: 20,
-      fontWeight: 'bold',
-      flex: 1,
-      textAlign: 'center',
-    },
-
-    // Badge Styles
     badge: {
       backgroundColor: '#f1f1f1',
       paddingHorizontal: 8,
       paddingVertical: 4,
       borderRadius: 20,
     },
+    badgeText: {fontSize: 14},
     greenBadge: {backgroundColor: '#e6f7e6'},
     yellowBadge: {backgroundColor: '#fff8e6'},
-    redBadge: {backgroundColor: '#ffebee'},
-    badgeText: {fontSize: 14},
 
+    // Action Buttons
     primaryButton: {
       flex: 1,
       flexDirection: 'row',
@@ -95,7 +76,7 @@ export const createStyles = isLandscape =>
     buttonText: {color: 'white', fontWeight: 'bold'},
     secondaryButtonText: {color: '#333', fontWeight: 'bold'},
 
-    // Token Card Styles
+    // Token Card
     tokenCard: {
       backgroundColor: 'white',
       borderRadius: 10,
@@ -105,8 +86,26 @@ export const createStyles = isLandscape =>
       borderColor: '#eee',
       marginBottom: 8,
     },
+    tokenCardContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    profileImageContainer: {
+      height: '100%',
+      flex: 0.15,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    tokenDataContent: {
+      flex: 0.85,
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      gap: 8,
+    },
+
+    // Token Status Variants
     inProgressCard: {backgroundColor: '#f3faf5', borderColor: '#2e7d32'},
-    onHoldCard: {backgroundColor: '#fff5f5', borderColor: '#d32f2f'},
     completedCard: {backgroundColor: '#e8f5e9', borderColor: '#388e3c'},
     cancelledCard: {backgroundColor: '#fce4ec', borderColor: '#d32f2f'},
     waitingCard: {backgroundColor: ' #f1f1f1', borderColor: '#1976d2'},
@@ -117,7 +116,6 @@ export const createStyles = isLandscape =>
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: 8,
     },
     patientName: {
       flexDirection: 'row',
@@ -129,10 +127,8 @@ export const createStyles = isLandscape =>
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-
     },
     tokenNumberText: {
-
       marginLeft: 12,
       fontWeight: '1000',
       paddingRight: 10,
@@ -147,44 +143,34 @@ export const createStyles = isLandscape =>
       justifyContent: 'space-between',
       alignItems: 'center',
     },
-    detailText: {color: '#666', fontSize: 14},
-    profileImage: {
-      width: 30,
-      height: 30,
-      borderRadius: 100,
-      marginRight: 2,
-    },
+    phoneNumber: {  marginRight : 4    , color: '#666', fontSize: 14},
 
-    // Status Indicators
-    statusContainer: {
+    // Fee Container
+    feePhoneStatusContainer: {
+      flex: 1,
       flexDirection: 'row',
-      alignItems: 'center',
-      gap: 8,
+      justifyContent: 'space-between',
     },
-    statusDot: {
-      width: 10,
-      height: 10,
-      borderRadius: 5,
-    },
-    greenDot: {backgroundColor: '#4CAF50'},
-    redDot: {backgroundColor: '#F44336'},
-    yellowDot: {backgroundColor: '#FFC107'},
-    blueDot: {backgroundColor: '#2196F3'},
-    orangeDot: {backgroundColor: '#FF9800'},
-    statusText: {fontSize: 14},
+    paidStatusTextColor: {color: '#4CAF50'},
+    notPaidStatusTextColor: {color: '#F44336'},
 
-    // Dropdown Styles
+    // Status Dropdown
     statusDropdownContainer: {width: 130, alignItems: 'flex-start'},
     dropdown: {
       width: '100%',
-      maxHeight : 50 ,
+      maxHeight: 50,
       justifyContent: 'center',
     },
     dropdownContainer: {
-       maxHeight: 150  , borderRadius: 10 , justifyContent: 'center' , alignItems: 'center'
+      maxHeight: 150,
+      borderRadius: 10,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     itemContainer: {
-      height: 45  , borderRadius: 10 , justifyContent: 'center' 
+      height: 45,
+      borderRadius: 10,
+      justifyContent: 'center',
     },
     selectedStatusText: {
       textAlign: 'right',
@@ -197,50 +183,30 @@ export const createStyles = isLandscape =>
       fontSize: 18,
       textAlign: 'right',
     },
+    dropdownItem: {
+      padding: 4,
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: 'rgba(209, 241, 247, 0.1)',
+    },
     smallStatusDot: {
       width: 8,
       height: 8,
       borderRadius: 4,
       marginRight: 4,
     },
-    smallStatusText: {fontSize: 14, marginLeft: 4},
     smallDropdownItemText: {fontSize: 14},
-    dropdownItem: {
-      padding: 4,
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor : 'rgba(209, 241, 247, 0.1)',     },
-    selectedStatus: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      height: 30,
-    },
+    greenDot: {backgroundColor: '#4CAF50'},
+    redDot: {backgroundColor: '#F44336'},
+    yellowDot: {backgroundColor: '#FFC107'},
+    blueDot: {backgroundColor: '#2196F3'},
 
-    // Payment Controls
-    paymentSwitchContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    smallSwitch: {transform: [{scaleX: 0.7}, {scaleY: 0.7}]},
-    paymentStatus: {fontSize: 14, width: 60, alignItems: 'center'},
-    paidStatusTextColor: {color: '#4CAF50'},
-    notPaidStatusTextColor: {color: '#F44336'},
-
-    // Footer Navigation
-    footerNavigation: {
-      flexDirection: 'row',
-      borderTopWidth: 1,
-      borderTopColor: '#eee',
-      backgroundColor: 'white',
-    },
-    footerButton: {alignItems: 'center', padding: 8},
-    footerButtonText: {fontSize: 12, marginTop: 4},
-
-       overlay: {
-      ...StyleSheet.absoluteFillObject, // Covers the entire screen
-      backgroundColor: 'rgba(255, 255, 255, 0.7)', // Semi-transparent white
+    // Overlay
+    overlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: 'rgba(255, 255, 255, 0.7)',
       justifyContent: 'center',
       alignItems: 'center',
-      zIndex: 1, // Ensures it appears above everything
+      zIndex: 1,
     },
   });
