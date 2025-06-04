@@ -40,8 +40,8 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   profileImageContainer: {
-    width: '80',
-    height: '100%',
+    flex: 1,
+    aspectRatio: 1,
     borderRadius: 10,
     backgroundColor: '#fff',
     borderColor: 'rgb(93, 101, 208)',

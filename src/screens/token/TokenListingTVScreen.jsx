@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect, useState, useMemo } from 'react';
-import { View,TouchableOpacity } from 'react-native';
+import React, {useCallback, useEffect, useState, useMemo} from 'react';
+import {View, TouchableOpacity} from 'react-native';
 import Orientation from 'react-native-orientation-locker';
-import { RotateCcw } from 'lucide-react-native';
+import {RotateCcw} from 'lucide-react-native';
 
-import { styles } from './TokenListingTVScreen.styles';
-import { usePatientTokens } from '../../hooks/usePatientTokens';
+import {styles} from './TokenListingTVScreen.styles';
+import {usePatientTokens} from '../../hooks/usePatientTokens';
 import withQueryClientProvider from '../../hooks/useQueryClientProvider';
-import { FetchDoctorWithIdRequest } from '../../services/doctorService';
+import {FetchDoctorWithIdRequest} from '../../services/doctorService';
 
 import InProgressTokenNotificationScreen from '../notification/InProgressTokenNotificationScreen';
 import DefaultTVScreen from '../television/DefaultTVScreen';
@@ -14,10 +14,10 @@ import TokenTable from './TokenTable';
 import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
 
 import AdWithRotation from '../../components/advertisement/AdRotation';
-import { showToast } from '../../components/toastMessage/ToastMessage';
-import { DoctorHeader } from './DoctorHeader';
+import {showToast} from '../../components/toastMessage/ToastMessage';
+import {DoctorHeader} from './DoctorHeader';
 
-const TokenListingTVScreen = ({ route, navigation }) => {
+const TokenListingTVScreen = ({route, navigation}) => {
   const {
     doctor_id = null,
     clinic_id = null,
@@ -37,9 +37,12 @@ const TokenListingTVScreen = ({ route, navigation }) => {
     refetch: refetchTokens,
   } = usePatientTokens(doctor_id, clinic_id);
 
-
   const filteredTokens = useMemo(() => {
-    return tokens?.filter(token => ['In Progress', 'Waiting'].includes(token?.status)) ?? [];
+    return (
+      tokens?.filter(token =>
+        ['In Progress', 'Waiting'].includes(token?.status),
+      ) ?? []
+    );
   }, [tokens]);
   const loadData = useCallback(async () => {
     try {
@@ -59,7 +62,6 @@ const TokenListingTVScreen = ({ route, navigation }) => {
     }
   }, [doctor_id, refetchTokens]);
 
-
   // Handle orientation and in-progress patient
   useEffect(() => {
     loadData();
@@ -75,8 +77,8 @@ const TokenListingTVScreen = ({ route, navigation }) => {
     // Find in-progress patient safely
     const inProgress = Array.isArray(tokens)
       ? tokens.find(
-        token => token?.status === 'In Progress' || token?.recall === true,
-      )
+          token => token?.status === 'In Progress' || token?.recall === true,
+        )
       : null;
     setInProgressPatient(inProgress || null);
 
@@ -107,16 +109,24 @@ const TokenListingTVScreen = ({ route, navigation }) => {
   }
 
   return (
-    <View style={styles.fullScreenContainer} testID="token-listing-screen" key={refreshKey} >
-      <View style={styles.headerContainer} >
-      <DoctorHeader doctorData={doctorData} /><View>
+    <View
+      style={styles.fullScreenContainer}
+      testID="token-listing-screen"
+      key={refreshKey}>
+      <View style={styles.headerContainer}>
+        <View style={styles.doctorHeaderSubContainer}>
+          <DoctorHeader doctorData={doctorData} />
+        </View>
+        <View style={styles.refreshSubContainer}>
           <TouchableOpacity onPress={() => setRefreshKey(prev => prev + 1)}>
             <RotateCcw size={22} color="#000" />
           </TouchableOpacity>
         </View>
       </View>
-      <TokenTable tokens={filteredTokens} doctorId={doctor_id}  />
-      <View style={styles.notificationInProgress}>
+      <View style={styles.tokenListContainer}>
+        <TokenTable tokens={filteredTokens} doctorId={doctor_id} />
+      </View>
+      <View style={styles.notificationInProgressContainer}>
         {inProgressPatient && (
           <InProgressTokenNotificationScreen
             inProgressPatient={inProgressPatient}
@@ -126,12 +136,12 @@ const TokenListingTVScreen = ({ route, navigation }) => {
           />
         )}
       </View>
-      <AdWithRotation
-        doctor_id={doctor_id}
-        clinic_id={clinic_id}
-        hasInProgressPatient={inProgressPatient !== null}
-      />
-    </View >
+        {/* <AdWithRotation
+          doctor_id={doctor_id}
+          clinic_id={clinic_id}
+          hasInProgressPatient={inProgressPatient !== null}
+        /> */}
+    </View>
   );
 };
 

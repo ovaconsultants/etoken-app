@@ -12,38 +12,56 @@ export const styles = StyleSheet.create({
     padding: moderateScale(20),
   },
 
-  /** HEADER SECTION **/
+  /** CONTAINER STYLES **/
   headerContainer: {
+    flex: isTV ? 0.3 : 0.4,
+    flexDirection: 'row',
+  },
+  tokenListContainer: {
+    flex:  isTV ? 0.7 : 0.6,
+  },
+  notificationInProgressContainer: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    width: isTV ? moderateScale(700) : moderateScale(600),
+  },
+
+
+
+  /** DOCTOR HEADER  SUBCONTAINERS **/
+doctorHeaderSubContainer : {
+    flex: 0.9,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: moderateScale(10),
   },
-  headerRightContainer: {
-    flexDirection: 'row',
+  refreshSubContainer: {
+    flex: 0.1,
     alignItems: 'center',
-    marginRight: moderateScale(12),
-    marginTop: moderateScale(4),
+    justifyContent: 'center',
+    marginRight: moderateScale(10),
   },
 
-  /** DOCTOR PROFILE SECTION **/
+
+  /** INSIDE ELEMENTS OF THE DOCTOR HEADER SUBCONTAINER **/
   doctorSection: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    flex: 0.8,
+    flex: 1,
   },
-  profileCircle: {
-    width: moderateScale(80),
-    height: moderateScale(80),
+  profileCircleSection: {
+    width: moderateScale(100),
+    height: moderateScale(100),
     borderRadius: moderateScale(10),
     backgroundColor: '#f0f0f0',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: moderateScale(16),
+    marginRight: moderateScale(5),
     overflow: 'hidden',
   },
-  doctorNameContainer: {
+  doctorDetailSubsection : {
     flexDirection: 'row',
     borderRadius: moderateScale(8),
     marginHorizontal: moderateScale(8),
@@ -72,6 +90,7 @@ export const styles = StyleSheet.create({
     fontWeight: '800',
   },
   infoRow: {
+   
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: moderateScale(8),
@@ -86,16 +105,13 @@ export const styles = StyleSheet.create({
     fontWeight: '800',
   },
   infoText: {
+    flex: 0.8,
+    flexWrap: 'wrap',   
     fontSize: moderateScale(16),
     color: '#333',
     fontWeight: '500',
   },
-  reloadButtonContainer: {
-    flex: 0.1,
-    flexDirection: 'row',
-    alignSelf: 'center',
-    marginRight: moderateScale(10),
-  },
+
   reloadButton: {
     marginTop: moderateScale(4),
     marginLeft: moderateScale(12),
