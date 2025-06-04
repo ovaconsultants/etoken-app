@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState, useMemo} from 'react';
-import {View, TouchableOpacity} from 'react-native';
+import {View, TouchableOpacity , Platform} from 'react-native';
 import Orientation from 'react-native-orientation-locker';
 import {RotateCcw} from 'lucide-react-native';
 
@@ -113,7 +113,7 @@ const TokenListingTVScreen = ({route, navigation}) => {
       style={styles.fullScreenContainer}
       testID="token-listing-screen"
       key={refreshKey}>
-      <View style={styles.headerContainer}>
+      {  Platform.isTV && <View style={styles.headerContainer}>
         <View style={styles.doctorHeaderSubContainer}>
           <DoctorHeader doctorData={doctorData} />
         </View>
@@ -122,7 +122,7 @@ const TokenListingTVScreen = ({route, navigation}) => {
             <RotateCcw size={22} color="#000" />
           </TouchableOpacity>
         </View>
-      </View>
+      </View> }
       <View style={styles.tokenListContainer}>
         <TokenTable tokens={filteredTokens} doctorId={doctor_id} />
       </View>
