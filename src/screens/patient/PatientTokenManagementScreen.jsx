@@ -97,7 +97,7 @@ const PatientTokenManagementScreen = ({navigation, route}) => {
   return (
     <View style={styles.fullScreenContainer}>
       <SafeAreaView style={styles.fullScreenContainer}>
-        <View style={styles.headerContainer}>
+        {/* <View style={styles.headerContainer}>
           <View style={styles.headerBadges}>
             <View style={styles.badge}>
               <TouchableOpacity onPress={() => handleBadgePress('all')}>
@@ -115,7 +115,7 @@ const PatientTokenManagementScreen = ({navigation, route}) => {
               </TouchableOpacity>
             </View>
           </View>
-        </View>
+        </View> */}
         {activeFilter !== 'attended' && (
           <View style={styles.actionButtonsContainer}>
             <TouchableOpacity
