@@ -139,7 +139,7 @@ const HomeScreen = ({navigation}) => (
                 ]}
                 onPress={() => setSelectedScreen('1')}>
                 <Tv
-                  size={24}
+                  size={isLandscape && dimensions.width > 700 ? 18 : 24}
                   color={
                     selectedScreen === '1'
                       ? styles.selectedIconColor.color
@@ -161,7 +161,7 @@ const HomeScreen = ({navigation}) => (
                 ]}
                 onPress={() => setSelectedScreen('2')}>
                 <Users
-                  size={24}
+                  size={isLandscape && dimensions.width > 700 ? 18 : 24}
                   color={
                     selectedScreen === '2'
                       ? styles.selectedIconColor.color

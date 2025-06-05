@@ -1,4 +1,5 @@
 import { StyleSheet} from 'react-native';
+import { fontSize } from '../../utils/fontUtils';
 
 export const createStyles = (isLandscape , dimensions) => { 
   const fontscale = (fontsize) => {
@@ -102,7 +103,7 @@ export const createStyles = (isLandscape , dimensions) => {
   },
   buttonText: {
     color: 'white',
-    fontSize: fontscale(18),
+    fontSize: fontSize(18), // Use utility
     fontWeight: '600',
   },
   // Handling Empty Clinic Case 
@@ -134,7 +135,6 @@ export const createStyles = (isLandscape , dimensions) => {
     alignSelf: 'center',
     marginBottom: marginscale(16),
     marginTop: marginscale(16),
-
   },
   tab: {
     flex: 1,
@@ -144,19 +144,23 @@ export const createStyles = (isLandscape , dimensions) => {
     paddingVertical: marginscale(10),
     borderBottomWidth: 2,
     borderBottomColor: 'transparent',
-    minWidth: 0, // <-- Add this line
+    minWidth: 0,
+    height: marginscale(40),
   },
   activeTab: {
     borderBottomColor: '#007AFF',
   },
   tabText: {
     marginLeft: marginscale(8),
-    fontSize: Math.min(fontscale(16), 18), // Limit max font size to 18
+    fontSize:
+      isLandscape && dimensions.width > 700
+        ? fontSize(13) // smaller in landscape on tablet
+        : fontSize(16),
     color: '#888',
     fontWeight: '500',
     flexShrink: 1,
-    flexWrap: 'wrap', // Allow wrapping
-    textAlign: 'center', // Center text if it wraps
+    flexWrap: 'wrap',
+    textAlign: 'center',
   },
   activeTabText: {
     color: '#007AFF',
