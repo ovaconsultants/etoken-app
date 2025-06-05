@@ -6,11 +6,10 @@ export const DoctorHeader = ({ doctorData }) => {
   return (
     <>
       <View style={styles.doctorSection}>
-        <View style={styles.profileCircle}>
+        <View style={styles.profileCircleSection}>
           <ProfileImageRenderer doctor_id={doctorData?.doctor_id ?? ''} />
         </View>
-
-        <View style={styles.doctorNameContainer}>
+        <View style={styles.doctorDetailSubsection}>
           <View style={styles.leftColumn}>
             <Text style={styles.doctorName}>
               Dr.{' '}
