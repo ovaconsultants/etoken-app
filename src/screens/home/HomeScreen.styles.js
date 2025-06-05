@@ -17,9 +17,10 @@ export const createStyles = (isLandscape , dimensions) => {
   return  StyleSheet.create({
   container: {
     flex: 1,
-    margin :  marginscale(10),
+    margin :  marginscale(5),
     backgroundColor :' rgb(251, 251, 251)',
     gap : 5 ,
+    marginTop :  marginscale(0),
   },
 
   selectionContainer: {
@@ -29,7 +30,8 @@ export const createStyles = (isLandscape , dimensions) => {
   cardContainer: {
     flex: isLandscape ? 3 : 4,
     width : '100%',
-    minHeight: 0,
+    minHeight: 0, 
+
   },
   buttonContainer: {
     flex:  isLandscape ? 0.5 : 0.7 ,
@@ -125,6 +127,40 @@ export const createStyles = (isLandscape , dimensions) => {
     color: '#007AFF',
     fontSize: 16,
     marginLeft: 8,
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    width: '100%',
+    alignSelf: 'center',
+    marginBottom: marginscale(16),
+    marginTop: marginscale(16),
+
+  },
+  tab: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: marginscale(10),
+    borderBottomWidth: 2,
+    borderBottomColor: 'transparent',
+    minWidth: 0, // <-- Add this line
+  },
+  activeTab: {
+    borderBottomColor: '#007AFF',
+  },
+  tabText: {
+    marginLeft: marginscale(8),
+    fontSize: Math.min(fontscale(16), 18), // Limit max font size to 18
+    color: '#888',
+    fontWeight: '500',
+    flexShrink: 1,
+    flexWrap: 'wrap', // Allow wrapping
+    textAlign: 'center', // Center text if it wraps
+  },
+  activeTabText: {
+    color: '#007AFF',
+    fontWeight: 'bold',
   },
 });
 }

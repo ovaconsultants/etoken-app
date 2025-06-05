@@ -68,7 +68,6 @@ const useStyles = () => {
       position: 'relative',
       overflow: 'hidden',
       marginBottom: 10,
-      height:  200,
     },
     borderHighlight: {
       position: 'absolute',
