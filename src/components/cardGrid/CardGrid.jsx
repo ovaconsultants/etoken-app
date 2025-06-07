@@ -1,6 +1,7 @@
 import React from 'react';
 import {View, StyleSheet, ScrollView} from 'react-native';
 import Card from '../card/Cards';
+import { styles } from './CardGrid.styles';
 
 const CardGrid = ({data, onPress, isSelectedCard, isLandscape}) => {
   return (
@@ -31,28 +32,4 @@ const CardGrid = ({data, onPress, isSelectedCard, isLandscape}) => {
     </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-    padding: 4,
-    minHeight: 1,
-  },
-  landscapeContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  cardWrapper: {
-    width: '100%',
-    marginBottom: 8,
-  },
-  landscapeCardWrapper: {
-    width: '49.1%',
-  },
-});
-
 export default CardGrid;

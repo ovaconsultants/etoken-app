@@ -30,9 +30,8 @@ export const createStyles = (isLandscape , dimensions) => {
   },
   cardContainer: {
     flex: isLandscape ? 3 : 4,
-    width : '100%',
-    minHeight: 0, 
-
+    width: '100%',
+    minHeight: 0,
   },
   buttonContainer: {
     flex:  isLandscape ? 0.5 : 0.7 ,
