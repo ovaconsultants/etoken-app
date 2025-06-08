@@ -188,6 +188,30 @@ export const ReceptionScreen = ({ route }) => {
 
           {!isLoading && !isError && (
             <View style={styles.contentContainer}>
+             
+              {/* Simplified Image Capture Section */}
+              <View style={styles.profileUploadLink}>
+                {profileImage ? (
+                  <View style={styles.imagePreviewContainer}>
+                    <Image
+                      source={{ uri: profileImage.uri || profileImage }}
+                      style={styles.profileImagePreview}
+                    />
+                    <TouchableOpacity
+                      style={styles.changePhotoButton}
+                      onPress={() => setProfileImage(null)}>
+                      <Text style={styles.changePhotoText}>Change Photo</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <CapturePatientProfilePhotoScreen
+                    onImageSelected={imageData => {
+                      setProfileImage(imageData);
+                    }}
+                  />
+                )}
+              </View>
+               {/* Search Bar Section */}
               <View style={styles.searchBarContainer}>
                 <SearchBar
                   data={patients}
@@ -213,28 +237,8 @@ export const ReceptionScreen = ({ route }) => {
                   doctorId={doctor_id}
                 />
               </View>
-              {/* Simplified Image Capture Section */}
-              <View style={styles.profileUploadLink}>
-                {profileImage ? (
-                  <View style={styles.imagePreviewContainer}>
-                    <Image
-                      source={{ uri: profileImage.uri || profileImage }}
-                      style={styles.profileImagePreview}
-                    />
-                    <TouchableOpacity
-                      style={styles.changePhotoButton}
-                      onPress={() => setProfileImage(null)}>
-                      <Text style={styles.changePhotoText}>Change Photo</Text>
-                    </TouchableOpacity>
-                  </View>
-                ) : (
-                  <CapturePatientProfilePhotoScreen
-                    onImageSelected={imageData => {
-                      setProfileImage(imageData);
-                    }}
-                  />
-                )}
-              </View>
+              {/* Form Section */}
+               {/* <ScrollView contentContainerStyle={styles.scrollContainer}  keyboardShouldPersistTaps="handled" > */}
               <Formik
                 innerRef={formikRef}
                 initialValues={Object.fromEntries(
