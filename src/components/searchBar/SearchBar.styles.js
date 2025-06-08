@@ -1,23 +1,28 @@
-import {StyleSheet} from 'react-native';
+import { StyleSheet } from 'react-native';
+import { fontSize } from '../../utils/fontUtils';
+import DeviceInfo from 'react-native-device-info';
+
+const isTablet = DeviceInfo.isTablet();
 
 export const createStyles = isLandscape =>
   StyleSheet.create({
-    searchBarContainer: {
+    container: {
       width: '100%',
       position: 'relative',
     },
     searchBar: {
-      width: '100%',
-      height: isLandscape ? 40 : 50,
+      width:isLandscape ? '98.5%' : '100%',
+      height: isTablet ? 72 : 48,
       borderRadius: 8,
       borderWidth: 1,
       borderColor: '#ccc',
       backgroundColor: '#fff',
-      opacity: 0.8,
-      paddingLeft: '4%',
+      // opacity: 0.95,
+      fontSize: fontSize(14),
+     
     },
     textInput: {
-      fontSize: 16,
+      fontSize: fontSize(14),  // match input font from ReceptionScreen
       color: '#333',
     },
     tile: {
@@ -32,14 +37,16 @@ export const createStyles = isLandscape =>
       justifyContent: 'center',
       alignItems: 'center',
     },
-
     enlargeShowImage: {
       flex: 1,
       backgroundColor: 'rgba(0,0,0,0.9)',
       justifyContent: 'center',
       alignItems: 'center',
     },
-    modalImage: {width: '90%', height: '70%'},
+    modalImage: {
+      width: '90%',
+      height: '70%',
+    },
     detailsPortion: {
       flex: 0.7,
       justifyContent: 'center',
@@ -89,7 +96,6 @@ export const createStyles = isLandscape =>
       alignItems: 'center',
       paddingHorizontal: '4%',
     },
-
     loadingContainer: {
       padding: '1%',
       alignItems: 'center',
@@ -101,9 +107,8 @@ export const createStyles = isLandscape =>
     },
     noResultsText: {
       color: '#95a5a6',
-      fontSize: 14,
+      fontSize: fontSize(12),
       fontWeight: '500',
-      fontStyle: 'Bold',
     },
     row: {
       flexDirection: 'row',
@@ -112,9 +117,8 @@ export const createStyles = isLandscape =>
       marginBottom: 6,
     },
     label: {
-      justifyContent: 'center',
-      alignItems: 'center',
-      fontSize: 16,
+      fontSize: fontSize(14),
+      color: '#000',
       flex: 1,
     },
     bold: {

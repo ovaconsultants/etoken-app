@@ -233,7 +233,7 @@ export const ReceptionScreen = ({ route }) => {
                   }}
                   dropdownVisible={searchDropdownVisible}
                   setDropdownVisible={setSearchDropdownVisible}
-                  placeholder="Search by Patient Name, Mobile, or Email"
+                  placeholder="Search by Name, Mobile, or Email"
                   doctorId={doctor_id}
                 />
               </View>

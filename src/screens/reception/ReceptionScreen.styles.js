@@ -21,7 +21,8 @@ export const createStyles = (isLandscape, dimensions) =>
       justifyContent: 'flex-start',
     },
     searchBarContainer: {
-      // marginBottom: isLandscape ? 10 : 20,
+      marginLeft: isLandscape ? -10 : 0,
+    
     },
     formContainer: {
       width: '100%',
@@ -52,8 +53,7 @@ export const createStyles = (isLandscape, dimensions) =>
     },
     profileUploadLink: {
       alignItems: 'center',
-      // marginVertical: isTablet ? 20 : 14,
-     minHeight: isTablet ? 120 : 80,
+     minHeight: isTablet ? 160 : 80,
     },
     imagePreviewContainer: {
       alignItems: 'center',
