@@ -23,8 +23,6 @@ export const styles = StyleSheet.create({
   label: {
     fontSize: fontSize(12),
     color: '#000',
-    // fontWeight: 'bold',
-    marginTop: 4,
   },
   icon: {
     color: '#000',
