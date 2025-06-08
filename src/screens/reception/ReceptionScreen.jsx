@@ -1,4 +1,4 @@
-import React, {useRef, useState, useMemo, useEffect} from 'react';
+import React, { useRef, useState, useMemo, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,19 +9,19 @@ import {
   SafeAreaView,
   Image,
 } from 'react-native';
-import {Formik} from 'formik';
-import {useQuery, useQueryClient} from '@tanstack/react-query';
-import {useNavigation} from '@react-navigation/native';
-import {useAtom} from 'jotai';
-import {Users, Home, Eraser, RefreshCcw} from 'lucide-react-native';
+import { Formik } from 'formik';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useNavigation } from '@react-navigation/native';
+import { useAtom } from 'jotai';
+import { Users, Home, Eraser, RefreshCcw } from 'lucide-react-native';
 
-import {patientsAtom} from '../../atoms/patientAtoms/patientAtom';
-import {ReceptionFormValidationSchema} from '../../utils/ReceptionFormValidation';
+import { patientsAtom } from '../../atoms/patientAtoms/patientAtom';
+import { ReceptionFormValidationSchema } from '../../utils/ReceptionFormValidation';
 import {
   FetchPatientsRequest,
   InsertPatientRequest,
 } from '../../services/patientService';
-import {GenerateTokenRequest} from '../../services/tokenService';
+import { GenerateTokenRequest } from '../../services/tokenService';
 import {
   UploadPatientProfileImageRequest,
   GetPatientProfileImageRequest,
@@ -33,10 +33,11 @@ import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErr
 import FooterNavigation from '../../components/tabNavigationFooter/TabNavigationFooter';
 import CapturePatientProfilePhotoScreen from '../profilePicture/patient/CapturePatientProfilePhotoScreen';
 
-import {showToast} from '../../components/toastMessage/ToastMessage';
-import {globalStyles} from '../../styles/globalStyles';
-import {useOrientation} from '../../hooks/useOrientation';
-import {createStyles} from './ReceptionScreen.styles';
+import { showToast } from '../../components/toastMessage/ToastMessage';
+import { globalStyles } from '../../styles/globalStyles';
+import { useOrientation } from '../../hooks/useOrientation';
+import { createStyles } from './ReceptionScreen.styles';
+import BottomNavigation from '../../components/bottomNavigation/BottomNavigation';
 
 const formFields = [
   {
@@ -68,9 +69,9 @@ const formFields = [
   },
 ];
 
-export const ReceptionScreen = ({route}) => {
-  const {doctor_id = null, clinic_id = null} = route.params ?? {};
-  const {isLandscape, dimensions} = useOrientation();
+export const ReceptionScreen = ({ route }) => {
+  const { doctor_id = null, clinic_id = null } = route.params ?? {};
+  const { isLandscape, dimensions } = useOrientation();
   const styles = useMemo(
     () => createStyles(isLandscape, dimensions),
     [dimensions, isLandscape],
@@ -84,8 +85,9 @@ export const ReceptionScreen = ({route}) => {
   const [searchDropdownVisible, setSearchDropdownVisible] = useState(false);
   const [isLoadingPatients, setIsLoadingPatients] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
+  const [resetKey, setResetKey] = useState(0);
 
-  const {isLoading, isError, error} = useQuery({
+  const { isLoading, isError, error } = useQuery({
     queryKey: ['fetchingPatients'],
     queryFn: async () => {
       const data = await FetchPatientsRequest(doctor_id);
@@ -99,6 +101,7 @@ export const ReceptionScreen = ({route}) => {
   useEffect(() => {
     setProfileImage(null);
   }, [doctor_id, clinic_id]);
+
   const handleSubmit = async values => {
     try {
       const patientIdToUse =
@@ -133,7 +136,6 @@ export const ReceptionScreen = ({route}) => {
           console.warn('Profile image upload failed:', uploadError);
         }
       }
-      handleClear();
       queryClient.invalidateQueries(['fetchingPatients']);
       showToast('Token generated successfully', 'success');
       const token_no = await GenerateTokenRequest({
@@ -152,20 +154,10 @@ export const ReceptionScreen = ({route}) => {
     }
   };
 
-  const handleClear = () => {
-    formikRef.current?.resetForm();
-    formFields.forEach(field => {
-      formikRef.current?.setFieldTouched(field.name, false);
-    });
-    console.log('value of profile image before clearing:', profileImage);
-    setProfileImage(null);
-  };
-  const handleRefresh = async () => {
-    setIsLoadingPatients(true);
-    queryClient.invalidateQueries(['fetchingPatients']);
-    await queryClient.refetchQueries(['fetchingPatients']);
-    formikRef.current?.resetForm();
-    setIsLoadingPatients(false);
+  const handleRefresh = () => {
+    setResetKey(prev => prev + 1);   // re-renders main UI
+    setProfileImage(null);          // explicitly reset image state
+    formikRef.current?.resetForm(); // optional: reset form too
   };
 
   if (isLoading || isLoadingPatients) {
@@ -184,14 +176,14 @@ export const ReceptionScreen = ({route}) => {
   }
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} key={resetKey}>
       <TouchableWithoutFeedback
         onPress={() => {
           setSearchDropdownVisible(false);
           Keyboard.dismiss();
         }}>
         <View style={styles.container}>
-          <LoadingErrorHandler {...{isLoading, isError, error, isLandscape}} />
+          <LoadingErrorHandler {...{ isLoading, isError, error, isLandscape }} />
 
           {!isLoading && !isError && (
             <View style={styles.contentContainer}>
@@ -225,7 +217,7 @@ export const ReceptionScreen = ({route}) => {
                 {profileImage ? (
                   <View style={styles.imagePreviewContainer}>
                     <Image
-                      source={{uri: profileImage.uri || profileImage}}
+                      source={{ uri: profileImage.uri || profileImage }}
                       style={styles.profileImagePreview}
                     />
                     <TouchableOpacity
@@ -269,8 +261,8 @@ export const ReceptionScreen = ({route}) => {
                             style={[
                               styles.input,
                               touched[field.name] &&
-                                errors[field.name] &&
-                                styles.inputError,
+                              errors[field.name] &&
+                              styles.inputError,
                             ]}
                             placeholder={field.placeholder}
                             placeholderTextColor="#888"
@@ -301,42 +293,7 @@ export const ReceptionScreen = ({route}) => {
               </Formik>
             </View>
           )}
-
-          <View style={styles.footerContainer}>
-            <FooterNavigation
-              navigation={navigation}
-              currentRoute="Reception"
-              handleRefresh={handleRefresh}
-              handleClear={handleClear}
-              routes={[
-                {
-                  id: 'home',
-                  icon: Home,
-                  screen: 'Home',
-                  label: 'Home',
-                },
-                {
-                  id: 'refresh',
-                  icon: RefreshCcw,
-                  label: 'refresh',
-                  action: 'refresh',
-                },
-                {
-                  id: 'clear',
-                  icon: Eraser,
-                  label: 'Clear',
-                  action: 'clear',
-                },
-                {
-                  id: 'tokens',
-                  icon: Users,
-                  label: 'Tokens',
-                  screen: 'TokenListing',
-                  params: {doctor_id, clinic_id},
-                },
-              ]}
-            />
-          </View>
+          <BottomNavigation screenName="Reception" route={route} handleRefresh={handleRefresh} />
         </View>
       </TouchableWithoutFeedback>
     </SafeAreaView>

@@ -4,7 +4,7 @@ const styles = StyleSheet.create({
   footer: {
     position: 'relative',
     marginTop:5,
-    bottom: 0,
+    bottom: 10,
     width: '100%',
     height: 20,
     backgroundColor: '#fff',
