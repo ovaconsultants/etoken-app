@@ -1,106 +1,91 @@
-import {StyleSheet} from 'react-native';
-export const createStyles = isLandscape =>
+import { StyleSheet } from 'react-native';
+import { fontSize } from '../../utils/fontUtils';
+import DeviceInfo from 'react-native-device-info';
+
+const isTablet = DeviceInfo.isTablet();
+
+export const createStyles = (isLandscape, dimensions) =>
   StyleSheet.create({
     safeArea: {
       flex: 1,
       backgroundColor: '#fff',
     },
     container: {
-      padding: '2%',
       flex: 1,
-      gap: isLandscape ? 0 : '4%',
+      padding: isTablet ? '2%' : '2%',
+      flexDirection: 'column',
+      gap: isLandscape ? 16 : 12,
     },
     contentContainer: {
-      flex: 1,
-      gap: isLandscape ? '5%' : '4%',
-    },
-    searchBarContainer: {
-      marginVertical: isLandscape ? 0 : 15,
-    },
-    formContainer: {
-      flex: 1,
-      flexDirection: 'column',
+      flexGrow: 1,
       justifyContent: 'flex-start',
     },
-
+    searchBarContainer: {
+      marginBottom: isLandscape ? 10 : 20,
+    },
+    formContainer: {
+      width: '100%',
+    },
+    inputsWrapper: {
+      marginTop: 10,
+    },
     inputContainer: {
-      marginBottom: isLandscape ? 7 : 15,
+      marginBottom: isTablet ? 14 : 10,
     },
     input: {
-      height: isLandscape ? 30 : 50,
-      paddingLeft: '2%',
+      height: isTablet ? 72 : 48,
+      paddingHorizontal: isTablet ? 16 : 12,
       borderWidth: 1,
       borderColor: '#ccc',
       borderRadius: 8,
-      fontSize: 16,
+      fontSize: fontSize(14),
       backgroundColor: '#fff',
+      marginRight: isLandscape ? 10 : 0,
     },
     inputError: {
       borderColor: 'red',
     },
     errorText: {
       color: 'red',
-      fontSize: 12,
-      marginTop: 5,
-    },
-    buttonContainer: {
-      flex: 0.6,
-      justifyContent: 'center',
-      marginTop: isLandscape ? 0 : 5,
-    },
-
-    uploadButton: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 8,
+      fontSize: fontSize(12),
+      marginTop: 4,
     },
     profileUploadLink: {
-      flex: 0.1,
-      flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'center',
-      paddingHorizontal: 10,
+      marginVertical: isTablet ? 20 : 14,
     },
-
-    submitButton: {
-      backgroundColor: '#007AFF',
-      paddingHorizontal: 15,
-      borderRadius: 8,
-      justifyContent: 'center',
-      alignItems: 'center',
-      flex: 1,
-    },
-    disabledButton: {
-      backgroundColor: 'rgba(0, 122, 255, 0.6)',
-    },
-
-    buttonText: {
-      color: '#fff',
-      fontWeight: 'bold',
-      fontSize: 24,
-    },
-    footerContainer: {
-      flex: isLandscape ? 0.2 : 0.1,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-
     imagePreviewContainer: {
-      flexDirection: 'row',
       alignItems: 'center',
     },
     profileImagePreview: {
-      width: 50,
-      height: 50,
-      borderRadius: 30,
+      width: isTablet ? 90 : 70,
+      height: isTablet ? 90 : 70,
+      borderRadius: isTablet ? 45 : 35,
     },
     changePhotoButton: {
       marginTop: 10,
-      padding: 8,
+      paddingVertical: 6,
+      paddingHorizontal: 14,
       backgroundColor: '#f0f0f0',
+      borderRadius: 6,
     },
     changePhotoText: {
-      color: '#3498db',
+      color: '#007AFF',
+      fontSize: fontSize(14),
       fontWeight: 'bold',
+    },
+    buttonContainer: {
+      marginTop: isLandscape ? 10 : 20,
+    },
+    submitButton: {
+      backgroundColor: '#007AFF',
+      paddingVertical: isTablet ? 18 : 14,
+      borderRadius: 10,
+      alignItems: 'center',
+    },
+    buttonText: {
+      color: '#fff',
+      fontWeight: 'bold',
+      fontSize: fontSize(isTablet ? 22 : 18),
     },
   });
