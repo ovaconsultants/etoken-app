@@ -145,8 +145,7 @@ const PatientTokenManagementScreen = ({navigation, route}) => {
                 isSelected={selectedTokenId === token.token_id}
                 translateNameToHindi={TranslateNameToHindi}
                 onPress={() => handleRowPress(token.token_id)}
-                onLongPress={() => handleLongPress(token)}
-                styles={styles}
+                onLongPress={() => handleLongPress(token)}              
                 updateToken={updateToken}
                 doctorId={doctor_id}
               />
