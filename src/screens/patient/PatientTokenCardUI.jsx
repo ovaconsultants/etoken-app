@@ -93,7 +93,7 @@ export const TokenCard = React.memo(
               {imageUrl ? (
                 <EnlargeableImage
                   imageUrl={imageUrl}
-                  imageStyle={styles.profileImage}
+                  imageStyle={styles.profileImage} // Use the fixed size style
                 />
               ) : null}
             </View>

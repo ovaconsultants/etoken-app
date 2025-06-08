@@ -85,6 +85,8 @@ export const createStyles = isLandscape =>
       borderWidth: 1,
       borderColor: '#eee',
       marginBottom: 8,
+      minHeight: 72, // Add this line for consistent height
+      justifyContent: 'center', // Vertically center content
     },
     tokenCardContent: {
       flexDirection: 'row',
@@ -92,10 +94,17 @@ export const createStyles = isLandscape =>
       gap: 8,
     },
     profileImageContainer: {
-      height: '100%',
-      flex: 0.15,
+      height: 56, // Fixed height
+      width: 56,  // Fixed width for centering
       alignItems: 'center',
       justifyContent: 'center',
+      overflow: 'hidden',
+    },
+    profileImage: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      resizeMode: 'cover',
     },
     tokenDataContent: {
       flex: 0.85,
