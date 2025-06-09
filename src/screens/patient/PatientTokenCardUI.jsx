@@ -1,12 +1,11 @@
-import { View, TouchableOpacity, Text } from 'react-native';
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
-
 import { GetPatientImage } from '../../services/patientImagesCacheServices';
 import EnlargeableImage from '../../components/enlargeableImage/EnlargeableImage';
 import { formatTokenTime, maskPhoneNumber } from '../../utils/globalUtil';
-import {useOrientation} from '../../hooks/useOrientation';
-import {createStyles} from './PatientTokenManagementScreen.styles';
+import { useOrientation } from '../../hooks/useOrientation';
+import { createTokenCardStyles } from './TokenCard.styles';
 
 const statusOptions = [
   { label: 'Waiting', value: 'Waiting' },
@@ -16,122 +15,80 @@ const statusOptions = [
 ];
 
 export const TokenCard = React.memo(
-  ({
-    token,
-    isSelected,
-    onPress,
-    onLongPress,
-    updateToken,
-    doctorId,
-  }) => {
-    const [status, _] = useState();
+  ({ token, isSelected, onPress, onLongPress, updateToken, doctorId }) => {
     const [imageUrl, setImageUrl] = useState(null);
-      const {isLandscape} = useOrientation();
-      const styles = createStyles(isLandscape);
+    const { isLandscape } = useOrientation();
+    const styles = createTokenCardStyles(isLandscape);
+
     useEffect(() => {
-      const fetchPatientImage = async () => {
+      const fetchImage = async () => {
         if (token.patient_id) {
-          const patientImageUrl = await GetPatientImage(doctorId, token.patient_id);
-          setImageUrl(patientImageUrl || null);
+          const url = await GetPatientImage(doctorId, token.patient_id);
+          setImageUrl(url || null);
         }
       };
-      fetchPatientImage();
-    }, [token.patient_name, token.patient_id, doctorId]);
+      fetchImage();
+    }, [token.patient_id, doctorId]);
 
-    const handleStatusChange = async item => {
+    const handleStatusChange = async (item) => {
       await updateToken({ ...token, status: item.value });
     };
 
     return (
       <TouchableOpacity
-        style={[
-          styles.tokenCard,
-          token.status === 'In Progress' && styles.inProgressCard,
-          token.status === 'Waiting' && styles.waitingCard,
-          token.status === 'Completed' && styles.completedCard,
-          token.status === 'Cancelled' && styles.cancelledCard,
-          isSelected && styles.selectedCard,
-        ]}
+        style={[styles.card, isSelected && styles.selectedCard]}
         onPress={onPress}
         onLongPress={onLongPress}
-        delayLongPress={500}>
-        <View style={styles.tokenCardContent}>
-          <View style={styles.profileImageContainer}>
-            {imageUrl ? (
-              <EnlargeableImage
-                imageUrl={imageUrl}
-                imageStyle={styles.profileImage}
-              />
-            ) : null}
+        delayLongPress={500}
+      >
+        <View style={styles.cardContent}>
+          <View style={styles.imageWrapper}>
+            {imageUrl && (
+              <EnlargeableImage imageUrl={imageUrl} imageStyle={styles.image} />
+            )}
           </View>
-          <View style={styles.tokenDataContent}>
-            <View style={styles.tokenHeader}>
-              <View>
-                <Text style={styles.patientName}>
-                  {token.patient_name} {token.age ? `(${token.age})` : ''}
-                </Text>
-              </View>
-              <View style={styles.tokenNumber}>
-                <Text style={styles.tokenTimeText}>
-                  {formatTokenTime(token.created_date)}
-                </Text>
-                <View style={styles.tokenNumberText}>
-                  <Text style={styles.tokenNumberValue}>{token.token_no}</Text>
-                </View>
+
+          <View style={styles.contentWrapper}>
+            <View style={styles.topContent}>
+              <View style={[styles.nameTimeBlock, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'right' }]}>
+                <Text style={styles.name}>{token.patient_name} ({token.age})</Text>
+                <Text style={styles.time}>{formatTokenTime(token.created_date)}</Text>
+                <Text style={styles.tokenNumberText}>{token.token_no}</Text>
               </View>
             </View>
-            <View style={styles.tokenDetails}>
-              <View style={styles.feePhoneStatusContainer}>
-                <Text style={styles.phoneNumber}>
-                  {maskPhoneNumber(token.mobile_number)}
-                </Text>
-                <Text
-                  style={
-                    token.fee_status === 'Paid'
-                      ? styles.paidStatusTextColor
-                      : styles.notPaidStatusTextColor
-                  }>
-                  Fee : {token.fee_status === 'Paid' ? 'Paid' : 'UnPaid'}
-                </Text>
-                <View style={styles.statusDropdownContainer}>
-                  <Dropdown
-                    style={styles.dropdown}
-                    containerStyle={styles.dropdownContainer}
-                    itemContainerStyle={styles.itemContainer}
-                    placeholder={token.status}
-                    placeholderStyle={styles.placeholderText}
-                    selectedTextStyle={styles.selectedStatusText}
-                    data={statusOptions.filter(
-                      item => item.value !== token.status,
-                    )}
-                    labelField="label"
-                    valueField="value"
-                    value={status}
-                    onChange={handleStatusChange}
-                    renderItem={item => (
-                      <View style={styles.dropdownItem}>
-                        <View
-                          style={[
-                            styles.smallStatusDot,
-                            item.value === 'In Progress' && styles.greenDot,
-                            item.value === 'On Hold' && styles.orangeDot,
-                            item.value === 'Waiting' && styles.yellowDot,
-                            item.value === 'Completed' && styles.blueDot,
-                            item.value === 'Cancelled' && styles.redDot,
-                          ]}
-                        />
-                        <Text style={styles.smallDropdownItemText}>
-                          {item.label}
-                        </Text>
-                      </View>
-                    )}
-                  />
-                </View>
+
+            <View style={[styles.bottomContent, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}>
+              <Text style={styles.phone}>{maskPhoneNumber(token.mobile_number)}</Text>
+              <Text
+                style={
+                  token.fee_status === 'Paid'
+                    ? styles.feePaid
+                    : styles.feeUnpaid
+                }
+              >
+                {token.fee_status === 'Paid' ? 'Paid' : 'Not Paid'}
+              </Text>
+              <View style={styles.dropdownWrapper}>
+                <Dropdown
+                  value={token.status}
+                  data={statusOptions}
+                  labelField="label"
+                  valueField="value"
+                  onChange={handleStatusChange}
+                  style={styles.dropdown}
+                  selectedTextStyle={styles.dropdownText}
+                  containerStyle={styles.dropdownContainer}
+                  itemContainerStyle={styles.dropdownItemContainer}
+                  renderItem={(item) => (
+                    <Text style={styles.dropdownItemText}>{item.label}</Text>
+                  )}
+                />
               </View>
             </View>
+
           </View>
         </View>
       </TouchableOpacity>
     );
-  },
+  }
 );

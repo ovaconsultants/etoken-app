@@ -44,7 +44,7 @@ export const createStyles = isLandscape =>
     buttonText: {
       color: 'white',
       fontWeight: 'bold',
-      fontSize: fontSize(isTablet ? 18 : 16),
+      fontSize: fontSize(isTablet ? 18 : 18),
       paddingVertical: isTablet ? 28 : 12,
     },
     secondaryButtonText: {
@@ -179,7 +179,9 @@ export const createStyles = isLandscape =>
     },
     placeholderText: {
       fontSize: fontSize(isTablet ? 14 : 12),
-      textAlign: 'right',
+      textAlign: 'center',
+      marginRight: 8,
+
     },
     dropdownItem: {
       flexDirection: 'row',

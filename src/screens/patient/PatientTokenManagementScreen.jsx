@@ -121,7 +121,7 @@ const PatientTokenManagementScreen = ({navigation, route}) => {
             <TouchableOpacity
               style={styles.primaryButton}
               onPress={hasTokenInProgress ? handleDone : handleNext}>
-              <Phone size={16} color="white" />
+              <Phone size={30} color="white" />
               <Text style={styles.buttonText}>
                 {hasTokenInProgress ? 'Done' : 'Call Next'}
               </Text>
@@ -130,7 +130,7 @@ const PatientTokenManagementScreen = ({navigation, route}) => {
               style={styles.secondaryButton}
               onPress={handleRecall}
               disabled={!hasTokenInProgress}>
-              <Nfc size={16} color="#333" />
+              <Nfc size={30} color="#333" />
               <Text style={styles.secondaryButtonText}>Recall</Text>
             </TouchableOpacity>
           </View>
