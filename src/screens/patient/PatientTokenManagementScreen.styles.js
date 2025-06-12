@@ -7,17 +7,24 @@ const isTablet = DeviceInfo.isTablet();
 export const createStyles = isLandscape =>
   StyleSheet.create({
     fullScreenContainer: {
+      marginTop: 10,
       flex: 1,
       backgroundColor: '#fff',
       width: '100%',
       height: '100%',
       gap: isLandscape ? 12 : 8,
     },
+    safeArea: {
+      flex: 1,
+      backgroundColor: '#fff',
+    },
+    
     // Buttons
     actionButtonsContainer: {
       flexDirection: 'row',
       paddingHorizontal: 8,
       gap: 12,
+      marginBottom: 10,
     },
     primaryButton: {
       flex: 1,

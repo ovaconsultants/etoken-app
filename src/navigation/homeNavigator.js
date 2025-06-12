@@ -110,6 +110,23 @@ const HomeNavigator = () => {
         component={PatientTokenManagementScreen}
         options={{
           title: 'Token Queue',
+           headerTitle: () => (
+            <>
+              <Text
+                style={{
+                  fontSize: fontSize(18),
+                  fontWeight: 'bold',
+                  color: '#222',
+                  textAlign: 'center',
+                  width: '100%',
+                  height: 40,
+                }}
+                numberOfLines={1}
+                onPress={handleRefresh}
+              >
+                Token Queue
+              </Text>
+            </>),
         }}
       />
 
@@ -122,7 +139,9 @@ const HomeNavigator = () => {
       <Stack.Screen
         name="TokenManagement"
         component={TokenListingTVScreen}
-        options={{ title: 'Patients Queue' }}
+        options={{ title: 'Patients Queue',
+          
+         }}
       />
 
       <Stack.Screen

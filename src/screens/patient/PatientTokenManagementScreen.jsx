@@ -16,6 +16,7 @@ import {
   UserPlus,
   RefreshCw,
 } from 'lucide-react-native';
+import {useAtomValue} from 'jotai';
 import withQueryClientProvider from '../../hooks/useQueryClientProvider';
 import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
 import {usePatientTokenManager} from '../../hooks/usePatientTokenManager';
@@ -100,26 +101,7 @@ const PatientTokenManagementScreen = ({navigation, route}) => {
 
   return (
     <View style={styles.fullScreenContainer} key={refreshKey}>
-      <SafeAreaView style={styles.fullScreenContainer}>
-        {/* <View style={styles.headerContainer}>
-          <View style={styles.headerBadges}>
-            <View style={styles.badge}>
-              <TouchableOpacity onPress={() => handleBadgePress('all')}>
-                <Text style={styles.badgeText}>Total: {total}</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={[styles.badge, styles.greenBadge]}>
-              <TouchableOpacity onPress={() => handleBadgePress('attended')}>
-                <Text style={styles.badgeText}>Attended: {attended}</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={[styles.badge, styles.yellowBadge]}>
-              <TouchableOpacity onPress={() => handleBadgePress('inQueue')}>
-                <Text style={styles.badgeText}>In Queue: {inQueue}</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View> */}
+      <SafeAreaView style={styles.safeArea}>
         {activeFilter !== 'attended' && (
           <View style={styles.actionButtonsContainer}>
             <TouchableOpacity
