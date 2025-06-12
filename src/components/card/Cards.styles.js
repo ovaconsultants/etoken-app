@@ -1,11 +1,13 @@
 import { StyleSheet } from 'react-native';
-export const styles = (isSmallDevice) => StyleSheet.create({
-    card: {
-      backgroundColor: 'rgba(217, 223, 249, 0.9)',
-      borderRadius: 16,
-      padding: isSmallDevice ? 12 : 16,
+import { fontSize } from '../../utils/fontUtils';
+
+export const getCardStyles = (deviceType = 'Mobile', isLandscape = false, cardWidth = '100%') =>
+  StyleSheet.create({
+    cardContainer: {
+      backgroundColor: 'rgba(236, 238, 255, 0.7)',
+      borderRadius: 10,
       justifyContent: 'center',
-      alignItems: 'center',
+      alignItems: 'flex-start',
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.1,
@@ -13,50 +15,36 @@ export const styles = (isSmallDevice) => StyleSheet.create({
       elevation: 5,
       position: 'relative',
       overflow: 'hidden',
+      marginBottom: 10,
+      width: cardWidth,
+      padding: deviceType === 'Tablet' ? (isLandscape ? 20 : 18) : 14,
     },
-    borderHighlight: {
+    animatedBorder: {
       position: 'absolute',
       top: 0,
       left: 0,
       right: 0,
       bottom: 0,
       borderWidth: 2,
-      borderRadius: 16,
-    },
-    content: {
-      alignItems: 'center',
-      justifyContent: 'center',
-      width: '100%',
-      padding: isSmallDevice ? 12 : 16,
+      borderRadius: 10,
     },
     title: {
-      fontSize: isSmallDevice ? 22 : 26, 
+      fontSize: fontSize(deviceType === 'Tablet' ? 22 : 18),
       fontWeight: 'bold',
       color: '#1E293B',
       textAlign: 'left',
-      marginBottom: 8,
+      marginBottom: 6,
       letterSpacing: 0.5,
+      alignSelf: 'flex-start',
     },
     description: {
-      fontSize: isSmallDevice ? 15 : 17,
-      color: '#4A5568',
+      fontSize: fontSize(deviceType === 'Tablet' ? 18 : 15),
+      color: '#555',
       textAlign: 'left',
-      lineHeight: isSmallDevice ? 22 : 24,
-      marginBottom: 12,
+      lineHeight: fontSize(deviceType === 'Tablet' ? 24 : 21),
+      marginBottom: 8,
       fontWeight: '500',
       letterSpacing: 0.3,
-    },
-    stateBadge: {
-      paddingHorizontal: 14,
-      borderRadius: 12,
-      marginTop: 10,
-    },
-    stateText: {
-      fontSize: isSmallDevice ? 13 : 15,
-      fontWeight: '500',
-      color: '#718096',
-      textTransform: 'none',
-      letterSpacing: 0.3,
+      alignSelf: 'flex-start',
     },
   });
-
