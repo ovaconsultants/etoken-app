@@ -69,8 +69,24 @@ const HomeNavigator = () => {
       <Stack.Screen
         name="Reception"
         component={ReceptionScreen}
-        options={{
+         options={{
           title: 'Patient Registration',
+          headerTitle: () => (
+            <>
+              <Text
+                style={{
+                  fontSize: fontSize(18),
+                  fontWeight: 'bold',
+                  color: '#222',
+                  textAlign: 'center',
+                  width: '100%',
+                }}
+                numberOfLines={1}
+                onPress={handleRefresh}
+              >
+                Patient Registration
+              </Text>
+            </>),
         }}
       />
 

@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import {
   Phone,
@@ -24,6 +25,7 @@ import {TranslateNameToHindi} from '../../services/langTranslationService';
 import FooterNavigation from '../../components/tabNavigationFooter/TabNavigationFooter';
 import {TokenCard} from './PatientTokenCardUI';
 import {createStyles} from './PatientTokenManagementScreen.styles';
+import {homeRefreshKeyAtom} from '../../atoms/refreshAtoms/homePageRefreshAtom';
 
 const PatientTokenManagementScreen = ({navigation, route}) => {
   const {isLandscape} = useOrientation();
@@ -31,6 +33,8 @@ const PatientTokenManagementScreen = ({navigation, route}) => {
   const {clinic_id, doctor_id} = route.params;
 
   const [activeFilter, setActiveFilter] = useState('all');
+   const refreshKey = useAtomValue(homeRefreshKeyAtom);
+
 
   const {
     patientTokens,
@@ -95,7 +99,7 @@ const PatientTokenManagementScreen = ({navigation, route}) => {
   }
 
   return (
-    <View style={styles.fullScreenContainer}>
+    <View style={styles.fullScreenContainer} key={refreshKey}>
       <SafeAreaView style={styles.fullScreenContainer}>
         {/* <View style={styles.headerContainer}>
           <View style={styles.headerBadges}>

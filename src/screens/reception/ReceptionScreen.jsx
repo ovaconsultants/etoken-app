@@ -13,6 +13,7 @@ import { Formik } from 'formik';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigation } from '@react-navigation/native';
 import { useAtom } from 'jotai';
+import {useAtomValue} from 'jotai';
 import { Users, Home, Eraser, RefreshCcw } from 'lucide-react-native';
 
 import { patientsAtom } from '../../atoms/patientAtoms/patientAtom';
@@ -38,6 +39,7 @@ import { globalStyles } from '../../styles/globalStyles';
 import { useOrientation } from '../../hooks/useOrientation';
 import { createStyles } from './ReceptionScreen.styles';
 import BottomNavigation from '../../components/bottomNavigation/BottomNavigation';
+import {homeRefreshKeyAtom} from '../../atoms/refreshAtoms/homePageRefreshAtom';
 
 const formFields = [
   {
@@ -86,6 +88,7 @@ export const ReceptionScreen = ({ route }) => {
   const [isLoadingPatients, setIsLoadingPatients] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
   const [resetKey, setResetKey] = useState(0);
+    const refreshKey = useAtomValue(homeRefreshKeyAtom);
 
   const { isLoading, isError, error } = useQuery({
     queryKey: ['fetchingPatients'],
@@ -97,6 +100,10 @@ export const ReceptionScreen = ({ route }) => {
     refetchInterval: 10 * 1000,
     staleTime: 11 * 1000,
   });
+  
+  useEffect(() => {
+   handleRefresh();
+  }, [refreshKey]);
 
   useEffect(() => {
     setProfileImage(null);
