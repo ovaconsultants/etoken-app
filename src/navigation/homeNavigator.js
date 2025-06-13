@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Platform, TouchableOpacity, Text } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import DrawerLeftNavigationButton from '../components/drawerNavigation/drawerNavigation';
 import HomeScreen from '../screens/home/HomeScreen';
 import TokenListingTVScreen from '../screens/token/TokenListingTVScreen';
 import DefaultTVScreen from '../screens/television/DefaultTVScreen';
@@ -14,6 +13,7 @@ import { incrementHomeRefreshKey } from '../atoms/refreshAtoms/homePageRefreshAt
 import { useSetAtom } from 'jotai';
 import { Home } from 'lucide-react-native';
 import { fontSize } from '../utils/fontUtils';
+import HamburgerIcon from '../components/hamburgerIcon/HamburgerIcon';
 
 const Stack = createNativeStackNavigator();
 
@@ -25,7 +25,7 @@ const Stack = createNativeStackNavigator();
 //   </TouchableOpacity>
 // );
 export const HeaderRightProfile = React.memo(() => (
-  <DrawerLeftNavigationButton />
+  <HamburgerIcon />
 ));
 
 const HomeNavigator = () => {

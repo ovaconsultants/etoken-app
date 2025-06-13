@@ -154,7 +154,7 @@ export const createStyles = (isLandscape , dimensions) => {
     fontSize:
       isLandscape && dimensions.width > 700
         ? fontSize(13) // smaller in landscape on tablet
-        : fontSize(16),
+        : fontSize(18),
     color: '#888',
     fontWeight: '500',
     flexShrink: 1,

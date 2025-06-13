@@ -6,9 +6,15 @@ import {
 } from 'react-native';
 import { Menu } from 'lucide-react-native';
 import {useNavigation} from '@react-navigation/native';
+import { useOrientation } from '../../hooks/useOrientation';
+import DeviceInfo, { isTablet } from 'react-native-device-info';
+import { createStyles } from './HamburgerIcon.styles';
 
-const DrawerLeftNavigationButton = () => {
+const HamburgerIcon = () => {
   const navigation = useNavigation();
+  const isTablet = DeviceInfo.isTablet();
+    const {isLandscape} = useOrientation();
+    const styles = createStyles(isLandscape);
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -16,18 +22,12 @@ const DrawerLeftNavigationButton = () => {
           navigation.toggleDrawer();
         }}>
         <View>
-        <Menu size={24} color="#333" />
+        <Menu size={isTablet ? 40 : 24}  color="#333"  />
         </View>
       </TouchableOpacity>
     </View>
   );
 };
-const styles = StyleSheet.create({
-  container: {
-    marginLeft: 15,  // Adjust as needed
-    marginTop: 6,
-  }
-});
 
 
-export default DrawerLeftNavigationButton;
+export default HamburgerIcon;
