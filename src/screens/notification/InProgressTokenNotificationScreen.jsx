@@ -5,7 +5,6 @@ import { useTheme } from 'react-native-paper';
 import { styles } from './InProgressTokenNotificationScreen.styles';
 import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
 import { speakNotification } from '../../utils/tokenManager';
-import { UpdateDoctorProfileDetailsRequest } from '../../services/doctorService';
 
 const InProgressTokenNotificationScreen = ({
   inProgressPatient,
@@ -14,7 +13,7 @@ const InProgressTokenNotificationScreen = ({
   error,
 }) => {
   const theme = useTheme();
-  
+
   // Trigger speech when inProgressPatient changes
   useEffect(() => {
     if (!inProgressPatient) return;
