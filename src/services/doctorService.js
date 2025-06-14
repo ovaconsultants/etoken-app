@@ -19,7 +19,7 @@ export const UpdateDoctorProfileDetailsRequest = async (doctorDataObj) => {
     const data = await putData(route, doctorDataObj, {});
     return data;
   } catch (error) {
-    console.error('Failed to add schedule:', error);
+    console.error('Failed to update doctor details:', error);
     throw error;
   }
 };

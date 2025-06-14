@@ -27,10 +27,10 @@ const TokenTable = ({tokens, doctorId}) => {
         doctorId,
         patientIds,
       );
-      console.log(
-        `Fetched patient images for doctor_id=${doctorId}: patient image urls in fetch patient images`,
-        patientImageUrls,
-      );
+      // console.log(
+      //   `Fetched patient images for doctor_id=${doctorId}: patient image urls in fetch patient images`,
+      //   patientImageUrls,
+      // );
       await setImageUrls(patientImageUrls);
     };
     const processTokens = async () => {
@@ -130,13 +130,7 @@ const TokenTable = ({tokens, doctorId}) => {
     }
   };
 
-  const renderItem = (item, index) => (
-    console.log(
-      `Rendering item ${index + 1}: with resulting array with urls`,
-      item,
-      imageUrls,
-    ),
-    (
+  const renderItem = (item, index) => (   
       <View
         key={`${item.token_id}-${index}`}
         style={[styles.tableRow, getRowStyle(item.status)]}>
@@ -162,7 +156,6 @@ const TokenTable = ({tokens, doctorId}) => {
         </View>
         <Text style={styles.tableCell}>{item.token_no}</Text>
       </View>
-    )
   );
 
   return (

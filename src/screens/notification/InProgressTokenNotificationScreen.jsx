@@ -1,10 +1,11 @@
 // InProgressTokenNotificationScreen.js
-import React, {useEffect} from 'react';
-import {View, Text} from 'react-native';
-import {useTheme} from 'react-native-paper';
-import {styles} from './InProgressTokenNotificationScreen.styles';
+import React, { useEffect, useRef } from 'react';
+import { View, Text } from 'react-native';
+import { useTheme } from 'react-native-paper';
+import { styles } from './InProgressTokenNotificationScreen.styles';
 import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
 import { speakNotification } from '../../utils/tokenManager';
+import { UpdateDoctorProfileDetailsRequest } from '../../services/doctorService';
 
 const InProgressTokenNotificationScreen = ({
   inProgressPatient,
@@ -13,18 +14,22 @@ const InProgressTokenNotificationScreen = ({
   error,
 }) => {
   const theme = useTheme();
+  
   // Trigger speech when inProgressPatient changes
   useEffect(() => {
+    if (!inProgressPatient) return;
     if (inProgressPatient.status === 'In Progress') {
-      speakNotification(inProgressPatient?.patient_name, inProgressPatient?.token_no);
+      speakNotification(
+        inProgressPatient?.patient_name,
+        inProgressPatient?.token_no
+      );
     }
-    return () => {};
-  },[inProgressPatient]);
+  }, [inProgressPatient]);
 
   if (!inProgressPatient) {
     return (
       <View style={styles.container}>
-        <Text style={[styles.noTokenText, {color: theme.colors.text}]}>
+        <Text style={[styles.noTokenText, { color: theme.colors.text }]}>
           No token available.
         </Text>
       </View>

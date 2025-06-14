@@ -28,6 +28,7 @@ const TokenListingTVScreen = ({route, navigation}) => {
   const [inProgressPatient, setInProgressPatient] = useState(null);
   const [isRefreshReloading, _] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  console.log("inProgressPatient", inProgressPatient);
 
   const {
     data: tokens = [],
@@ -77,7 +78,7 @@ const TokenListingTVScreen = ({route, navigation}) => {
     // Find in-progress patient safely
     const inProgress = Array.isArray(tokens)
       ? tokens.find(
-          token => token?.status === 'In Progress' || token?.recall === true,
+          token => token?.status === 'In Progress',
         )
       : null;
     setInProgressPatient(inProgress || null);

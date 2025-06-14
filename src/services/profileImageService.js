@@ -74,14 +74,14 @@ export const GetDoctorProfileImageRequest = async doctorId => {
  * Get patient profile image by doctorId/patientId
  */
 export const GetPatientProfileImageRequest = async (doctorId, patientId) => {
-  console.log();
+  //console.log();
   try {
     const endpoint = API_ENDPOINTS.DOCTOR.GET_IMAGE;
-    console.log(`Fetching patient profile image for doctor_id=${doctorId}, patient_id=${patientId}`);
+ //   console.log(`Fetching patient profile image for doctor_id=${doctorId}, patient_id=${patientId}`);
     const params = {userId: `${doctorId}/${patientId}`};
-    console.log(`Using endpoint: ${endpoint} with params:`, params);
+  //  console.log(`Using endpoint: ${endpoint} with params:`, params);
     const data = await fetchData(endpoint, params);
-    console.log('Received data for in GetPatientProfileImageRequest:', data);
+   // console.log('Received data for in GetPatientProfileImageRequest:', data);
     return data.imageUrl || null;
   } catch (error) {
     console.error(

@@ -50,6 +50,6 @@ export const PrefetchPatientImages = async (doctorId, patientIds) => {
       }
     }),
   );
-  console.log(`Prefetched images for doctor_id=${doctorId}:`, results);
+ // console.log(`Prefetched images for doctor_id=${doctorId}:`, results);
   return results;
 };

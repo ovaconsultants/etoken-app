@@ -75,23 +75,6 @@ const { stats, hasTokenInProgress  , inProgressToken} = useMemo(() => {
   const handleNext = () => updateToken({status: 'In Progress'});
   const handleDone = () =>  { selectedTokenRef.current === inProgressToken.token_id ?  updateToken({status: 'Completed'}) : updateToken({status: 'In Progress'});}
 
-  const handleRecall = async () => {
-    if (!selectedTokenRef.current) {return;}
-
-    setIsMutating(true);
-    try {
-      await RecallTokenRequest({
-        token_id: selectedTokenRef.current,
-        modified_by: 'Receptionist',
-      });
-      await refetchTokens();
-    } catch (refetchTokensError) {
-      console.error('Recall failed:', refetchTokensError);
-      showToast('Recall failed', 'error');
-    } finally {
-      setIsMutating(false);
-    }
-  };
 
   const handleRefresh = async () => {
     setIsLoading(true);
@@ -112,7 +95,6 @@ const { stats, hasTokenInProgress  , inProgressToken} = useMemo(() => {
     handleSelectToken,
     handleNext,
     handleDone,
-    handleRecall,
     handleRefresh,
     updateToken,
     isFetching: isFetching,

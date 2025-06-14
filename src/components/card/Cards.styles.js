@@ -29,7 +29,7 @@ export const getCardStyles = (deviceType = 'Mobile', isLandscape = false, cardWi
       borderRadius: 10,
     },
     title: {
-      fontSize: fontSize(deviceType === 'Tablet' ? 22 : 18),
+      fontSize: fontSize(18),
       fontWeight: 'bold',
       color: '#1E293B',
       textAlign: 'left',
@@ -38,10 +38,10 @@ export const getCardStyles = (deviceType = 'Mobile', isLandscape = false, cardWi
       alignSelf: 'flex-start',
     },
     description: {
-      fontSize: fontSize(deviceType === 'Tablet' ? 18 : 15),
+      fontSize: fontSize(14),
       color: '#555',
       textAlign: 'left',
-      lineHeight: fontSize(deviceType === 'Tablet' ? 24 : 21),
+      lineHeight: fontSize(16),
       marginBottom: 8,
       fontWeight: '500',
       letterSpacing: 0.3,

@@ -27,6 +27,8 @@ import FooterNavigation from '../../components/tabNavigationFooter/TabNavigation
 import {TokenCard} from './PatientTokenCardUI';
 import {createStyles} from './PatientTokenManagementScreen.styles';
 import {homeRefreshKeyAtom} from '../../atoms/refreshAtoms/homePageRefreshAtom';
+import { showToast } from '../../components/toastMessage/ToastMessage';
+import {UpdateDoctorProfileDetailsRequest} from '../../services/doctorService';
 
 const PatientTokenManagementScreen = ({navigation, route}) => {
   const {isLandscape} = useOrientation();
@@ -43,7 +45,6 @@ const PatientTokenManagementScreen = ({navigation, route}) => {
     handleSelectToken,
     handleNext,
     handleDone,
-    handleRecall,
     handleRefresh,
     updateToken,
     isError,
@@ -87,6 +88,22 @@ const PatientTokenManagementScreen = ({navigation, route}) => {
     },
     [navigation],
   );
+  const handleRecall = async () => {
+      try {
+        // Prepare the request data
+        const requestData = {
+          doctor_id,
+          recall:'Y',
+          modified_by: 'admin',
+        };   
+      
+         await UpdateDoctorProfileDetailsRequest(requestData);
+         showToast('Called patient successfully', {type: 'success'});
+      } catch (error) {
+        console.error('Update error:', error);
+        showToast(error.message || 'Failed to call patient', {type: 'error'});
+      }
+    };
 
   if (isLoading || isError) {
     return (
