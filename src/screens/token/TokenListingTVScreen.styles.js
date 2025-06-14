@@ -24,7 +24,7 @@ export const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     right: 0,
-    width: isTV ? moderateScale(700) : moderateScale(600),
+    width: isTV ? moderateScale(600) : moderateScale(400),
   },
 
 
@@ -134,6 +134,7 @@ doctorHeaderSubContainer : {
     backgroundColor: '#f8f8f8',
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
+    alignItems: 'left',
   },
   tableHeaderText: {
     flex: 1,

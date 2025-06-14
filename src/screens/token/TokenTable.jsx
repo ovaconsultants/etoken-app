@@ -139,20 +139,20 @@ const TokenTable = ({tokens, doctorId}) => {
             <EnlargeableImage
               imageUrl={imageUrls[item.patient_id]}
               imageStyle={styles.profileImage}
-            />
-            <Text style={styles.patientName}>{item.patient_name}</Text>
+            />           
           </View>
         </View>
-        <Text style={styles.tableCell}>
+         <Text style={styles.tableCell}>{item.patient_name}</Text>
+        {/* <Text style={styles.tableCell}>
           {item.mobile_number?.replace(/(\d{3})(\d{3})(\d{4})/, 'xxx-xxx-$3')}
-        </Text>
-        <Text style={styles.tableCell}>{item.fee_status || 'Not Paid'}</Text>
+        </Text> */}
+        {/* <Text style={styles.tableCell}>{item.fee_status || 'Not Paid'}</Text> */}
         <Text style={styles.tableCell}>
           {item.emegency === 'Y' ? 'Yes' : 'No'}
         </Text>
         <View style={[styles.tableCell, styles.statusCell]}>
           {getStatusDot(item.status)}
-          <Text>{item.status}</Text>
+          <Text  style={styles.tableCell}>{item.status}</Text>
         </View>
         <Text style={styles.tableCell}>{item.token_no}</Text>
       </View>
@@ -162,9 +162,10 @@ const TokenTable = ({tokens, doctorId}) => {
     <View style={[styles.tableContainer, {flex: 1}]}>
       {/* Fixed Header */}
       <View style={styles.tableHeader}>
-        <Text style={styles.tableHeaderText}>Patient</Text>
-        <Text style={styles.tableHeaderText}>Phone</Text>
-        <Text style={styles.tableHeaderText}>Payment</Text>
+         <Text style={styles.tableHeaderText}>Patient</Text>
+        <Text style={styles.tableHeaderText}>Name</Text>
+        {/* <Text style={styles.tableHeaderText}>Phone</Text> */}
+        {/* <Text style={styles.tableHeaderText}>Payment</Text> */}
         <Text style={styles.tableHeaderText}>Emergency</Text>
         <Text style={styles.tableHeaderText}>Status</Text>
         <Text style={styles.tableHeaderText}>Token</Text>
