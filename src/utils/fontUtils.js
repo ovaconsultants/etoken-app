@@ -15,3 +15,19 @@ export function fontSize(base) {
   if (deviceType === 'Tablet') return base * 1.8;
   return base;
 }
+
+// Responsive width utility
+export function responsiveWidth(base) {
+  const deviceType = getDeviceType();
+  if (deviceType === 'TV') return base * 2.2;
+  if (deviceType === 'Tablet') return base * 1.8;
+  return base;
+} 
+
+// Responsive height utility
+export function responsiveHeight(base) {
+  const deviceType = getDeviceType();
+  if (deviceType === 'TV') return base * 2.2;
+  if (deviceType === 'Tablet') return base * 1.8;
+  return base;
+}

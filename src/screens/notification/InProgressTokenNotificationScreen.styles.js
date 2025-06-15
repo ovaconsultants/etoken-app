@@ -1,6 +1,8 @@
 import { StyleSheet, Dimensions } from 'react-native';
+import { fontSize, responsiveWidth, responsiveHeight } from '../../utils/fontUtils';
 
 const { width: SCREEN_WIDTH, } = Dimensions.get('window');
+
 
 // Helper function to scale font size based on screen width
 const scaleFont = (size) => {
@@ -17,7 +19,7 @@ export const styles = StyleSheet.create({
     flex : 1 ,
     justifyContent: 'center',
     backgroundColor : '#fff',
-    width: 600,
+    width: responsiveWidth(300),
   },
   badgeCircle: {
     backgroundColor: '#fff',
@@ -25,14 +27,14 @@ export const styles = StyleSheet.create({
     borderColor: 'rgb(89, 120, 120)',
     alignSelf : 'center',
     borderRadius: 50,
-    width: 80,
-    height: 80,
+    width: responsiveWidth(50),
+    height: responsiveHeight(50),
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 2,
   },
   tokenNumber: {
-    fontSize: scaleFont(18),
+    fontSize: fontSize(30),
     fontWeight: 'bold',
     color: '#2b1b0e',
   },
@@ -49,7 +51,7 @@ export const styles = StyleSheet.create({
   },
   patientName: {
     paddingVertical : 20,
-    fontSize: scaleFont(16),
+    fontSize: fontSize(20),
     fontWeight: 'bold',
     color: '#2b1b0e',
     textAlign: 'center',

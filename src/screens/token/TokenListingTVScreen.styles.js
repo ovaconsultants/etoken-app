@@ -1,5 +1,6 @@
 import {StyleSheet, Platform} from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
+import { fontSize, responsiveWidth, responsiveHeight } from '../../utils/fontUtils';
 
 const isTV = Platform.isTV;
 
@@ -24,7 +25,7 @@ export const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     right: 0,
-    width: isTV ? moderateScale(600) : moderateScale(400),
+    width: responsiveWidth(300),
   },
 
 
