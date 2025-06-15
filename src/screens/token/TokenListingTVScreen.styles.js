@@ -108,7 +108,7 @@ doctorHeaderSubContainer : {
   infoText: {
     flex: 0.8,
     flexWrap: 'wrap',   
-    fontSize: moderateScale(16),
+    fontSize: moderateScale(14),
     color: '#333',
     fontWeight: '500',
   },
