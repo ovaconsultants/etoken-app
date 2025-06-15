@@ -1,13 +1,14 @@
 import React from 'react';
 import {View, TouchableOpacity, Text} from 'react-native';
 import { styles } from './TabNavigationFooter.styles';
+import { fontSize } from '../../utils/fontUtils';
 
 const FooterButton = React.memo(({icon: Icon, label, onPress,}) => {
   return (
     <TouchableOpacity
       style={[styles.footerButton]}
       onPress={onPress}>
-      <Icon size={20} color={ '#333'} />
+      <Icon size={fontSize(18)} />
       {label && <Text style={styles.footerButtonText}>{label}</Text>}
     </TouchableOpacity>
   );

@@ -169,7 +169,7 @@ const PatientTokenManagementScreen = ({navigation, route}) => {
               {
                 id: 'new',
                 icon: UserPlus,
-                label: 'New',
+                label: 'New Patient',
                 screen: 'Reception',
                 params: route.params,
               },

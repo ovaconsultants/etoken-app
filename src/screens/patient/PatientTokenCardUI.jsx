@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import { GetPatientImage } from '../../services/patientImagesCacheServices';
 import EnlargeableImage from '../../components/enlargeableImage/EnlargeableImage';
 import { formatTokenTime, maskPhoneNumber } from '../../utils/globalUtil';
 import { useOrientation } from '../../hooks/useOrientation';
 import { createTokenCardStyles } from './TokenCard.styles';
+
+// Import your default human icon (place the icon in your assets folder)
+import HumanIcon from '../../../assets/patient.png';
 
 const statusOptions = [
   { label: 'Waiting', value: 'Waiting' },
@@ -43,8 +46,10 @@ export const TokenCard = React.memo(
       >
         <View style={styles.cardContent}>
           <View style={styles.imageWrapper}>
-            {imageUrl && (
+            {imageUrl ? (
               <EnlargeableImage imageUrl={imageUrl} imageStyle={styles.image} />
+            ) : (
+              <Image source={HumanIcon} style={styles.image} resizeMode="cover" />
             )}
           </View>
 
@@ -60,15 +65,6 @@ export const TokenCard = React.memo(
             <View style={[styles.bottomContent, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}>
               <Text style={styles.phone}>{token.mobile_number}</Text>
                <Text style={styles.time}>{formatTokenTime(token.created_date)}</Text>
-              {/* <Text
-                style={
-                  token.fee_status === 'Paid'
-                    ? styles.feePaid
-                    : styles.feeUnpaid
-                }
-              >
-                {token.fee_status === 'Paid' ? 'Paid' : 'Not Paid'}
-              </Text> */}
               <View style={styles.dropdownWrapper}>
                 <Dropdown
                   value={token.status}

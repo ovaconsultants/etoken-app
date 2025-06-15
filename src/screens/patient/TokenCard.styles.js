@@ -89,7 +89,7 @@ export const createTokenCardStyles = (isLandscape) => {
       width: isTablet ? 220 : 150,
     },
     dropdown: {
-      height: 58,
+      height: isTablet ? 58 : 35,
       borderColor: '#ccc',
       borderWidth: 1,
       borderRadius: 10,

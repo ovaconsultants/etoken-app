@@ -1,5 +1,6 @@
 import { StyleSheet , Dimensions } from 'react-native';
 const { width , height }   = Dimensions.get('window');
+import { fontSize } from '../../utils/fontUtils';
 const isLandscape = width > height;
 export const styles = StyleSheet.create({
     footerNavigation: {
@@ -22,7 +23,7 @@ export const styles = StyleSheet.create({
     },
 
     footerButtonText: {
-      fontSize: 12,
+      fontSize: fontSize(12),
       marginTop: 4,
       color: '#333',
     },

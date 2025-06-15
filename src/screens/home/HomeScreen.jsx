@@ -15,6 +15,7 @@ import {FetchAllClinicForDoctorRequest} from '../../services/clinicService';
 import CardGrid from '../../components/cardGrid/CardGrid';
 import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErrorHandler';
 import ResponsiveLayout from '../../components/ResponsiveLayout';
+import { fontSize } from '../../utils/fontUtils';
 
 const HomeScreen = ({navigation}) => (
   <ResponsiveLayout>
@@ -139,7 +140,7 @@ const HomeScreen = ({navigation}) => (
                 ]}
                 onPress={() => setSelectedScreen('1')}>
                 <Tv
-                  size={isLandscape && dimensions.width > 700 ? 18 : 32}
+                  size={fontSize(20)}
                   color={
                     selectedScreen === '1'
                       ? styles.selectedIconColor.color
@@ -161,7 +162,7 @@ const HomeScreen = ({navigation}) => (
                 ]}
                 onPress={() => setSelectedScreen('2')}>
                 <Users
-                  size={isLandscape && dimensions.width > 700 ? 18 : 32}
+                  size={fontSize(20)}
                   color={
                     selectedScreen === '2'
                       ? styles.selectedIconColor.color
