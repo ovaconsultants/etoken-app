@@ -11,7 +11,7 @@ const statusOptions = [
   { label: 'Waiting', value: 'Waiting' },
   { label: 'In Progress', value: 'In Progress' },
   { label: 'Completed', value: 'Completed' },
-  { label: 'Cancelled', value: 'Cancelled' },
+  // { label: 'Cancelled', value: 'Cancelled' },
 ];
 
 export const TokenCard = React.memo(
@@ -52,13 +52,14 @@ export const TokenCard = React.memo(
             <View style={styles.topContent}>
               <View style={[styles.nameTimeBlock, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'left' }]}>
                 <Text style={styles.name}>{token.patient_name} ({token.age})</Text>
-                <Text style={styles.time}>{formatTokenTime(token.created_date)}</Text>
+               
                 <Text style={styles.tokenNumberText}>{token.token_no}</Text>
               </View>
             </View>
 
             <View style={[styles.bottomContent, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}>
               <Text style={styles.phone}>{token.mobile_number}</Text>
+               <Text style={styles.time}>{formatTokenTime(token.created_date)}</Text>
               {/* <Text
                 style={
                   token.fee_status === 'Paid'

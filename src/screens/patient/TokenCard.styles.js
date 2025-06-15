@@ -56,7 +56,6 @@ export const createTokenCardStyles = (isLandscape) => {
     time: {
       fontSize: fontSize(isTablet ? 14 : 12),
       color: '#000',
-      fontWeight: '500',
     },
     tokenNumberText: {
       fontSize: fontSize(isTablet ? 22 : 18),
@@ -73,7 +72,7 @@ export const createTokenCardStyles = (isLandscape) => {
     },
     phone: {
       fontSize: fontSize(isTablet ? 14 : 12),
-      color: '#444',
+      color: '#000',
       marginBottom: 4,
     },
     feePaid: {
@@ -106,9 +105,10 @@ export const createTokenCardStyles = (isLandscape) => {
       borderWidth: 1,
       borderColor: '#ccc',
       elevation: 10,
+
     },
     dropdownItemContainer: {
-      paddingVertical: 10,
+      paddingVertical: 20,
       paddingHorizontal: 12,
     },
     dropdownItemText: {
