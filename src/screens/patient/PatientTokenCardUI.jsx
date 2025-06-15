@@ -50,7 +50,7 @@ export const TokenCard = React.memo(
 
           <View style={styles.contentWrapper}>
             <View style={styles.topContent}>
-              <View style={[styles.nameTimeBlock, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'right' }]}>
+              <View style={[styles.nameTimeBlock, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'left' }]}>
                 <Text style={styles.name}>{token.patient_name} ({token.age})</Text>
                 <Text style={styles.time}>{formatTokenTime(token.created_date)}</Text>
                 <Text style={styles.tokenNumberText}>{token.token_no}</Text>
@@ -58,8 +58,8 @@ export const TokenCard = React.memo(
             </View>
 
             <View style={[styles.bottomContent, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}>
-              <Text style={styles.phone}>{maskPhoneNumber(token.mobile_number)}</Text>
-              <Text
+              <Text style={styles.phone}>{token.mobile_number}</Text>
+              {/* <Text
                 style={
                   token.fee_status === 'Paid'
                     ? styles.feePaid
@@ -67,7 +67,7 @@ export const TokenCard = React.memo(
                 }
               >
                 {token.fee_status === 'Paid' ? 'Paid' : 'Not Paid'}
-              </Text>
+              </Text> */}
               <View style={styles.dropdownWrapper}>
                 <Dropdown
                   value={token.status}

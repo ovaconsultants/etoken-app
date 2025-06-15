@@ -174,12 +174,12 @@ const PatientTokenManagementScreen = ({navigation, route}) => {
                 params: route.params,
               },
               {id: 'home', icon: Home, label: 'Home', screen: 'Home'},
-              {
-                id: 'report',
-                icon: FileText,
-                label: 'Report',
-                screen: 'ReportsScreen',
-              },
+              // {
+              //   id: 'report',
+              //   icon: FileText,
+              //   label: 'Report',
+              //   screen: 'ReportsScreen',
+              // },
               {
                 id: 'refresh',
                 icon: RefreshCw,

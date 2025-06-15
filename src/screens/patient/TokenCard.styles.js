@@ -48,13 +48,13 @@ export const createTokenCardStyles = (isLandscape) => {
       flex: 1,
     },
     name: {
-      fontSize: fontSize(isTablet ? 18 : 16),
+      fontSize: fontSize(isTablet ? 16 : 14),
       fontWeight: 'bold',
       color: '#000',
       marginBottom: 4,
     },
     time: {
-      fontSize: fontSize(isTablet ? 16 : 14),
+      fontSize: fontSize(isTablet ? 14 : 12),
       color: '#000',
       fontWeight: '500',
     },
@@ -87,14 +87,14 @@ export const createTokenCardStyles = (isLandscape) => {
       color: '#F44336',
     },
     dropdownWrapper: {
-      width: isTablet ? 240 : 120,
+      width: isTablet ? 220 : 150,
     },
     dropdown: {
-      height: 38,
-      // borderColor: '#ccc',
-      // borderWidth: 1,
-      // borderRadius: 6,
-      paddingHorizontal: 10,
+      height: 58,
+      borderColor: '#ccc',
+      borderWidth: 1,
+      borderRadius: 10,
+      padding: 10,
     },
     dropdownText: {
       fontSize: fontSize(isTablet ? 14 : 12),
