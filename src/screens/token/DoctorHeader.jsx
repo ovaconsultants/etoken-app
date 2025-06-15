@@ -36,7 +36,7 @@ export const DoctorHeader = ({ doctorData }) => {
             </View>
 
             <View style={[styles.infoRow, styles.phoneRow]}>
-              <Text style={styles.infoLabel}>Ph: </Text>
+              <Text style={styles.infoLabel}>Phone # : </Text>
               <Text style={styles.infoText}>
                 {doctorData?.phone_number ?? 'N/A'}
               </Text>

@@ -139,9 +139,25 @@ const HomeNavigator = () => {
       <Stack.Screen
         name="TokenManagement"
         component={TokenListingTVScreen}
-        options={{ title: 'Patients Queue',
-          
-         }}
+        options={{
+          title: 'Patient Queue',
+           headerTitle: () => (
+              <Text
+                style={{
+                  fontSize: fontSize(18),
+                  fontWeight: 'bold',
+                  color: '#222',
+                  textAlign: 'center',
+                  width: '200%',
+                  height: 40,
+                }}
+                numberOfLines={1}
+                onPress={handleRefresh}
+              >
+                Patient Queue
+              </Text>
+),
+        }}
       />
 
       <Stack.Screen

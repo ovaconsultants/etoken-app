@@ -1,4 +1,5 @@
 import React, {useCallback, useEffect, useState, useMemo} from 'react';
+import {useAtomValue} from 'jotai';
 import {View, TouchableOpacity , Platform} from 'react-native';
 import Orientation from 'react-native-orientation-locker';
 import {RotateCcw} from 'lucide-react-native';
@@ -16,6 +17,8 @@ import LoadingErrorHandler from '../../components/loadingErrorHandler/LoadingErr
 import AdWithRotation from '../../components/advertisement/AdRotation';
 import {showToast} from '../../components/toastMessage/ToastMessage';
 import {DoctorHeader} from './DoctorHeader';
+import {homeRefreshKeyAtom} from '../../atoms/refreshAtoms/homePageRefreshAtom';
+
 
 const TokenListingTVScreen = ({route, navigation}) => {
   const {
@@ -24,11 +27,10 @@ const TokenListingTVScreen = ({route, navigation}) => {
     selectedClinic: clinicData = [],
   } = route.params ?? {};
 
+  const refreshKey = useAtomValue(homeRefreshKeyAtom);
   const [doctorData, setDoctorData] = useState({});
   const [inProgressPatient, setInProgressPatient] = useState(null);
   const [isRefreshReloading, _] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
-  console.log("inProgressPatient", inProgressPatient);
 
   const {
     data: tokens = [],
@@ -114,16 +116,18 @@ const TokenListingTVScreen = ({route, navigation}) => {
       style={styles.fullScreenContainer}
       testID="token-listing-screen"
       key={refreshKey}>
-      {  Platform.isTV && <View style={styles.headerContainer}>
+      {/* {  Platform.isTV &&  */}
+      <View style={styles.headerContainer}>
         <View style={styles.doctorHeaderSubContainer}>
           <DoctorHeader doctorData={doctorData} />
         </View>
-        <View style={styles.refreshSubContainer}>
+        {/* <View style={styles.refreshSubContainer}>
           <TouchableOpacity onPress={() => setRefreshKey(prev => prev + 1)}>
             <RotateCcw size={22} color="#000" />
           </TouchableOpacity>
-        </View>
-      </View> }
+        </View> */}
+      </View>
+       {/* } */}
       <View style={styles.tokenListContainer}>
         <TokenTable tokens={filteredTokens} doctorId={doctor_id} />
       </View>

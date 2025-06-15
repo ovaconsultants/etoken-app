@@ -9,8 +9,8 @@ export const styles = StyleSheet.create({
   fullScreenContainer: {
     flex: 1,
     backgroundColor: '#fff',
-    margin: moderateScale(10),
-    padding: moderateScale(20),
+    // margin: moderateScale(10),
+    paddingHorizontal: moderateScale(20),
   },
 
   /** CONTAINER STYLES **/
@@ -26,8 +26,8 @@ export const styles = StyleSheet.create({
     bottom: 0,
     right: 0,
     width: responsiveWidth(300),
+    margin: moderateScale(20),
   },
-
 
 
   /** DOCTOR HEADER  SUBCONTAINERS **/
@@ -68,7 +68,7 @@ doctorHeaderSubContainer : {
     marginHorizontal: moderateScale(8),
   },
   leftColumn: {
-    flex: 0.3,
+    flex: 0.4,
     paddingRight: moderateScale(16),
     borderRightWidth: 1,
     borderRightColor: '#eee',
@@ -90,7 +90,7 @@ doctorHeaderSubContainer : {
     fontStyle: 'Roboto',
     fontWeight: '800',
   },
-  infoRow: {
+  infoRow: {   
    
     flexDirection: 'row',
     alignItems: 'center',
@@ -102,8 +102,8 @@ doctorHeaderSubContainer : {
   infoLabel: {
     fontSize: moderateScale(16),
     color: '#666',
-    marginRight: moderateScale(4),
     fontWeight: '800',
+    width: responsiveWidth(120),
   },
   infoText: {
     flex: 0.8,
