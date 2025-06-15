@@ -31,3 +31,10 @@ export function responsiveHeight(base) {
   if (deviceType === 'Tablet') return base * 1.8;
   return base;
 }
+// Responsive size utility
+export function responsiveSize(base) {
+  const deviceType = getDeviceType();
+  if (deviceType === 'TV') return base * 2.2;
+  if (deviceType === 'Tablet') return base * 1.8;
+  return base;
+}
