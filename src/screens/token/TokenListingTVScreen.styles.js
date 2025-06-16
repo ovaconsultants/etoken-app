@@ -1,6 +1,6 @@
 import {StyleSheet, Platform} from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
-import { fontSize, responsiveWidth, responsiveHeight } from '../../utils/fontUtils';
+import { fontSize, responsiveWidth, responsiveHeight, responsiveSize } from '../../utils/fontUtils';
 
 const isTV = Platform.isTV;
 
@@ -10,12 +10,13 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     // margin: moderateScale(10),
-    paddingHorizontal: moderateScale(20),
+    // paddingHorizontal: moderateScale(20),
+    padding:responsiveSize(5),
   },
 
   /** CONTAINER STYLES **/
   headerContainer: {
-    flex: isTV ? 0.3 : 0.4,
+    flex: responsiveSize(0.2),
     flexDirection: 'row',
   },
   tokenListContainer: {
@@ -24,9 +25,9 @@ export const styles = StyleSheet.create({
   notificationInProgressContainer: {
     position: 'absolute',
     bottom: 0,
-    right: 0,
+    right: responsiveSize(5),
     width: responsiveWidth(300),
-    margin: moderateScale(20),
+    marginBottom: responsiveSize(3),
   },
 
 

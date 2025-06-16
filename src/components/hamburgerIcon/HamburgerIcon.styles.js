@@ -1,14 +1,16 @@
-
 import { StyleSheet } from 'react-native';
-import { responsiveSize } from '../../utils/fontUtils';
+import { responsiveSize, getDeviceType } from '../../utils/fontUtils';
 
 export const createStyles = (isLandscape, dimensions) => {
+    const deviceType = getDeviceType();
 
     return StyleSheet.create({
         container: {
-            marginLeft: 15,
+
+
             marginTop: 6,
-            paddingRight: responsiveSize(5),
+            ...(deviceType === 'TV' && { marginRight: responsiveSize(5) }),
+
         },
     });
 }

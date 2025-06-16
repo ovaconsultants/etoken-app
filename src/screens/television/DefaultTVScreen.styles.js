@@ -1,4 +1,5 @@
 import {StyleSheet} from 'react-native';
+import { fontSize, responsiveWidth, responsiveHeight, responsiveSize } from '../../utils/fontUtils';
 
 export const creatStyles = (isLandscape, dimension) => {
   const isTablet = dimension.width >= 768;
