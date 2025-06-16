@@ -4,10 +4,9 @@ import { responsiveSize } from '../../utils/fontUtils';
 const styles = StyleSheet.create({
   footer: {
     position: 'relative',
-    marginTop:responsiveSize(10),
-    bottom: responsiveSize(10),
+    bottom: responsiveSize(8),
     width: '100%',
-    height: responsiveSize(20),
+    height: responsiveSize(15),
     backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
@@ -18,7 +17,6 @@ const styles = StyleSheet.create({
     fontSize: responsiveSize(10),
     fontWeight: '500',
     textAlign: 'center',
-    marginTop: responsiveSize(5),
   },
 });
 
