@@ -46,13 +46,13 @@ const InProgressTokenNotificationScreen = ({
 
       {/* Notification Card */}
       <View style={styles.cardWrapper}>
-        <View style={styles.badgeCircle}>
+        {/* <View style={styles.badgeCircle}>
           <Text style={styles.tokenNumber}>{inProgressPatient.token_no}</Text>
-        </View>
+        </View> */}
 
         <View style={styles.nameCard}>
           <Text style={styles.patientName}>
-            {inProgressPatient.patient_name}
+            {inProgressPatient.patient_name}# {inProgressPatient.token_no}
           </Text>
         </View>
       </View>

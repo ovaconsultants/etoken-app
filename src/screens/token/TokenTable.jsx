@@ -15,7 +15,7 @@ const TokenTable = ({tokens, doctorId}) => {
   const [processedTokens, setProcessedTokens] = useState([]);
   const [contentHeight, setContentHeight] = useState(0);
   const [containerHeight, setContainerHeight] = useState(0);
-  const [imageUrls, setImageUrls] = useState({});
+  // const [imageUrls, setImageUrls] = useState({});
   const timeout = useRef(null);
   const isMounted = useRef(false);
 
@@ -142,6 +142,7 @@ const TokenTable = ({tokens, doctorId}) => {
             />           
           </View>
         </View> */}
+         <Text style={styles.tableCell}>{item.token_no}</Text>
          <Text style={styles.tableCell}>{item.patient_name}</Text>
         {/* <Text style={styles.tableCell}>
           {item.mobile_number?.replace(/(\d{3})(\d{3})(\d{4})/, 'xxx-xxx-$3')}
@@ -154,7 +155,7 @@ const TokenTable = ({tokens, doctorId}) => {
           {getStatusDot(item.status)}
           <Text  style={styles.tableCell}>{item.status}</Text>
         </View>
-        <Text style={styles.tableCell}>{item.token_no}</Text>
+      
       </View>
   );
 
@@ -163,12 +164,13 @@ const TokenTable = ({tokens, doctorId}) => {
       {/* Fixed Header */}
       <View style={styles.tableHeader}>
          {/* <Text style={styles.tableHeaderText}>Patient</Text> */}
+        <Text style={styles.tableHeaderText}>Token #</Text>
         <Text style={styles.tableHeaderText}>Patient Name</Text>
         {/* <Text style={styles.tableHeaderText}>Phone</Text> */}
         {/* <Text style={styles.tableHeaderText}>Payment</Text> */}
         <Text style={styles.tableHeaderText}>Emergency</Text>
         <Text style={styles.tableHeaderText}>Status</Text>
-        <Text style={styles.tableHeaderText}>Token</Text>
+      
       </View>
 
       {/* Scrollable Content */}

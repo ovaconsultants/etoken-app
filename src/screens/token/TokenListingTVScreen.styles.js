@@ -71,49 +71,46 @@ doctorHeaderSubContainer : {
   },
   leftColumn: {
     flex: 0.4,
-    paddingRight: moderateScale(16),
+    // paddingLeft: moderateScale(10),
     borderRightWidth: 1,
     borderRightColor: '#eee',
+    marginRight: moderateScale(5),
   },
   rightColumn: {
     flex: 1,
-    paddingLeft: moderateScale(16),
-    justifyContent: 'space-between',
+   
+    // paddingLeft: moderateScale(0),
+    // justifyContent: 'space-between',
   },
   doctorName: {
-    fontSize: moderateScale(20),
+    fontSize: moderateScale(16),
     fontWeight: 'bold',
     color: '#2a3f54',
     marginBottom: moderateScale(4),
   },
   qualificationText: {
-    fontSize: moderateScale(14),
-    color: '#666',
-    fontStyle: 'Roboto',
-    fontWeight: '800',
+    fontSize: moderateScale(12),
+    fontStyle: 'Roboto'
   },
   infoRow: {      
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'left',
     // marginBottom: moderateScale(8),
   },
   phoneRow: {
     marginBottom: 0,
   },
   infoLabel: {
-    fontSize: moderateScale(16),
-    color: '#666',
+    fontSize: moderateScale(12),
     fontWeight: '800',
     width: responsiveWidth(120),
     position: 'relative',
     top:0,
   },
   infoText: {
-    flex: 0.8,
+    flex: 1,
     flexWrap: 'wrap',   
-    fontSize: moderateScale(14),
-    color: '#333',
-    fontWeight: '500',
+    fontSize: moderateScale(12),
   },
 
   reloadButton: {
@@ -135,7 +132,7 @@ doctorHeaderSubContainer : {
   },
   tableHeader: {
     flexDirection: 'row',
-    paddingVertical: moderateScale(10),
+    paddingVertical: moderateScale(5),
     paddingHorizontal: moderateScale(12),
     backgroundColor: '#f8f8f8',
     borderBottomWidth: 1,
@@ -152,14 +149,14 @@ doctorHeaderSubContainer : {
   tableRow: {
     flexDirection: 'row',
     alignItems: 'left',
-    paddingVertical: moderateScale(12),
-    paddingHorizontal: moderateScale(12),
+    paddingVertical: moderateScale(7),
+    paddingHorizontal: moderateScale(10),
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
   },
   tableCell: {
     flex: 1,
-    fontSize: moderateScale(14),
+    fontSize: moderateScale(10),
     color: '#333',
     textAlign: 'left',
   },
