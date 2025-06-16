@@ -39,8 +39,9 @@ const HomeNavigator = () => {
         headerBackTitle: 'Back',
         gestureEnabled: true,
         headerStyle: {
-          backgroundColor: 'rgb(240, 240, 246)',
+          backgroundColor: 'rgb(240, 240, 246)',          
         },
+      
       }}>
       <Stack.Screen
         name="Home"

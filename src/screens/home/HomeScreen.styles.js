@@ -1,5 +1,5 @@
 import { StyleSheet} from 'react-native';
-import { fontSize } from '../../utils/fontUtils';
+import { fontSize, responsiveSize } from '../../utils/fontUtils';
 
 export const createStyles = (isLandscape , dimensions) => { 
   const fontscale = (fontsize) => {
@@ -18,10 +18,9 @@ export const createStyles = (isLandscape , dimensions) => {
   return  StyleSheet.create({
   container: {
     flex: 1,
-    margin :  marginscale(5),
+    padding : responsiveSize(10),
     backgroundColor :' rgb(251, 251, 251)',
     gap : 5 ,
-    marginTop :  marginscale(0),
   },
 
   selectionContainer: {

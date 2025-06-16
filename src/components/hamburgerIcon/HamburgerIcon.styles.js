@@ -6,8 +6,6 @@ export const createStyles = (isLandscape, dimensions) => {
 
     return StyleSheet.create({
         container: {
-
-
             marginTop: 6,
             ...(deviceType === 'TV' && { marginRight: responsiveSize(5) }),
 
