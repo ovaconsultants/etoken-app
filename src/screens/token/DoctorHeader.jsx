@@ -29,18 +29,21 @@ export const DoctorHeader = ({ doctorData }) => {
             </View>
 
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Experience: </Text>
+              <Text style={styles.infoLabel}>Exp / Mob: </Text>
               <Text style={styles.infoText}>
-                {doctorData?.experience_years ?? 0} years
+                {doctorData?.experience_years ?? 0} + Years
+              </Text>
+              <Text style={styles.infoText}>
+                {doctorData?.phone_number ?? ''}
               </Text>
             </View>
 
-            <View style={[styles.infoRow, styles.phoneRow]}>
+            {/* <View style={[styles.infoRow, styles.phoneRow]}>
               <Text style={styles.infoLabel}>Phone # : </Text>
               <Text style={styles.infoText}>
                 {doctorData?.phone_number ?? 'N/A'}
               </Text>
-            </View>
+            </View> */}
           </View>
         </View>
       </View>

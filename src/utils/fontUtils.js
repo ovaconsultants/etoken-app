@@ -11,7 +11,7 @@ export function getDeviceType() {
 
 export function fontSize(base) {
   const deviceType = getDeviceType();
-  if (deviceType === 'TV') return base * 2.2;
+  if (deviceType === 'TV') return base * 2.0;
   if (deviceType === 'Tablet') return base * 1.8;
   return base;
 }
@@ -19,7 +19,7 @@ export function fontSize(base) {
 // Responsive width utility
 export function responsiveWidth(base) {
   const deviceType = getDeviceType();
-  if (deviceType === 'TV') return base * 2.2;
+  if (deviceType === 'TV') return base * 2.0
   if (deviceType === 'Tablet') return base * 1.8;
   return base;
 } 
@@ -27,14 +27,14 @@ export function responsiveWidth(base) {
 // Responsive height utility
 export function responsiveHeight(base) {
   const deviceType = getDeviceType();
-  if (deviceType === 'TV') return base * 2.2;
+  if (deviceType === 'TV') return base * 2.0;
   if (deviceType === 'Tablet') return base * 1.8;
   return base;
 }
 // Responsive size utility
 export function responsiveSize(base) {
   const deviceType = getDeviceType();
-  if (deviceType === 'TV') return base * 2.2;
+  if (deviceType === 'TV') return base * 2.0;
   if (deviceType === 'Tablet') return base * 1.8;
   return base;
 }

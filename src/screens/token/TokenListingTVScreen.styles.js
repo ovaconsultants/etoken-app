@@ -11,23 +11,24 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff',
     // margin: moderateScale(10),
     // paddingHorizontal: moderateScale(20),
-    padding:responsiveSize(5),
+    padding:responsiveSize(15),
+    paddingTop: responsiveSize(0),
   },
 
   /** CONTAINER STYLES **/
   headerContainer: {
-    flex: responsiveSize(0.2),
+    paddingTop: responsiveSize(10),
     flexDirection: 'row',
   },
   tokenListContainer: {
-    flex:  isTV ? 0.7 : 0.6,
+    flex: responsiveSize(1),
   },
   notificationInProgressContainer: {
     position: 'absolute',
     bottom: 0,
-    right: responsiveSize(5),
-    width: responsiveWidth(300),
-    marginBottom: responsiveSize(3),
+    right: responsiveSize(15),
+    width: responsiveWidth(200),
+    marginBottom: responsiveSize(10),
   },
 
 
@@ -54,8 +55,8 @@ doctorHeaderSubContainer : {
     flex: 1,
   },
   profileCircleSection: {
-    width: moderateScale(100),
-    height: moderateScale(100),
+    width: moderateScale(50),
+    height: moderateScale(50),
     borderRadius: moderateScale(10),
     backgroundColor: '#f0f0f0',
     justifyContent: 'center',
@@ -91,11 +92,10 @@ doctorHeaderSubContainer : {
     fontStyle: 'Roboto',
     fontWeight: '800',
   },
-  infoRow: {   
-   
+  infoRow: {      
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: moderateScale(8),
+    // marginBottom: moderateScale(8),
   },
   phoneRow: {
     marginBottom: 0,
@@ -105,6 +105,8 @@ doctorHeaderSubContainer : {
     color: '#666',
     fontWeight: '800',
     width: responsiveWidth(120),
+    position: 'relative',
+    top:0,
   },
   infoText: {
     flex: 0.8,
@@ -125,9 +127,11 @@ doctorHeaderSubContainer : {
 
   /** TOKEN TABLE **/
   tableContainer: {
+    flex: 1,
+    // paddingLeft:0,
     marginTop: moderateScale(10),
     borderRadius: moderateScale(8),
-    overflow: 'hidden',
+    // overflow: 'hidden',
   },
   tableHeader: {
     flexDirection: 'row',
@@ -147,7 +151,7 @@ doctorHeaderSubContainer : {
   },
   tableRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'left',
     paddingVertical: moderateScale(12),
     paddingHorizontal: moderateScale(12),
     borderBottomWidth: 1,
@@ -157,7 +161,7 @@ doctorHeaderSubContainer : {
     flex: 1,
     fontSize: moderateScale(14),
     color: '#333',
-    textAlign: 'flex-start',
+    textAlign: 'left',
   },
   profileImageAndNameContainer: {
     flexDirection: 'row',

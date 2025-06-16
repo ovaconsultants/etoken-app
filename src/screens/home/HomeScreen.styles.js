@@ -18,7 +18,7 @@ export const createStyles = (isLandscape , dimensions) => {
   return  StyleSheet.create({
   container: {
     flex: 1,
-    padding : responsiveSize(10),
+    padding : responsiveSize(12),
     backgroundColor :' rgb(251, 251, 251)',
     gap : 5 ,
   },

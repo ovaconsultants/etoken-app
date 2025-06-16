@@ -21,18 +21,18 @@ const TokenTable = ({tokens, doctorId}) => {
 
   // Process tokens data
   useEffect(() => {
-    const fetchPatientImages = async () => {
-      const patientIds = tokens.map(token => token.patient_id);
-      const patientImageUrls = await PrefetchPatientImages(
-        doctorId,
-        patientIds,
-      );
-      // console.log(
-      //   `Fetched patient images for doctor_id=${doctorId}: patient image urls in fetch patient images`,
-      //   patientImageUrls,
-      // );
-      await setImageUrls(patientImageUrls);
-    };
+    // const fetchPatientImages = async () => {
+    //   const patientIds = tokens.map(token => token.patient_id);
+    //   const patientImageUrls = await PrefetchPatientImages(
+    //     doctorId,
+    //     patientIds,
+    //   );
+    //   // console.log(
+    //   //   `Fetched patient images for doctor_id=${doctorId}: patient image urls in fetch patient images`,
+    //   //   patientImageUrls,
+    //   // );
+    //   await setImageUrls(patientImageUrls);
+    // };
     const processTokens = async () => {
       const updatedTokens = await Promise.all(
         tokens.map(async token => {
@@ -49,7 +49,7 @@ const TokenTable = ({tokens, doctorId}) => {
       );
       setProcessedTokens(updatedTokens);
     };
-    fetchPatientImages();
+    // fetchPatientImages();
     processTokens();
     isMounted.current = true;
     return () => {
@@ -134,14 +134,14 @@ const TokenTable = ({tokens, doctorId}) => {
       <View
         key={`${item.token_id}-${index}`}
         style={[styles.tableRow, getRowStyle(item.status)]}>
-        <View style={styles.tableCell}>
+        {/* <View style={styles.tableCell}>
           <View style={styles.profileImageAndNameContainer}>
             <EnlargeableImage
               imageUrl={imageUrls[item.patient_id]}
               imageStyle={styles.profileImage}
             />           
           </View>
-        </View>
+        </View> */}
          <Text style={styles.tableCell}>{item.patient_name}</Text>
         {/* <Text style={styles.tableCell}>
           {item.mobile_number?.replace(/(\d{3})(\d{3})(\d{4})/, 'xxx-xxx-$3')}
@@ -159,11 +159,11 @@ const TokenTable = ({tokens, doctorId}) => {
   );
 
   return (
-    <View style={[styles.tableContainer, {flex: 1}]}>
+    <View style={styles.tableContainer}>
       {/* Fixed Header */}
       <View style={styles.tableHeader}>
-         <Text style={styles.tableHeaderText}>Patient</Text>
-        <Text style={styles.tableHeaderText}>Name</Text>
+         {/* <Text style={styles.tableHeaderText}>Patient</Text> */}
+        <Text style={styles.tableHeaderText}>Patient Name</Text>
         {/* <Text style={styles.tableHeaderText}>Phone</Text> */}
         {/* <Text style={styles.tableHeaderText}>Payment</Text> */}
         <Text style={styles.tableHeaderText}>Emergency</Text>

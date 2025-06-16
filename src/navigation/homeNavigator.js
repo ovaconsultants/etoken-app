@@ -12,7 +12,7 @@ import DefaultReceptionScreen from '../screens/noTokenReceptionState/DefaultRece
 import { incrementHomeRefreshKey } from '../atoms/refreshAtoms/homePageRefreshAtom';
 import { useSetAtom } from 'jotai';
 import { Home } from 'lucide-react-native';
-import { fontSize } from '../utils/fontUtils';
+import { fontSize, responsiveSize } from '../utils/fontUtils';
 import HamburgerIcon from '../components/hamburgerIcon/HamburgerIcon';
 
 const Stack = createNativeStackNavigator();
@@ -151,6 +151,8 @@ const HomeNavigator = () => {
                   textAlign: 'center',
                   width: '200%',
                   height: 40,
+                  marginTop:responsiveSize(10),
+                  marginBottom: responsiveSize(10),
                 }}
                 numberOfLines={1}
                 onPress={handleRefresh}

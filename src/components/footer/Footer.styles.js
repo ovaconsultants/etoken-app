@@ -1,12 +1,13 @@
 import { StyleSheet } from 'react-native';
+import { responsiveSize } from '../../utils/fontUtils';
 
 const styles = StyleSheet.create({
   footer: {
     position: 'relative',
-    marginTop:5,
-    bottom: 10,
+    marginTop:responsiveSize(10),
+    bottom: responsiveSize(10),
     width: '100%',
-    height: 20,
+    height: responsiveSize(20),
     backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
@@ -14,10 +15,10 @@ const styles = StyleSheet.create({
 },
   copyrightText: {
     color: '#222',
-    fontSize: 11,
+    fontSize: responsiveSize(10),
     fontWeight: '500',
     textAlign: 'center',
-    marginTop: 5,
+    marginTop: responsiveSize(5),
   },
 });
 
